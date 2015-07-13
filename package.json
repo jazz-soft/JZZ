@@ -1,0 +1,20 @@
+{
+  "name": "jzz-dev",
+  "version": "0.0.0",
+  "description": "JZZ development",
+  "scripts": {
+    "test": "node test.js"
+  },
+  "author": "jazz-soft (http://jazz-soft.net/)",
+  "devDependencies": {
+    "uglify-js": ">=2.4.21"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jazz-soft/JZZ.git"
+  },
+  "homepage": "http://jazz-soft.net",
+  "bugs": "http://jazz-soft.org",
+  "license": "MIT"
+  "private": true
+}

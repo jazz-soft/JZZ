@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+ <title>JZZ test page</title>
+<meta http-equiv="X-UA-Compatible" content="requiresActiveX=true"/>
+<script src="jzz/javascript/JZZ.js"></script>
+<script><!--
+function test(){
+  JZZ().or('Cannot start MIDI engine!')
+       .openMidiOut().or('Cannot open MIDI Out port!')
+       .wait(500).send([0x90,60,127])
+       .wait(500).send([0x90,64,127])
+       .wait(500).send([0x90,67,127])
+       .wait(500).send([0x90,72,127])
+       .wait(1000).send([0x90,60,0]).send([0x90,64,0]).send([0x90,67,0]).send([0x90,72,0])
+       .and('thank you!');
+}
+--></script>
+</head>
+
+<body>
+<h1>JZZ test page</h1>
+<p>
+<button  onclick='test();'>Test!</button> 
+</p>
+</body>
+</html>

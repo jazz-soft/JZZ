@@ -1,0 +1,25 @@
+{
+  "name": "jzz",
+  "version": "0.0.0",
+  "description": "Async MIDI library",
+  "main": "index.js",
+  "scripts": {
+    "test": "node test.js"
+  },
+  "keywords": [
+    "MIDI",
+    "music",
+    "sound"
+  ],
+  "author": "jazz-soft (http://jazz-soft.net/)",
+  "dependencies": {
+    "jazz-midi": ">=1.4.4"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jazz-soft/JZZ.git"
+  },
+  "homepage": "http://jazz-soft.net",
+  "bugs": "http://jazz-soft.org",
+  "license": "MIT"
+}
