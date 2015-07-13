@@ -5,12 +5,19 @@
 ## Asynchronous MIDI Library.
 
 This library requires [Jazz-Plugin](http://jazz-soft.net)
-or [jazz-midi](https://www.npmjs.com/package/jazz-midi)
-and uses [Chrome Web MIDI API](http://webaudio.github.io/web-midi-api) as a fallback option.
+or [jazz-midi](https://www.npmjs.com/package/jazz-midi) module
+and uses [Chrome Web MIDI API](http://webaudio.github.io/web-midi-api) as a fallback.
+
+Current version is rather a preview. It provides only MIDI-Out support.
+MIDI-In and tons of other features will be coming gradually.
+
+Development version is available at https://github.com/jazz-soft/JZZ
+
+Your questions and comments are welcome [here](http://jazz-soft.org).
 
 ## Usage
 
-#### HTML
+##### HTML
 
     <script src="scripts/JZZ.js"></script>
     ...
@@ -25,7 +32,7 @@ and uses [Chrome Web MIDI API](http://webaudio.github.io/web-midi-api) as a fall
          .and('thank you!');
     --></script>
 
-#### Node.js
+##### Node.js
 
     var JZZ = require('jzz');
     JZZ().or('Cannot start MIDI engine!')
