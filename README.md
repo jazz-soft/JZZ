@@ -1,7 +1,7 @@
 # JZZ: Asynchronous MIDI Library.
 
 This library requires [**Jazz-Plugin**](http://jazz-soft.net)
-or [**jazz-midi**](https://www.npmjs.com/package/jazz-midi) module
+or [**jazz-midi**](https://www.npmjs.com/package/jazz-midi),
 and uses [**Chrome Web MIDI API**](http://webaudio.github.io/web-midi-api) as a fallback.
 
 Current version is rather a preview. It provides only MIDI-Out support.
@@ -11,6 +11,8 @@ MIDI-In and other features will be coming gradually.
 Node.js module: [**npm install jzz**](https://www.npmjs.com/package/jzz).
 
 Your questions and comments are welcome [**here**](http://jazz-soft.org).
+
+You can also [**support**](http://jazz-soft.net/donate) this project.
 
 ## Usage
 
@@ -53,7 +55,7 @@ Subsequent calls return the same object and ignore arguments.
 Syntax: **JZZ(*arg*)**
 
 - *arg* can be empty or an object(map) with the following keys:
-  - **sysex:** - if *true*, Web MIDI API will be called with the *{sysex:true}* option.
+  - **sysex** - if *true*, Web MIDI API will be called with the *{sysex:true}* option.
 Other MIDI implementations are not as paranoic about the sysex messages and ignore this key.
 
 Example:
