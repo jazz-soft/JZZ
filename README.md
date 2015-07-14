@@ -1,5 +1,3 @@
-*Async MIDI made easy!*
-
 # JZZ: Asynchronous MIDI Library.
 
 This library requires [**Jazz-Plugin**](http://jazz-soft.net)

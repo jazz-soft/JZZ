@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "description": "JZZ development",
   "scripts": {
-    "test": "node test.js"
+    "test": "node test.js",
+    "minify": "uglifyjs jzz/javascript/JZZ.js > minified/JZZ.js"
   },
   "author": "jazz-soft (http://jazz-soft.net/)",
   "devDependencies": {
@@ -15,6 +16,6 @@
   },
   "homepage": "http://jazz-soft.net",
   "bugs": "http://jazz-soft.org",
-  "license": "MIT"
+  "license": "MIT",
   "private": true
 }
