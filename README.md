@@ -42,9 +42,9 @@ Your questions and comments are welcome [**here**](http://jazz-soft.org).
          .and('thank you!');
 
 
-## API
+# API
 
-### MIDI engine
+## MIDI engine
 
 #### JZZ()
 Returns a MIDI engine object (singleton).
@@ -53,18 +53,16 @@ Subsequent calls return the same object and ignore arguments.
 Syntax: **JZZ(*arg*)**
 
 - *arg* can be empty or an object(map) with the following keys:
-
-**sysex:** - if *true*, Web MIDI API will be called with the *{sysex:true}* option.
-
-Other MIDI implementations are not as paranoic about the sysex messages.
+  - **sysex:** - if *true*, Web MIDI API will be called with the *{sysex:true}* option.
+Other MIDI implementations are not as paranoic about the sysex messages and ignore this key.
 
 Example:
 
-    engine = JZZ();
     engine = JZZ({sysex:true});
+    engine = JZZ();
 
 
-### MIDI Out port
+## MIDI Out port
 
 #### openMidiOut()
 Returns the MIDI Out port.
@@ -92,21 +90,21 @@ Sends MIDI message through the port.
 
 Syntax: **send(*arg*);**
 
-*arg* must be an array representing the message.
+- *arg* must be an array representing the message.
 
 Example:
 
     port.send([0x90,60,127]);
 
 
-### Common calls
+## Common calls
 
 #### or()
 Executes if the previous operation on the object failed.
 
 Syntax: **or(*arg*);**
 
-If *arg* is a function, it will execute in the context of the current object,
+- If *arg* is a function, it will execute in the context of the current object,
 otherwise, it will be printed via the *console.log*.
 
 #### and()
@@ -139,7 +137,7 @@ Example:
     port.wait(200).send([0x90,64,127]);
     port.wait(300).send([0x90,67,127]);
 
-These two code snippets will produce the equivalent results.
+These two code snippets above will produce equivalent results.
 
 
 *to be continued...*
