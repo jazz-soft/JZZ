@@ -8,6 +8,8 @@ Current version is rather a preview. It provides only MIDI-Out support.
 
 MIDI-In and other features will be coming gradually.
 
+Node.js module: [**npm install jzz**](https://www.npmjs.com/package/jzz).
+
 Your questions and comments are welcome [**here**](http://jazz-soft.org).
 
 ## Usage
