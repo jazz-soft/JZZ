@@ -1,8 +1,8 @@
-*Async MIDI made easy!*
+# jzz
 
+### Async MIDI Library
 
-# JZZ: Asynchronous MIDI Library
-
+## JZZ: Asynchronous MIDI Library
 
 This library requires [**Jazz-Plugin**](http://jazz-soft.net)
 or [**jazz-midi**](https://www.npmjs.com/package/jazz-midi) module
