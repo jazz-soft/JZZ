@@ -159,6 +159,9 @@
   }
   // Jazz-Plugin
   function _tryJazzPlugin() {
+    var div = document.createElement('div'); 
+    div.style.visibility='hidden';
+    document.body.appendChild(div);
     var obj = document.createElement('object');
     obj.style.visibility='hidden';
     obj.style.width='0px'; obj.style.height='0px';
@@ -196,12 +199,17 @@
     }
     this._break();
   }
+  function _zeroBreak() {
+    this._pause();
+    var self = this;
+    setTimeout(function(){ self._break(); self._resume();}, 0);
+  }
 
-  function _initJZZ(opt){
+  function _initJZZ(opt) {
     _jzz = new _J();
     _jzz._options = opt;
     _jzz._info = function() {return _engine._outs;};
-    _jzz._push(_tryAny, [[_tryNODE, _tryJazzPlugin, _tryWebMIDI, _initNONE]]);
+    _jzz._push(_tryAny, [[_tryNODE, _zeroBreak, _tryJazzPlugin, _tryWebMIDI, _initNONE]]);
     _jzz.refresh();
     _jzz._push(function(){if(!_engine._outs.length && !_engine._ins.length) this._break();}, []);
     _jzz._resume();
