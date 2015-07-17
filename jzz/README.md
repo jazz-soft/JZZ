@@ -55,6 +55,7 @@ Your questions and comments are welcome [**here**](http://jazz-soft.org).
          .wait(1000).send([0x90,60,0]).send([0x90,64,0]).send([0x90,67,0]).send([0x90,72,0])
          .and('thank you!');
 
+See more examples [**here**](http://jazz-soft.net/demo)...
 
 # API
 
@@ -67,7 +68,7 @@ Subsequent calls return the same object and ignore arguments.
 Syntax: **JZZ(*arg*)**
 
 - *arg* can be empty or an object(map) with the following keys:
-  - **sysex:** - if *true*, Web MIDI API will be called with the *{sysex:true}* option.
+  - **sysex** - if *true*, Web MIDI API will be called with the *{sysex:true}* option.
 Other MIDI implementations are not as paranoic about the sysex messages and ignore this key.
 
 Example:
