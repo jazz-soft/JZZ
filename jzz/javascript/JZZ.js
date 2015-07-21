@@ -144,7 +144,11 @@
     this._push(_send, [MIDI.apply(null, arguments)]);
     return this;
   }
-
+  _O.prototype.note = function(c, n, v, t) {
+    this.noteOn(c, n, v);
+    if (t) this.wait(t).noteOff(c, n);
+    return this;
+  }
 
   var _jzz;
   var _engine = {};

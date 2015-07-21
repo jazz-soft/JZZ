@@ -36,6 +36,7 @@ You can also [**support**](http://jazz-soft.net/donate) this project.
          .wait(1000).send([0x90,60,0]).send([0x90,64,0]).send([0x90,67,0])
          .and('thank you!');
 
+
 ##### HTML
 
 
@@ -50,6 +51,18 @@ You can also [**support**](http://jazz-soft.net/donate) this project.
          .wait(1000).send([0x90,60,0]).send([0x90,64,0]).send([0x90,67,0])
          .and('thank you!');
     --></script>
+
+
+##### Helpers and shortcuts
+
+All calls below will do the same job:
+
+
+    port.send([0x90,61,127]).wait(500).send([0x80,61,0]);   // arrays
+    port.send(0x90,61,127).wait(500).send(0x80,61,0);       // comma-separated
+    port.send(0x90,'C#5',127).wait(500).send(0x80,'Db5',0); // note names
+    port.noteOn(0,'C#5',127).wait(500).noteOff(0,'Db5');    // helper functions
+    port.note(0,'C#5',127,500);                             // another shortcut
 
 
 See more examples [**here**](http://jazz-soft.net/demo)...
