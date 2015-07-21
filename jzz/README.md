@@ -5,7 +5,7 @@
 # JZZ: Asynchronous MIDI Library
 
 This library requires [**Jazz-Plugin**](http://jazz-soft.net)
-or [**jazz-midi**](https://www.npmjs.com/package/jazz-midi) module
+or [**jazz-midi**](https://www.npmjs.com/package/jazz-midi)
 and uses [**Chrome Web MIDI API**](http://webaudio.github.io/web-midi-api) as a fallback.
 
 Current version is rather a preview. It provides only MIDI-Out support.
@@ -16,14 +16,25 @@ The development version and minified scripts are available at [**Github**](https
 
 Your questions and comments are welcome [**here**](http://jazz-soft.org).
 
+You can also [**support**](http://jazz-soft.net/donate) this project.
 
 ## Install
 
     npm install jzz
 
-
 ## Usage
 
+##### Node.js
+
+
+    var JZZ = require('jzz');
+    JZZ().or('Cannot start MIDI engine!')
+         .openMidiOut().or('Cannot open MIDI Out port!')
+         .wait(500).send([0x90,60,127])
+         .wait(500).send([0x90,64,127])
+         .wait(500).send([0x90,67,127])
+         .wait(1000).send([0x90,60,0]).send([0x90,64,0]).send([0x90,67,0])
+         .and('thank you!');
 
 ##### HTML
 
@@ -36,26 +47,13 @@ Your questions and comments are welcome [**here**](http://jazz-soft.org).
          .wait(500).send([0x90,60,127])
          .wait(500).send([0x90,64,127])
          .wait(500).send([0x90,67,127])
-         .wait(500).send([0x90,72,127])
-         .wait(1000).send([0x90,60,0]).send([0x90,64,0]).send([0x90,67,0]).send([0x90,72,0])
+         .wait(1000).send([0x90,60,0]).send([0x90,64,0]).send([0x90,67,0])
          .and('thank you!');
     --></script>
 
 
-##### Node.js
-
-
-    var JZZ = require('jzz');
-    JZZ().or('Cannot start MIDI engine!')
-         .openMidiOut().or('Cannot open MIDI Out port!')
-         .wait(500).send([0x90,60,127])
-         .wait(500).send([0x90,64,127])
-         .wait(500).send([0x90,67,127])
-         .wait(500).send([0x90,72,127])
-         .wait(1000).send([0x90,60,0]).send([0x90,64,0]).send([0x90,67,0]).send([0x90,72,0])
-         .and('thank you!');
-
 See more examples [**here**](http://jazz-soft.net/demo)...
+
 
 # API
 

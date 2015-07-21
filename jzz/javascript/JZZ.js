@@ -140,8 +140,8 @@
   function _send(arg) {
     this._send(arg);
   }
-  _O.prototype.send = function(arg) {
-    this._push(_send, [arg]);
+  _O.prototype.send = function() {
+    this._push(_send, [MIDI.apply(null, arguments)]);
     return this;
   }
 
@@ -251,7 +251,7 @@
         _engine._outMap[name] = plugin;
       }
       out._impl = plugin;
-      out._send = function(a){ this._impl.MidiOutRaw(a); }
+      out._send = function(a){ this._impl.MidiOutRaw(a.slice()); }
     }
   }
 
@@ -312,7 +312,7 @@
           out._port = port;
         }
       });
-      out._send = function(a){ this._port.send(a); }
+      out._send = function(a){ this._port.send(a.slice()); }
       if (!out._port) out._break();
     }
   }
@@ -321,5 +321,84 @@
     if(!_jzz) _initJZZ(opt);
     return _jzz;
   }
+
+
+  // JZZ.MIDI
+
+  function MIDI(arg) {
+    var self = this instanceof MIDI ? this : self = new MIDI();
+    if (!arguments.length) return self;
+    var arr = arg instanceof Array ? arg : arguments;
+    for (var i = 0; i < arr.length; i++) {
+      var n = arr[i];
+      if (i==1 && self[0]>=0x80 && self[0]<=0xAF) n = MIDI.noteValue(n);
+      if (n != parseInt(n) || n<0 || n>255) _throw(arr[i]);
+      self.push(n);
+    }
+    return self;
+  }
+  MIDI.prototype = [];
+  MIDI.prototype.constructor = MIDI;
+  var _noteNum = {};
+  MIDI.noteValue = function(x){ return _noteNum[x];}
+
+  var _noteMap = {C:0, D:2, E:4, F:5, G:7, A:9, B:11};
+  for (var k in _noteMap) {
+    for (var n=0; n<12; n++) {
+      var m = _noteMap[k] + n*12;
+      if (m > 127) break;
+      _noteNum[k+n] = m;
+      if (m > 0) { _noteNum[k+'b'+n] = m - 1; _noteNum[k+'bb'+n] = m - 2;}
+      if (m < 127) { _noteNum[k+'#'+n] = m + 1; _noteNum[k+'##'+n] = m + 2;}
+    }
+  }
+  for (var n=0; n<128; n++) _noteNum[n] = n;
+  function _throw(x){ throw RangeError('Bad MIDI value: '+x);}
+  function _ch(n) { if (n != parseInt(n) || n<0 || n>0xf) _throw(n); return n;}
+  function _7b(n) { if (n != parseInt(n) || n<0 || n>0x7f) _throw(n); return n;}
+  function _lsb(n){ if (n != parseInt(n) || n<0 || n>0x3fff) _throw(n); return n & 0x7f;}
+  function _msb(n){ if (n != parseInt(n) || n<0 || n>0x3fff) _throw(n); return n >> 7;}
+  var _helper = {
+    noteOff : function(c, n){ return [0x80+_ch(c), _7b(MIDI.noteValue(n)), 0];},
+    noteOn  : function(c, n, v){ return [0x90+_ch(c), _7b(MIDI.noteValue(n)), _7b(v)];},
+    aftertouch : function(c, n, v){ return [0xA0+_ch(c), _7b(MIDI.noteValue(n)), _7b(v)];},
+    control : function(c, n, v){ return [0xE0+_ch(c), _7b(n), _7b(v)];},
+    program : function(c, n){ return [0xC0+_ch(c), _7b(n)];},
+    pressure: function(c, n){ return [0xD0+_ch(c), _7b(n)];},
+    pichBend: function(c, n){ return [0xE0+_ch(c), _lsb(n), _msb(n)];},
+    bankMSB : function(c, n){ return [0xB0+_ch(c), 0x00, _7b(n)];},
+    bankLSB : function(c, n){ return [0xB0+_ch(c), 0x20, _7b(n)];},
+    modMSB  : function(c, n){ return [0xB0+_ch(c), 0x01, _7b(n)];},
+    modLSB  : function(c, n){ return [0xB0+_ch(c), 0x21, _7b(n)];},
+    breathMSB : function(c, n){ return [0xB0+_ch(c), 0x02, _7b(n)];},
+    breathLSB : function(c, n){ return [0xB0+_ch(c), 0x22, _7b(n)];},
+    footMSB : function(c, n){ return [0xB0+_ch(c), 0x04, _7b(n)];},
+    footLSB : function(c, n){ return [0xB0+_ch(c), 0x24, _7b(n)];},
+    portamentoMSB : function(c, n){ return [0xB0+_ch(c), 0x05, _7b(n)];},
+    portamentoLSB : function(c, n){ return [0xB0+_ch(c), 0x25, _7b(n)];},
+    volumeMSB : function(c, n){ return [0xB0+_ch(c), 0x07, _7b(n)];},
+    volumeLSB : function(c, n){ return [0xB0+_ch(c), 0x27, _7b(n)];},
+    balanceMSB : function(c, n){ return [0xB0+_ch(c), 0x08, _7b(n)];},
+    balanceLSB : function(c, n){ return [0xB0+_ch(c), 0x28, _7b(n)];},
+    panMSB  : function(c, n){ return [0xB0+_ch(c), 0x0A, _7b(n)];},
+    panLSB  : function(c, n){ return [0xB0+_ch(c), 0x2A, _7b(n)];},
+    expressionMSB : function(c, n){ return [0xB0+_ch(c), 0x0B, _7b(n)];},
+    expressionLSB : function(c, n){ return [0xB0+_ch(c), 0x2B, _7b(n)];},
+    damper : function(c, b){ return [0xB0+_ch(c), 0x40, b ? 127 : 0];},
+    portamento : function(c, b){ return [0xB0+_ch(c), 0x41, b ? 127 : 0];},
+    sostenuto : function(c, b){ return [0xB0+_ch(c), 0x42, b ? 127 : 0];},
+    soft   : function(c, b){ return [0xB0+_ch(c), 0x43, b ? 127 : 0];},
+    allNotesOff : function(c){ return [0xB0+_ch(c), 0x7b, 0];},
+    0:0
+  };
+  function _copyHelper(name, func) {
+    MIDI[name] = function(){ return new MIDI(func.apply(0, arguments));};
+    _O.prototype[name] = function(){ this.send(func.apply(0, arguments)); return this;};
+  }
+  for (var k in _helper) {
+    _copyHelper(k, _helper[k]);
+  }
+
+  JZZ.MIDI = MIDI;
 
 })();

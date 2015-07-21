@@ -26,8 +26,7 @@ You can also [**support**](http://jazz-soft.net/donate) this project.
          .wait(500).send([0x90,60,127])
          .wait(500).send([0x90,64,127])
          .wait(500).send([0x90,67,127])
-         .wait(500).send([0x90,72,127])
-         .wait(1000).send([0x90,60,0]).send([0x90,64,0]).send([0x90,67,0]).send([0x90,72,0])
+         .wait(1000).send([0x90,60,0]).send([0x90,64,0]).send([0x90,67,0])
          .and('thank you!');
     --></script>
 
@@ -39,9 +38,9 @@ You can also [**support**](http://jazz-soft.net/donate) this project.
          .wait(500).send([0x90,60,127])
          .wait(500).send([0x90,64,127])
          .wait(500).send([0x90,67,127])
-         .wait(500).send([0x90,72,127])
-         .wait(1000).send([0x90,60,0]).send([0x90,64,0]).send([0x90,67,0]).send([0x90,72,0])
+         .wait(1000).send([0x90,60,0]).send([0x90,64,0]).send([0x90,67,0])
          .and('thank you!');
+
 
 See more examples [**here**](http://jazz-soft.net/demo)...
 
