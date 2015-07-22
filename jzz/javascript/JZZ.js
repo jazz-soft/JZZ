@@ -366,10 +366,10 @@
     noteOff : function(c, n){ return [0x80+_ch(c), _7b(MIDI.noteValue(n)), 0];},
     noteOn  : function(c, n, v){ return [0x90+_ch(c), _7b(MIDI.noteValue(n)), _7b(v)];},
     aftertouch : function(c, n, v){ return [0xA0+_ch(c), _7b(MIDI.noteValue(n)), _7b(v)];},
-    control : function(c, n, v){ return [0xE0+_ch(c), _7b(n), _7b(v)];},
+    control : function(c, n, v){ return [0xB0+_ch(c), _7b(n), _7b(v)];},
     program : function(c, n){ return [0xC0+_ch(c), _7b(n)];},
     pressure: function(c, n){ return [0xD0+_ch(c), _7b(n)];},
-    pichBend: function(c, n){ return [0xE0+_ch(c), _lsb(n), _msb(n)];},
+    pitchBend: function(c, n){ return [0xE0+_ch(c), _lsb(n), _msb(n)];},
     bankMSB : function(c, n){ return [0xB0+_ch(c), 0x00, _7b(n)];},
     bankLSB : function(c, n){ return [0xB0+_ch(c), 0x20, _7b(n)];},
     modMSB  : function(c, n){ return [0xB0+_ch(c), 0x01, _7b(n)];},
@@ -401,6 +401,117 @@
   }
   for (var k in _helper) {
     _copyHelper(k, _helper[k]);
+  }
+
+  function _hex(x){
+    var a=[];
+    for (var i=0; i<x.length; i++) {
+      a[i] = (x[i]<16 ? '0' : '') + x[i].toString(16);
+    }
+    return a.join(' ');
+  }
+  MIDI.prototype.toString = function() {
+    if (!this.length) return 'empty';
+    var s = _hex(this);
+    if (this[0]<0x80) return s;
+    s += ' -- ';
+    var ss = {
+      241: 'Time Code',
+      242: 'Song Position',
+      243: 'Song Select',
+      244: 'Undefined',
+      245: 'Undefined',
+      246: 'Tune request',
+      248: 'Timing clock',
+      249: 'Undefined',
+      250: 'Start',
+      251: 'Continue',
+      252: 'Stop',
+      253: 'Undefined',
+      254: 'Active Sensing',
+      255: 'Reset'}[this[0]];
+    if (ss) return s + ss;
+    var c = this[0] >> 4;
+    ss = {8: 'Note Off', 10: 'Aftertouch', 12: 'Program Change', 13: 'Channel Aftertouch', 14: 'Pitch Wheel'}[c];
+    if (ss) return s + ss;
+    if (c == 9) return s + (this[2] ? 'Note On' : 'Note Off');
+    if (c != 11) return s;
+    ss = {
+      0: 'Bank Select MSB',
+      1: 'Modulation Wheel MSB',
+      2: 'Breath Controller MSB',
+      4: 'Foot Controller MSB',
+      5: 'Portamento Time MSB',
+      6: 'Data Entry MSB',
+      7: 'Channel Volume MSB',
+      8: 'Balance MSB',
+      10: 'Pan MSB',
+      11: 'Expression Controller MSB',
+      12: 'Effect Control 1 MSB',
+      13: 'Effect Control 2 MSB',
+      16: 'General Purpose Controller 1 MSB',
+      17: 'General Purpose Controller 2 MSB',
+      18: 'General Purpose Controller 3 MSB',
+      19: 'General Purpose Controller 4 MSB',
+      32: 'Bank Select LSB',
+      33: 'Modulation Wheel LSB',
+      34: 'Breath Controller LSB',
+      36: 'Foot Controller LSB',
+      37: 'Portamento Time LSB',
+      38: 'Data Entry LSB',
+      39: 'Channel Volume LSB',
+      40: 'Balance LSB',
+      42: 'Pan LSB',
+      43: 'Expression Controller LSB',
+      44: 'Effect control 1 LSB',
+      45: 'Effect control 2 LSB',
+      48: 'General Purpose Controller 1 LSB',
+      49: 'General Purpose Controller 2 LSB',
+      50: 'General Purpose Controller 3 LSB',
+      51: 'General Purpose Controller 4 LSB',
+      64: 'Damper Pedal On/Off',
+      65: 'Portamento On/Off',
+      66: 'Sostenuto On/Off',
+      67: 'Soft Pedal On/Off',
+      68: 'Legato Footswitch',
+      69: 'Hold 2',
+      70: 'Sound Controller 1',
+      71: 'Sound Controller 2',
+      72: 'Sound Controller 3',
+      73: 'Sound Controller 4',
+      74: 'Sound Controller 5',
+      75: 'Sound Controller 6',
+      76: 'Sound Controller 7',
+      77: 'Sound Controller 8',
+      78: 'Sound Controller 9',
+      79: 'Sound Controller 10',
+      80: 'General Purpose Controller 5',
+      81: 'General Purpose Controller 6',
+      82: 'General Purpose Controller 7',
+      83: 'General Purpose Controller 8',
+      84: 'Portamento Control',
+      88: 'High Resolution Velocity Prefix',
+      91: 'Effects 1 Depth',
+      92: 'Effects 2 Depth',
+      93: 'Effects 3 Depth',
+      94: 'Effects 4 Depth',
+      95: 'Effects 5 Depth',
+      96: 'Data Increment',
+      97: 'Data Decrement',
+      98: 'Non-Registered Parameter Number LSB',
+      99: 'Non-Registered Parameter Number MSB',
+      100: 'Registered Parameter Number LSB',
+      101: 'Registered Parameter Number MSB',
+      120: 'All Sound Off',
+      121: 'Reset All Controllers',
+      122: 'Local Control On/Off',
+      123: 'All Notes Off',
+      124: 'Omni Mode Off',
+      125: 'Omni Mode On',
+      126: 'Mono Mode On',
+      127: 'Poly Mode On'}[this[1]];
+    if (!ss) ss = 'Undefined';
+    return s + ss;
   }
 
   JZZ.MIDI = MIDI;
