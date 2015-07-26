@@ -4,10 +4,6 @@ This library requires [**Jazz-Plugin**](http://jazz-soft.net)
 or [**jazz-midi**](https://www.npmjs.com/package/jazz-midi),
 and uses [**Chrome Web MIDI API**](http://webaudio.github.io/web-midi-api) as a fallback.
 
-Current version is rather a preview. It provides only MIDI-Out support.
-
-MIDI-In and other features will be coming gradually.
-
 Node.js module: [**npm install jzz**](https://www.npmjs.com/package/jzz).
 
 Your questions and comments are welcome [**here**](http://jazz-soft.org).

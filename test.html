@@ -6,22 +6,54 @@
 <script src="jzz/javascript/JZZ.js"></script>
 <script><!--
 function test(){
-  JZZ().or('Cannot start MIDI engine!')
-       .openMidiOut().or('Cannot open MIDI Out port!')
+  JZZ().openMidiOut()
        .wait(500).send([0x90,60,127])
        .wait(500).send([0x90,64,127])
        .wait(500).send([0x90,67,127])
        .wait(500).send([0x90,72,127])
-       .wait(1000).send([0x90,60,0]).send([0x90,64,0]).send([0x90,67,0]).send([0x90,72,0])
-       .and('thank you!');
+       .wait(500).send([0x90,60,0]).send([0x90,64,0]).send([0x90,67,0]).send([0x90,72,0]);
 }
 --></script>
 </head>
 
 <body>
 <h1>JZZ test page</h1>
+<p>
+<span id="midiEngineStatus"> </span>
+</p><p>
+MIDI-Out: <span id="midiOutName">NONE</span>
+</p><p>
+<button  onclick='test();'>Press to play!</button> 
+</p><p>
+MIDI-In: <span id="midiInName">NONE</span>
+</p><p>
+<pre id="midiIn">
+messages
+</pre>
+</p>
 
-<button  onclick='test();'>Test!</button>
+
+<script><!--
+var output = [];
+
+JZZ()
+  .or(function(){document.getElementById("midiEngineStatus").innerHTML = "Cannot start MIDI Engine!";})
+  .and(function(){document.getElementById("midiEngineStatus").innerHTML = "MIDI Engine is running!";})
+
+JZZ().openMidiOut()
+  .or(function(){document.getElementById("midiOutName").innerHTML = "Cannot open!";})
+  .and(function(){document.getElementById("midiOutName").innerHTML = this.name();});
+
+JZZ().openMidiIn()
+  .or(function(){document.getElementById("midiInName").innerHTML = "Cannot open!";})
+  .and(function(){document.getElementById("midiInName").innerHTML = this.name();})
+  .connect(function(msg){
+    output.push(msg.toString());
+    if (output.length > 20) output.splice(0, 1);
+    document.getElementById("midiIn").innerHTML = output.join("\n");
+  });
+--></script>
+
 
 </body>
 </html>

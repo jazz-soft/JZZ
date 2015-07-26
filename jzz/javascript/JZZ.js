@@ -347,7 +347,7 @@
         }
         impl.open = true;
       }
-      port._impl = impl;
+      port._orig._impl = impl;
       port._send = function(a){ this._impl.plugin.MidiOutRaw(a.slice()); }
       _push(impl.clients, port._orig);
     }
@@ -379,7 +379,7 @@
         }
         impl.open = true;
       }
-      port._impl = impl;
+      port._orig._impl = impl;
       _push(impl.clients, port._orig);
     }
     _engine._closeOut = function(port) {
@@ -454,17 +454,67 @@
       });
     }
     _engine._openOut = function(port, name) {
-      var id, dev;
-      _engine._access.outputs.forEach(function(dev, key) {
-        if (dev.name === name) {
-          port._port = dev;
+      var impl = _engine._outMap[name];
+      if (!impl) {
+        impl = {
+          name: name,
+          clients: []
+        };
+        var id, dev;
+        _engine._access.outputs.forEach(function(dev, key) {
+          if (dev.name === name) impl.dev = dev;
+        });
+        if (impl.dev) {
+          _engine._outMap[name] = impl;
         }
-      });
-      if (!port._port) port._break();
-      else {
-        port._send = function(a){ this._port.send(a.slice()); }
-        port._name = name;
+        else impl = undefined;
       }
+      if (impl) {
+        port._orig._impl = impl;
+        port._send = function(a){ this._impl.dev.send(a.slice()); }
+        _push(impl.clients, port._orig);
+      }
+      else port._break();
+    }
+    _engine._openIn = function(port, name) {
+      var impl = _engine._inMap[name];
+      if (!impl) {
+        impl = {
+          name: name,
+          clients: [],
+          handle: function(evt) {
+            for (var i in this.clients) {
+              var msg = MIDI([].slice.call(evt.data));
+              this.clients[i]._event(msg);
+            }
+          }
+        };
+        var id, dev;
+        _engine._access.inputs.forEach(function(dev, key) {
+          if (dev.name === name) impl.dev = dev;
+        });
+        if (impl.dev) {
+        function makeHandle(x) { return function(evt) { x.handle(evt); }; };
+          impl.dev.onmidimessage = makeHandle(impl);
+          _engine._inMap[name] = impl;
+        }
+        else impl = undefined;
+      }
+      if (impl) {
+        port._orig._impl = impl;
+        _push(impl.clients, port._orig);
+      }
+      else port._break();
+    }
+    _engine._closeOut = function(port) {
+      var impl = port._impl;
+      _pop(impl.clients, port._orig);
+    }
+    _engine._closeIn = function(port) {
+      var impl = port._impl;
+      _pop(impl.clients, port._orig);
+    }
+    _engine._close = function() {
     }
   }
 
