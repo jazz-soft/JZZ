@@ -9,14 +9,14 @@
   _R.prototype._exec = function() {
     while (this._ready && this._queue.length) {
       var x = this._queue.shift();
-      if (this._bad) {
-        if (this._hope && x[0] == _or) {
-          this._hope = false;
+      if (this._orig._bad) {
+        if (this._orig._hope && x[0] == _or) {
+          this._orig._hope = false;
           x[0].apply(this, x[1]);
         }
         else {
           this._queue = [];
-          this._hope = false;
+          this._orig._hope = false;
         }
       }
       else if (x[0] != _or) {
@@ -28,8 +28,8 @@
   _R.prototype._slip = function(func, arg) { this._queue.unshift([func, arg]);}
   _R.prototype._pause = function() { this._ready = false;}
   _R.prototype._resume = function() { this._ready = true; _R.prototype._exec.apply(this);}
-  _R.prototype._break = function() { this._bad = true; this._hope = true;}
-  _R.prototype._repair = function() { this._bad = false;}
+  _R.prototype._break = function() { this._orig._bad = true; this._orig._hope = true;}
+  _R.prototype._repair = function() { this._orig._bad = false;}
   _R.prototype._info = function(){ return this.toString();}
 
   function _wait(obj, delay) { setTimeout(function(){obj._resume();}, delay);}
@@ -169,6 +169,18 @@
     _R.apply(this);
   }
   _O.prototype = new _R();
+  _O.prototype.name = function() { return this._impl ? this._impl.name : undefined;}
+
+  function _closeMidiOut(obj) {
+    _engine._closeOut(this);
+    this._break();
+    obj._resume();
+  }
+  _O.prototype.close = function() {
+    var ret = new _R();
+    this._push(_closeMidiOut, [ret]);
+    return ret;
+  }
 
   function _send(arg) {
     this._send(arg);
@@ -190,17 +202,18 @@
     this._outs = [];
   }
   _I.prototype = new _R();
+  _I.prototype.name = _O.prototype.name;
   _I.prototype._event = function(msg) {
     for (var i in this._handles) this._handles[i].apply(this, [msg]);
     for (var i in this._outs) this._outs[i]._send(msg);
   }
   function _connect(arg) {
-    if (arg instanceof Function) _push(this._handles, arg);
-    else _push(this._outs, arg);
+    if (arg instanceof Function) _push(this._orig._handles, arg);
+    else _push(this._orig._outs, arg);
   }
   function _disconnect(arg) {
-    if (arg instanceof Function) _pop(this._handles, arg);
-    else _pop(this._outs, arg);
+    if (arg instanceof Function) _pop(this._orig._handles, arg);
+    else _pop(this._orig._outs, arg);
   }
   _I.prototype.connect = function(arg) {
     this._push(_connect, [arg]);
@@ -211,12 +224,15 @@
     return this;
   }
 
-  function _closeMidiIn() {
-console.log('Closing MIDI-In!');
+  function _closeMidiIn(obj) {
+    _engine._closeIn(this);
+    this._break();
+    obj._resume();
   }
   _I.prototype.close = function() {
-    this._push(_closeMidiIn, []);
-    return this;
+    var ret = new _R();
+    this._push(_closeMidiIn, [ret]);
+    return ret;
   }
 
   var _jzz;
@@ -311,21 +327,29 @@ console.log('Closing MIDI-In!');
       }
     }
     _engine._openOut = function(port, name) {
-      var plugin = _engine._outMap[name];
-      if (!plugin) {
+      var impl = _engine._outMap[name];
+      if (!impl) {
         if (_engine._pool.length <= _engine._outArr.length) _engine._pool.push(_engine._newPlugin());
-        plugin = _engine._pool[_engine._outArr.length];
-        var s = plugin.MidiOutOpen(name);
+        impl = {
+          name: name,
+          clients: []
+        };
+        var plugin = _engine._pool[_engine._outArr.length];
+        impl.plugin = plugin;
+        _engine._outArr.push(impl);
+        _engine._outMap[name] = impl;
+      }
+      if (!impl.open) {
+        var s = impl.plugin.MidiOutOpen(name);
         if (s !== name) {
-          if (s) plugin.MidiOutClose();
+          if (s) impl.plugin.MidiOutClose();
           port._break(); return;
         }
-        _engine._outArr.push(plugin);
-        _engine._outMap[name] = plugin;
+        impl.open = true;
       }
-      port._impl = plugin;
-      port._send = function(a){ this._impl.MidiOutRaw(a.slice()); }
-      port._name = name;
+      port._impl = impl;
+      port._send = function(a){ this._impl.plugin.MidiOutRaw(a.slice()); }
+      _push(impl.clients, port._orig);
     }
     _engine._openIn = function(port, name) {
       var impl = _engine._inMap[name];
@@ -333,7 +357,7 @@ console.log('Closing MIDI-In!');
         if (_engine._pool.length <= _engine._inArr.length) _engine._pool.push(_engine._newPlugin());
         function makeHandle(x) { return function(t, a) { x.handle(t, a); }; };
         impl = {
-          open: true,
+          name: name,
           clients: [],
           handle: function(t, a) {
             for (var i in this.clients) {
@@ -343,18 +367,36 @@ console.log('Closing MIDI-In!');
           }
         };
         var plugin = _engine._pool[_engine._inArr.length];
+        impl.plugin = plugin;
+        _engine._inArr.push(impl);
+        _engine._inMap[name] = impl;
+      }
+      if (!impl.open) {
         var s = plugin.MidiInOpen(name, makeHandle(impl));
         if (s !== name) {
           if (s) plugin.MidiInClose();
           port._break(); return;
         }
-        impl.plugin = plugin;
-        _engine._inArr.push(impl);
-        _engine._inMap[name] = impl;
+        impl.open = true;
       }
       port._impl = impl;
-      port._name = name;
-      _push(impl.clients, port);
+      _push(impl.clients, port._orig);
+    }
+    _engine._closeOut = function(port) {
+      var impl = port._impl;
+      _pop(impl.clients, port._orig);
+      if (!impl.clients.length) {
+        impl.open = false;
+        impl.plugin.MidiOutClose();
+      }
+    }
+    _engine._closeIn = function(port) {
+      var impl = port._impl;
+      _pop(impl.clients, port._orig);
+      if (!impl.clients.length) {
+        impl.open = false;
+        impl.plugin.MidiInClose();
+      }
     }
     _engine._close = function() {
       for (var i in _engine._inArr) if (_engine._inArr[i].open) _engine._inArr[i].plugin.MidiInClose();
