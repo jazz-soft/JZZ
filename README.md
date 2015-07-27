@@ -1,16 +1,32 @@
 # JZZ: Asynchronous MIDI Library.
 
-This library requires [**Jazz-Plugin**](http://jazz-soft.net)
-or [**jazz-midi**](https://www.npmjs.com/package/jazz-midi),
+JZZ.js allows sending, receiving and playing MIDI messages
+in **Node.js** and **all major browsers** in **Linux**, **MacOS** and **Windows**.
+
+It requires [**jazz-midi**](https://www.npmjs.com/package/jazz-midi)
+or [**Jazz-Plugin**](http://jazz-soft.net),
 and uses [**Chrome Web MIDI API**](http://webaudio.github.io/web-midi-api) as a fallback.
 
 Node.js module: [**npm install jzz**](https://www.npmjs.com/package/jzz).
+
+Development version and minified scripts are available at [**Github**](https://github.com/jazz-soft/JZZ).
 
 Your questions and comments are welcome [**here**](http://jazz-soft.org).
 
 You can also [**support**](http://jazz-soft.net/donate) this project.
 
 ## Usage
+
+##### Node.js
+
+    var JZZ = require('jzz');
+    JZZ().or('Cannot start MIDI engine!')
+         .openMidiOut().or('Cannot open MIDI Out port!')
+         .wait(500).send([0x90,60,127])
+         .wait(500).send([0x90,64,127])
+         .wait(500).send([0x90,67,127])
+         .wait(1000).send([0x90,60,0]).send([0x90,64,0]).send([0x90,67,0])
+         .and('thank you!');
 
 ##### HTML
 
@@ -26,17 +42,6 @@ You can also [**support**](http://jazz-soft.net/donate) this project.
          .and('thank you!');
     --></script>
 
-##### Node.js
-
-    var JZZ = require('jzz');
-    JZZ().or('Cannot start MIDI engine!')
-         .openMidiOut().or('Cannot open MIDI Out port!')
-         .wait(500).send([0x90,60,127])
-         .wait(500).send([0x90,64,127])
-         .wait(500).send([0x90,67,127])
-         .wait(1000).send([0x90,60,0]).send([0x90,64,0]).send([0x90,67,0])
-         .and('thank you!');
-
 ##### Helpers and shortcuts
 
 All calls below will do the same job:
@@ -46,6 +51,13 @@ All calls below will do the same job:
     port.send(0x90,'C#5',127).wait(500).send(0x80,'Db5',0); // note names
     port.noteOn(0,'C#5',127).wait(500).noteOff(0,'B##4');   // helper functions
     port.note(0,'C#5',127,500);                             // another shortcut
+
+##### MIDI input
+
+    JZZ().openMidiIn().or('MIDI-In:  Cannot open!')
+         .and(function(){ console.log('MIDI-In: ', this.name()); })
+         .connect(function(msg){console.log(msg.toString());})
+         .wait(10000).close();
 
 See more examples [**here**](http://jazz-soft.net/demo)...
 
@@ -69,10 +81,10 @@ Example:
     engine = JZZ();
 
 
-## MIDI Out port
+## MIDI-Out port
 
 #### openMidiOut()
-Returns the MIDI Out port.
+Returns the MIDI-Out port.
 
 Syntax: **openMidiOut(*arg*)**
 
@@ -95,14 +107,51 @@ Example:
 #### send()
 Sends MIDI message through the port.
 
-Syntax: **send(*arg*);**
+Syntax: **send(*args*)**
 
-- *arg* must be an array representing the message.
+- *args* must be a comma-separated list or an array of bytes.
+- string note names are accepted where appropriate (in the *note on* / *note off* / *aftertouch*
+MIDI messages).
 
 Example:
 
-    port.send([0x90,60,127]);
+    port.send([0x90,'C5',127]);   // middle C
 
+#### close()
+Closes the port.
+*NOTE:* No other calls except **wait()** and **and()** can be chained to the closed port.
+
+## MIDI-In port
+
+#### openMidiIn()
+Returns the MIDI-Out port.
+
+Syntax: **openMidiIn(*arg*)** - exactly the same as **openMidiOut(*arg*)** above.
+
+#### close()
+Closes the port. See the comment above.
+
+In Node.js applications all MIDI-In ports must be closed for the application could exit.
+
+#### connect()
+Add a MIDI event handler or connect the MIDI-Out port.
+
+Syntax: **connect(*arg*)**
+
+- *args* is a MIDI-Out port object or a function, that receives the MIDI message object
+and executes in the context of the current MIDI-In object.
+
+Multiple connections are allowed.
+
+Example:
+
+    // Default MIDI-In -> default MIDI-Out
+    JZZ().openMidiIn().connect(JZZ().openMidiOpen());
+
+#### disconnect()
+Remove the MIDI event handler or disconnect the MIDI-Out port.
+
+Syntax: **disconnect(*arg*)** - same as **connect(*arg*)**.
 
 ## Common calls
 
@@ -146,5 +195,4 @@ Example:
 
 These two code snippets above will produce equivalent results.
 
-
-*to be continued...*
+Check [**here**](http://jazz-soft.net/doc/JZZ) for more information...
