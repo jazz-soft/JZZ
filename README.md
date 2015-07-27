@@ -1,7 +1,8 @@
-# JZZ: Asynchronous MIDI Library.
+# JZZ: Asynchronous MIDI Library
 
-JZZ.js allows sending, receiving and playing MIDI messages
-in **Node.js** and **all major browsers** in **Linux**, **MacOS** and **Windows**.
+**JZZ.js** allows sending, receiving and playing MIDI messages
+in **Node.js** and **all major browsers**
+in **Linux**, **MacOS** and **Windows**.
 
 It requires [**jazz-midi**](https://www.npmjs.com/package/jazz-midi)
 or [**Jazz-Plugin**](http://jazz-soft.net),
@@ -119,12 +120,13 @@ Example:
 
 #### close()
 Closes the port.
+
 *NOTE:* No other calls except **wait()** and **and()** can be chained to the closed port.
 
 ## MIDI-In port
 
 #### openMidiIn()
-Returns the MIDI-Out port.
+Returns the MIDI-In port.
 
 Syntax: **openMidiIn(*arg*)** - exactly the same as **openMidiOut(*arg*)** above.
 
@@ -195,4 +197,4 @@ Example:
 
 These two code snippets above will produce equivalent results.
 
-Check [**here**](http://jazz-soft.net/doc/JZZ) for more information...
+*Check [**here**](http://jazz-soft.net/doc/JZZ) for more information...*
