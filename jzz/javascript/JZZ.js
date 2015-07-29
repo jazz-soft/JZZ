@@ -83,6 +83,14 @@
   }
   _J.prototype = new _R();
 
+  _J.prototype.time = function() { return 0; }
+  if (typeof performance != 'undefined' && performance.now) _J.prototype._time = function() { return performance.now(); }
+  function _initTimer() {
+    if (!_J.prototype._time) _J.prototype._time = function() { return Date.now(); }
+    _J.prototype._startTime = _J.prototype._time();
+    _J.prototype.time = function() { return _J.prototype._time() - _J.prototype._startTime; }
+  }
+
   function _postRefresh() {
     _engine._allOuts = {};
     _engine._allIns = {};
@@ -300,6 +308,7 @@
     _jzz._info = function() {return _engine._outs;};
     _jzz._push(_tryAny, [[_tryNODE, _zeroBreak, _tryJazzPlugin, _tryWebMIDI, _initNONE]]);
     _jzz.refresh();
+    _jzz._push(_initTimer, []);
     _jzz._push(function(){if(!_engine._outs.length && !_engine._ins.length) this._break();}, []);
     _jzz._resume();
   }
@@ -401,6 +410,7 @@
     _engine._close = function() {
       for (var i in _engine._inArr) if (_engine._inArr[i].open) _engine._inArr[i].plugin.MidiInClose();
     }
+    _J.prototype._time = function() { return _engine._main.Time(); }
   }
 
   function _initNode(obj) {
