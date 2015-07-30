@@ -1,5 +1,12 @@
 # JZZ: Asynchronous MIDI Library
 
+![firefox](http://jazz-soft.github.io/img/firefox.jpg)
+![chrome](http://jazz-soft.github.io/img/chrome.jpg)
+![opera](http://jazz-soft.github.io/img/opera.jpg)
+![safari](http://jazz-soft.github.io/img/safari.jpg)
+![msie](http://jazz-soft.github.io/img/msie.jpg)
+![firefox](http://jazz-soft.github.io/img/firefox.jpg)
+
 **JZZ.js** allows sending, receiving and playing MIDI messages
 in **Node.js** and **all major browsers**
 in **Linux**, **MacOS** and **Windows**.
