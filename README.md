@@ -1,13 +1,14 @@
 # JZZ: Asynchronous MIDI Library
 
-![firefox](http://jazz-soft.github.io/img/firefox.jpg)
-![chrome](http://jazz-soft.github.io/img/chrome.jpg)
-![opera](http://jazz-soft.github.io/img/opera.jpg)
-![safari](http://jazz-soft.github.io/img/safari.jpg)
-![msie](http://jazz-soft.github.io/img/msie.jpg)
-![windows](http://jazz-soft.github.io/img/windows.jpg)
-![mocos](http://jazz-soft.github.io/img/macos.jpg)
-![linux](http://jazz-soft.github.io/img/linux.jpg)
+[![nodejs](http://jazz-soft.github.io/img/nodejs.jpg)](https://www.npmjs.com/package/jazz-midi)
+[![firefox](http://jazz-soft.github.io/img/firefox.jpg)](http://jazz-soft.net/download/Jazz-Plugin)
+[![chrome](http://jazz-soft.github.io/img/chrome.jpg)](http://jazz-soft.net/download/Jazz-Plugin)
+[![opera](http://jazz-soft.github.io/img/opera.jpg)](http://jazz-soft.net/download/Jazz-Plugin)
+[![safari](http://jazz-soft.github.io/img/safari.jpg)](http://jazz-soft.net/download/Jazz-Plugin)
+[![msie](http://jazz-soft.github.io/img/msie.jpg)](http://jazz-soft.net/download/Jazz-Plugin)
+[![windows](http://jazz-soft.github.io/img/windows.jpg)](http://jazz-soft.net/download/Jazz-Plugin)
+[![mocos](http://jazz-soft.github.io/img/macos.jpg)](http://jazz-soft.net/download/Jazz-Plugin)
+[![linux](http://jazz-soft.github.io/img/linux.jpg)](http://jazz-soft.net/download/Jazz-Plugin)
 
 **JZZ.js** allows sending, receiving and playing MIDI messages
 in **Node.js** and **all major browsers**
