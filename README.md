@@ -5,7 +5,9 @@
 ![opera](http://jazz-soft.github.io/img/opera.jpg)
 ![safari](http://jazz-soft.github.io/img/safari.jpg)
 ![msie](http://jazz-soft.github.io/img/msie.jpg)
-![firefox](http://jazz-soft.github.io/img/firefox.jpg)
+![windows](http://jazz-soft.github.io/img/windows.jpg)
+![mocos](http://jazz-soft.github.io/img/macos.jpg)
+![linux](http://jazz-soft.github.io/img/linux.jpg)
 
 **JZZ.js** allows sending, receiving and playing MIDI messages
 in **Node.js** and **all major browsers**
