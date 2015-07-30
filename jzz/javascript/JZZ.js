@@ -1,5 +1,7 @@
 (function() {
 
+  var _version = '0.1.2';
+
   // _R: common root for all async objects
   function _R() {
     this._orig = this;
@@ -30,7 +32,6 @@
   _R.prototype._resume = function() { this._ready = true; _R.prototype._exec.apply(this);}
   _R.prototype._break = function() { this._orig._bad = true; this._orig._hope = true;}
   _R.prototype._repair = function() { this._orig._bad = false;}
-  _R.prototype._info = function(){ return this.toString();}
 
   function _wait(obj, delay) { setTimeout(function(){obj._resume();}, delay);}
   _R.prototype.wait = function(delay) {
@@ -91,19 +92,45 @@
     _J.prototype.time = function() { return _J.prototype._time() - _J.prototype._startTime; }
   }
 
+  function _clone(obj) {
+    if (obj instanceof Object) {
+      var ret = obj instanceof Array ? [] : {};
+      for(var k in obj) ret[k] = _clone(obj[k]);
+      return ret;
+    }
+    return obj;
+  }
+  _J.prototype._info = { name: 'JZZ.js', version: _version };
+  _J.prototype.info = function() { return _clone(this._info); }
+
   function _postRefresh() {
-    _engine._allOuts = {};
+    this._info.engine = _engine._type;
+    this._info.inputs = [];
+    this._info.outputs = [];
+   _engine._allOuts = {};
     _engine._allIns = {};
     var i, x;
     for (i=0; i<_engine._outs.length; i++) {
       x = _engine._outs[i];
       x.engine = _engine;
       _engine._allOuts[x.name] = x;
+      this._info.outputs.push({
+        name: x.name,
+        manufacturer: x.manufacturer,
+        version: x.version,
+        engine: _engine._type
+      });
     }
     for (i=0; i<_engine._ins.length; i++) {
       x = _engine._ins[i];
       x.engine = _engine;
       _engine._allIns[x.name] = x;
+      this._info.inputs.push({
+        name: x.name,
+        manufacturer: x.manufacturer,
+        version: x.version,
+        engine: _engine._type
+      });
     }
   }
   function _refresh() {
@@ -304,8 +331,8 @@
 
   function _initJZZ(opt) {
     _jzz = new _J();
+//    _jzz._info = { name: 'JZZ.js', version: _version };
     _jzz._options = opt;
-    _jzz._info = function() {return _engine._outs;};
     _jzz._push(_tryAny, [[_tryNODE, _zeroBreak, _tryJazzPlugin, _tryWebMIDI, _initNONE]]);
     _jzz.refresh();
     _jzz._push(_initTimer, []);
