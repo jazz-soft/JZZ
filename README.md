@@ -1,6 +1,6 @@
 # JZZ: Asynchronous MIDI Library
 
-[![nodejs](http://jazz-soft.github.io/img/nodejs.jpg)](https://www.npmjs.com/package/jazz-midi)
+[![nodejs](http://jazz-soft.github.io/img/nodejs.jpg)](https://www.npmjs.com/package/jzz)
 [![firefox](http://jazz-soft.github.io/img/firefox.jpg)](http://jazz-soft.net/download/Jazz-Plugin)
 [![chrome](http://jazz-soft.github.io/img/chrome.jpg)](http://jazz-soft.net/download/Jazz-Plugin)
 [![opera](http://jazz-soft.github.io/img/opera.jpg)](http://jazz-soft.net/download/Jazz-Plugin)
