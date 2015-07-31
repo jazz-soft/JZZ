@@ -1,6 +1,6 @@
 (function() {
 
-  var _version = '0.1.2';
+  var _version = '0.1.3';
 
   // _R: common root for all async objects
   function _R() {
@@ -107,7 +107,7 @@
     this._info.engine = _engine._type;
     this._info.inputs = [];
     this._info.outputs = [];
-   _engine._allOuts = {};
+    _engine._allOuts = {};
     _engine._allIns = {};
     var i, x;
     for (i=0; i<_engine._outs.length; i++) {
@@ -154,7 +154,7 @@
     if (!(q instanceof Array)) q = [q];
     for (i=0; i<q.length; i++) {
       for (n=0; n<arr.length; n++) {
-        if (q[i] === n || q[i] === arr[n].name || q[i] === arr[n]) a.push(arr[n]);
+        if (q[i]+'' === n+'' || q[i] === arr[n].name || (q[i] instanceof Object && q[i].name === arr[n].name)) a.push(arr[n]);
       }
     }
     return a;
@@ -205,6 +205,7 @@
   }
   _O.prototype = new _R();
   _O.prototype.name = function() { return this._impl ? this._impl.name : undefined;}
+  _O.prototype.info = function() { return this._impl ? _clone(this._impl.info) : {};}
 
   function _closeMidiOut(obj) {
     _engine._closeOut(this);
@@ -238,6 +239,7 @@
   }
   _I.prototype = new _R();
   _I.prototype.name = _O.prototype.name;
+  _I.prototype.info = _O.prototype.info;
   _I.prototype._event = function(msg) {
     for (var i in this._handles) this._handles[i].apply(this, [msg]);
     for (var i in this._outs) this._outs[i]._send(msg);
@@ -331,7 +333,6 @@
 
   function _initJZZ(opt) {
     _jzz = new _J();
-//    _jzz._info = { name: 'JZZ.js', version: _version };
     _jzz._options = opt;
     _jzz._push(_tryAny, [[_tryNODE, _zeroBreak, _tryJazzPlugin, _tryWebMIDI, _initNONE]]);
     _jzz.refresh();
@@ -368,7 +369,14 @@
         if (_engine._pool.length <= _engine._outArr.length) _engine._pool.push(_engine._newPlugin());
         impl = {
           name: name,
-          clients: []
+          clients: [],
+          info: {
+            name: name,
+            manufacturer: _engine._allOuts[name].manufacturer,
+            version: _engine._allOuts[name].version,
+            type: 'MIDI-out',
+            engine: _engine._type            
+          }
         };
         var plugin = _engine._pool[_engine._outArr.length];
         impl.plugin = plugin;
@@ -395,6 +403,13 @@
         impl = {
           name: name,
           clients: [],
+          info: {
+            name: name,
+            manufacturer: _engine._allIns[name].manufacturer,
+            version: _engine._allIns[name].version,
+            type: 'MIDI-in',
+            engine: _engine._type            
+          },
           handle: function(t, a) {
             for (var i in this.clients) {
               var msg = MIDI(a);
@@ -495,7 +510,13 @@
       if (!impl) {
         impl = {
           name: name,
-          clients: []
+          clients: [],
+          info: {
+            name: name,
+            manufacturer: _engine._allOuts[name].manufacturer,
+            version: _engine._allOuts[name].version,
+            engine: _engine._type            
+          }
         };
         var id, dev;
         _engine._access.outputs.forEach(function(dev, key) {
@@ -519,6 +540,12 @@
         impl = {
           name: name,
           clients: [],
+          info: {
+            name: name,
+            manufacturer: _engine._allIns[name].manufacturer,
+            version: _engine._allIns[name].version,
+            engine: _engine._type            
+          },
           handle: function(evt) {
             for (var i in this.clients) {
               var msg = MIDI([].slice.call(evt.data));
@@ -578,9 +605,9 @@
   MIDI.prototype = [];
   MIDI.prototype.constructor = MIDI;
   var _noteNum = {};
-  MIDI.noteValue = function(x){ return _noteNum[x];}
+  MIDI.noteValue = function(x){ return _noteNum[x.toString().toLowerCase()];}
 
-  var _noteMap = {C:0, D:2, E:4, F:5, G:7, A:9, B:11};
+  var _noteMap = {c:0, d:2, e:4, f:5, g:7, a:9, b:11};
   for (var k in _noteMap) {
     for (var n=0; n<12; n++) {
       var m = _noteMap[k] + n*12;
