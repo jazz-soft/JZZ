@@ -146,7 +146,7 @@ Closes the port. See the comment above.
 In Node.js applications all MIDI-In ports must be closed for the application could exit.
 
 #### connect()
-Add a MIDI event handler or connect the MIDI-Out port.
+Add MIDI event handler or connect to MIDI-Out port.
 
 Syntax: **connect(*arg*)**
 
@@ -158,10 +158,10 @@ Multiple connections are allowed.
 Example:
 
     // Default MIDI-In -> default MIDI-Out
-    JZZ().openMidiIn().connect(JZZ().openMidiOpen());
+    JZZ().openMidiIn().connect(JZZ().openMidiOut());
 
 #### disconnect()
-Remove the MIDI event handler or disconnect the MIDI-Out port.
+Remove MIDI event handler or disconnect MIDI-Out port.
 
 Syntax: **disconnect(*arg*)** - same as **connect(*arg*)**.
 
@@ -172,7 +172,7 @@ Executes if the previous operation on the object failed.
 
 Syntax: **or(*arg*);**
 
-- If *arg* is a function, it will execute in the context of the current object,
+- If *arg* is function, it will execute in the context of the current object,
 otherwise, it will be printed via the *console.log*.
 
 #### and()
@@ -180,7 +180,7 @@ Executes when the object is ready.
 
 Syntax: **and(*arg*);**
 
-If *arg* is a function, it will execute in the context of the current object,
+If *arg* is function, it will execute in the context of the current object,
 otherwise, it will be printed via the *console.log*.
 
 Example:

@@ -1,6 +1,6 @@
 (function() {
 
-  var _version = '0.1.3';
+  var _version = '0.1.4';
 
   // _R: common root for all async objects
   function _R() {
@@ -607,7 +607,7 @@
   var _noteNum = {};
   MIDI.noteValue = function(x){ return _noteNum[x.toString().toLowerCase()];}
 
-  var _noteMap = {c:0, d:2, e:4, f:5, g:7, a:9, b:11};
+  var _noteMap = {c:0, d:2, e:4, f:5, g:7, a:9, b:11, h:11};
   for (var k in _noteMap) {
     for (var n=0; n<12; n++) {
       var m = _noteMap[k] + n*12;
@@ -653,8 +653,7 @@
     portamento : function(c, b){ return [0xB0+_ch(c), 0x41, b ? 127 : 0];},
     sostenuto : function(c, b){ return [0xB0+_ch(c), 0x42, b ? 127 : 0];},
     soft   : function(c, b){ return [0xB0+_ch(c), 0x43, b ? 127 : 0];},
-    allNotesOff : function(c){ return [0xB0+_ch(c), 0x7b, 0];},
-    0:0
+    allNotesOff : function(c){ return [0xB0+_ch(c), 0x7b, 0];}
   };
   function _copyHelper(name, func) {
     MIDI[name] = function(){ return new MIDI(func.apply(0, arguments));};
