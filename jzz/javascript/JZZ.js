@@ -1,12 +1,13 @@
 (function() {
 
-  var _version = '0.1.4';
+  var _version = '0.1.5';
 
   // _R: common root for all async objects
   function _R() {
     this._orig = this;
     this._ready = false;
     this._queue = [];
+    this._err = [];
   };
   _R.prototype._exec = function() {
     while (this._ready && this._queue.length) {
@@ -30,8 +31,10 @@
   _R.prototype._slip = function(func, arg) { this._queue.unshift([func, arg]);}
   _R.prototype._pause = function() { this._ready = false;}
   _R.prototype._resume = function() { this._ready = true; _R.prototype._exec.apply(this);}
-  _R.prototype._break = function() { this._orig._bad = true; this._orig._hope = true;}
+  _R.prototype._break = function(err) { this._orig._bad = true; this._orig._hope = true; if (err) this._orig._err.push(err);}
   _R.prototype._repair = function() { this._orig._bad = false;}
+  _R.prototype._crash = function(err) { this._break(err); this._resume();}
+  _R.prototype.err = function() { return _clone(this._err);}
 
   function _wait(obj, delay) { setTimeout(function(){obj._resume();}, delay);}
   _R.prototype.wait = function(delay) {
@@ -63,7 +66,7 @@
       func.apply(this);
     }
     catch (e) {
-      this._break();
+      this._break(e.toString());
     }
   }
 
@@ -208,8 +211,8 @@
   _O.prototype.info = function() { return this._impl ? _clone(this._impl.info) : {};}
 
   function _closeMidiOut(obj) {
-    _engine._closeOut(this);
-    this._break();
+    if (this._impl._close) this._impl._close(this);
+    this._break('closed');
     obj._resume();
   }
   _O.prototype.close = function() {
@@ -219,7 +222,7 @@
   }
 
   function _send(arg) {
-    this._send(arg);
+    this._impl._send(arg);
   }
   _O.prototype.send = function() {
     this._push(_send, [MIDI.apply(null, arguments)]);
@@ -262,7 +265,7 @@
   }
 
   function _closeMidiIn(obj) {
-    _engine._closeIn(this);
+    if (this._impl._close) this._impl._close(this);
     this._break();
     obj._resume();
   }
@@ -328,7 +331,7 @@
   function _zeroBreak() {
     this._pause();
     var self = this;
-    setTimeout(function(){ self._break(); self._resume();}, 0);
+    setTimeout(function(){ self._crash();}, 0);
   }
 
   function _initJZZ(opt) {
@@ -376,7 +379,9 @@
             version: _engine._allOuts[name].version,
             type: 'MIDI-out',
             engine: _engine._type            
-          }
+          },
+          _close: function(port){ _engine._closeOut(port); },
+          _send: function(a){ this.plugin.MidiOutRaw(a.slice()); }
         };
         var plugin = _engine._pool[_engine._outArr.length];
         impl.plugin = plugin;
@@ -392,7 +397,6 @@
         impl.open = true;
       }
       port._orig._impl = impl;
-      port._send = function(a){ this._impl.plugin.MidiOutRaw(a.slice()); }
       _push(impl.clients, port._orig);
     }
     _engine._openIn = function(port, name) {
@@ -410,6 +414,7 @@
             type: 'MIDI-in',
             engine: _engine._type            
           },
+          _close: function(port){ _engine._closeIn(port); },
           handle: function(t, a) {
             for (var i in this.clients) {
               var msg = MIDI(a);
@@ -516,7 +521,9 @@
             manufacturer: _engine._allOuts[name].manufacturer,
             version: _engine._allOuts[name].version,
             engine: _engine._type            
-          }
+          },
+          _close: function(port){ _engine._closeOut(port); },
+          _send: function(a){ this.dev.send(a.slice());}
         };
         var id, dev;
         _engine._access.outputs.forEach(function(dev, key) {
@@ -529,7 +536,6 @@
       }
       if (impl) {
         port._orig._impl = impl;
-        port._send = function(a){ this._impl.dev.send(a.slice()); }
         _push(impl.clients, port._orig);
       }
       else port._break();
@@ -546,6 +552,7 @@
             version: _engine._allIns[name].version,
             engine: _engine._type            
           },
+          _close: function(port){ _engine._closeIn(port); },
           handle: function(evt) {
             for (var i in this.clients) {
               var msg = MIDI([].slice.call(evt.data));
@@ -587,6 +594,16 @@
     return _jzz;
   }
 
+  JZZ._openMidiOut = function(name, engine) {
+    var port = new _O();
+    engine._openOut(port, name);
+    return port;
+  }
+  JZZ._openMidiIn = function(name, engine) {
+    var port = new _I();
+    engine._openIn(port, name);
+    return port;
+  }
 
   // JZZ.MIDI
 
