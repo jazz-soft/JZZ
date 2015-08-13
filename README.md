@@ -16,7 +16,9 @@ in **Linux**, **MacOS** and **Windows**.
 
 It requires [**jazz-midi**](https://www.npmjs.com/package/jazz-midi)
 or [**Jazz-Plugin**](http://jazz-soft.net),
-and uses [**Chrome Web MIDI API**](http://webaudio.github.io/web-midi-api) as a fallback.
+and uses [**Chrome Web MIDI API**](http://webaudio.github.io/web-midi-api)
+and/or [**Web Audio**](https://github.com/jazz-soft/JZZ-modules)
+as a fallback.
 
 Node.js module: [**npm install jzz**](https://www.npmjs.com/package/jzz).
 

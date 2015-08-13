@@ -1,6 +1,6 @@
 (function() {
 
-  var _version = '0.1.5';
+  var _version = '0.1.6';
 
   // _R: common root for all async objects
   function _R() {
@@ -106,10 +106,15 @@
   _J.prototype._info = { name: 'JZZ.js', version: _version };
   _J.prototype.info = function() { return _clone(this._info); }
 
+  var _outs = [];
+  var _ins = [];
+
   function _postRefresh() {
     this._info.engine = _engine._type;
     this._info.inputs = [];
     this._info.outputs = [];
+    _outs = [];
+    _ins = [];
     _engine._allOuts = {};
     _engine._allIns = {};
     var i, x;
@@ -123,6 +128,17 @@
         version: x.version,
         engine: _engine._type
       });
+      _outs.push(x);
+    }
+    for (i=0; i<_virtual._outs.length; i++) {
+      x = _virtual._outs[i];
+      this._info.outputs.push({
+        name: x.name,
+        manufacturer: x.manufacturer,
+        version: x.version,
+        engine: x.type
+      });
+      _outs.push(x);
     }
     for (i=0; i<_engine._ins.length; i++) {
       x = _engine._ins[i];
@@ -134,6 +150,17 @@
         version: x.version,
         engine: _engine._type
       });
+      _ins.push(x);
+    }
+    for (i=0; i<_virtual._ins.length; i++) {
+      x = _virtual._ins[i];
+      this._info.inputs.push({
+        name: x.name,
+        manufacturer: x.manufacturer,
+        version: x.version,
+        engine: x.type
+      });
+      _ins.push(x);
     }
   }
   function _refresh() {
@@ -164,31 +191,31 @@
   }
 
   function _openMidiOut(port, arg) {
-    var arr = _filterList(arg, _engine._outs);
+    var arr = _filterList(arg, _outs);
     function pack(x){ return function(){x.engine._openOut(this, x.name);};};
     for (var i=0; i<arr.length; i++) arr[i] = pack(arr[i]);
     port._slip(_tryAny, [arr]);
     port._resume();
   }
   _J.prototype.openMidiOut = function(arg) {
-    var ret = new _O();
+    var port = new _O();
     this._push(_refresh, []);
-    this._push(_openMidiOut, [ret, arg]);
-    return ret;
+    this._push(_openMidiOut, [port, arg]);
+    return port;
   }
 
   function _openMidiIn(port, arg) {
-    var arr = _filterList(arg, _engine._ins);
+    var arr = _filterList(arg, _ins);
     function pack(x){ return function(){x.engine._openIn(this, x.name);};};
     for (var i=0; i<arr.length; i++) arr[i] = pack(arr[i]);
     port._slip(_tryAny, [arr]);
     port._resume();
   }
   _J.prototype.openMidiIn = function(arg) {
-    var ret = new _I();
+    var port = new _I();
     this._push(_refresh, []);
-    this._push(_openMidiIn, [ret, arg]);
-    return ret;
+    this._push(_openMidiIn, [port, arg]);
+    return port;
   }
 
   function _close(obj) {
@@ -277,6 +304,7 @@
 
   var _jzz;
   var _engine = {};
+  var _virtual = { _outs: [], _ins: []};
 
   // Node.js
   function _tryNODE() {
@@ -603,6 +631,18 @@
     var port = new _I();
     engine._openIn(port, name);
     return port;
+  }
+  JZZ._registerMidiOut = function(name, engine) {
+    var x = engine._info(name);
+    x.engine = engine;
+    _virtual._outs.push(x);
+    return true;
+  }
+  JZZ._registerMidiIn = function(name, engine) {
+    var x = engine._info(name);
+    x.engine = engine;
+    _virtual._ins.push(x);
+    return true;
   }
 
   // JZZ.MIDI
