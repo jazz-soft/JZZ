@@ -1,6 +1,6 @@
 (function() {
 
-  var _version = '0.1.6';
+  var _version = '0.1.7';
 
   // _R: common root for all async objects
   function _R() {
@@ -55,6 +55,7 @@
   function _tryAny(arr) {
     if (!arr.length) {
       this._break();
+      return;
     }
     var func = arr.shift();
     if (arr.length) {
