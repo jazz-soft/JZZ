@@ -1,6 +1,6 @@
 (function() {
 
-  var _version = '0.1.7';
+  var _version = '0.1.8';
 
   // _R: common root for all async objects
   function _R() {
@@ -369,7 +369,7 @@
     _jzz._push(_tryAny, [[_tryNODE, _zeroBreak, _tryJazzPlugin, _tryWebMIDI, _initNONE]]);
     _jzz.refresh();
     _jzz._push(_initTimer, []);
-    _jzz._push(function(){if(!_engine._outs.length && !_engine._ins.length) this._break();}, []);
+    _jzz._push(function(){if(!_outs.length && !_ins.length) this._break();}, []);
     _jzz._resume();
   }
 
