@@ -1,6 +1,6 @@
 (function() {
 
-  var _version = '0.1.9';
+  var _version = '0.2.0';
 
   // _R: common root for all async objects
   function _R() {
@@ -847,5 +847,24 @@
   }
 
   JZZ.MIDI = MIDI;
+
+  JZZ.util = {};
+
+  JZZ.util.iosSound = function() {
+    JZZ.util.iosSound = function() {};
+    if (!window) return;
+    var AudioContext = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContext) return;
+    var context = new AudioContext();
+    if (!context.createGain) context.createGain = context.createGainNode;
+    var osc = context.createOscillator();
+    var gain = context.createGain();
+    gain.gain.value = 0;
+    osc.connect(gain);
+    gain.connect(context.destination);
+    if (!osc.start) osc.start = osc.noteOn;
+    if (!osc.stop) osc.stop = osc.noteOff;
+    osc.start(0); osc.stop(1);
+  }
 
 })();

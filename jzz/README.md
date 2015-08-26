@@ -20,6 +20,8 @@ and uses [**Chrome Web MIDI API**](http://webaudio.github.io/web-midi-api)
 and/or [**Web Audio**](https://github.com/jazz-soft/JZZ-modules)
 as a fallback.
 
+Limited support is available on **iOS** and **Android** devices.
+
 Node.js module: [**npm install jzz**](https://www.npmjs.com/package/jzz).
 
 Development version and minified scripts are available at [**Github**](https://github.com/jazz-soft/JZZ).
