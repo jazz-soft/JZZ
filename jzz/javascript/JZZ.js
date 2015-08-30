@@ -1,6 +1,6 @@
 (function() {
 
-  var _version = '0.2.1';
+  var _version = '0.2.2';
 
   // _R: common root for all async objects
   function _R() {
@@ -319,7 +319,7 @@
 
   // Node.js
   function _tryNODE() {
-    if(typeof module !== 'undefined' && module.exports){
+    if (typeof module !== 'undefined' && module.exports) {
       _initNode(require('jazz-midi'));
       return;
     }
@@ -334,14 +334,14 @@
     obj.style.visibility='hidden';
     obj.style.width='0px'; obj.style.height='0px';
     obj.classid = 'CLSID:1ACE1618-1C7D-4561-AEE1-34842AA85E90';
-    if(obj.isJazz){
+    if (obj.isJazz) {
       document.body.appendChild(obj);
       _initMSIE(obj);
       return;
     }
     obj.type = 'audio/x-jazz';
     document.body.appendChild(obj);
-    if(obj.isJazz){
+    if (obj.isJazz) {
       _initNPAPI(obj);
       return;
     }
@@ -349,7 +349,7 @@
   }
   // Web MIDI API
   function _tryWebMIDI() {
-    if(navigator.requestMIDIAccess) {
+    if (navigator.requestMIDIAccess) {
       var self = this;
       function onGood(midi) {
         _initWebMIDI(midi);
@@ -379,7 +379,7 @@
     _jzz._push(_tryAny, [[_tryNODE, _zeroBreak, _tryJazzPlugin, _tryWebMIDI, _initNONE]]);
     _jzz.refresh();
     _jzz._push(_initTimer, []);
-    _jzz._push(function(){if(!_outs.length && !_ins.length) this._break();}, []);
+    _jzz._push(function(){ if (!_outs.length && !_ins.length) this._break(); }, []);
     _jzz._resume();
   }
 
@@ -633,33 +633,6 @@
     return _jzz;
   }
 
-  JZZ._openMidiOut = function(name, engine) {
-    var port = new _O();
-    engine._openOut(port, name);
-    return port;
-  }
-  JZZ._openMidiIn = function(name, engine) {
-    var port = new _I();
-    engine._openIn(port, name);
-    return port;
-  }
-  JZZ._registerMidiOut = function(name, engine) {
-    for (var i in _virtual._outs) if (_virtual._outs[i].name == name) return false;
-    var x = engine._info(name);
-    x.engine = engine;
-    _virtual._outs.push(x);
-    if (_jzz && _jzz._bad) { _jzz._repair(); _jzz._resume(); }
-    return true;
-  }
-  JZZ._registerMidiIn = function(name, engine) {
-    for (var i in _virtual._ins) if (_virtual._ins[i].name == name) return false;
-    var x = engine._info(name);
-    x.engine = engine;
-    _virtual._ins.push(x);
-    if (_jzz && _jzz._bad) { _jzz._repair(); _jzz._resume(); }
-    return true;
-  }
-
   // JZZ.MIDI
 
   function MIDI(arg) {
@@ -849,8 +822,35 @@
 
   JZZ.MIDI = MIDI;
 
-  JZZ.util = {};
+  JZZ.lib = {};
+  JZZ.lib.openMidiOut = function(name, engine) {
+    var port = new _O();
+    engine._openOut(port, name);
+    return port;
+  }
+  JZZ.lib.openMidiIn = function(name, engine) {
+    var port = new _I();
+    engine._openIn(port, name);
+    return port;
+  }
+  JZZ.lib.registerMidiOut = function(name, engine) {
+    var x = engine._info(name);
+    for (var i in _virtual._outs) if (_virtual._outs[i].name == x.name) return false;
+    x.engine = engine;
+    _virtual._outs.push(x);
+    if (_jzz && _jzz._bad) { _jzz._repair(); _jzz._resume(); }
+    return true;
+  }
+  JZZ.lib.registerMidiIn = function(name, engine) {
+    var x = engine._info(name);
+    for (var i in _virtual._ins) if (_virtual._ins[i].name == x.name) return false;
+    x.engine = engine;
+    _virtual._ins.push(x);
+    if (_jzz && _jzz._bad) { _jzz._repair(); _jzz._resume(); }
+    return true;
+  }
 
+  JZZ.util = {};
   JZZ.util.iosSound = function() {
     JZZ.util.iosSound = function() {};
     if (!window) return;
