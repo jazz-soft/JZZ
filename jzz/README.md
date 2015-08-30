@@ -9,6 +9,8 @@
 [![windows](http://jazz-soft.github.io/img/windows.jpg)](http://jazz-soft.net/download/Jazz-Plugin)
 [![mocos](http://jazz-soft.github.io/img/macos.jpg)](http://jazz-soft.net/download/Jazz-Plugin)
 [![linux](http://jazz-soft.github.io/img/linux.jpg)](http://jazz-soft.net/download/Jazz-Plugin)
+[![ios](http://jazz-soft.github.io/img/ios.jpg)](https://github.com/jazz-soft/JZZ-modules)
+[![android](http://jazz-soft.github.io/img/android.jpg)](https://github.com/jazz-soft/JZZ-modules)
 
 **JZZ.js** allows sending, receiving and playing MIDI messages
 in **Node.js** and **all major browsers**

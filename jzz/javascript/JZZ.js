@@ -1,6 +1,6 @@
 (function() {
 
-  var _version = '0.2.0';
+  var _version = '0.2.1';
 
   // _R: common root for all async objects
   function _R() {
@@ -725,6 +725,7 @@
     portamento : function(c, b){ return [0xB0+_ch(c), 0x41, b ? 127 : 0];},
     sostenuto : function(c, b){ return [0xB0+_ch(c), 0x42, b ? 127 : 0];},
     soft   : function(c, b){ return [0xB0+_ch(c), 0x43, b ? 127 : 0];},
+    allSoundOff : function(c){ return [0xB0+_ch(c), 0x78, 0];},
     allNotesOff : function(c){ return [0xB0+_ch(c), 0x7b, 0];}
   };
   function _copyHelper(name, func) {
