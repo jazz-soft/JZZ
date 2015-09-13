@@ -356,8 +356,7 @@
         self._resume();
       }
       function onBad(msg) {
-        self._break(msg);
-        self._resume();
+        self._crash(msg);
       }
       var opt = {};
       if (this._options && this._options.sysex === true) opt.sysex = true;
@@ -367,6 +366,33 @@
     }
     this._break();
   }
+  // Chrome CRX
+  function _tryCRX() {
+    var self = this;
+    var inst;
+    var msg;
+    function eventHandle(e) {
+      inst = true;
+      if (!msg) msg = document.getElementById('jazz-midi-msg');
+      if (!msg) return;
+      var a = [];
+      try { a = JSON.parse(msg.innerText);} catch (e) {}
+      msg.innerText = '';
+      document.removeEventListener('jazz-midi-msg', eventHandle);
+      if (a[0] === 'version') {
+        _initCRX(msg, a[1]);
+        self._resume();
+      }
+      else {
+        self._crash();
+      }
+    }
+    this._pause();
+    document.addEventListener('jazz-midi-msg', eventHandle);
+    try { document.dispatchEvent(new Event('jazz-midi'));} catch (e) {}
+    window.setTimeout(function() { if (!inst) self._crash();}, 0);
+  }
+
   function _zeroBreak() {
     this._pause();
     var self = this;
@@ -376,7 +402,7 @@
   function _initJZZ(opt) {
     _jzz = new _J();
     _jzz._options = opt;
-    _jzz._push(_tryAny, [[_tryNODE, _zeroBreak, _tryJazzPlugin, _tryWebMIDI, _initNONE]]);
+    _jzz._push(_tryAny, [[_tryNODE, _zeroBreak, _tryCRX, _tryJazzPlugin, _tryWebMIDI, _initNONE]]);
     _jzz.refresh();
     _jzz._push(_initTimer, []);
     _jzz._push(function(){ if (!_outs.length && !_ins.length) this._break(); }, []);
@@ -626,6 +652,36 @@
     }
     _engine._close = function() {
     }
+  }
+  function _initCRX(msg, ver) {
+    _engine._type = 'crx';
+    _engine._msg = msg;
+    _engine._refresh = function() {
+      _engine._outs = [];
+      _engine._ins = [];
+      _jzz._pause();
+      document.dispatchEvent(new CustomEvent('jazz-midi', {detail:['refresh']}));
+    }
+    document.addEventListener('jazz-midi-msg', function(e) {
+      var v = _engine._msg.innerText.split('\n');
+      _engine._msg.innerText = '';
+      for (var i=0; i<v.length; i++) {
+        var a = [];
+        try { a = JSON.parse(v[i]);} catch (e) {}
+        if (!a.length) continue;
+        if (a[0] === 'refresh') {
+          if (a[1].ins) {
+            for (var j=0; i<a[1].ins; i++) a[1].ins[j].type = _engine._type;
+            _engine._ins = a[1].ins;
+          }
+          if (a[1].outs) {
+            for (var j=0; i<a[1].outs; i++) a[1].outs[j].type = _engine._type;
+            _engine._outs = a[1].outs;
+          }
+          _jzz._resume();
+        }
+      }
+    });
   }
 
   JZZ = function(opt) {
