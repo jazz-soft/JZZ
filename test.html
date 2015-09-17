@@ -17,7 +17,7 @@ function test(){
 </head>
 
 <body>
-<h1>JZZ test page</h1>
+<h1>JZZ v.<span id="jzzVersion">0.0</span> test page</h1>
 <p>
 <span id="midiEngineStatus"> </span>
 </p><p>
@@ -34,11 +34,12 @@ messages
 
 
 <script><!--
+document.getElementById("jzzVersion").innerHTML = JZZ.info().ver;
 var output = [];
 
 JZZ()
   .or(function(){document.getElementById("midiEngineStatus").innerHTML = "Cannot start MIDI Engine!";})
-  .and(function(){document.getElementById("midiEngineStatus").innerHTML = "MIDI Engine is running!";})
+  .and(function(){ var info = this.info(); document.getElementById("midiEngineStatus").innerHTML = "MIDI Engine is running: " + info.engine + " v." + info.version;});
 
 JZZ().openMidiOut()
   .or(function(){document.getElementById("midiOutName").innerHTML = "Cannot open!";})
