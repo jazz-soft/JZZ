@@ -1,6 +1,6 @@
 (function() {
 
-  var _version = '0.2.3';
+  var _version = '0.2.4';
 
   // _R: common root for all async objects
   function _R() {
@@ -707,6 +707,34 @@
       _push(impl.clients, port._orig);
       if (!impl.open) port._pause();
     }
+    _engine._openIn = function(port, name) {
+      var impl = _engine._inMap[name];
+      if (!impl) {
+        if (_engine._pool.length <= _engine._inArr.length) _engine._newPlugin();
+        var plugin = _engine._pool[_engine._inArr.length];
+        impl = {
+          name: name,
+          clients: [],
+          info: {
+            name: name,
+            manufacturer: _engine._allIns[name].manufacturer,
+            version: _engine._allIns[name].version,
+            type: 'MIDI-in',
+            engine: _engine._type            
+          },
+          _start: function(){ document.dispatchEvent(new CustomEvent('jazz-midi', {detail:['openin', plugin.id, name]})); },
+          _close: function(port){ _engine._closeIn(port); }
+        };
+        impl.plugin = plugin;
+        plugin.input = impl;
+        _engine._inArr.push(impl);
+        _engine._inMap[name] = impl;
+        if (plugin.ready) impl._start();
+      }
+      port._orig._impl = impl;
+      _push(impl.clients, port._orig);
+      if (!impl.open) port._pause();
+    }
     _engine._closeOut = function(port) {
       var impl = port._impl;
       _pop(impl.clients, port._orig);
@@ -753,8 +781,26 @@
         }
         else if (a[0] === 'openout') {
           var impl = _engine._pool[a[1]].output;
-          impl.open = true;
-          if (impl) for (var i=0; i<impl.clients.length; i++) impl.clients[i]._resume();
+          if (impl) {
+            impl.open = true;
+            if (impl.clients) for (var i=0; i<impl.clients.length; i++) impl.clients[i]._resume();
+          }
+        }
+        else if (a[0] === 'openin') {
+          var impl = _engine._pool[a[1]].input;
+          if (impl) {
+            impl.open = true;
+            if (impl.clients) for (var i=0; i<impl.clients.length; i++) impl.clients[i]._resume();
+          }
+        }
+        else if (a[0] === 'midi') {
+          var impl = _engine._pool[a[1]].input;
+          if (impl && impl.clients) {
+            for (var i=0; i<impl.clients.length; i++) {
+              var msg = MIDI(a.slice(3));
+              impl.clients[i]._event(msg);
+            }
+          }
         }
       }
     });
