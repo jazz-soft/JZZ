@@ -1,6 +1,6 @@
 (function() {
 
-  var _version = '0.2.4';
+  var _version = '0.2.5';
 
   // _R: common root for all async objects
   function _R() {
@@ -400,10 +400,42 @@
     setTimeout(function(){ self._crash();}, 0);
   }
 
+  function _filterEngines(opt) {
+    if (!opt || !opt.engine) return [_tryNODE, _zeroBreak, _tryCRX, _tryJazzPlugin, _tryWebMIDI, _initNONE];
+    var arr = opt.engine instanceof Array ? opt.engine : [opt.engine];
+    var dup = {};
+    var none;
+    var etc;
+    var head = [];
+    var tail = [];
+    var hash = {crx: _tryCRX, npapi: _tryJazzPlugin, webmidi: _tryWebMIDI};
+    var web = ['crx', 'webmidi', 'npapi'];
+    for (var i=0; i<arr.length; i++) {
+      var name = arr[i].toString().toLowerCase();
+      if (dup[name]) continue;
+      dup[name] = true;
+      if (name === 'none') none = true;
+      if (name === 'etc') etc = true;
+      if (!hash[name]) continue;
+      if (etc) tail.push(name); else head.push(name);
+      _pop(web, name);
+    }
+    if (etc || head.length || tail.length) none = false;
+    if (none) return [_zeroBreak, _initNONE];
+    var ret = [_tryNODE, _zeroBreak];
+    for (var i=0; i<head.length; i++) ret.push(hash[head[i]]);
+    if (etc) {
+      for (var i=0; i<web.length; i++) ret.push(hash[web[i]]);
+      for (var i=0; i<tail.length; i++) ret.push(hash[tail[i]]);
+    }
+    ret.push(_initNONE);
+    return ret;
+  }
+
   function _initJZZ(opt) {
     _jzz = new _J();
     _jzz._options = opt;
-    _jzz._push(_tryAny, [[_tryNODE, _zeroBreak, _tryCRX, _tryJazzPlugin, _tryWebMIDI, _initNONE]]);
+    _jzz._push(_tryAny, [_filterEngines(opt)]);
     _jzz.refresh();
     _jzz._push(_initTimer, []);
     _jzz._push(function(){ if (!_outs.length && !_ins.length) this._break(); }, []);
