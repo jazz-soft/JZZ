@@ -335,15 +335,10 @@
     obj.style.visibility='hidden';
     obj.style.width='0px'; obj.style.height='0px';
     obj.classid = 'CLSID:1ACE1618-1C7D-4561-AEE1-34842AA85E90';
-    if (obj.isJazz) {
-      document.body.appendChild(obj);
-      _initMSIE(obj);
-      return;
-    }
     obj.type = 'audio/x-jazz';
     document.body.appendChild(obj);
     if (obj.isJazz) {
-      _initNPAPI(obj);
+      _initJazzPlugin(obj);
       return;
     }
     this._break();
@@ -448,7 +443,6 @@
   }
   // common initialization for Jazz-Plugin and jazz-midi
   function _initEngineJP() {
-    _engine._pool = [];
     _engine._inArr = [];
     _engine._outArr = [];
     _engine._inMap = {};
@@ -566,8 +560,8 @@
     _engine._newPlugin = function(){ return new obj.MIDI();}
     _initEngineJP();
   }
-  function _initMSIE(obj) {
-    _engine._type = 'msie';
+  function _initJazzPlugin(obj) {
+    _engine._type = 'plugin';
     _engine._main = obj;
     _engine._pool = [obj];
     _engine._newPlugin = function() {
@@ -575,19 +569,6 @@
       plg.style.visibility='hidden';
       plg.style.width='0px'; obj.style.height='0px';
       plg.classid = 'CLSID:1ACE1618-1C7D-4561-AEE1-34842AA85E90';
-      document.body.appendChild(plg);
-      return plg.isJazz ? plg : undefined;
-    }
-    _initEngineJP();
-  }
-  function _initNPAPI(obj) {
-    _engine._type = 'npapi';
-    _engine._main = obj;
-    _engine._pool = [obj];
-    _engine._newPlugin = function() {
-      var plg = document.createElement('object');
-      plg.style.visibility='hidden';
-      plg.style.width='0px'; obj.style.height='0px';
       plg.type = 'audio/x-jazz';
       document.body.appendChild(plg);
       return plg.isJazz ? plg : undefined;
