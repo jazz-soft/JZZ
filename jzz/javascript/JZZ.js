@@ -1,6 +1,6 @@
 (function() {
 
-  var _version = '0.2.5';
+  var _version = '0.2.6';
 
   // _R: common root for all async objects
   function _R() {
@@ -284,7 +284,7 @@
   _I.prototype.info = _O.prototype.info;
   _I.prototype._event = function(msg) {
     for (var i in this._handles) this._handles[i].apply(this, [msg]);
-    for (var i in this._outs) this._outs[i]._send(msg);
+    for (var i in this._outs) this._outs[i].send(msg);
   }
   function _connect(arg) {
     if (arg instanceof Function) _push(this._orig._handles, arg);
@@ -403,8 +403,8 @@
     var etc;
     var head = [];
     var tail = [];
-    var hash = {crx: _tryCRX, npapi: _tryJazzPlugin, webmidi: _tryWebMIDI};
-    var web = ['crx', 'webmidi', 'npapi'];
+    var hash = {crx: _tryCRX, plugin: _tryJazzPlugin, webmidi: _tryWebMIDI};
+    var web = ['crx', 'webmidi', 'plugin'];
     for (var i=0; i<arr.length; i++) {
       var name = arr[i].toString().toLowerCase();
       if (dup[name]) continue;
