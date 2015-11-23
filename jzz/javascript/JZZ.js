@@ -1,6 +1,6 @@
 (function() {
 
-  var _version = '0.2.6';
+  var _version = '0.2.7';
 
   // _R: common root for all async objects
   function _R() {
@@ -96,10 +96,14 @@
     _J.prototype.time = function() { return _J.prototype._time() - _J.prototype._startTime; }
   }
 
-  function _clone(obj) {
+  function _clone(obj, key, val) {
+    if (key === undefined) return _clone(obj, [], []);
     if (obj instanceof Object) {
-      var ret = obj instanceof Array ? [] : {};
-      for(var k in obj) ret[k] = _clone(obj[k]);
+      for (var i = 0; i < key.length; i++) if (key[i] === obj) return val[i];
+      var ret;
+      if (obj instanceof Array) ret = [];
+      else { ret = {}; key.push(obj); val.push(ret); }
+      for(var k in obj) ret[k] = _clone(obj[k], key, val);
       return ret;
     }
     return obj;
