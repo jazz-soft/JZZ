@@ -1,6 +1,6 @@
 (function() {
 
-  var _version = '0.2.7';
+  var _version = '0.3.0';
 
   // _R: common root for all async objects
   function _R() {
@@ -27,16 +27,16 @@
       }
     }
   }
-  _R.prototype._push = function(func, arg) { this._queue.push([func, arg]); _R.prototype._exec.apply(this);}
-  _R.prototype._slip = function(func, arg) { this._queue.unshift([func, arg]);}
-  _R.prototype._pause = function() { this._ready = false;}
-  _R.prototype._resume = function() { this._ready = true; _R.prototype._exec.apply(this);}
-  _R.prototype._break = function(err) { this._orig._bad = true; this._orig._hope = true; if (err) this._orig._err.push(err);}
-  _R.prototype._repair = function() { this._orig._bad = false;}
-  _R.prototype._crash = function(err) { this._break(err); this._resume();}
-  _R.prototype.err = function() { return _clone(this._err);}
+  _R.prototype._push = function(func, arg) { this._queue.push([func, arg]); _R.prototype._exec.apply(this); }
+  _R.prototype._slip = function(func, arg) { this._queue.unshift([func, arg]); }
+  _R.prototype._pause = function() { this._ready = false; }
+  _R.prototype._resume = function() { this._ready = true; _R.prototype._exec.apply(this); }
+  _R.prototype._break = function(err) { this._orig._bad = true; this._orig._hope = true; if (err) this._orig._err.push(err); }
+  _R.prototype._repair = function() { this._orig._bad = false; }
+  _R.prototype._crash = function(err) { this._break(err); this._resume(); }
+  _R.prototype.err = function() { return _clone(this._err); }
 
-  function _wait(obj, delay) { setTimeout(function(){obj._resume();}, delay);}
+  function _wait(obj, delay) { setTimeout(function(){obj._resume();}, delay); }
   _R.prototype.wait = function(delay) {
     if (!delay) return this;
     function F(){}; F.prototype = this._orig;
@@ -47,10 +47,25 @@
     return ret;
   }
 
-  function _and(q) { if (q instanceof Function) q.apply(this); else console.log(q);}
-  _R.prototype.and = function(func) { this._push(_and, [func]); return this;}
-  function _or(q) { if (q instanceof Function) q.apply(this); else console.log(q);}
-  _R.prototype.or = function(func) { this._push(_or, [func]); return this;}
+  function _and(q) { if (q instanceof Function) q.apply(this); else console.log(q); }
+  _R.prototype.and = function(func) { this._push(_and, [func]); return this; }
+  function _or(q) { if (q instanceof Function) q.apply(this); else console.log(q); }
+  _R.prototype.or = function(func) { this._push(_or, [func]); return this; }
+
+  _R.prototype._info = {};
+  _R.prototype.info = function() { return _clone(this._orig._info); }
+  _R.prototype.name = function() { return this.info().name; }
+
+  function _close(obj) {
+    this._break('closed');
+    obj._resume();
+  }
+  _R.prototype.close = function() {
+    var ret = new _R();
+    if (this._close) this._push(this._close, []);
+    this._push(_close, [ret]);
+    return ret;
+  }
 
   function _tryAny(arr) {
     if (!arr.length) {
@@ -109,7 +124,6 @@
     return obj;
   }
   _J.prototype._info = { name: 'JZZ.js', ver: _version };
-  _J.prototype.info = function() { return _clone(this._info); }
 
   var _outs = [];
   var _ins = [];
@@ -213,7 +227,7 @@
     port._resume();
   }
   _J.prototype.openMidiOut = function(arg) {
-    var port = new _O();
+    var port = new _M();
     this._push(_refresh, []);
     this._push(_openMidiOut, [port, arg]);
     return port;
@@ -228,67 +242,43 @@
     port._resume();
   }
   _J.prototype.openMidiIn = function(arg) {
-    var port = new _I();
+    var port = new _M();
     this._push(_refresh, []);
     this._push(_openMidiIn, [port, arg]);
     return port;
   }
 
-  function _close(obj) {
+  _J.prototype._close = function() {
     _engine._close();
-    this._break();
-    obj._resume();
-  }
-  _J.prototype.close = function() {
-    var ret = new _R();
-    this._push(_close, [ret]);
-    return ret;
   }
 
-  // _O: MIDI-Out object
-  function _O() {
-    _R.apply(this);
-  }
-  _O.prototype = new _R();
-  _O.prototype.name = function() { return this._impl ? this._impl.name : undefined;}
-  _O.prototype.info = function() { return this._impl ? _clone(this._impl.info) : {};}
-
-  function _closeMidiOut(obj) {
-    if (this._impl._close) this._impl._close(this);
-    this._break('closed');
-    obj._resume();
-  }
-  _O.prototype.close = function() {
-    var ret = new _R();
-    this._push(_closeMidiOut, [ret]);
-    return ret;
-  }
-
-  function _send(arg) {
-    this._impl._send(arg);
-  }
-  _O.prototype.send = function() {
-    this._push(_send, [MIDI.apply(null, arguments)]);
-    return this;
-  }
-  _O.prototype.note = function(c, n, v, t) {
-    this.noteOn(c, n, v);
-    if (t) this.wait(t).noteOff(c, n);
-    return this;
-  }
-
-  // _I: MIDI-In object
-  function _I() {
+  // _M: MIDI-In/Out object
+  function _M() {
     _R.apply(this);
     this._handles = [];
     this._outs = [];
   }
-  _I.prototype = new _R();
-  _I.prototype.name = _O.prototype.name;
-  _I.prototype.info = _O.prototype.info;
-  _I.prototype._event = function(msg) {
-    for (var i in this._handles) this._handles[i].apply(this, [msg]);
-    for (var i in this._outs) this._outs[i].send(msg);
+  _M.prototype = new _R();
+
+  _M.prototype._send = function(msg) { this._event(msg); } // override!
+  function _send(msg) { this._send(msg); }
+  _M.prototype.send = function() {
+    this._push(_send, [MIDI.apply(null, arguments)]);
+    return this;
+  }
+  _M.prototype.note = function(c, n, v, t) {
+    this.noteOn(c, n, v);
+    if (t) this.wait(t).noteOff(c, n);
+    return this;
+  }
+  _M.prototype._event = function(msg) {
+    for (var i in this._handles) this._handles[i].apply(this, [MIDI(msg)]);
+    for (var i in this._outs) this._outs[i].send(MIDI(msg));
+  }
+  function _event(msg) { this._event(msg); }
+  _M.prototype.event = function(msg) {
+    this._push(_event, [msg]);
+    return this;
   }
   function _connect(arg) {
     if (arg instanceof Function) _push(this._orig._handles, arg);
@@ -298,24 +288,13 @@
     if (arg instanceof Function) _pop(this._orig._handles, arg);
     else _pop(this._orig._outs, arg);
   }
-  _I.prototype.connect = function(arg) {
+  _M.prototype.connect = function(arg) {
     this._push(_connect, [arg]);
     return this;
   }
-  _I.prototype.disconnect = function(arg) {
+  _M.prototype.disconnect = function(arg) {
     this._push(_disconnect, [arg]);
     return this;
-  }
-
-  function _closeMidiIn(obj) {
-    if (this._impl._close) this._impl._close(this);
-    this._break();
-    obj._resume();
-  }
-  _I.prototype.close = function() {
-    var ret = new _R();
-    this._push(_closeMidiIn, [ret]);
-    return ret;
   }
 
   var _jzz;
@@ -495,6 +474,8 @@
       }
       port._orig._impl = impl;
       _push(impl.clients, port._orig);
+      port._send = function(arg) { impl._send(arg); }
+      port._close = function() { impl._close(this); }
     }
     _engine._openIn = function(port, name) {
       var impl = _engine._inMap[name];
@@ -534,6 +515,7 @@
       }
       port._orig._impl = impl;
       _push(impl.clients, port._orig);
+      port._close = function() { impl._close(this); }
     }
     _engine._closeOut = function(port) {
       var impl = port._impl;
@@ -622,6 +604,8 @@
       if (impl) {
         port._orig._impl = impl;
         _push(impl.clients, port._orig);
+        port._send = function(arg) { impl._send(arg); }
+        port._close = function() { impl._close(this); }
       }
       else port._break();
     }
@@ -659,6 +643,7 @@
       if (impl) {
         port._orig._impl = impl;
         _push(impl.clients, port._orig);
+        port._close = function() { impl._close(this); }
       }
       else port._break();
     }
@@ -722,6 +707,8 @@
       }
       port._orig._impl = impl;
       _push(impl.clients, port._orig);
+      port._send = function(arg) { impl._send(arg); }
+      port._close = function() { impl._close(this); }
       if (!impl.open) port._pause();
     }
     _engine._openIn = function(port, name) {
@@ -750,6 +737,7 @@
       }
       port._orig._impl = impl;
       _push(impl.clients, port._orig);
+      port._close = function() { impl._close(this); }
       if (!impl.open) port._pause();
     }
     _engine._closeOut = function(port) {
@@ -828,6 +816,13 @@
     return _jzz;
   }
   JZZ.info = function() { return _J.prototype.info();}
+  JZZ.createNew = function(arg) {
+    var obj = new _M();
+    if (arg instanceof Object) for (var k in arg) obj[k] = arg[k];
+    obj._resume();
+    return obj;
+  }
+  _J.prototype.createNew = JZZ.createNew;
 
   // JZZ.MIDI
 
@@ -899,10 +894,48 @@
   };
   function _copyHelper(name, func) {
     MIDI[name] = function(){ return new MIDI(func.apply(0, arguments));};
-    _O.prototype[name] = function(){ this.send(func.apply(0, arguments)); return this;};
+    _M.prototype[name] = function(){ this.send(func.apply(0, arguments)); return this;};
   }
   for (var k in _helper) {
     _copyHelper(k, _helper[k]);
+  }
+  var _channelMap = { a:10, b:11, c:12, d:13, e:14, f:15 };
+  for (var k = 0; k < 16; k++) _channelMap[k] = k;
+  MIDI.prototype.getChannel = function() {
+    var c = this[0];
+    if (c === undefined || c < 0x80 || c > 0xef) return;
+    return c | 15;
+  }
+  MIDI.prototype.setChannel = function(x) {
+    var c = this[0];
+    if (c === undefined || c < 0x80 || c > 0xef) return this;
+    x = _channelMap[x.toString().toLowerCase()];
+    if (x !== undefined) this[0] = (c & 0xf0) | x;
+    return this;
+  }
+  MIDI.prototype.getNote = function() {
+    var c = this[0];
+    if (c === undefined || c < 0x80 || c >= 0xaf) return;
+    return this[1];
+  }
+  MIDI.prototype.setNote = function(x) {
+    var c = this[0];
+    if (c === undefined || c < 0x80 || c >= 0xaf) return this;
+    x = MIDI.noteValue(x);
+    if (x !== undefined) this[1] = x;
+    return this;
+  }
+  MIDI.prototype.getVelocity = function() {
+    var c = this[0];
+    if (c === undefined || c < 0x90 || c >= 0x9f) return;
+    return this[2];
+  }
+  MIDI.prototype.setVelocity = function(x) {
+    var c = this[0];
+    if (c === undefined || c < 0x90 || c >= 0x9f) return this;
+    x = parseInt(x);
+    if (x >= 0 && x < 128) this[2] = x;
+    return this;
   }
 
   function _hex(x){
@@ -915,7 +948,7 @@
   MIDI.prototype.toString = function() {
     if (!this.length) return 'empty';
     var s = _hex(this);
-    if (this[0]<0x80) return s;
+    if (this[0] < 0x80) return s;
     s += ' -- ';
     var ss = {
       241: 'Time Code',
@@ -1020,12 +1053,12 @@
 
   JZZ.lib = {};
   JZZ.lib.openMidiOut = function(name, engine) {
-    var port = new _O();
+    var port = new _M();
     engine._openOut(port, name);
     return port;
   }
   JZZ.lib.openMidiIn = function(name, engine) {
-    var port = new _I();
+    var port = new _M();
     engine._openIn(port, name);
     return port;
   }
