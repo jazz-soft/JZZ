@@ -1,6 +1,6 @@
 (function() {
 
-  var _version = '0.3.0';
+  var _version = '0.3.1';
 
   // _R: common root for all async objects
   function _R() {
@@ -899,43 +899,54 @@
   for (var k in _helper) {
     _copyHelper(k, _helper[k]);
   }
-  var _channelMap = { a:10, b:11, c:12, d:13, e:14, f:15 };
+  var _channelMap = { a:10, b:11, c:12, d:13, e:14, f:15, A:10, B:11, C:12, D:13, E:14, F:15 };
   for (var k = 0; k < 16; k++) _channelMap[k] = k;
   MIDI.prototype.getChannel = function() {
     var c = this[0];
     if (c === undefined || c < 0x80 || c > 0xef) return;
-    return c | 15;
+    return c & 15;
   }
   MIDI.prototype.setChannel = function(x) {
     var c = this[0];
     if (c === undefined || c < 0x80 || c > 0xef) return this;
-    x = _channelMap[x.toString().toLowerCase()];
+    x = _channelMap[x];
     if (x !== undefined) this[0] = (c & 0xf0) | x;
     return this;
   }
   MIDI.prototype.getNote = function() {
     var c = this[0];
-    if (c === undefined || c < 0x80 || c >= 0xaf) return;
+    if (c === undefined || c < 0x80 || c > 0xaf) return;
     return this[1];
   }
   MIDI.prototype.setNote = function(x) {
     var c = this[0];
-    if (c === undefined || c < 0x80 || c >= 0xaf) return this;
+    if (c === undefined || c < 0x80 || c > 0xaf) return this;
     x = MIDI.noteValue(x);
     if (x !== undefined) this[1] = x;
     return this;
   }
   MIDI.prototype.getVelocity = function() {
     var c = this[0];
-    if (c === undefined || c < 0x90 || c >= 0x9f) return;
+    if (c === undefined || c < 0x90 || c > 0x9f) return;
     return this[2];
   }
   MIDI.prototype.setVelocity = function(x) {
     var c = this[0];
-    if (c === undefined || c < 0x90 || c >= 0x9f) return this;
+    if (c === undefined || c < 0x90 || c > 0x9f) return this;
     x = parseInt(x);
     if (x >= 0 && x < 128) this[2] = x;
     return this;
+  }
+  MIDI.prototype.isNoteOn = function() {
+    var c = this[0];
+    if (c === undefined || c < 0x90 || c > 0x9f) return false;
+    return this[2] > 0 ? true : false;
+  }
+  MIDI.prototype.isNoteOff = function() {
+    var c = this[0];
+    if (c === undefined || c < 0x80 || c > 0x9f) return false;
+    if (c < 0x90) return true;
+    return this[2] == 0 ? true : false;
   }
 
   function _hex(x){
