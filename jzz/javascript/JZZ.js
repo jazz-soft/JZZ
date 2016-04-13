@@ -1,6 +1,6 @@
 (function() {
 
-  var _version = '0.3.1';
+  var _version = '0.3.2';
 
   // _R: common root for all async objects
   function _R() {
@@ -890,7 +890,16 @@
     sostenuto : function(c, b){ return [0xB0+_ch(c), 0x42, b ? 127 : 0];},
     soft   : function(c, b){ return [0xB0+_ch(c), 0x43, b ? 127 : 0];},
     allSoundOff : function(c){ return [0xB0+_ch(c), 0x78, 0];},
-    allNotesOff : function(c){ return [0xB0+_ch(c), 0x7b, 0];}
+    allNotesOff : function(c){ return [0xB0+_ch(c), 0x7b, 0];},
+    songPosition: function(n){ return [0xF2, _lsb(n), _msb(n)];},
+    songSelect : function(n){ return [0xF3, _7b(n)];},
+    tune : function(){ return [0xF6];},
+    clock : function(){ return [0xF8];},
+    start : function(){ return [0xFA];},
+    continue : function(){ return [0xFB];},
+    stop : function(){ return [0xFC];},
+    active : function(){ return [0xFE];},
+    reset : function(){ return [0xFF];}
   };
   function _copyHelper(name, func) {
     MIDI[name] = function(){ return new MIDI(func.apply(0, arguments));};
