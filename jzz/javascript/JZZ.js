@@ -1,6 +1,6 @@
 (function() {
 
-  var _version = '0.3.3';
+  var _version = '0.3.4';
 
   // _R: common root for all async objects
   function _R() {
@@ -839,7 +839,7 @@
       this.setSecond(arg.getSecond());
       this.setFrame(arg.getFrame());
       this.setQuarter(arg.getQuarter());
-      return;
+      return this;
     }
     var arr = arg instanceof Array ? arg : arguments;
     this.setType(arr[0]);
@@ -848,8 +848,10 @@
     this.setSecond(arr[3]);
     this.setFrame(arr[4]);
     this.setQuarter(arr[5]);
+    return this;
   }
   function _fixDropFrame() { if (this.type == 29.97 && !this.second && this.frame < 2 && this.minute % 10) this.frame = 2; }
+  SMPTE.prototype.isFullFrame = function() { return this.quarter == 0 || this.quarter == 4; }
   SMPTE.prototype.getType = function() { return this.type; }
   SMPTE.prototype.getHour = function() { return this.hour; }
   SMPTE.prototype.getMinute = function() { return this.minute; }
@@ -945,7 +947,7 @@
     return this;
   }
   function _825(a) { return [[24, 25, 29.97, 30][(a[7] >> 1) & 3], ((a[7] & 1) << 4) | a[6], (a[5] << 4) | a[4], (a[3] << 4) | a[2], (a[1] << 4) | a[0]]; }
-  SMPTE.prototype.update = function(m) {
+  SMPTE.prototype.read = function(m) {
     if (!(m instanceof MIDI)) m = MIDI.apply(0, arguments);
     if (m[0] == 0xf0 && m[1] == 0x7f && m[3] == 1 && m[4] == 1 && m[9] == 0xf7) {
       this.type = [24, 25, 29.97, 30][(m[5] >> 5) & 3];
@@ -1156,6 +1158,16 @@
     if (x >= 0 && x < 128) this[2] = x;
     return this;
   }
+  MIDI.prototype.getSysExChannel = function() {
+    if (this[0] == 0xf0) return this[2];
+  }
+  MIDI.prototype.setSysExChannel = function(x) {
+    if (this[0] == 0xf0 && this.length > 2) {
+      x = parseInt(x);
+      if (x >= 0 && x < 128) this[2] = x;
+    }
+    return this;
+  }
   MIDI.prototype.isNoteOn = function() {
     var c = this[0];
     if (c === undefined || c < 0x90 || c > 0x9f) return false;
@@ -1166,6 +1178,12 @@
     if (c === undefined || c < 0x80 || c > 0x9f) return false;
     if (c < 0x90) return true;
     return this[2] == 0 ? true : false;
+  }
+  MIDI.prototype.isSysEx = function() {
+    return this[0] == 0xf0;
+  }
+  MIDI.prototype.isFullSysEx = function() {
+    return this[0] == 0xf0 && this[this.length - 1] == 0xf7;
   }
 
   function _hex(x){
