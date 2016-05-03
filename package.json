@@ -7,9 +7,6 @@
     "minify": "uglifyjs jzz/javascript/JZZ.js > minified/JZZ.js"
   },
   "author": "jazz-soft (http://jazz-soft.net/)",
-  "devDependencies": {
-    "uglify-js": ">=2.4.21"
-  },
   "repository": {
     "type": "git",
     "url": "https://github.com/jazz-soft/JZZ.git"
@@ -17,5 +14,10 @@
   "homepage": "http://jazz-soft.net",
   "bugs": "http://jazz-soft.org",
   "license": "MIT",
+  "devDependencies": {
+    "grunt": ">=0.4.5",
+    "grunt-contrib-copy": ">=1.0.0",
+    "grunt-contrib-uglify": ">=1.0.0"
+  },
   "private": true
 }
