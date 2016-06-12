@@ -1,6 +1,6 @@
 (function() {
 
-  var _version = '0.3.5';
+  var _version = '0.3.6';
 
   // _R: common root for all async objects
   function _R() {
@@ -272,8 +272,11 @@
     return this;
   }
   _M.prototype._emit = function(msg) {
-    for (var i in this._handles) this._handles[i].apply(this, [MIDI(msg)]);
-    for (var i in this._outs) this._outs[i].send(MIDI(msg));
+    for (var i in this._handles) this._handles[i].apply(this, [MIDI(msg)._stamp(this)]);
+    for (var i in this._outs) {
+      var m = MIDI(msg);
+      if (!m._stamped(this._outs[i])) this._outs[i].send(m._stamp(this));
+    }
   }
   function _emit(msg) { this._emit(msg); }
   _M.prototype.emit = function(msg) {
@@ -954,7 +957,7 @@
   }
   function _825(a) { return [[24, 25, 29.97, 30][(a[7] >> 1) & 3], ((a[7] & 1) << 4) | a[6], (a[5] << 4) | a[4], (a[3] << 4) | a[2], (a[1] << 4) | a[0]]; }
   SMPTE.prototype.read = function(m) {
-    if (!(m instanceof MIDI)) m = MIDI.apply(0, arguments);
+    if (!(m instanceof MIDI)) m = MIDI.apply(null, arguments);
     if (m[0] == 0xf0 && m[1] == 0x7f && m[3] == 1 && m[4] == 1 && m[9] == 0xf7) {
       this.type = [24, 25, 29.97, 30][(m[5] >> 5) & 3];
       this.hour = m[5] & 31;
@@ -1043,6 +1046,7 @@
 
   function MIDI(arg) {
     var self = this instanceof MIDI ? this : self = new MIDI();
+    self._from = arg instanceof MIDI ? arg._from.slice() : [];
     if (!arguments.length) return self;
     var arr = arg instanceof Array ? arg : arguments;
     for (var i = 0; i < arr.length; i++) {
@@ -1203,7 +1207,6 @@
     if (!this.length) return 'empty';
     var s = _hex(this);
     if (this[0] < 0x80) return s;
-    s += ' -- ';
     var ss = {
       241: 'MIDI Time Code',
       242: 'Song Position',
@@ -1219,11 +1222,11 @@
       253: 'Undefined',
       254: 'Active Sensing',
       255: 'Reset'}[this[0]];
-    if (ss) return s + ss;
+    if (ss) return s + ' -- ' + ss;
     var c = this[0] >> 4;
     ss = {8: 'Note Off', 10: 'Aftertouch', 12: 'Program Change', 13: 'Channel Aftertouch', 14: 'Pitch Wheel'}[c];
-    if (ss) return s + ss;
-    if (c == 9) return s + (this[2] ? 'Note On' : 'Note Off');
+    if (ss) return s + ' -- ' + ss;
+    if (c == 9) return s + ' -- ' + (this[2] ? 'Note On' : 'Note Off');
     if (c != 11) return s;
     ss = {
       0: 'Bank Select MSB',
@@ -1300,7 +1303,22 @@
       126: 'Mono Mode On',
       127: 'Poly Mode On'}[this[1]];
     if (!ss) ss = 'Undefined';
-    return s + ss;
+    return s + ' -- ' + ss;
+  }
+  MIDI.prototype._stamp = function(obj) { this._from.push(obj._orig ? obj._orig : obj); return this; }
+  MIDI.prototype._unstamp = function(obj) {
+    if (obj === undefined) this._from = [];
+    else {
+      if (obj._orig) obj = obj._orig;
+      var i = this._from.indexOf(obj);
+      if (i > -1) this._from.splice(i, 1);
+    }
+    return this;
+  }
+  MIDI.prototype._stamped = function(obj) {
+    if (obj._orig) obj = obj._orig;
+    for (var i = 0; i < this._from.length; i++) if (this._from[i] == obj) return true;
+    return false;
   }
 
   JZZ.MIDI = MIDI;
