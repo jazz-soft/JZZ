@@ -112,7 +112,7 @@
   }
 
   function _clone(obj, key, val) {
-    if (key === undefined) return _clone(obj, [], []);
+    if (typeof key == 'undefined') return _clone(obj, [], []);
     if (obj instanceof Object) {
       for (var i = 0; i < key.length; i++) if (key[i] === obj) return val[i];
       var ret;
@@ -193,7 +193,7 @@
   }
 
   function _filterList(q, arr) {
-    if (q === undefined) return arr.slice();
+    if (typeof q == 'undefined') return arr.slice();
     var i, n;
     var a = [];
     if (q instanceof RegExp) {
@@ -213,7 +213,7 @@
   function _notFound(port, q) {
     var msg;
     if (q instanceof RegExp) msg = 'Port matching ' + q + ' not found';
-    else if (q instanceof Object || q === undefined) msg = 'Port not found';
+    else if (q instanceof Object || typeof q == 'undefined') msg = 'Port not found';
     else msg = 'Port "' + q + '" not found';
     port._crash(msg);
   }
@@ -306,7 +306,7 @@
 
   // Node.js
   function _tryNODE() {
-    if (typeof module !== 'undefined' && module.exports) {
+    if (typeof module != 'undefined' && module.exports) {
       _initNode(require('jazz-midi'));
       return;
     }
@@ -868,7 +868,7 @@
   SMPTE.prototype.getFrame = function() { return this.frame; }
   SMPTE.prototype.getQuarter = function() { return this.quarter; }
   SMPTE.prototype.setType = function(x) {
-    if (x === undefined || x == 24) this.type = 24;
+    if (typeof x == 'undefined' || x == 24) this.type = 24;
     else if (x == 25) this.type = 25;
     else if (x == 29.97) { this.type = 29.97; _fixDropFrame.apply(this); }
     else if (x == 30) this.type = 30;
@@ -877,34 +877,34 @@
     return this;
   }
   SMPTE.prototype.setHour = function(x) {
-    if (x === undefined) x = 0;
+    if (typeof x == 'undefined') x = 0;
     if (x != parseInt(x) || x < 0 || x >= 24) throw RangeError('Bad SMPTE hours value: ' + x);
     this.hour = x;
     return this;
   }
   SMPTE.prototype.setMinute = function(x) {
-    if (x === undefined) x = 0;
+    if (typeof x == 'undefined') x = 0;
     if (x != parseInt(x) || x < 0 || x >= 60) throw RangeError('Bad SMPTE minutes value: ' + x);
     this.minute = x;
     _fixDropFrame.apply(this);
     return this;
   }
   SMPTE.prototype.setSecond = function(x) {
-    if (x === undefined) x = 0;
+    if (typeof x == 'undefined') x = 0;
     if (x != parseInt(x) || x < 0 || x >= 60) throw RangeError('Bad SMPTE seconds value: ' + x);
     this.second = x;
     _fixDropFrame.apply(this);
     return this;
   }
   SMPTE.prototype.setFrame = function(x) {
-    if (x === undefined) x = 0;
+    if (typeof x == 'undefined') x = 0;
     if (x != parseInt(x) || x < 0 || x >= this.type) throw RangeError('Bad SMPTE frame number: ' + x);
     this.frame = x;
     _fixDropFrame.apply(this);
     return this;
   }
   SMPTE.prototype.setQuarter = function(x) {
-    if (x === undefined) x = 0;
+    if (typeof x == 'undefined') x = 0;
     if (x != parseInt(x) || x < 0 || x >= 8) throw RangeError('Bad SMPTE quarter frame: ' + x);
     this.quarter = x;
     return this;
@@ -970,7 +970,7 @@
       this._f = undefined;
       return true;
     }
-    if (m[0] == 0xf1 && m[1] !== undefined) {
+    if (m[0] == 0xf1 && typeof m[1] != 'undefined') {
       var q = m[1] >> 4;
       var n = m[1] & 15;
       if (q == 0) {
@@ -1134,36 +1134,36 @@
   for (var k = 0; k < 16; k++) _channelMap[k] = k;
   MIDI.prototype.getChannel = function() {
     var c = this[0];
-    if (c === undefined || c < 0x80 || c > 0xef) return;
+    if (typeof c == 'undefined' || c < 0x80 || c > 0xef) return;
     return c & 15;
   }
   MIDI.prototype.setChannel = function(x) {
     var c = this[0];
-    if (c === undefined || c < 0x80 || c > 0xef) return this;
+    if (typeof c == 'undefined' || c < 0x80 || c > 0xef) return this;
     x = _channelMap[x];
-    if (x !== undefined) this[0] = (c & 0xf0) | x;
+    if (typeof x != 'undefined') this[0] = (c & 0xf0) | x;
     return this;
   }
   MIDI.prototype.getNote = function() {
     var c = this[0];
-    if (c === undefined || c < 0x80 || c > 0xaf) return;
+    if (typeof c == 'undefined' || c < 0x80 || c > 0xaf) return;
     return this[1];
   }
   MIDI.prototype.setNote = function(x) {
     var c = this[0];
-    if (c === undefined || c < 0x80 || c > 0xaf) return this;
+    if (typeof c == 'undefined' || c < 0x80 || c > 0xaf) return this;
     x = MIDI.noteValue(x);
-    if (x !== undefined) this[1] = x;
+    if (typeof x != 'undefined') this[1] = x;
     return this;
   }
   MIDI.prototype.getVelocity = function() {
     var c = this[0];
-    if (c === undefined || c < 0x90 || c > 0x9f) return;
+    if (typeof c == 'undefined' || c < 0x90 || c > 0x9f) return;
     return this[2];
   }
   MIDI.prototype.setVelocity = function(x) {
     var c = this[0];
-    if (c === undefined || c < 0x90 || c > 0x9f) return this;
+    if (typeof c == 'undefined' || c < 0x90 || c > 0x9f) return this;
     x = parseInt(x);
     if (x >= 0 && x < 128) this[2] = x;
     return this;
@@ -1180,12 +1180,12 @@
   }
   MIDI.prototype.isNoteOn = function() {
     var c = this[0];
-    if (c === undefined || c < 0x90 || c > 0x9f) return false;
+    if (typeof c == 'undefined' || c < 0x90 || c > 0x9f) return false;
     return this[2] > 0 ? true : false;
   }
   MIDI.prototype.isNoteOff = function() {
     var c = this[0];
-    if (c === undefined || c < 0x80 || c > 0x9f) return false;
+    if (typeof c == 'undefined' || c < 0x80 || c > 0x9f) return false;
     if (c < 0x90) return true;
     return this[2] == 0 ? true : false;
   }
@@ -1307,7 +1307,7 @@
   }
   MIDI.prototype._stamp = function(obj) { this._from.push(obj._orig ? obj._orig : obj); return this; }
   MIDI.prototype._unstamp = function(obj) {
-    if (obj === undefined) this._from = [];
+    if (typeof obj == 'undefined') this._from = [];
     else {
       if (obj._orig) obj = obj._orig;
       var i = this._from.indexOf(obj);
