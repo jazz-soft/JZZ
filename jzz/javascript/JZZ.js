@@ -1,6 +1,6 @@
 (function() {
 
-  var _version = '0.3.6';
+  var _version = '0.3.7';
 
   // _R: common root for all async objects
   function _R() {
@@ -131,6 +131,7 @@
   function _postRefresh() {
     this._info.engine = _engine._type;
     this._info.version = _engine._version;
+    this._info.sysex = _engine._sysex;
     this._info.inputs = [];
     this._info.outputs = [];
     _outs = [];
@@ -218,11 +219,18 @@
     port._crash(msg);
   }
 
+  function _defaultPortInfo() {
+    if (typeof this._info.engine == 'undefined') this._info.engine = 'none';
+    if (typeof this._info.sysex == 'undefined') this._info.sysex = true;
+    if (typeof this._info.type == 'undefined') this._info.type = 'unknown';
+  }
+
   function _openMidiOut(port, arg) {
     var arr = _filterList(arg, _outs);
     if (!arr.length) { _notFound(port, arg); return; }
     function pack(x){ return function(){x.engine._openOut(this, x.name);};};
     for (var i=0; i<arr.length; i++) arr[i] = pack(arr[i]);
+    port._slip(_defaultPortInfo, []);
     port._slip(_tryAny, [arr]);
     port._resume();
   }
@@ -238,6 +246,7 @@
     if (!arr.length) { _notFound(port, arg); return; }
     function pack(x){ return function(){x.engine._openIn(this, x.name);};};
     for (var i=0; i<arr.length; i++) arr[i] = pack(arr[i]);
+    port._slip(_defaultPortInfo, []);
     port._slip(_tryAny, [arr]);
     port._resume();
   }
@@ -341,7 +350,23 @@
         self._crash(msg);
       }
       var opt = {};
-      if (this._options && this._options.sysex === true) opt.sysex = true;
+      navigator.requestMIDIAccess(opt).then(onGood, onBad);
+      this._pause();
+      return;
+    }
+    this._break();
+  }
+  function _tryWebMIDIsysex() {
+    if (navigator.requestMIDIAccess) {
+      var self = this;
+      function onGood(midi) {
+        _initWebMIDI(midi, true);
+        self._resume();
+      }
+      function onBad(msg) {
+        self._crash(msg);
+      }
+      var opt = {sysex:true};
       navigator.requestMIDIAccess(opt).then(onGood, onBad);
       this._pause();
       return;
@@ -382,35 +407,40 @@
   }
 
   function _filterEngines(opt) {
-    if (!opt || !opt.engine) return [_tryNODE, _zeroBreak, _tryCRX, _tryJazzPlugin, _tryWebMIDI, _initNONE];
+    var ret = [_tryNODE, _zeroBreak];
+    var arr = _filterEngineNames(opt);
+    for (var i=0; i<arr.length; i++) {
+      if (arr[i] == 'webmidi') {
+        if (opt && opt.sysex === true) ret.push(_tryWebMIDIsysex);
+        if (!opt || opt.sysex !== true || opt.degrade === true) ret.push(_tryWebMIDI);
+      }
+      else if (arr[i] == 'crx') ret.push(_tryCRX);
+      else if (arr[i] == 'plugin') ret.push(_tryJazzPlugin);
+    }
+    ret.push(_initNONE);
+    return ret;
+  }
+
+  function _filterEngineNames(opt) {
+    var web = ['crx', 'webmidi', 'plugin'];
+    if (!opt || !opt.engine) return web;
     var arr = opt.engine instanceof Array ? opt.engine : [opt.engine];
     var dup = {};
     var none;
     var etc;
     var head = [];
     var tail = [];
-    var hash = {crx: _tryCRX, plugin: _tryJazzPlugin, webmidi: _tryWebMIDI};
-    var web = ['crx', 'webmidi', 'plugin'];
     for (var i=0; i<arr.length; i++) {
       var name = arr[i].toString().toLowerCase();
       if (dup[name]) continue;
       dup[name] = true;
       if (name === 'none') none = true;
       if (name === 'etc') etc = true;
-      if (!hash[name]) continue;
       if (etc) tail.push(name); else head.push(name);
       _pop(web, name);
     }
     if (etc || head.length || tail.length) none = false;
-    if (none) return [_zeroBreak, _initNONE];
-    var ret = [_tryNODE, _zeroBreak];
-    for (var i=0; i<head.length; i++) ret.push(hash[head[i]]);
-    if (etc) {
-      for (var i=0; i<web.length; i++) ret.push(hash[web[i]]);
-      for (var i=0; i<tail.length; i++) ret.push(hash[tail[i]]);
-    }
-    ret.push(_initNONE);
-    return ret;
+    return none ? [] : head.concat(etc ? web : tail);
   }
 
   function _initJZZ(opt) {
@@ -425,6 +455,7 @@
 
   function _initNONE() {
     _engine._type = 'none';
+    _engine._sysex = true;
     _engine._refresh = function() { _engine._outs = []; _engine._ins = [];}
   }
   // common initialization for Jazz-Plugin and jazz-midi
@@ -434,6 +465,7 @@
     _engine._inMap = {};
     _engine._outMap = {};
     _engine._version = _engine._main.version;
+    _engine._sysex = true;
     _engine._refresh = function() {
       _engine._outs = [];
       _engine._ins = [];
@@ -457,6 +489,7 @@
             manufacturer: _engine._allOuts[name].manufacturer,
             version: _engine._allOuts[name].version,
             type: 'MIDI-out',
+            sysex: _engine._sysex,
             engine: _engine._type            
           },
           _close: function(port){ _engine._closeOut(port); },
@@ -494,6 +527,7 @@
             manufacturer: _engine._allIns[name].manufacturer,
             version: _engine._allIns[name].version,
             type: 'MIDI-in',
+            sysex: _engine._sysex,
             engine: _engine._type            
           },
           _close: function(port){ _engine._closeIn(port); },
@@ -566,9 +600,10 @@
     }
     _initEngineJP();
   }
-  function _initWebMIDI(access) {
+  function _initWebMIDI(access, sysex) {
     _engine._type = 'webmidi';
     _engine._version = 43;
+    _engine._sysex = !!sysex;
     _engine._access = access;
     _engine._inMap = {};
     _engine._outMap = {};
@@ -592,6 +627,8 @@
             name: name,
             manufacturer: _engine._allOuts[name].manufacturer,
             version: _engine._allOuts[name].version,
+            type: 'MIDI-out',
+            sysex: _engine._sysex,
             engine: _engine._type            
           },
           _close: function(port){ _engine._closeOut(port); },
@@ -625,6 +662,8 @@
             name: name,
             manufacturer: _engine._allIns[name].manufacturer,
             version: _engine._allIns[name].version,
+            type: 'MIDI-in',
+            sysex: _engine._sysex,
             engine: _engine._type            
           },
           _close: function(port){ _engine._closeIn(port); },
@@ -668,6 +707,7 @@
   function _initCRX(msg, ver) {
     _engine._type = 'crx';
     _engine._version = ver;
+    _engine._sysex = true;
     _engine._pool = [];
     _engine._inArr = [];
     _engine._outArr = [];
@@ -700,6 +740,7 @@
             manufacturer: _engine._allOuts[name].manufacturer,
             version: _engine._allOuts[name].version,
             type: 'MIDI-out',
+            sysex: _engine._sysex,
             engine: _engine._type            
           },
           _start: function(){ document.dispatchEvent(new CustomEvent('jazz-midi', {detail:['openout', plugin.id, name]})); },
@@ -732,6 +773,7 @@
             manufacturer: _engine._allIns[name].manufacturer,
             version: _engine._allIns[name].version,
             type: 'MIDI-in',
+            sysex: _engine._sysex,
             engine: _engine._type            
           },
           _start: function(){ document.dispatchEvent(new CustomEvent('jazz-midi', {detail:['openin', plugin.id, name]})); },
@@ -1327,11 +1369,13 @@
   JZZ.lib.openMidiOut = function(name, engine) {
     var port = new _M();
     engine._openOut(port, name);
+    _defaultPortInfo.apply(port);
     return port;
   }
   JZZ.lib.openMidiIn = function(name, engine) {
     var port = new _M();
     engine._openIn(port, name);
+    _defaultPortInfo.apply(port);
     return port;
   }
   JZZ.lib.registerMidiOut = function(name, engine) {

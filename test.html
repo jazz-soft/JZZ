@@ -37,13 +37,13 @@ messages
 document.getElementById("jzzVersion").innerHTML = JZZ.info().ver;
 var output = [];
 
-JZZ()
+JZZ({sysex:true, degrade:true})
   .or(function(){document.getElementById("midiEngineStatus").innerHTML = "Cannot start MIDI Engine!";})
-  .and(function(){ var info = this.info(); document.getElementById("midiEngineStatus").innerHTML = "MIDI Engine is running: " + info.engine + " v." + info.version;});
+  .and(function(){ var info = this.info(); console.log(info); document.getElementById("midiEngineStatus").innerHTML = "MIDI Engine is running: " + info.engine + " v." + info.version + "; sysex: " + info.sysex;});
 
 JZZ().openMidiOut()
   .or(function(){document.getElementById("midiOutName").innerHTML = "Cannot open!";})
-  .and(function(){document.getElementById("midiOutName").innerHTML = this.name();});
+  .and(function(){document.getElementById("midiOutName").innerHTML = this.name(); console.log(this.info());});
 
 JZZ().openMidiIn()
   .or(function(){document.getElementById("midiInName").innerHTML = "Cannot open!";})
