@@ -9,6 +9,7 @@
 [![windows](http://jazz-soft.github.io/img/windows.jpg)](http://jazz-soft.net/download/Jazz-Plugin)
 [![mocos](http://jazz-soft.github.io/img/macos.jpg)](http://jazz-soft.net/download/Jazz-Plugin)
 [![linux](http://jazz-soft.github.io/img/linux.jpg)](http://jazz-soft.net/download/Jazz-Plugin)
+[![raspberry pi](http://jazz-soft.github.io/img/rpi.jpg)](https://www.npmjs.com/package/jazz-midi)
 [![ios](http://jazz-soft.github.io/img/ios.jpg)](https://github.com/jazz-soft/JZZ-modules)
 [![android](http://jazz-soft.github.io/img/android.jpg)](https://github.com/jazz-soft/JZZ-modules)
 
