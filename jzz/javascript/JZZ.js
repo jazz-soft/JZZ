@@ -1,6 +1,6 @@
 (function() {
 
-  var _version = '0.3.8';
+  var _version = '0.3.9';
 
   // _R: common root for all async objects
   function _R() {
@@ -403,8 +403,8 @@
   function _zeroBreak() {
     this._pause();
     var self = this;
-    if (document.readyState != 'complete') window.addEventListener('load', function(){ setTimeout(function(){ self._crash();}, 0);});
-    else setTimeout(function(){ self._crash();}, 0);
+    if (document.readyState != 'complete') window.addEventListener('load', function(){ setTimeout(function(){ self._crash();}, 200);});
+    else setTimeout(function(){ self._crash();}, 200);
   }
 
   function _filterEngines(opt) {
