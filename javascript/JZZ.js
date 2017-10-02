@@ -403,8 +403,7 @@
   function _zeroBreak() {
     this._pause();
     var self = this;
-    if (document.readyState != 'complete') window.addEventListener('load', function(){ setTimeout(function(){ self._crash();}, 200);});
-    else setTimeout(function(){ self._crash();}, 200);
+    setTimeout(function(){ self._crash();}, 0);
   }
 
   function _filterEngines(opt) {
