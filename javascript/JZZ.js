@@ -64,6 +64,9 @@
     var ret = new _R();
     if (this._close) this._push(this._close, []);
     this._push(_close, [ret]);
+    if (_engine && this._impl && _engine._inMap[this._impl.name]) {
+      delete _engine._inMap[this._impl.name];
+    }
     return ret;
   }
 
