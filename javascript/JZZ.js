@@ -87,19 +87,13 @@
   }
 
   function _push(arr, obj) {
-    for (var i in arr) {
-      if (!arr.hasOwnProperty(i)) continue;
-      if (arr[i] === obj) return;
-    }
+    for (var i = 0; i < arr.length; i++) if (arr[i] === obj) return;
     arr.push(obj);
   }
   function _pop(arr, obj) {
-    for (var i in arr) {
-      if (!arr.hasOwnProperty(i)) continue;
-      if (arr[i] === obj) {
-        arr.splice(i, 1);
-        return;
-      }
+    for (var i = 0; i < arr.length; i++) if (arr[i] === obj) {
+      arr.splice(i, 1);
+      return;
     }
   }
 
@@ -122,12 +116,9 @@
     if (obj instanceof Object) {
       for (var i = 0; i < key.length; i++) if (key[i] === obj) return val[i];
       var ret;
-      if (obj instanceof Array) ret = [];
-      else { ret = {}; key.push(obj); val.push(ret); }
-      for(var k in obj) {
-        if (!obj.hasOwnProperty(k)) continue;
-        ret[k] = _clone(obj[k], key, val);
-      }
+      if (obj instanceof Array) ret = []; else ret = {};
+      key.push(obj); val.push(ret);
+      for(var k in obj) if (obj.hasOwnProperty(k)) ret[k] = _clone(obj[k], key, val);
       return ret;
     }
     return obj;
@@ -290,12 +281,8 @@
     return this;
   }
   _M.prototype._emit = function(msg) {
-    for (var i in this._handles) {
-      if (!this._handles.hasOwnProperty(i)) continue;
-      this._handles[i].apply(this, [MIDI(msg)._stamp(this)]);
-    }
-    for (var i in this._outs) {
-      if (!this._outs.hasOwnProperty(i)) continue;
+    for (var i = 0; i < this._handles.length; i++) this._handles[i].apply(this, [MIDI(msg)._stamp(this)]);
+    for (var i = 0; i < this._outs.length; i++) {
       var m = MIDI(msg);
       if (!m._stamped(this._outs[i])) this._outs[i].send(m._stamp(this));
     }
@@ -545,8 +532,7 @@
           },
           _close: function(port){ _engine._closeIn(port); },
           handle: function(t, a) {
-            for (var i in this.clients) {
-              if (!this.clients.hasOwnProperty(i)) continue;
+            for (var i = 0; i < this.clients.length; i++) {
               var msg = MIDI(a);
               this.clients[i]._emit(msg);
             }
@@ -587,10 +573,7 @@
       }
     }
     _engine._close = function() {
-      for (var i in _engine._inArr) {
-        if (!_engine._inArr.hasOwnProperty(i)) continue;
-        if (_engine._inArr[i].open) _engine._inArr[i].plugin.MidiInClose();
-      }
+      for (var i = 0; i < _engine._inArr.length; i++) if (_engine._inArr[i].open) _engine._inArr[i].plugin.MidiInClose();
     }
     _J.prototype._time = function() { return _engine._main.Time(); }
   }
@@ -685,8 +668,7 @@
           },
           _close: function(port){ _engine._closeIn(port); },
           handle: function(evt) {
-            for (var i in this.clients) {
-              if (!this.clients.hasOwnProperty(i)) continue;
+            for (var i = 0; i < this.clients.length; i++) {
               var msg = MIDI([].slice.call(evt.data));
               this.clients[i]._emit(msg);
             }
@@ -887,11 +869,7 @@
   JZZ.info = function() { return _J.prototype.info();}
   JZZ.createNew = function(arg) {
     var obj = new _M();
-    if (arg instanceof Object)
-      for (var k in arg) {
-        if (!arg.hasOwnProperty(k)) continue;
-        obj[k] = arg[k];
-      }
+    if (arg instanceof Object) for (var k in arg) if (arg.hasOwnProperty(k)) obj[k] = arg[k];
     obj._resume();
     return obj;
   }
@@ -1192,10 +1170,8 @@
     MIDI[name] = function(){ return new MIDI(func.apply(0, arguments));};
     _M.prototype[name] = function(){ this.send(func.apply(0, arguments)); return this;};
   }
-  for (var k in _helper) {
-    if (!_helper.hasOwnProperty(k)) continue;
-    _copyHelper(k, _helper[k]);
-  }
+  for (var k in _helper) if (_helper.hasOwnProperty(k)) _copyHelper(k, _helper[k]);
+
   var _channelMap = { a:10, b:11, c:12, d:13, e:14, f:15, A:10, B:11, C:12, D:13, E:14, F:15 };
   for (var k = 0; k < 16; k++) _channelMap[k] = k;
   MIDI.prototype.getChannel = function() {
@@ -1404,10 +1380,7 @@
   }
   JZZ.lib.registerMidiOut = function(name, engine) {
     var x = engine._info(name);
-    for (var i in _virtual._outs) {
-      if (!_virtual._outs.hasOwnProperty(i)) continue;
-      if (_virtual._outs[i].name == x.name) return false;
-    }
+    for (var i = 0; i < _virtual._outs.length; i++) if (_virtual._outs[i].name == x.name) return false;
     x.engine = engine;
     _virtual._outs.push(x);
     if (_jzz && _jzz._bad) { _jzz._repair(); _jzz._resume(); }
@@ -1415,10 +1388,7 @@
   }
   JZZ.lib.registerMidiIn = function(name, engine) {
     var x = engine._info(name);
-    for (var i in _virtual._ins) {
-      if (!_virtual._ins.hasOwnProperty(i)) continue;
-      if (_virtual._ins[i].name == x.name) return false;
-    }
+    for (var i = 0; i < _virtual._ins.length; i++) if (_virtual._ins[i].name == x.name) return false;
     x.engine = engine;
     _virtual._ins.push(x);
     if (_jzz && _jzz._bad) { _jzz._repair(); _jzz._resume(); }
