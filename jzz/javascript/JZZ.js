@@ -516,7 +516,8 @@
     }
     _engine._openIn = function(port, name) {
       var impl = _engine._inMap[name];
-      if (!impl) {
+      if (!impl || !impl.open) { // - hack
+//      if (!impl) {
         if (_engine._pool.length <= _engine._inArr.length) _engine._pool.push(_engine._newPlugin());
         function makeHandle(x) { return function(t, a) { x.handle(t, a); }; };
         impl = {
@@ -544,9 +545,9 @@
         _engine._inMap[name] = impl;
       }
       if (!impl.open) {
-        var s = plugin.MidiInOpen(name, makeHandle(impl));
+        var s = impl.plugin.MidiInOpen(name, makeHandle(impl));
         if (s !== name) {
-          if (s) plugin.MidiInClose();
+          if (s) impl.plugin.MidiInClose();
           port._break(); return;
         }
         impl.open = true;
@@ -644,6 +645,7 @@
         else impl = undefined;
       }
       if (impl) {
+        if (impl.dev.open) impl.dev.open();
         port._orig._impl = impl;
         _push(impl.clients, port._orig);
         port._info = impl.info;
@@ -686,6 +688,7 @@
         else impl = undefined;
       }
       if (impl) {
+        if (impl.dev.open) impl.dev.open();
         port._orig._impl = impl;
         _push(impl.clients, port._orig);
         port._info = impl.info;
@@ -695,11 +698,17 @@
     }
     _engine._closeOut = function(port) {
       var impl = port._impl;
+      if (!impl.clients.length) {
+        if (impl.dev.close) impl.dev.close();
+      }
       _pop(impl.clients, port._orig);
     }
     _engine._closeIn = function(port) {
       var impl = port._impl;
       _pop(impl.clients, port._orig);
+      if (!impl.clients.length) {
+        if (impl.dev.close) impl.dev.close();
+      }
     }
     _engine._close = function() {
     }
@@ -751,14 +760,16 @@
         plugin.output = impl;
         _engine._outArr.push(impl);
         _engine._outMap[name] = impl;
-        if (plugin.ready) impl._start();
       }
       port._orig._impl = impl;
       _push(impl.clients, port._orig);
       port._info = impl.info;
       port._receive = function(arg) { impl._receive(arg); }
       port._close = function() { impl._close(this); }
-      if (!impl.open) port._pause();
+      if (!impl.open) {
+        if (impl.plugin.ready) impl._start();
+        port._pause();
+      }
     }
     _engine._openIn = function(port, name) {
       var impl = _engine._inMap[name];
@@ -783,13 +794,15 @@
         plugin.input = impl;
         _engine._inArr.push(impl);
         _engine._inMap[name] = impl;
-        if (plugin.ready) impl._start();
       }
       port._orig._impl = impl;
       _push(impl.clients, port._orig);
       port._info = impl.info;
       port._close = function() { impl._close(this); }
-      if (!impl.open) port._pause();
+      if (!impl.open) {
+        if (impl.plugin.ready) impl._start();
+        port._pause();
+      }
     }
     _engine._closeOut = function(port) {
       var impl = port._impl;
