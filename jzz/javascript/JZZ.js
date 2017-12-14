@@ -1,6 +1,6 @@
 (function() {
 
-  var _version = '0.3.9';
+  var _version = '0.4.0';
 
   // _R: common root for all async objects
   function _R() {
@@ -53,7 +53,12 @@
   _R.prototype.or = function(func) { this._push(_or, [func]); return this; }
 
   _R.prototype._info = {};
-  _R.prototype.info = function() { return _clone(this._orig._info); }
+  _R.prototype.info = function() {
+    var info = _clone(this._orig._info);
+    if (typeof info.engine == 'undefined') info.engine = 'none';
+    if (typeof info.sysex == 'undefined') info.sysex = true;
+    return info;
+  }
   _R.prototype.name = function() { return this.info().name; }
 
   function _close(obj) {
@@ -123,7 +128,7 @@
     }
     return obj;
   }
-  _J.prototype._info = { name: 'JZZ.js', ver: _version };
+  _J.prototype._info = { name: 'JZZ.js', ver: _version, version:  _version };
 
   var _outs = [];
   var _ins = [];
@@ -219,18 +224,11 @@
     port._crash(msg);
   }
 
-  function _defaultPortInfo() {
-    if (typeof this._info.engine == 'undefined') this._info.engine = 'none';
-    if (typeof this._info.sysex == 'undefined') this._info.sysex = true;
-    if (typeof this._info.type == 'undefined') this._info.type = 'unknown';
-  }
-
   function _openMidiOut(port, arg) {
     var arr = _filterList(arg, _outs);
     if (!arr.length) { _notFound(port, arg); return; }
     function pack(x){ return function(){x.engine._openOut(this, x.name);};};
     for (var i=0; i<arr.length; i++) arr[i] = pack(arr[i]);
-    port._slip(_defaultPortInfo, []);
     port._slip(_tryAny, [arr]);
     port._resume();
   }
@@ -246,7 +244,6 @@
     if (!arr.length) { _notFound(port, arg); return; }
     function pack(x){ return function(){x.engine._openIn(this, x.name);};};
     for (var i=0; i<arr.length; i++) arr[i] = pack(arr[i]);
-    port._slip(_defaultPortInfo, []);
     port._slip(_tryAny, [arr]);
     port._resume();
   }
@@ -373,7 +370,7 @@
     }
     this._break();
   }
-  // Chrome CRX
+  // Web-extension
   function _tryCRX() {
     var self = this;
     var inst;
@@ -414,7 +411,7 @@
         if (opt && opt.sysex === true) ret.push(_tryWebMIDIsysex);
         if (!opt || opt.sysex !== true || opt.degrade === true) ret.push(_tryWebMIDI);
       }
-      else if (arr[i] == 'crx') ret.push(_tryCRX);
+      else if (arr[i] == 'extension') ret.push(_tryCRX);
       else if (arr[i] == 'plugin') ret.push(_tryJazzPlugin);
     }
     ret.push(_initNONE);
@@ -422,7 +419,7 @@
   }
 
   function _filterEngineNames(opt) {
-    var web = ['crx', 'webmidi', 'plugin'];
+    var web = ['extension', 'webmidi', 'plugin'];
     if (!opt || !opt.engine) return web;
     var arr = opt.engine instanceof Array ? opt.engine : [opt.engine];
     var dup = {};
@@ -516,10 +513,8 @@
     }
     _engine._openIn = function(port, name) {
       var impl = _engine._inMap[name];
-      if (!impl || !impl.open) { // - hack
-//      if (!impl) {
+      if (!impl) {
         if (_engine._pool.length <= _engine._inArr.length) _engine._pool.push(_engine._newPlugin());
-        function makeHandle(x) { return function(t, a) { x.handle(t, a); }; };
         impl = {
           name: name,
           clients: [],
@@ -539,13 +534,15 @@
             }
           }
         };
+        function makeHandle(x) { return function(t, a) { x.handle(t, a); }; };
+        impl.onmidi = makeHandle(impl);
         var plugin = _engine._pool[_engine._inArr.length];
         impl.plugin = plugin;
         _engine._inArr.push(impl);
         _engine._inMap[name] = impl;
       }
       if (!impl.open) {
-        var s = impl.plugin.MidiInOpen(name, makeHandle(impl));
+        var s = impl.plugin.MidiInOpen(name, impl.onmidi);
         if (s !== name) {
           if (s) impl.plugin.MidiInClose();
           port._break(); return;
@@ -714,7 +711,7 @@
     }
   }
   function _initCRX(msg, ver) {
-    _engine._type = 'crx';
+    _engine._type = 'extension';
     _engine._version = ver;
     _engine._sysex = true;
     _engine._pool = [];
@@ -851,15 +848,21 @@
         else if (a[0] === 'openout') {
           var impl = _engine._pool[a[1]].output;
           if (impl) {
-            impl.open = true;
-            if (impl.clients) for (var i=0; i<impl.clients.length; i++) impl.clients[i]._resume();
+            if (a[2] == impl.name) {
+              impl.open = true;
+              if (impl.clients) for (var i = 0; i < impl.clients.length; i++) impl.clients[i]._resume();
+            }
+            else if (impl.clients) for (var i = 0; i < impl.clients.length; i++) impl.clients[i]._crash();
           }
         }
         else if (a[0] === 'openin') {
           var impl = _engine._pool[a[1]].input;
           if (impl) {
-            impl.open = true;
-            if (impl.clients) for (var i=0; i<impl.clients.length; i++) impl.clients[i]._resume();
+            if (a[2] == impl.name) {
+              impl.open = true;
+              if (impl.clients) for (var i = 0; i < impl.clients.length; i++) impl.clients[i]._resume();
+            }
+            else if (impl.clients) for (var i = 0; i < impl.clients.length; i++) impl.clients[i]._crash();
           }
         }
         else if (a[0] === 'midi') {
@@ -1382,13 +1385,11 @@
   JZZ.lib.openMidiOut = function(name, engine) {
     var port = new _M();
     engine._openOut(port, name);
-    _defaultPortInfo.apply(port);
     return port;
   }
   JZZ.lib.openMidiIn = function(name, engine) {
     var port = new _M();
     engine._openIn(port, name);
-    _defaultPortInfo.apply(port);
     return port;
   }
   JZZ.lib.registerMidiOut = function(name, engine) {

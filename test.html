@@ -5,54 +5,77 @@
 <meta http-equiv="X-UA-Compatible" content="requiresActiveX=true"/>
 <script src="jzz/javascript/JZZ.js"></script>
 <script><!--
-function test(){
-  JZZ().openMidiOut()
-       .wait(500).send([0x90,60,127])
-       .wait(500).send([0x90,64,127])
-       .wait(500).send([0x90,67,127])
-       .wait(500).send([0x90,72,127])
-       .wait(500).send([0x90,60,0]).send([0x90,64,0]).send([0x90,67,0]).send([0x90,72,0]);
+var midi_out;
+var midi_in;
+function open_midi_out() {
+  midi_out = JZZ().openMidiOut()
+    .or(function(){document.getElementById("midiOutName").innerHTML = "Cannot open!";})
+    .and(function(){document.getElementById("midiOutName").innerHTML = this.name(); console.log(this.info());});
+}
+function test_midi_out() {
+  if (midi_out) midi_out.send([0x90,60,127]).wait(500).send([0x90,60,0]);
+}
+function change_midi_out(x) {
+  if (midi_out) midi_out.program(0, x);
+}
+function close_midi_out() {
+  if (midi_out) {
+    midi_out.close();
+    midi_out = undefined;
+    document.getElementById("midiOutName").innerHTML = "closed";
+  }
+}
+
+function open_midi_in() {
+  midi_in = JZZ().openMidiIn()
+    .or(function(){document.getElementById("midiInName").innerHTML = "Cannot open!";})
+    .and(function(){document.getElementById("midiInName").innerHTML = this.name(); console.log(this.info());})
+    .connect(function(msg){
+      output.push(msg.toString());
+      if (output.length > 20) output.splice(0, 1);
+      document.getElementById("midiIn").innerHTML = output.join("\n");
+    });
+}
+function close_midi_in() {
+  if (midi_in) {
+    midi_in.close();
+    midi_in = undefined;
+    document.getElementById("midiInName").innerHTML = "closed";
+  }
 }
 --></script>
 </head>
 
 <body>
-<h1>JZZ v.<span id="jzzVersion">0.0</span> test page</h1>
+<h1>Testing JZZ v.<span id="jzzVersion">0.0</span></h1>
 <p>
 <span id="midiEngineStatus"> </span>
 </p><p>
 MIDI-Out: <span id="midiOutName">NONE</span>
 </p><p>
-<button  onclick='test();'>Press to play!</button> 
+<button  onclick='open_midi_out();'>open</button> 
+<button  onclick='test_midi_out();'>play</button> 
+<button  onclick='change_midi_out(0);'>piano</button> 
+<button  onclick='change_midi_out(16);'>organ</button> 
+<button  onclick='close_midi_out();'>close</button> 
 </p><p>
 MIDI-In: <span id="midiInName">NONE</span>
+</p><p>
+<button  onclick='open_midi_in();'>open</button> 
+<button  onclick='close_midi_in();'>close</button> 
+</p><p>
 </p><p>
 <pre id="midiIn">
 messages
 </pre>
 </p>
 
-
 <script><!--
 document.getElementById("jzzVersion").innerHTML = JZZ.info().ver;
 var output = [];
-
 JZZ({sysex:true, degrade:true})
   .or(function(){document.getElementById("midiEngineStatus").innerHTML = "Cannot start MIDI Engine!";})
   .and(function(){ var info = this.info(); console.log(info); document.getElementById("midiEngineStatus").innerHTML = "MIDI Engine is running: " + info.engine + " v." + info.version + "; sysex: " + info.sysex;});
-
-JZZ().openMidiOut()
-  .or(function(){document.getElementById("midiOutName").innerHTML = "Cannot open!";})
-  .and(function(){document.getElementById("midiOutName").innerHTML = this.name(); console.log(this.info());});
-
-JZZ().openMidiIn()
-  .or(function(){document.getElementById("midiInName").innerHTML = "Cannot open!";})
-  .and(function(){document.getElementById("midiInName").innerHTML = this.name();})
-  .connect(function(msg){
-    output.push(msg.toString());
-    if (output.length > 20) output.splice(0, 1);
-    document.getElementById("midiIn").innerHTML = output.join("\n");
-  });
 --></script>
 
 
