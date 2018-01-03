@@ -1,6 +1,6 @@
 (function() {
 
-  var _version = '0.4.0';
+  var _version = '0.4.1';
 
   // _R: common root for all async objects
   function _R() {
@@ -1408,23 +1408,39 @@
     if (_jzz && _jzz._bad) { _jzz._repair(); _jzz._resume(); }
     return true;
   }
+  var _ac;
+  JZZ.lib.getAudioContext = function() { return _ac; }
+  if (window) {
+    var AudioContext = window.AudioContext || window.webkitAudioContext;
+    if (AudioContext) _ac = new AudioContext();
+    if (_ac && !_ac.createGain) _ac.createGain = _ac.createGainNode;
+    function _activateAudioContext() {
+      if (_ac.state != 'running') {
+        _ac.resume();
+        var osc = _ac.createOscillator();
+        var gain = _ac.createGain();
+        gain.gain.setTargetAtTime(0, _ac.currentTime, 0.01);
+        osc.connect(gain);
+        gain.connect(_ac.destination);
+        if (!osc.start) osc.start = osc.noteOn;
+        if (!osc.stop) osc.stop = osc.noteOff;
+        osc.start(.1); osc.stop(0.11);
+      }
+      else {
+        document.removeEventListener('touchend', _activateAudioContext);
+        document.removeEventListener('mousedown', _activateAudioContext);
+        document.removeEventListener('keydown', _activateAudioContext);
+      }
+    }
+    document.addEventListener('touchend', _activateAudioContext);
+    document.addEventListener('mousedown', _activateAudioContext);
+    document.addEventListener('keydown', _activateAudioContext);
+    _activateAudioContext();
+  }
 
   JZZ.util = {};
   JZZ.util.iosSound = function() {
-    JZZ.util.iosSound = function() {};
-    if (!window) return;
-    var AudioContext = window.AudioContext || window.webkitAudioContext;
-    if (!AudioContext) return;
-    var context = new AudioContext();
-    if (!context.createGain) context.createGain = context.createGainNode;
-    var osc = context.createOscillator();
-    var gain = context.createGain();
-    gain.gain.value = 0;
-    osc.connect(gain);
-    gain.connect(context.destination);
-    if (!osc.start) osc.start = osc.noteOn;
-    if (!osc.stop) osc.stop = osc.noteOff;
-    osc.start(0); osc.stop(1);
+    // deprecated. will be removed in next version
   }
 
 })();

@@ -1,14 +1,14 @@
 # JZZ: Asynchronous MIDI Library
 
 [![nodejs](http://jazz-soft.github.io/img/nodejs.jpg)](https://www.npmjs.com/package/jzz)
-[![firefox](http://jazz-soft.github.io/img/firefox.jpg)](http://jazz-soft.net/download/Jazz-Plugin)
-[![chrome](http://jazz-soft.github.io/img/chrome.jpg)](http://jazz-soft.net/download/Jazz-Plugin)
-[![opera](http://jazz-soft.github.io/img/opera.jpg)](http://jazz-soft.net/download/Jazz-Plugin)
-[![safari](http://jazz-soft.github.io/img/safari.jpg)](http://jazz-soft.net/download/Jazz-Plugin)
-[![msie](http://jazz-soft.github.io/img/msie.jpg)](http://jazz-soft.net/download/Jazz-Plugin)
-[![windows](http://jazz-soft.github.io/img/windows.jpg)](http://jazz-soft.net/download/Jazz-Plugin)
-[![mocos](http://jazz-soft.github.io/img/macos.jpg)](http://jazz-soft.net/download/Jazz-Plugin)
-[![linux](http://jazz-soft.github.io/img/linux.jpg)](http://jazz-soft.net/download/Jazz-Plugin)
+[![firefox](http://jazz-soft.github.io/img/firefox.jpg)](https://addons.mozilla.org/en-US/firefox/addon/jazz-midi)
+[![chrome](http://jazz-soft.github.io/img/chrome.jpg)](https://chrome.google.com/webstore/detail/jazz-midi/jhdoobfdaejmldnpihidjemjcbpfmbkm)
+[![opera](http://jazz-soft.github.io/img/opera.jpg)](https://chrome.google.com/webstore/detail/jazz-midi/jhdoobfdaejmldnpihidjemjcbpfmbkm)
+[![safari](http://jazz-soft.github.io/img/safari.jpg)](https://jazz-soft.net/download/Jazz-Plugin)
+[![msie](http://jazz-soft.github.io/img/msie.jpg)](https://jazz-soft.net/download/Jazz-Plugin)
+[![windows](http://jazz-soft.github.io/img/windows.jpg)](https://jazz-soft.net/download/Jazz-Plugin)
+[![mocos](http://jazz-soft.github.io/img/macos.jpg)](https://jazz-soft.net/download/Jazz-Plugin)
+[![linux](http://jazz-soft.github.io/img/linux.jpg)](https://jazz-soft.net/download/Jazz-Plugin)
 [![raspberry pi](http://jazz-soft.github.io/img/rpi.jpg)](https://www.npmjs.com/package/jazz-midi)
 [![ios](http://jazz-soft.github.io/img/ios.jpg)](https://github.com/jazz-soft/JZZ-modules)
 [![android](http://jazz-soft.github.io/img/android.jpg)](https://github.com/jazz-soft/JZZ-modules)
@@ -16,22 +16,20 @@
 **JZZ.js** allows sending, receiving and playing MIDI messages
 in **Node.js** and **all major browsers**
 in **Linux**, **MacOS** and **Windows**.
+Some features are available on **iOS** and **Android** devices.
 
-It requires [**jazz-midi**](https://www.npmjs.com/package/jazz-midi)
-or [**Jazz-Plugin**](http://jazz-soft.net),
-and uses [**Chrome Web MIDI API**](http://webaudio.github.io/web-midi-api)
-and/or [**Web Audio**](https://github.com/jazz-soft/JZZ-modules)
-as a fallback.
-
-Limited support is available on **iOS** and **Android** devices.
+For the best user experience, it's *highly RECOMMENDED (though not required)*
+to install the latest version of [**Jazz-Plugin**](http://jazz-soft.net)
+and browser extensions from [**Chrome Web Store**](https://chrome.google.com/webstore/detail/jazz-midi/jhdoobfdaejmldnpihidjemjcbpfmbkm)
+or [**Mozilla Add-ons**](https://addons.mozilla.org/en-US/firefox/addon/jazz-midi).
 
 Node.js module: [**npm install jzz**](https://www.npmjs.com/package/jzz).
 
 Development version and minified scripts are available at [**Github**](https://github.com/jazz-soft/JZZ).
 
-Your questions and comments are welcome [**here**](http://jazz-soft.org).
+Your questions and comments are welcome [**here**](https://jazz-soft.org).
 
-You can also [**support**](http://jazz-soft.net/donate) this project.
+We would really appreciate your [**support**](https://jazz-soft.net/donate)!
 
 ## Usage
 
@@ -77,6 +75,6 @@ All calls below will do the same job:
          .connect(function(msg){console.log(msg.toString());})
          .wait(10000).close();
 
-*Check the [**Getting Started**](http://jazz-soft.net/doc/JZZ) page
-and the [**API reference**](http://jazz-soft.net/doc/JZZ/reference.html)
+*Check the [**Getting Started**](https://jazz-soft.net/doc/JZZ) page
+and the [**API reference**](https://jazz-soft.net/doc/JZZ/reference.html)
 for more information ...*
