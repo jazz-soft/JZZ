@@ -1,7 +1,16 @@
-(function() {
+(function(global, factory) {
+  if (typeof exports === 'object' && typeof module !== 'undefined') {
+    module.exports = factory();
+  }
+  else if (typeof define === 'function' && define.amd) {
+    define('JZZ', [], factory);
+  }
+  else {
+    global.JZZ = factory();
+  }
+})(this, function(){
 
-  var _version = '0.4.1';
-
+  var _version = '0.4.2';
   var i, j, k, m, n;
 
   // _R: common root for all async objects
@@ -89,7 +98,7 @@
       func.apply(this);
     }
     catch (err) {
-      this._break(e.toString());
+      this._break(err.toString());
     }
   }
 
@@ -882,7 +891,7 @@
     });
   }
 
-  JZZ = function(opt) {
+  var JZZ = function(opt) {
     if (!_jzz) _initJZZ(opt);
     return _jzz;
   };
@@ -1414,7 +1423,7 @@
   };
   var _ac;
   JZZ.lib.getAudioContext = function() { return _ac; };
-  if (window) {
+  if (typeof window !== 'undefined') {
     var AudioContext = window.AudioContext || window.webkitAudioContext;
     if (AudioContext) _ac = new AudioContext();
     if (_ac && !_ac.createGain) _ac.createGain = _ac.createGainNode;
@@ -1441,5 +1450,5 @@
     document.addEventListener('keydown', _activateAudioContext);
     _activateAudioContext();
   }
-
-})();
+  return JZZ;
+});

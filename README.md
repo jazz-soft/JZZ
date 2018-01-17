@@ -33,18 +33,7 @@ We would really appreciate your [**support**](https://jazz-soft.net/donate)!
 
 ## Usage
 
-##### Node.js
-
-    var JZZ = require('jzz');
-    JZZ().or('Cannot start MIDI engine!')
-         .openMidiOut().or('Cannot open MIDI Out port!')
-         .wait(500).send([0x90,60,127])
-         .wait(500).send([0x90,64,127])
-         .wait(500).send([0x90,67,127])
-         .wait(1000).send([0x90,60,0]).send([0x90,64,0]).send([0x90,67,0])
-         .and('thank you!');
-
-##### HTML
+##### Plain HTML
 
     <script src="scripts/JZZ.js"></script>
     ...
@@ -57,6 +46,29 @@ We would really appreciate your [**support**](https://jazz-soft.net/donate)!
          .wait(1000).send([0x90,60,0]).send([0x90,64,0]).send([0x90,67,0])
          .and('thank you!');
     --></script>
+
+##### CommonJS (Browserify and Node.js command line applications)
+
+    var JZZ = require('jzz');
+    JZZ().or('Cannot start MIDI engine!')
+         .openMidiOut().or('Cannot open MIDI Out port!')
+         .wait(500).send([0x90,60,127])
+         .wait(500).send([0x90,64,127])
+         .wait(500).send([0x90,67,127])
+         .wait(1000).send([0x90,60,0]).send([0x90,64,0]).send([0x90,67,0])
+         .and('thank you!');
+
+##### AMD
+
+    require(['JZZ'], function(JZZ) {
+      JZZ().or('Cannot start MIDI engine!')
+           .openMidiOut().or('Cannot open MIDI Out port!')
+           .wait(500).send([0x90,60,127])
+           .wait(500).send([0x90,64,127])
+           .wait(500).send([0x90,67,127])
+           .wait(1000).send([0x90,60,0]).send([0x90,64,0]).send([0x90,67,0])
+           .and('thank you!');
+    });
 
 ##### Helpers and shortcuts
 

@@ -1,4 +1,4 @@
-var JZZ = require('./jzz');
+var JZZ = require('.');
 var outs;
 var ins;
 
