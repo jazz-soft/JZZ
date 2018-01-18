@@ -9,8 +9,10 @@
   "keywords": [
     "MIDI",
     "midi",
-    "music",
-    "sound"
+    "webmidi",
+    "webmidiapi",
+    "web-midi",
+    "web-midi-api"
   ],
   "author": "jazz-soft (http://jazz-soft.net/)",
   "dependencies": {

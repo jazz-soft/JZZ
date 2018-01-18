@@ -1,0 +1,26 @@
+{
+  "name": "jzz",
+  "description": "Async MIDI library for Node.js and web-browsers",
+  "main": "javascript/JZZ.js",
+  "authors": [
+    "jazz-soft (http://jazz-soft.net/)"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "MIDI",
+    "midi",
+    "webmidi",
+    "webmidiapi",
+    "web-midi",
+    "web-midi-api"
+  ],
+  "homepage": "https://jazz-soft.net/doc/JZZ",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "minified",
+    "test.*"
+    "Gruntfile.js"
+  ]
+}
