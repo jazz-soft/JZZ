@@ -20,7 +20,7 @@
     "node_modules",
     "bower_components",
     "minified",
-    "test.*"
+    "test.*",
     "Gruntfile.js"
   ]
 }
