@@ -1,9 +1,14 @@
 {
   "name": "jzz",
   "description": "Async MIDI library for Node.js and web-browsers",
-  "main": "javascript/JZZ.js",
   "authors": [
     "jazz-soft (http://jazz-soft.net/)"
+  ],
+  "main": "javascript/JZZ.js",
+  "moduleType": [
+    "amd",
+    "node",
+    "globals"
   ],
   "license": "MIT",
   "keywords": [
