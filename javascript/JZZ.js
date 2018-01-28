@@ -10,7 +10,7 @@
   }
 })(this, function(){
 
-  var _version = '0.4.2';
+  var _version = '0.4.3';
   var i, j, k, m, n;
 
   // _R: common root for all async objects
@@ -896,13 +896,17 @@
     return _jzz;
   };
   JZZ.info = function() { return _J.prototype.info();};
-  JZZ.createNew = function(arg) {
+  JZZ.Widget = function(arg) {
     var obj = new _M();
     if (arg instanceof Object) for (var k in arg) if (arg.hasOwnProperty(k)) obj[k] = arg[k];
     obj._resume();
     return obj;
   };
-  _J.prototype.createNew = JZZ.createNew;
+  _J.prototype.Widget = JZZ.Widget;
+
+  // deprecated. will be removed from the next release
+  JZZ.createNew = JZZ.Widget;
+  _J.prototype.createNew = JZZ.Widget;
 
   // JZZ.SMPTE
 
