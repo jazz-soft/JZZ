@@ -23,13 +23,11 @@ to install the latest version of [**Jazz-Plugin**](http://jazz-soft.net)
 and browser extensions from [**Chrome Web Store**](https://chrome.google.com/webstore/detail/jazz-midi/jhdoobfdaejmldnpihidjemjcbpfmbkm)
 or [**Mozilla Add-ons**](https://addons.mozilla.org/en-US/firefox/addon/jazz-midi).
 
-Node.js module: [**npm install jzz**](https://www.npmjs.com/package/jzz).
+## Install
 
-Development version and minified scripts are available at [**Github**](https://github.com/jazz-soft/JZZ).
-
-Your questions and comments are welcome [**here**](https://jazz-soft.org).
-
-We would really appreciate your [**support**](https://jazz-soft.net/donate)!
+[**npm install jzz**](https://www.npmjs.com/package/jzz)  
+**bower install jzz**  
+or get full development version and minified scripts from [**Github**](https://github.com/jazz-soft/JZZ)
 
 ## Usage
 
@@ -89,4 +87,7 @@ All calls below will do the same job:
 
 *Check the [**Getting Started**](https://jazz-soft.net/doc/JZZ) page
 and the [**API reference**](https://jazz-soft.net/doc/JZZ/reference.html)
-for more information ...*
+for more information.  
+Your questions and comments are welcome [**here**](https://jazz-soft.org).*
+
+We would really appreciate your [**support**](https://jazz-soft.net/donate)!
