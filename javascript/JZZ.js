@@ -10,7 +10,7 @@
   }
 })(this, function(){
 
-  var _version = '0.4.3';
+  var _version = '0.4.4';
   var i, j, k, m, n;
 
   // _R: common root for all async objects
@@ -1135,7 +1135,8 @@
   MIDI.prototype = [];
   MIDI.prototype.constructor = MIDI;
   var _noteNum = {};
-  MIDI.noteValue = function(x){ return _noteNum[x.toString().toLowerCase()]; };
+  MIDI.noteValue = function(x) { return _noteNum[x.toString().toLowerCase()]; };
+  MIDI.programValue = function(x) { return x; };
 
   var _noteMap = {c:0, d:2, e:4, f:5, g:7, a:9, b:11, h:11};
   for (k in _noteMap) {
@@ -1159,7 +1160,7 @@
     noteOn  : function(c, n, v){ return [0x90+_ch(c), _7b(MIDI.noteValue(n)), _7b(v)];},
     aftertouch : function(c, n, v){ return [0xA0+_ch(c), _7b(MIDI.noteValue(n)), _7b(v)];},
     control : function(c, n, v){ return [0xB0+_ch(c), _7b(n), _7b(v)];},
-    program : function(c, n){ return [0xC0+_ch(c), _7b(n)];},
+    program : function(c, n){ return [0xC0+_ch(c), _7b(MIDI.programValue(n))];},
     pressure: function(c, n){ return [0xD0+_ch(c), _7b(n)];},
     pitchBend: function(c, n){ return [0xE0+_ch(c), _lsb(n), _msb(n)];},
     bankMSB : function(c, n){ return [0xB0+_ch(c), 0x00, _7b(n)];},
