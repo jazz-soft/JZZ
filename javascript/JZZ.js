@@ -841,11 +841,11 @@
         if (!a.length) continue;
         if (a[0] === 'refresh') {
           if (a[1].ins) {
-            for (j = 0; i < a[1].ins; i++) a[1].ins[j].type = _engine._type;
+            for (j = 0; j < a[1].ins.length; j++) a[1].ins[j].type = _engine._type;
             _engine._ins = a[1].ins;
           }
           if (a[1].outs) {
-            for (j = 0; i < a[1].outs; i++) a[1].outs[j].type = _engine._type;
+            for (j = 0; j < a[1].outs.length; j++) a[1].outs[j].type = _engine._type;
             _engine._outs = a[1].outs;
           }
           _jzz._resume();
@@ -863,9 +863,9 @@
           if (impl) {
             if (a[2] == impl.name) {
               impl.open = true;
-              if (impl.clients) for (i = 0; i < impl.clients.length; i++) impl.clients[i]._resume();
+              if (impl.clients) for (j = 0; j < impl.clients.length; j++) impl.clients[j]._resume();
             }
-            else if (impl.clients) for (i = 0; i < impl.clients.length; i++) impl.clients[i]._crash();
+            else if (impl.clients) for (j = 0; j < impl.clients.length; j++) impl.clients[j]._crash();
           }
         }
         else if (a[0] === 'openin') {
@@ -873,17 +873,17 @@
           if (impl) {
             if (a[2] == impl.name) {
               impl.open = true;
-              if (impl.clients) for (i = 0; i < impl.clients.length; i++) impl.clients[i]._resume();
+              if (impl.clients) for (j = 0; j < impl.clients.length; j++) impl.clients[j]._resume();
             }
-            else if (impl.clients) for (i = 0; i < impl.clients.length; i++) impl.clients[i]._crash();
+            else if (impl.clients) for (j = 0; j < impl.clients.length; j++) impl.clients[j]._crash();
           }
         }
         else if (a[0] === 'midi') {
           impl = _engine._pool[a[1]].input;
           if (impl && impl.clients) {
-            for (i = 0; i < impl.clients.length; i++) {
+            for (j = 0; j < impl.clients.length; j++) {
               var msg = MIDI(a.slice(3));
-              impl.clients[i]._emit(msg);
+              impl.clients[j]._emit(msg);
             }
           }
         }
