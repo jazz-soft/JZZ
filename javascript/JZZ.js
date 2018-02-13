@@ -306,7 +306,11 @@
     else _push(this._orig._outs, arg);
   }
   function _disconnect(arg) {
-    if (arg instanceof Function) _pop(this._orig._handles, arg);
+    if (typeof arg == 'undefined') {
+      this._orig._handles = [];
+      this._orig._outs = [];
+    }
+    else if (arg instanceof Function) _pop(this._orig._handles, arg);
     else _pop(this._orig._outs, arg);
   }
   _M.prototype.connect = function(arg) {
