@@ -265,6 +265,16 @@
     return port;
   };
 
+  function _onChange(arg) {
+    this._orig._watcher._slip(_connectW, [arg]);
+    this._orig._watcher._resume();
+  }
+  _J.prototype.onChange = function(arg) {
+    if (!this._orig._watcher) this._orig._watcher = new _W();
+    this._push(_onChange, [arg]);
+    return this._orig._watcher;
+  };
+
   _J.prototype._close = function() {
     _engine._close();
   };
@@ -319,6 +329,46 @@
   };
   _M.prototype.disconnect = function(arg) {
     this._push(_disconnect, [arg]);
+    return this;
+  };
+
+  // _W: Watcher object ~ MIDIAccess.onstatechange
+  function _W() {
+    _R.apply(this);
+    this._handles = [];
+  }
+  _W.prototype = new _R();
+  function _connectW(arg) {
+    if (arg instanceof Function) {
+      if (!this._orig._handles.length) {
+//console.log('start watcher');
+      }
+      _push(this._orig._handles, arg);
+      arg.apply(_jzz);
+    }
+  }
+  function _disconnectW(arg) {
+    if (typeof arg == 'undefined') {
+      this._orig._handles = [];
+    }
+    else _pop(this._orig._handles, arg);
+    if (!this._orig._handles.length) {
+//console.log('stop watcher');
+    }
+  }
+  function _fireW() {
+    for (i = 0; i < this._handles.length; i++) this._handles[i].apply(_jzz);
+  }
+  _W.prototype.connect = function(arg) {
+    this._push(_connectW, [arg]);
+    return this;
+  };
+  _W.prototype.disconnect = function(arg) {
+    this._push(_disconnectW, [arg]);
+    return this;
+  };
+  _W.prototype.fire = function(arg) {
+    this._push(_fireW, []);
     return this;
   };
 

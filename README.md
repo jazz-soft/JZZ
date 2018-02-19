@@ -28,7 +28,7 @@ or [**Mozilla Add-ons**](https://addons.mozilla.org/en-US/firefox/addon/jazz-mid
 [**npm install jzz**](https://www.npmjs.com/package/jzz)  
 or **bower install jzz**  
 or **yarn add jzz**  
-or get full development version and minified scripts from [**Github**](https://github.com/jazz-soft/JZZ)
+or get the full development version and minified scripts from [**Github**](https://github.com/jazz-soft/JZZ)
 
 ## Usage
 
