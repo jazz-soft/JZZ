@@ -358,7 +358,30 @@
     this._push(_disconnectW, [arg]);
     return this;
   };
-  function _diff(ins, outs) {
+  function _diff(x0, y0, x1, y1) {
+    var ax = []; // added
+    var ay = [];
+    var rx = []; // removed
+    var ry = [];
+    var i;
+    var h = {};
+    for (i = 0; i < x0.length; i++) h[x0[i].name] = true;
+    for (i = 0; i < x1.length; i++) if (!h[x1[i].name]) ax.push(x1[i]);
+    h = {};
+    for (i = 0; i < x1.length; i++) h[x1[i].name] = true;
+    for (i = 0; i < x0.length; i++) if (!h[x0[i].name]) rx.push(x0[i]);
+    h = {};
+    for (i = 0; i < y0.length; i++) h[y0[i].name] = true;
+    for (i = 0; i < y1.length; i++) if (!h[y1[i].name]) ay.push(y1[i]);
+    h = {};
+    for (i = 0; i < y1.length; i++) h[y1[i].name] = true;
+    for (i = 0; i < y0.length; i++) if (!h[y0[i].name]) ry.push(y0[i]);
+    if (ax.length || rx.length || ay.length || ry.length) {
+      return { inputs: { added: ax, removed: rx }, outputs: { added: ay, removed: ry } };
+    }
+  }
+  function _fireW(arg) {
+    for (i = 0; i < _jzz._watcher._handles.length; i++) _jzz._watcher._handles[i].apply(_jzz, [arg]);
   }
 
   var _jzz;
@@ -909,7 +932,9 @@
           if (watcher) {
             var diff = _diff(watchIn, watchOut, _engine._ins, _engine._outs);
             if (diff) {
-console.log('watcher:', diff);
+              watchIn = _engine._ins;
+              watchOut = _engine._outs;
+              _fireW(diff);
             }
           }
         }
