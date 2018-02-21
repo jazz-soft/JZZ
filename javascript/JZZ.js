@@ -340,24 +340,15 @@
   _W.prototype = new _R();
   function _connectW(arg) {
     if (arg instanceof Function) {
-      if (!this._orig._handles.length) {
-//console.log('start watcher');
-      }
+      if (!this._orig._handles.length) _engine._watch();
       _push(this._orig._handles, arg);
       arg.apply(_jzz);
     }
   }
   function _disconnectW(arg) {
-    if (typeof arg == 'undefined') {
-      this._orig._handles = [];
-    }
+    if (typeof arg == 'undefined') this._orig._handles = [];
     else _pop(this._orig._handles, arg);
-    if (!this._orig._handles.length) {
-//console.log('stop watcher');
-    }
-  }
-  function _fireW() {
-    for (i = 0; i < this._handles.length; i++) this._handles[i].apply(_jzz);
+    if (!this._orig._handles.length) _engine._unwatch();
   }
   _W.prototype.connect = function(arg) {
     this._push(_connectW, [arg]);
@@ -367,10 +358,8 @@
     this._push(_disconnectW, [arg]);
     return this;
   };
-  _W.prototype.fire = function(arg) {
-    this._push(_fireW, []);
-    return this;
-  };
+  function _diff(ins, outs) {
+  }
 
   var _jzz;
   var _engine = {};
@@ -885,6 +874,20 @@
     };
     _engine._close = function() {
     };
+    var watcher;
+    var watchIn;
+    var watchOut;
+    _engine._watch = function() {
+      watchIn = _engine._ins;
+      watchOut = _engine._outs;
+      watcher = setInterval(function() {
+        document.dispatchEvent(new CustomEvent('jazz-midi', {detail:['refresh']}));
+      }, 250);
+    };
+    _engine._unwatch = function() {
+      clearInterval(watcher);
+      watcher = undefined;
+    };
     document.addEventListener('jazz-midi-msg', function(e) {
       var v = _engine._msg.innerText.split('\n');
       var impl, i, j;
@@ -903,6 +906,12 @@
             _engine._outs = a[1].outs;
           }
           _jzz._resume();
+          if (watcher) {
+            var diff = _diff(watchIn, watchOut, _engine._ins, _engine._outs);
+            if (diff) {
+console.log('watcher:', diff);
+            }
+          }
         }
         else if (a[0] === 'version') {
           var plugin = _engine._pool[a[1]];
