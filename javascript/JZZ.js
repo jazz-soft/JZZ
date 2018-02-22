@@ -342,7 +342,6 @@
     if (arg instanceof Function) {
       if (!this._orig._handles.length) _engine._watch();
       _push(this._orig._handles, arg);
-      arg.apply(_jzz);
     }
   }
   function _disconnectW(arg) {
@@ -358,7 +357,15 @@
     this._push(_disconnectW, [arg]);
     return this;
   };
+  function _changed(x0, y0, x1, y1) {
+    var i;
+    if (x0.length != x1.length || y0.length != y1.length) return true;
+    for (i = 0; i < x0.length; i++) if (x0[i].name != x1[i].name) return true;
+    for (i = 0; i < y0.length; i++) if (y0[i].name != y1[i].name) return true;
+    return false;
+  }
   function _diff(x0, y0, x1, y1) {
+    if (!_changed(x0, y0, x1, y1)) return;
     var ax = []; // added
     var ay = [];
     var rx = []; // removed
@@ -811,6 +818,9 @@
       _jzz._pause();
       document.dispatchEvent(new CustomEvent('jazz-midi', {detail:['refresh']}));
     };
+    _closeAll = function() {
+      for (var i = 0; i < this.clients.length; i++) this._close(this.clients[i]);
+    }
     _engine._openOut = function(port, name) {
       var impl = _engine._outMap[name];
       if (!impl) {
@@ -829,6 +839,7 @@
           },
           _start: function(){ document.dispatchEvent(new CustomEvent('jazz-midi', {detail:['openout', plugin.id, name]})); },
           _close: function(port){ _engine._closeOut(port); },
+          _closeAll: _closeAll,
           _receive: function(a){ var v = a.slice(); v.splice(0, 0, 'play', plugin.id); document.dispatchEvent(new CustomEvent('jazz-midi', {detail: v})); }
         };
         impl.plugin = plugin;
@@ -863,7 +874,8 @@
             engine: _engine._type
           },
           _start: function(){ document.dispatchEvent(new CustomEvent('jazz-midi', {detail:['openin', plugin.id, name]})); },
-          _close: function(port){ _engine._closeIn(port); }
+          _close: function(port){ _engine._closeIn(port); },
+          _closeAll: _closeAll
         };
         impl.plugin = plugin;
         plugin.input = impl;
@@ -934,6 +946,14 @@
             if (diff) {
               watchIn = _engine._ins;
               watchOut = _engine._outs;
+              for (j = 0; j < diff.inputs.removed.length; j++) {
+                impl = _engine._inMap[diff.inputs.removed[j].name];
+                if (impl) impl._closeAll();
+              }
+              for (j = 0; j < diff.outputs.removed.length; j++) {
+                impl = _engine._outMap[diff.inputs.removed[j].name];
+                if (impl) impl._closeAll();
+              }
               _fireW(diff);
             }
           }
