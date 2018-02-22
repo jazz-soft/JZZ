@@ -548,6 +548,9 @@
     _engine._outMap = {};
     _engine._version = _engine._main.version;
     _engine._sysex = true;
+    _closeAll = function() {
+      for (var i = 0; i < this.clients.length; i++) this._close(this.clients[i]);
+    }
     _engine._refresh = function() {
       _engine._outs = [];
       _engine._ins = [];
@@ -575,6 +578,7 @@
             engine: _engine._type
           },
           _close: function(port){ _engine._closeOut(port); },
+          _closeAll: _closeAll,
           _receive: function(a){ this.plugin.MidiOutRaw(a.slice()); }
         };
         var plugin = _engine._pool[_engine._outArr.length];
@@ -612,6 +616,7 @@
             engine: _engine._type
           },
           _close: function(port){ _engine._closeIn(port); },
+          _closeAll: _closeAll,
           handle: function(t, a) {
             for (var i = 0; i < this.clients.length; i++) {
               var msg = MIDI(a);
@@ -690,6 +695,12 @@
     _engine._access = access;
     _engine._inMap = {};
     _engine._outMap = {};
+    _engine._outsW = [];
+    _engine._insW = [];
+    var watcher;
+    _closeAll = function() {
+      for (var i = 0; i < this.clients.length; i++) this._close(this.clients[i]);
+    }
     _engine._refresh = function() {
       _engine._outs = [];
       _engine._ins = [];
@@ -699,6 +710,20 @@
       _engine._access.inputs.forEach(function(port, key) {
         _engine._ins.push({type: _engine._type, name: port.name, manufacturer: port.manufacturer, version: port.version});
       });
+      var diff = _diff(_engine._insW, _engine._outsW, _engine._ins, _engine._outs);
+      if (diff) {
+        for (j = 0; j < diff.inputs.removed.length; j++) {
+          impl = _engine._inMap[diff.inputs.removed[j].name];
+          if (impl) impl._closeAll();
+        }
+        for (j = 0; j < diff.outputs.removed.length; j++) {
+          impl = _engine._outMap[diff.inputs.removed[j].name];
+          if (impl) impl._closeAll();
+        }
+        _engine._insW = _engine._ins;
+        _engine._outsW = _engine._outs;
+        if (watcher) _fireW(diff);
+      }
     };
     _engine._openOut = function(port, name) {
       var impl = _engine._outMap[name];
@@ -715,6 +740,7 @@
             engine: _engine._type
           },
           _close: function(port){ _engine._closeOut(port); },
+          _closeAll: _closeAll,
           _receive: function(a){ this.dev.send(a.slice());}
         };
         var id, dev;
@@ -751,6 +777,7 @@
             engine: _engine._type
           },
           _close: function(port){ _engine._closeIn(port); },
+          _closeAll: _closeAll,
           handle: function(evt) {
             for (var i = 0; i < this.clients.length; i++) {
               var msg = MIDI([].slice.call(evt.data));
@@ -794,6 +821,20 @@
     };
     _engine._close = function() {
     };
+    _engine._watch = function() {
+      _engine._access.onstatechange = function() {
+        watcher = true;
+        setTimeout(function() {
+          if (watcher) {
+            _engine._refresh();
+            watcher = false;
+          }
+        }, 0);
+      }
+    }
+    _engine._unwatch = function() {
+      _engine._access.onstatechange = undefined;
+    }
   }
   function _initCRX(msg, ver) {
     _engine._type = 'extension';
@@ -804,6 +845,8 @@
     _engine._outArr = [];
     _engine._inMap = {};
     _engine._outMap = {};
+    _engine._outsW = [];
+    _engine._insW = [];
     _engine._msg = msg;
     _engine._newPlugin = function() {
       var plugin = { id: _engine._pool.length };
@@ -910,11 +953,9 @@
     _engine._close = function() {
     };
     var watcher;
-    var watchIn;
-    var watchOut;
     _engine._watch = function() {
-      watchIn = _engine._ins;
-      watchOut = _engine._outs;
+      _engine._insW = _engine._ins;
+      _engine._outsW = _engine._outs;
       watcher = setInterval(function() {
         document.dispatchEvent(new CustomEvent('jazz-midi', {detail:['refresh']}));
       }, 250);
@@ -941,21 +982,19 @@
             _engine._outs = a[1].outs;
           }
           _jzz._resume();
-          if (watcher) {
-            var diff = _diff(watchIn, watchOut, _engine._ins, _engine._outs);
-            if (diff) {
-              watchIn = _engine._ins;
-              watchOut = _engine._outs;
-              for (j = 0; j < diff.inputs.removed.length; j++) {
-                impl = _engine._inMap[diff.inputs.removed[j].name];
-                if (impl) impl._closeAll();
-              }
-              for (j = 0; j < diff.outputs.removed.length; j++) {
-                impl = _engine._outMap[diff.inputs.removed[j].name];
-                if (impl) impl._closeAll();
-              }
-              _fireW(diff);
+          var diff = _diff(_engine._insW, _engine._outsW, _engine._ins, _engine._outs);
+          if (diff) {
+            _engine._insW = _engine._ins;
+            _engine._outsW = _engine._outs;
+            for (j = 0; j < diff.inputs.removed.length; j++) {
+              impl = _engine._inMap[diff.inputs.removed[j].name];
+              if (impl) impl._closeAll();
             }
+            for (j = 0; j < diff.outputs.removed.length; j++) {
+              impl = _engine._outMap[diff.inputs.removed[j].name];
+              if (impl) impl._closeAll();
+            }
+            if (watcher) _fireW(diff);
           }
         }
         else if (a[0] === 'version') {
