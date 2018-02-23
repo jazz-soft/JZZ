@@ -691,7 +691,7 @@
     }
     function watch(name) {
       watcher = true;
-      setTimeout(onChange, 100);
+      setTimeout(onChange, 0);
     }
     _engine._watch = function() {
       _engine._main.OnConnectMidiIn(watch);
@@ -1619,30 +1619,32 @@
   JZZ.lib.getAudioContext = function() { return _ac; };
   if (typeof window !== 'undefined') {
     var AudioContext = window.AudioContext || window.webkitAudioContext;
-    if (AudioContext) _ac = new AudioContext();
-    if (_ac && !_ac.createGain) _ac.createGain = _ac.createGainNode;
-    var _activateAudioContext = function() {
-      if (_ac.state != 'running') {
-        _ac.resume();
-        var osc = _ac.createOscillator();
-        var gain = _ac.createGain();
-        gain.gain.setTargetAtTime(0, _ac.currentTime, 0.01);
-        osc.connect(gain);
-        gain.connect(_ac.destination);
-        if (!osc.start) osc.start = osc.noteOn;
-        if (!osc.stop) osc.stop = osc.noteOff;
-        osc.start(0.1); osc.stop(0.11);
-      }
-      else {
-        document.removeEventListener('touchend', _activateAudioContext);
-        document.removeEventListener('mousedown', _activateAudioContext);
-        document.removeEventListener('keydown', _activateAudioContext);
-      }
-    };
-    document.addEventListener('touchend', _activateAudioContext);
-    document.addEventListener('mousedown', _activateAudioContext);
-    document.addEventListener('keydown', _activateAudioContext);
-    _activateAudioContext();
+    if (AudioContext) {
+     _ac = new AudioContext();
+      if (_ac && !_ac.createGain) _ac.createGain = _ac.createGainNode;
+      var _activateAudioContext = function() {
+        if (_ac.state != 'running') {
+          _ac.resume();
+          var osc = _ac.createOscillator();
+          var gain = _ac.createGain();
+          gain.gain.setTargetAtTime(0, _ac.currentTime, 0.01);
+          osc.connect(gain);
+          gain.connect(_ac.destination);
+          if (!osc.start) osc.start = osc.noteOn;
+          if (!osc.stop) osc.stop = osc.noteOff;
+          osc.start(0.1); osc.stop(0.11);
+        }
+        else {
+          document.removeEventListener('touchend', _activateAudioContext);
+          document.removeEventListener('mousedown', _activateAudioContext);
+          document.removeEventListener('keydown', _activateAudioContext);
+        }
+      };
+      document.addEventListener('touchend', _activateAudioContext);
+      document.addEventListener('mousedown', _activateAudioContext);
+      document.addEventListener('keydown', _activateAudioContext);
+      _activateAudioContext();
+    }
   }
   return JZZ;
 });
