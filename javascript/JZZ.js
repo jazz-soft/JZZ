@@ -539,6 +539,8 @@
     _engine._type = 'none';
     _engine._sysex = true;
     _engine._refresh = function() { _engine._outs = []; _engine._ins = []; };
+    _engine._watch = function() {};
+    _engine._unwatch = function() {};
   }
   // common initialization for Jazz-Plugin and jazz-midi
   function _initEngineJP() {
@@ -546,8 +548,11 @@
     _engine._outArr = [];
     _engine._inMap = {};
     _engine._outMap = {};
+    _engine._outsW = [];
+    _engine._insW = [];
     _engine._version = _engine._main.version;
     _engine._sysex = true;
+    var watcher;
     _closeAll = function() {
       for (var i = 0; i < this.clients.length; i++) this._close(this.clients[i]);
     }
@@ -555,11 +560,25 @@
       _engine._outs = [];
       _engine._ins = [];
       var i, x;
-      for( i=0; (x=_engine._main.MidiOutInfo(i)).length; i++) {
-        _engine._outs.push({type: _engine._type, name: x[0], manufacturer: x[1], version: x[2]});
+      for (i = 0; (x = _engine._main.MidiOutInfo(i)).length; i++) {
+        _engine._outs.push({ type: _engine._type, name: x[0], manufacturer: x[1], version: x[2] });
       }
-      for (i=0; (x=_engine._main.MidiInInfo(i)).length; i++) {
-        _engine._ins.push({type: _engine._type, name: x[0], manufacturer: x[1], version: x[2]});
+      for (i = 0; (x = _engine._main.MidiInInfo(i)).length; i++) {
+        _engine._ins.push({ type: _engine._type, name: x[0], manufacturer: x[1], version: x[2] });
+      }
+      var diff = _diff(_engine._insW, _engine._outsW, _engine._ins, _engine._outs);
+      if (diff) {
+        for (j = 0; j < diff.inputs.removed.length; j++) {
+          impl = _engine._inMap[diff.inputs.removed[j].name];
+          if (impl) impl._closeAll();
+        }
+        for (j = 0; j < diff.outputs.removed.length; j++) {
+          impl = _engine._outMap[diff.inputs.removed[j].name];
+          if (impl) impl._closeAll();
+        }
+        _engine._insW = _engine._ins;
+        _engine._outsW = _engine._outs;
+        if (watcher) _fireW(diff);
       }
     };
     _engine._openOut = function(port, name) {
@@ -662,6 +681,29 @@
     };
     _engine._close = function() {
       for (var i = 0; i < _engine._inArr.length; i++) if (_engine._inArr[i].open) _engine._inArr[i].plugin.MidiInClose();
+      _engine.unwatch();
+    };
+    function onChange() {
+      if (watcher) {
+        _engine._refresh();
+        watcher = false;
+      }
+    }
+    function watch(name) {
+      watcher = true;
+      setTimeout(onChange, 100);
+    }
+    _engine._watch = function() {
+      _engine._main.OnConnectMidiIn(watch);
+      _engine._main.OnConnectMidiOut(watch);
+      _engine._main.OnDisconnectMidiIn(watch);
+      _engine._main.OnDisconnectMidiOut(watch);
+    };
+    _engine._unwatch = function() {
+      _engine._main.OnConnectMidiIn();
+      _engine._main.OnConnectMidiOut();
+      _engine._main.OnDisconnectMidiIn();
+      _engine._main.OnDisconnectMidiOut();
     };
     _J.prototype._time = function() { return _engine._main.Time(); };
   }
