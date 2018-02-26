@@ -783,18 +783,16 @@
           },
           _close: function(port){ _engine._closeOut(port); },
           _closeAll: _closeAll,
-          _receive: function(a){ this.dev.send(a.slice());}
+          _receive: function(a){ if (impl.dev) this.dev.send(a.slice());}
         };
-        var id, dev;
-        _engine._access.outputs.forEach(function(dev, key) {
-          if (dev.name === name) impl.dev = dev;
-        });
-        if (impl.dev) {
-          _engine._outMap[name] = impl;
-        }
-        else impl = undefined;
       }
-      if (impl) {
+      var found;
+      _engine._access.outputs.forEach(function(dev, key) {
+        if (dev.name === name) found = dev;
+      });
+      if (found) {
+        impl.dev = found;
+        _engine._outMap[name] = impl;
         if (impl.dev.open) impl.dev.open();
         port._orig._impl = impl;
         _push(impl.clients, port._orig);
@@ -827,18 +825,16 @@
             }
           }
         };
-        var id, dev;
-        _engine._access.inputs.forEach(function(dev, key) {
-          if (dev.name === name) impl.dev = dev;
-        });
-        if (impl.dev) {
-          var makeHandle = function(x) { return function(evt) { x.handle(evt); }; };
-          impl.dev.onmidimessage = makeHandle(impl);
-          _engine._inMap[name] = impl;
-        }
-        else impl = undefined;
       }
-      if (impl) {
+      var found;
+      _engine._access.inputs.forEach(function(dev, key) {
+        if (dev.name === name) found = dev;
+      });
+      if (found) {
+        impl.dev = found;
+        var makeHandle = function(x) { return function(evt) { x.handle(evt); }; };
+        impl.dev.onmidimessage = makeHandle(impl);
+        _engine._inMap[name] = impl;
         if (impl.dev.open) impl.dev.open();
         port._orig._impl = impl;
         _push(impl.clients, port._orig);
@@ -849,16 +845,18 @@
     };
     _engine._closeOut = function(port) {
       var impl = port._impl;
-      if (!impl.clients.length) {
-        if (impl.dev.close) impl.dev.close();
-      }
       _pop(impl.clients, port._orig);
+      if (!impl.clients.length) {
+        if (impl.dev && impl.dev.close) impl.dev.close();
+        impl.dev = undefined;
+      }
     };
     _engine._closeIn = function(port) {
       var impl = port._impl;
       _pop(impl.clients, port._orig);
       if (!impl.clients.length) {
-        if (impl.dev.close) impl.dev.close();
+        if (impl.dev && impl.dev.close) impl.dev.close();
+        impl.dev = undefined;
       }
     };
     _engine._close = function() {
