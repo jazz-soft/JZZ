@@ -47,7 +47,7 @@
   _R.prototype._crash = function(err) { this._break(err); this._resume(); };
   _R.prototype.err = function() { return _clone(this._err); };
 
-  function _wait(obj, delay) { setTimeout(function(){obj._resume();}, delay); }
+  function _wait(obj, delay) { setTimeout(function() { obj._resume(); }, delay); }
   _R.prototype.wait = function(delay) {
     if (!delay) return this;
     var F = function() {}; F.prototype = this._orig;
@@ -57,6 +57,19 @@
     this._push(_wait, [ret, delay]);
     return ret;
   };
+
+  function _kick(obj) { obj._resume(); }
+  function _rechain(self, obj, name) {
+    self[name] = function() {
+      var arg = arguments;
+      var F = function() {}; F.prototype = obj._orig;
+      var ret = new F();
+      ret._ready = false;
+      ret._queue = [];
+      self._push(_kick, [ret]);
+      return ret[name].apply(ret, arg);
+    };
+  }
 
   function _and(q) { if (q instanceof Function) q.apply(this); else console.log(q); }
   _R.prototype.and = function(func) { this._push(_and, [func]); return this; };
@@ -155,7 +168,7 @@
     _engine._allOuts = {};
     _engine._allIns = {};
     var i, x;
-    for (i=0; i<_engine._outs.length; i++) {
+    for (i = 0; i < _engine._outs.length; i++) {
       x = _engine._outs[i];
       x.engine = _engine;
       _engine._allOuts[x.name] = x;
@@ -167,7 +180,7 @@
       });
       _outs.push(x);
     }
-    for (i=0; i<_virtual._outs.length; i++) {
+    for (i = 0; i < _virtual._outs.length; i++) {
       x = _virtual._outs[i];
       this._info.outputs.push({
         name: x.name,
@@ -177,7 +190,7 @@
       });
       _outs.push(x);
     }
-    for (i=0; i<_engine._ins.length; i++) {
+    for (i = 0; i < _engine._ins.length; i++) {
       x = _engine._ins[i];
       x.engine = _engine;
       _engine._allIns[x.name] = x;
@@ -189,7 +202,7 @@
       });
       _ins.push(x);
     }
-    for (i=0; i<_virtual._ins.length; i++) {
+    for (i = 0; i < _virtual._ins.length; i++) {
       x = _virtual._ins[i];
       this._info.inputs.push({
         name: x.name,
@@ -202,7 +215,7 @@
   }
   function _refresh() {
     this._slip(_postRefresh, []);
-    _engine._refresh();
+    _engine._refresh(this);
   }
   _J.prototype.refresh = function() {
     this._push(_refresh, []);
@@ -336,6 +349,11 @@
   function _W() {
     _R.apply(this);
     this._handles = [];
+    _rechain(this, _jzz, 'refresh');
+    _rechain(this, _jzz, 'openMidiOut');
+    _rechain(this, _jzz, 'openMidiIn');
+    _rechain(this, _jzz, 'onChange');
+    _rechain(this, _jzz, 'close');
   }
   _W.prototype = new _R();
   function _connectW(arg) {
@@ -895,10 +913,12 @@
       _engine._pool.push(plugin);
     };
     _engine._newPlugin();
-    _engine._refresh = function() {
+    var refreshClients = [];
+    _engine._refresh = function(client) {
       _engine._outs = [];
       _engine._ins = [];
-      _jzz._pause();
+      refreshClients.push(client);
+      client._pause();
       document.dispatchEvent(new CustomEvent('jazz-midi', {detail:['refresh']}));
     };
     _closeAll = function() {
@@ -1021,7 +1041,8 @@
             for (j = 0; j < a[1].outs.length; j++) a[1].outs[j].type = _engine._type;
             _engine._outs = a[1].outs;
           }
-          _jzz._resume();
+          for (j = 0; j < refreshClients.length; j++) refreshClients[j]._resume();
+          refreshClients = [];
           var diff = _diff(_engine._insW, _engine._outsW, _engine._ins, _engine._outs);
           if (diff) {
             _engine._insW = _engine._ins;
