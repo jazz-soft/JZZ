@@ -158,11 +158,11 @@
   var _ins = [];
 
   function _postRefresh() {
-    this._info.engine = _engine._type;
-    this._info.version = _engine._version;
-    this._info.sysex = _engine._sysex;
-    this._info.inputs = [];
-    this._info.outputs = [];
+    this._orig._info.engine = _engine._type;
+    this._orig._info.version = _engine._version;
+    this._orig._info.sysex = _engine._sysex;
+    this._orig._info.inputs = [];
+    this._orig._info.outputs = [];
     _outs = [];
     _ins = [];
     _engine._allOuts = {};
@@ -172,7 +172,7 @@
       x = _engine._outs[i];
       x.engine = _engine;
       _engine._allOuts[x.name] = x;
-      this._info.outputs.push({
+      this._orig._info.outputs.push({
         name: x.name,
         manufacturer: x.manufacturer,
         version: x.version,
@@ -182,7 +182,7 @@
     }
     for (i = 0; i < _virtual._outs.length; i++) {
       x = _virtual._outs[i];
-      this._info.outputs.push({
+      this._orig._info.outputs.push({
         name: x.name,
         manufacturer: x.manufacturer,
         version: x.version,
@@ -194,7 +194,7 @@
       x = _engine._ins[i];
       x.engine = _engine;
       _engine._allIns[x.name] = x;
-      this._info.inputs.push({
+      this._orig._info.inputs.push({
         name: x.name,
         manufacturer: x.manufacturer,
         version: x.version,
@@ -204,7 +204,7 @@
     }
     for (i = 0; i < _virtual._ins.length; i++) {
       x = _virtual._ins[i];
-      this._info.inputs.push({
+      this._orig._info.inputs.push({
         name: x.name,
         manufacturer: x.manufacturer,
         version: x.version,
@@ -1052,7 +1052,7 @@
               if (impl) impl._closeAll();
             }
             for (j = 0; j < diff.outputs.removed.length; j++) {
-              impl = _engine._outMap[diff.inputs.removed[j].name];
+              impl = _engine._outMap[diff.outputs.removed[j].name];
               if (impl) impl._closeAll();
             }
             if (watcher) _fireW(diff);
