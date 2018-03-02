@@ -899,12 +899,15 @@
     _engine._version = ver;
     _engine._sysex = true;
     _engine._pool = [];
+    _engine._outs = [];
+    _engine._ins = [];
     _engine._inArr = [];
     _engine._outArr = [];
     _engine._inMap = {};
     _engine._outMap = {};
     _engine._outsW = [];
     _engine._insW = [];
+    _engine.refreshClients = [];
     _engine._msg = msg;
     _engine._newPlugin = function() {
       var plugin = { id: _engine._pool.length };
@@ -913,13 +916,12 @@
       _engine._pool.push(plugin);
     };
     _engine._newPlugin();
-    var refreshClients = [];
     _engine._refresh = function(client) {
-      _engine._outs = [];
-      _engine._ins = [];
-      refreshClients.push(client);
+      _engine.refreshClients.push(client);
       client._pause();
-      document.dispatchEvent(new CustomEvent('jazz-midi', {detail:['refresh']}));
+      setTimeout(function() {
+        document.dispatchEvent(new CustomEvent('jazz-midi', { detail: ['refresh'] }));
+      }, 0);
     };
     _closeAll = function() {
       for (var i = 0; i < this.clients.length; i++) this._close(this.clients[i]);
@@ -1016,9 +1018,9 @@
     _engine._watch = function() {
       _engine._insW = _engine._ins;
       _engine._outsW = _engine._outs;
-      watcher = setInterval(function() {
-        document.dispatchEvent(new CustomEvent('jazz-midi', {detail:['refresh']}));
-      }, 250);
+//      watcher = setInterval(function() {
+//        document.dispatchEvent(new CustomEvent('jazz-midi', {detail:['refresh']}));
+//      }, 250);
     };
     _engine._unwatch = function() {
       clearInterval(watcher);
@@ -1041,8 +1043,8 @@
             for (j = 0; j < a[1].outs.length; j++) a[1].outs[j].type = _engine._type;
             _engine._outs = a[1].outs;
           }
-          for (j = 0; j < refreshClients.length; j++) refreshClients[j]._resume();
-          refreshClients = [];
+          for (j = 0; j < _engine.refreshClients.length; j++) _engine.refreshClients[j]._resume();
+          _engine.refreshClients = [];
           var diff = _diff(_engine._insW, _engine._outsW, _engine._ins, _engine._outs);
           if (diff) {
             _engine._insW = _engine._ins;
