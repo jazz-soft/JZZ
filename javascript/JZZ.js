@@ -46,31 +46,29 @@
   _R.prototype._repair = function() { this._orig._bad = false; };
   _R.prototype._crash = function(err) { this._break(err); this._resume(); };
   _R.prototype.err = function() { return _clone(this._err); };
-
-  function _wait(obj, delay) { setTimeout(function() { obj._resume(); }, delay); }
-  _R.prototype.wait = function(delay) {
-    if (!delay) return this;
+  _R.prototype._image = function() {
     var F = function() {}; F.prototype = this._orig;
     var ret = new F();
     ret._ready = false;
     ret._queue = [];
+    return ret;
+  }
+  function _wait(obj, delay) { setTimeout(function() { obj._resume(); }, delay); }
+  _R.prototype.wait = function(delay) {
+    if (!delay) return this;
+    var ret = this._image();
     this._push(_wait, [ret, delay]);
     return ret;
   };
-
   function _kick(obj) { obj._resume(); }
   function _rechain(self, obj, name) {
     self[name] = function() {
       var arg = arguments;
-      var F = function() {}; F.prototype = obj._orig;
-      var ret = new F();
-      ret._ready = false;
-      ret._queue = [];
-      self._push(_kick, [ret]);
+      var ret = obj._image();
+      this._push(_kick, [ret]);
       return ret[name].apply(ret, arg);
     };
   }
-
   function _and(q) { if (q instanceof Function) q.apply(this); else console.log(q); }
   _R.prototype.and = function(func) { this._push(_and, [func]); return this; };
   function _or(q) { if (q instanceof Function) q.apply(this); else console.log(q); }
@@ -278,14 +276,15 @@
     return port;
   };
 
-  function _onChange(arg) {
-    this._orig._watcher._slip(_connectW, [arg]);
-    this._orig._watcher._resume();
+  function _onChange(watcher, arg) {
+    watcher._slip(_connectW, [arg]);
+    watcher._resume();
   }
   _J.prototype.onChange = function(arg) {
     if (!this._orig._watcher) this._orig._watcher = new _W();
-    this._push(_onChange, [arg]);
-    return this._orig._watcher;
+    var watcher = this._orig._watcher._image();
+    this._push(_onChange, [watcher, arg]);
+    return watcher;
   };
 
   _J.prototype._close = function() {
@@ -1018,9 +1017,9 @@
     _engine._watch = function() {
       _engine._insW = _engine._ins;
       _engine._outsW = _engine._outs;
-//      watcher = setInterval(function() {
-//        document.dispatchEvent(new CustomEvent('jazz-midi', {detail:['refresh']}));
-//      }, 250);
+      watcher = setInterval(function() {
+        document.dispatchEvent(new CustomEvent('jazz-midi', {detail:['refresh']}));
+      }, 250);
     };
     _engine._unwatch = function() {
       clearInterval(watcher);
