@@ -1647,6 +1647,7 @@
           _ac.resume();
           var osc = _ac.createOscillator();
           var gain = _ac.createGain();
+          try { gain.gain.value = 0; } catch (err) {}
           gain.gain.setTargetAtTime(0, _ac.currentTime, 0.01);
           osc.connect(gain);
           gain.connect(_ac.destination);
