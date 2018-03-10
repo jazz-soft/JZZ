@@ -521,7 +521,7 @@
   }
 
   function _filterEngineNames(opt) {
-    var web = ['extension', 'webmidi', 'plugin'];
+    var web = ['extension', 'plugin', 'webmidi'];
     if (!opt || !opt.engine) return web;
     var arr = opt.engine instanceof Array ? opt.engine : [opt.engine];
     var dup = {};
@@ -1112,10 +1112,6 @@
     return obj;
   };
   _J.prototype.Widget = JZZ.Widget;
-
-  // deprecated. will be removed from the next release
-  JZZ.createNew = JZZ.Widget;
-  _J.prototype.createNew = JZZ.Widget;
 
   // JZZ.SMPTE
 
