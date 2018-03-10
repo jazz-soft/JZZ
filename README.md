@@ -1,4 +1,4 @@
-# JZZ: Asynchronous MIDI Library
+# JZZ: MIDI library for Node.js and web-browsers
 
 [![nodejs](http://jazz-soft.github.io/img/nodejs.jpg)](https://www.npmjs.com/package/jzz)
 [![firefox](http://jazz-soft.github.io/img/firefox.jpg)](https://addons.mozilla.org/en-US/firefox/addon/jazz-midi)
