@@ -343,6 +343,24 @@
     this._push(_disconnect, [arg]);
     return this;
   };
+  _M.prototype.chan = function(n) {
+    if (n != parseInt(n) || n < 0 || n > 15) _throw('Channel must be from 0 to 15');
+    var chan = new _C(this, n);
+    this._push(_kick, [chan]);
+    return chan;
+  }
+
+  // _C: MIDI Channel object
+  function _C(port, chan) {
+    _M.apply(this);
+    this._port = port._orig;
+    this._chan = chan;
+    _rechain(this, this._port, 'chan');
+    _rechain(this, this._port, 'close');
+  }
+  _C.prototype = new _M();
+  _C.prototype.channel = function() { return this._chan; };
+  _C.prototype._receive = function(msg) { this._port._receive(msg); };
 
   // _W: Watcher object ~ MIDIAccess.onstatechange
   function _W() {
@@ -1331,8 +1349,11 @@
     var arr = arg instanceof Array ? arg : arguments;
     for (i = 0; i < arr.length; i++) {
       n = arr[i];
-      if (i == 1 && self[0] >= 0x80 && self[0] <= 0xAF) n = MIDI.noteValue(n);
-      if (n != parseInt(n) || n<0 || n>255) _throw(arr[i]);
+      if (i == 1) {
+        if (self[0] >= 0x80 && self[0] <= 0xAF) n = MIDI.noteValue(n);
+        if (self[0] >= 0xC0 && self[0] <= 0xCF) n = MIDI.programValue(n);
+      }
+      if (n != parseInt(n) || n < 0 || n > 255) _throw(arr[i]);
       self.push(n);
     }
     return self;
