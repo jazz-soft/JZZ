@@ -350,6 +350,13 @@
     this._push(_kick, [chan]);
     return chan;
   }
+  _M.prototype.mpe = function(m, n) {
+    if (typeof m == 'undefined' && typeof n == 'undefined') return this;
+    if (n != parseInt(n) || n < 0 || n > 15) throw RangeError('Bad channel value: ' + n  + ' (must be from 0 to 15)');
+    var chan = new _C(this, n);
+    this._push(_kick, [chan]);
+    return chan;
+  }
 
   // _C: MIDI Channel object
   function _C(port, chan) {
@@ -357,6 +364,7 @@
     this._port = port._orig;
     this._chan = chan;
     _rechain(this, this._port, 'ch');
+    _rechain(this, this._port, 'mpe');
     _rechain(this, this._port, 'connect');
     _rechain(this, this._port, 'disconnect');
     _rechain(this, this._port, 'close');
@@ -365,6 +373,26 @@
   _C.prototype.channel = function() { return this._chan; };
   _C.prototype._receive = function(msg) { this._port._receive(msg); };
   _C.prototype.note = function(n, v, t) {
+    this.noteOn(n, v);
+    if (t) this.wait(t).noteOff(n);
+    return this;
+  };
+
+  // _E: MPE Channel object
+  function _E(port, chan, num) {
+    _M.apply(this);
+    this._port = port._orig;
+    this._chan = chan;
+    _rechain(this, this._port, 'ch');
+    _rechain(this, this._port, 'mpe');
+    _rechain(this, this._port, 'connect');
+    _rechain(this, this._port, 'disconnect');
+    _rechain(this, this._port, 'close');
+  }
+  _E.prototype = new _M();
+  _E.prototype.channel = function() { return this._chan; };
+  _E.prototype._receive = function(msg) { this._port._receive(msg); };
+  _E.prototype.note = function(n, v, t) {
     this.noteOn(n, v);
     if (t) this.wait(t).noteOff(n);
     return this;
