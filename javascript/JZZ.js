@@ -343,8 +343,9 @@
     this._push(_disconnect, [arg]);
     return this;
   };
-  _M.prototype.chan = function(n) {
-    if (n != parseInt(n) || n < 0 || n > 15) _throw('Channel must be from 0 to 15');
+  _M.prototype.ch = function(n) {
+    if (typeof n == 'undefined') return this;
+    if (n != parseInt(n) || n < 0 || n > 15) throw RangeError('Bad channel value: ' + n  + ' (must be from 0 to 15)');
     var chan = new _C(this, n);
     this._push(_kick, [chan]);
     return chan;
@@ -355,12 +356,19 @@
     _M.apply(this);
     this._port = port._orig;
     this._chan = chan;
-    _rechain(this, this._port, 'chan');
+    _rechain(this, this._port, 'ch');
+    _rechain(this, this._port, 'connect');
+    _rechain(this, this._port, 'disconnect');
     _rechain(this, this._port, 'close');
   }
   _C.prototype = new _M();
   _C.prototype.channel = function() { return this._chan; };
   _C.prototype._receive = function(msg) { this._port._receive(msg); };
+  _C.prototype.note = function(n, v, t) {
+    this.noteOn(n, v);
+    if (t) this.wait(t).noteOff(n);
+    return this;
+  };
 
   // _W: Watcher object ~ MIDIAccess.onstatechange
   function _W() {
@@ -1382,8 +1390,8 @@
   function _lsb(n){ if (n != parseInt(n) || n<0 || n>0x3fff) _throw(n); return n & 0x7f;}
   function _msb(n){ if (n != parseInt(n) || n<0 || n>0x3fff) _throw(n); return n >> 7;}
   var _helper = {
-    noteOff : function(c, n){ return [0x80+_ch(c), _7b(MIDI.noteValue(n)), 0];},
-    noteOn  : function(c, n, v){ return [0x90+_ch(c), _7b(MIDI.noteValue(n)), _7b(v)];},
+    noteOff : function(c, n, v){ if (typeof v == 'undefined') v = 64; return [0x80+_ch(c), _7b(MIDI.noteValue(n)), _7b(v)];},
+    noteOn  : function(c, n, v){ if (typeof v == 'undefined') v = 127; return [0x90+_ch(c), _7b(MIDI.noteValue(n)), _7b(v)];},
     aftertouch : function(c, n, v){ return [0xA0+_ch(c), _7b(MIDI.noteValue(n)), _7b(v)];},
     control : function(c, n, v){ return [0xB0+_ch(c), _7b(n), _7b(v)];},
     program : function(c, n){ return [0xC0+_ch(c), _7b(MIDI.programValue(n))];},
@@ -1413,6 +1421,8 @@
     soft   : function(c, b){ return [0xB0+_ch(c), 0x43, b ? 127 : 0];},
     allSoundOff : function(c){ return [0xB0+_ch(c), 0x78, 0];},
     allNotesOff : function(c){ return [0xB0+_ch(c), 0x7b, 0];},
+  };
+  var _helperNC = { // no channel
     mtc: function(t){ return [0xF1, _mtc(t)];},
     songPosition: function(n){ return [0xF2, _lsb(n), _msb(n)];},
     songSelect : function(n){ return [0xF3, _7b(n)];},
@@ -1426,10 +1436,17 @@
     sxFullFrame : function(t){ return [0xF0, 0x7F, 0x7F, 0x01, 0x01, _hrtype(t), t.getMinute(), t.getSecond(), t.getFrame(), 0xF7];},
     reset : function(){ return [0xFF];}
   };
-  function _copyHelper(name, func) {
-    MIDI[name] = function(){ return new MIDI(func.apply(0, arguments));};
-    _M.prototype[name] = function(){ this.send(func.apply(0, arguments)); return this;};
+  function _copyHelperNC(name, func) {
+    MIDI[name] = function() { return new MIDI(func.apply(0, arguments)); };
+    _M.prototype[name] = function() { this.send(func.apply(0, arguments)); return this; };
   }
+  function _copyHelper(name, func) {
+    _copyHelperNC(name, func);
+    _C.prototype[name] = function() {
+      this.send(func.apply(0, [this._chan].concat(Array.prototype.slice.call(arguments)))); return this;
+    };
+  }
+  for (k in _helperNC) if (_helperNC.hasOwnProperty(k)) _copyHelper(k, _helperNC[k]);
   for (k in _helper) if (_helper.hasOwnProperty(k)) _copyHelper(k, _helper[k]);
 
   var _channelMap = { a:10, b:11, c:12, d:13, e:14, f:15, A:10, B:11, C:12, D:13, E:14, F:15 };

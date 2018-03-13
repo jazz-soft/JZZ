@@ -78,6 +78,8 @@ All calls below will do the same job:
     port.send(0x90,'C#5',127).wait(500).send(0x80,'Db5',0); // note names
     port.noteOn(0,'C#5',127).wait(500).noteOff(0,'B##4');   // helper functions
     port.note(0,'C#5',127,500);                             // another shortcut
+    port.ch(0).noteOn('C#5').wait(500).noteOff('C#5');      // using channels
+    port.ch(0).note('C#5',127,500);                         // using channels
 
 ##### MIDI input
 
