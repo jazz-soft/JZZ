@@ -352,8 +352,9 @@
   }
   _M.prototype.mpe = function(m, n) {
     if (typeof m == 'undefined' && typeof n == 'undefined') return this;
-    if (n != parseInt(n) || n < 0 || n > 15) throw RangeError('Bad channel value: ' + n  + ' (must be from 0 to 15)');
-    var chan = new _C(this, n);
+    if (m != parseInt(m) || m < 0 || m > 14) throw RangeError('Bad master channel value: ' + m);     
+    if (n != parseInt(n) || n < 0 || m + n > 15) throw RangeError('Bad zone size value: ' + n);
+    var chan = new _E(this, m, n);
     this._push(_kick, [chan]);
     return chan;
   }
@@ -379,10 +380,11 @@
   };
 
   // _E: MPE Channel object
-  function _E(port, chan, num) {
+  function _E(port, m, n) {
     _M.apply(this);
     this._port = port._orig;
-    this._chan = chan;
+    this._master = m;
+    this._zone = n;
     _rechain(this, this._port, 'ch');
     _rechain(this, this._port, 'mpe');
     _rechain(this, this._port, 'connect');
@@ -1472,6 +1474,9 @@
     _copyHelperNC(name, func);
     _C.prototype[name] = function() {
       this.send(func.apply(0, [this._chan].concat(Array.prototype.slice.call(arguments)))); return this;
+    };
+    _E.prototype[name] = function() {
+      this.send(func.apply(0, [this._master].concat(Array.prototype.slice.call(arguments)))); return this;
     };
   }
   for (k in _helperNC) if (_helperNC.hasOwnProperty(k)) _copyHelper(k, _helperNC[k]);
