@@ -1476,11 +1476,37 @@
       this.send(func.apply(0, [this._chan].concat(Array.prototype.slice.call(arguments)))); return this;
     };
     _E.prototype[name] = function() {
-      this.send(func.apply(0, [this._master].concat(Array.prototype.slice.call(arguments)))); return this;
+      var chan;
+      var args = Array.prototype.slice.call(arguments);
+      if (args.length < func.length) args = [this._master].concat(args);
+      else {
+        chan = _7b(MIDI.noteValue(args[0]));
+        args[0] = this._master;
+      }
+      var msg = func.apply(0, args);
+      msg.mpe = chan;
+      this.send(msg);
+      return this;
     };
   }
   for (k in _helperNC) if (_helperNC.hasOwnProperty(k)) _copyHelper(k, _helperNC[k]);
   for (k in _helper) if (_helper.hasOwnProperty(k)) _copyHelper(k, _helper[k]);
+  _E.prototype.noteOn = function(n, v) {
+    var msg = MIDI.noteOn(this._master, n, v);
+    msg.mpe = msg[1];
+    this.send(msg);
+    return this;
+  }
+  _E.prototype.noteOff = function(n, v) {
+    var msg = MIDI.noteOff(this._master, n, v);
+    msg.mpe = msg[1];
+    this.send(msg);
+    return this;
+  }
+  _E.prototype.aftertouch = function(n, v) {
+    this.send(MIDI.aftertouch(this._master, n, v));
+    return this;
+  }
 
   var _channelMap = { a:10, b:11, c:12, d:13, e:14, f:15, A:10, B:11, C:12, D:13, E:14, F:15 };
   for (k = 0; k < 16; k++) _channelMap[k] = k;
