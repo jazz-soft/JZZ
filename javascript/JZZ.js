@@ -350,11 +350,16 @@
     this._push(_kick, [chan]);
     return chan;
   }
+  function _mpe(m, n) {
+    if (!this._orig._mpe) this._orig._mpe = new MPE;
+    this._orig._mpe.setup(m, n);
+  }
   _M.prototype.mpe = function(m, n) {
     if (typeof m == 'undefined' && typeof n == 'undefined') return this;
     if (m != parseInt(m) || m < 0 || m > 14) throw RangeError('Bad master channel value: ' + m);     
     if (n != parseInt(n) || n < 0 || m + n > 15) throw RangeError('Bad zone size value: ' + n);
-    var chan = new _E(this, m, n);
+    var chan = n ? new _E(this, m, n) : new _C(this, m);
+    this._push(_mpe, [m, n]);
     this._push(_kick, [chan]);
     return chan;
   }
@@ -1700,6 +1705,38 @@
   };
 
   JZZ.MIDI = MIDI;
+
+  function MPE() { this.cancel(); }
+  MPE.prototype.cancel = function() { for (var n = 0; n < 16; n++) this[n] = { band: 0, master: n }; };
+  MPE.prototype.setup = function(m, n) {
+    var k;
+    var last = m + n;
+    if (this[m].master == m && this[m].band == n) return;
+    if (!n && !this[m].band) return;
+    if (this[m].band) {
+      k = m + this[m].band;
+      if (last < k) last = k;
+    }
+    else if (this[m].master == m - 1) {
+      k = m - 1;
+      k = k + this[k].band;
+      if (last < k) last = k;
+      this[m - 1] = { band: 0, master: n };
+    }
+    else if (this[m].master != m) {
+      k = m - this[m].master - 1;
+      this[this[m].master].band = k;
+    }
+    this[m].master = m;
+    this[m].band = n;
+    for (k = m + 1; k <= m + n; k++) {
+      if (this[k].band && last < k + this[k].band) last = k + this[k].band;
+      this[k] = { band: 0, master: m };
+    }
+    for (; k <= last; k++) this[k] = { band: 0, master: k };
+  }
+  MPE.prototype.filter = function(msg) {
+  }
 
   JZZ.lib = {};
   JZZ.lib.openMidiOut = function(name, engine) {
