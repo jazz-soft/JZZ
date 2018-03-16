@@ -1721,11 +1721,13 @@
       k = m - 1;
       k = k + this[k].band;
       if (last < k) last = k;
-      this[m - 1] = { band: 0, master: n };
+      this[m - 1] = { band: 0, master: m - 1 };
     }
     else if (this[m].master != m) {
-      k = m - this[m].master - 1;
-      this[this[m].master].band = k;
+      k = this[m].master;
+      k = k + this[k].band;
+      if (last < k) last = k;
+      this[this[m].master].band = m - this[m].master - 1;
     }
     this[m].master = m;
     this[m].band = n;
