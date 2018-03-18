@@ -1,6 +1,6 @@
 {
   "name": "jzz",
-  "description": "Async MIDI library for Node.js and web-browsers",
+  "description": "MIDI library for Node.js and web-browsers",
   "authors": [
     "jazz-soft (http://jazz-soft.net/)"
   ],
