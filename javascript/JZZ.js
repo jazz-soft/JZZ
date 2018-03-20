@@ -1713,8 +1713,13 @@
 
   JZZ.MIDI = MIDI;
 
-  function MPE() { this.cancel(); }
-  MPE.prototype.cancel = function() { for (var n = 0; n < 16; n++) this[n] = { band: 0, master: n }; };
+  function MPE() {
+    var self = this instanceof MPE ? this : self = new MPE();
+    self.reset();
+    if (arguments.length) MPE.prototype.setup.apply(self, arguments);
+    return self;
+  }
+  MPE.prototype.reset = function() { for (var n = 0; n < 16; n++) this[n] = { band: 0, master: n }; };
   MPE.prototype.setup = function(m, n) {
     var k;
     var last = m + n;
@@ -1776,6 +1781,7 @@
     }
     return msg;
   }
+  JZZ.MPE = MPE;
 
   JZZ.lib = {};
   JZZ.lib.openMidiOut = function(name, engine) {
