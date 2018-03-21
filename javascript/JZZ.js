@@ -359,8 +359,7 @@
   }
   _M.prototype.mpe = function(m, n) {
     if (typeof m == 'undefined' && typeof n == 'undefined') return this;
-    if (m != parseInt(m) || m < 0 || m > 14) throw RangeError('Bad master channel value: ' + m);     
-    if (n != parseInt(n) || n < 0 || m + n > 15) throw RangeError('Bad zone size value: ' + n);
+    MPE.validate(m, n);
     var chan = n ? new _E(this, m, n) : new _C(this, m);
     this._push(_mpe, [m, n]);
     this._push(_kick, [chan]);
@@ -1719,8 +1718,14 @@
     if (arguments.length) MPE.prototype.setup.apply(self, arguments);
     return self;
   }
+  MPE.validate = function(arg) {
+    var a = arg instanceof Array ? arg : arguments;
+    if (a[0] != parseInt(a[0]) || a[0] < 0 || a[0] > 14) throw RangeError('Bad master channel value: ' + a[0]);
+    if (a[1] != parseInt(a[1]) || a[1] < 0 || a[0] + a[1] > 15) throw RangeError('Bad zone size value: ' + a[1]);
+  };
   MPE.prototype.reset = function() { for (var n = 0; n < 16; n++) this[n] = { band: 0, master: n }; };
   MPE.prototype.setup = function(m, n) {
+    MPE.validate(m, n);
     var k;
     var last = m + n;
     if (this[m].master == m && this[m].band == n) return;
