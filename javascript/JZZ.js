@@ -52,7 +52,7 @@
     ret._ready = false;
     ret._queue = [];
     return ret;
-  }
+  };
   function _wait(obj, delay) { setTimeout(function() { obj._resume(); }, delay); }
   _R.prototype.wait = function(delay) {
     if (!delay) return this;
@@ -352,9 +352,9 @@
     var chan = new _C(this, n);
     this._push(_kick, [chan]);
     return chan;
-  }
+  };
   function _mpe(m, n) {
-    if (!this._orig._mpe) this._orig._mpe = new MPE;
+    if (!this._orig._mpe) this._orig._mpe = new MPE();
     this._orig._mpe.setup(m, n);
   }
   _M.prototype.mpe = function(m, n) {
@@ -364,7 +364,7 @@
     this._push(_mpe, [m, n]);
     this._push(_kick, [chan]);
     return chan;
-  }
+  };
 
   // _C: MIDI Channel object
   function _C(port, chan) {
@@ -635,7 +635,7 @@
     var watcher;
     _closeAll = function() {
       for (var i = 0; i < this.clients.length; i++) this._close(this.clients[i]);
-    }
+    };
     _engine._refresh = function() {
       _engine._outs = [];
       _engine._ins = [];
@@ -822,7 +822,7 @@
     var watcher;
     _closeAll = function() {
       for (var i = 0; i < this.clients.length; i++) this._close(this.clients[i]);
-    }
+    };
     _engine._refresh = function() {
       _engine._outs = [];
       _engine._ins = [];
@@ -950,11 +950,11 @@
             watcher = false;
           }
         }, 0);
-      }
-    }
+      };
+    };
     _engine._unwatch = function() {
       _engine._access.onstatechange = undefined;
-    }
+    };
   }
   function _initCRX(msg, ver) {
     _engine._type = 'extension';
@@ -987,7 +987,7 @@
     };
     _closeAll = function() {
       for (var i = 0; i < this.clients.length; i++) this._close(this.clients[i]);
-    }
+    };
     _engine._openOut = function(port, name) {
       var impl = _engine._outMap[name];
       if (!impl) {
@@ -1507,17 +1507,17 @@
     msg._mpe = msg[1];
     this.send(msg);
     return this;
-  }
+  };
   _E.prototype.noteOff = function(n, v) {
     var msg = MIDI.noteOff(this._master, n, v);
     msg._mpe = msg[1];
     this.send(msg);
     return this;
-  }
+  };
   _E.prototype.aftertouch = function(n, v) {
     this.send(MIDI.aftertouch(this._master, n, v));
     return this;
-  }
+  };
 
   var _channelMap = { a:10, b:11, c:12, d:13, e:14, f:15, A:10, B:11, C:12, D:13, E:14, F:15 };
   for (k = 0; k < 16; k++) _channelMap[k] = k;
@@ -1753,7 +1753,7 @@
       this[k] = { band: 0, master: m };
     }
     for (; k <= last; k++) this[k] = { band: 0, master: k };
-  }
+  };
   MPE.prototype.filter = function(msg) {
     var c = msg.getChannel();
     if (!this[c] || !this[this[c].master].band) return msg;
@@ -1785,7 +1785,7 @@
       if (this[c].notes) _pop(this[c].notes, msg.getNote());
     }
     return msg;
-  }
+  };
   JZZ.MPE = MPE;
 
   JZZ.lib = {};
