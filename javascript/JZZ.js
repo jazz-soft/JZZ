@@ -298,11 +298,25 @@
     this._outs = [];
   }
   _M.prototype = new _R();
-
-  _M.prototype._receive = function(msg) {
-    if (this._orig._mpe) msg = this._orig._mpe.filter(msg);
-    this._emit(msg);
+  _M.prototype._filter = function(msg) {
+    if (this._orig._mpe) {
+      var out;
+      var outs = 0;
+      if (this._handles && this._handles.length) {
+        outs = this._handles.length;
+        out = this._handles[0];
+      }
+      if (this._outs && this._outs.length) {
+        outs = this._outs.length;
+        out = this._outs[0];
+      }
+      if (outs == 1 && !out._mpe) {
+        msg = this._orig._mpe.filter(msg);
+      }
+    }
+    return msg;
   };
+  _M.prototype._receive = function(msg) { this._emit(this._filter(msg)); };
   function _receive(msg) { this._receive(msg); }
   _M.prototype.send = function() {
     this._push(_receive, [MIDI.apply(null, arguments)]);
