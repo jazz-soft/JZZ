@@ -606,7 +606,8 @@
     var etc;
     var head = [];
     var tail = [];
-    for (var i=0; i<arr.length; i++) {
+    var i;
+    for (i = 0; i < arr.length; i++) {
       var name = arr[i].toString().toLowerCase();
       if (dup[name]) continue;
       dup[name] = true;
@@ -1424,32 +1425,36 @@
   MIDI.prototype = [];
   MIDI.prototype.constructor = MIDI;
   var _noteNum = {};
-  MIDI.noteValue = function(x) { return _noteNum[x.toString().toLowerCase()]; };
+  MIDI.noteValue = function(x) { return typeof x == 'undefined' ? undefined : _noteNum[x.toString().toLowerCase()]; };
   MIDI.programValue = function(x) { return x; };
+  MIDI.freq = function(n, a) {
+    if (typeof a == 'undefined') a = 440.0;
+    return (a * Math.pow(2, (_7b(MIDI.noteValue(n), n) - 69.0) / 12.0));
+  };
 
-  var _noteMap = {c:0, d:2, e:4, f:5, g:7, a:9, b:11, h:11};
+  var _noteMap = { c:0, d:2, e:4, f:5, g:7, a:9, b:11, h:11 };
   for (k in _noteMap) {
     if (!_noteMap.hasOwnProperty(k)) continue;
     for (n = 0; n < 12; n++) {
       m = _noteMap[k] + n * 12;
       if (m > 127) break;
       _noteNum[k+n] = m;
-      if (m > 0) { _noteNum[k + 'b' + n] = m - 1; _noteNum[k + 'bb' + n] = m - 2;}
-      if (m < 127) { _noteNum[k + '#' + n] = m + 1; _noteNum[k + '##' + n] = m + 2;}
+      if (m > 0) { _noteNum[k + 'b' + n] = m - 1; _noteNum[k + 'bb' + n] = m - 2; }
+      if (m < 127) { _noteNum[k + '#' + n] = m + 1; _noteNum[k + '##' + n] = m + 2; }
     }
   }
   for (n = 0; n < 128; n++) _noteNum[n] = n;
   function _throw(x){ throw RangeError('Bad MIDI value: ' + x);}
   function _ch(n) { if (n != parseInt(n) || n<0 || n>0xf) _throw(n); return n;}
-  function _7b(n) { if (n != parseInt(n) || n<0 || n>0x7f) _throw(n); return n;}
+  function _7b(n, m) { if (n != parseInt(n) || n<0 || n>0x7f) _throw(typeof m == 'undefined' ? n : m); return n;}
   function _lsb(n){ if (n != parseInt(n) || n<0 || n>0x3fff) _throw(n); return n & 0x7f;}
   function _msb(n){ if (n != parseInt(n) || n<0 || n>0x3fff) _throw(n); return n >> 7;}
   var _helper = {
-    noteOff : function(c, n, v){ if (typeof v == 'undefined') v = 64; return [0x80+_ch(c), _7b(MIDI.noteValue(n)), _7b(v)];},
-    noteOn  : function(c, n, v){ if (typeof v == 'undefined') v = 127; return [0x90+_ch(c), _7b(MIDI.noteValue(n)), _7b(v)];},
-    aftertouch : function(c, n, v){ return [0xA0+_ch(c), _7b(MIDI.noteValue(n)), _7b(v)];},
+    noteOff : function(c, n, v){ if (typeof v == 'undefined') v = 64; return [0x80+_ch(c), _7b(MIDI.noteValue(n), n), _7b(v)];},
+    noteOn  : function(c, n, v){ if (typeof v == 'undefined') v = 127; return [0x90+_ch(c), _7b(MIDI.noteValue(n), n), _7b(v)];},
+    aftertouch : function(c, n, v){ return [0xA0+_ch(c), _7b(MIDI.noteValue(n), n), _7b(v)];},
     control : function(c, n, v){ return [0xB0+_ch(c), _7b(n), _7b(v)];},
-    program : function(c, n){ return [0xC0+_ch(c), _7b(MIDI.programValue(n))];},
+    program : function(c, n){ return [0xC0+_ch(c), _7b(MIDI.programValue(n), n)];},
     pressure: function(c, n){ return [0xD0+_ch(c), _7b(n)];},
     pitchBend: function(c, n){ return [0xE0+_ch(c), _lsb(n), _msb(n)];},
     bankMSB : function(c, n){ return [0xB0+_ch(c), 0x00, _7b(n)];},
@@ -1505,7 +1510,7 @@
       var args = Array.prototype.slice.call(arguments);
       if (args.length < func.length) args = [this._master].concat(args);
       else {
-        chan = _7b(MIDI.noteValue(args[0]));
+        chan = _7b(MIDI.noteValue(args[0], args[0]));
         args[0] = this._master;
       }
       var msg = func.apply(0, args);
