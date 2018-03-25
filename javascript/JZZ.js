@@ -10,7 +10,7 @@
   }
 })(this, function(){
 
-  var _version = '0.4.4';
+  var _version = '0.4.5';
   var i, j, k, m, n;
 
   // _R: common root for all async objects
