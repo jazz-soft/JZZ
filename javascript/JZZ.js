@@ -6,6 +6,7 @@
     define('JZZ', [], factory);
   }
   else {
+    if (global.JZZ && global.JZZ.MIDI) return;
     global.JZZ = factory();
   }
 })(this, function(){
