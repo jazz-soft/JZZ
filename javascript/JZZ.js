@@ -11,6 +11,7 @@
   }
 })(this, function(){
 
+  var _scope = typeof window === 'undefined' ? global : window;
   var _version = '0.4.5';
   var i, j, k, m, n;
 
@@ -1867,5 +1868,59 @@
       _activateAudioContext();
     }
   }
+  // Web MIDI API
+  var _midi_access;
+  var Promise = _scope.Promise;
+  if (typeof Promise !== 'function') {
+    Promise = function(executor) {
+      this.executor = executor;
+    };
+    Promise.prototype.then = function(resolve, reject) {
+      if (typeof resolve !== 'function') {
+        resolve = function() {};
+      }
+      if (typeof reject !== 'function') {
+        reject = function() {};
+      }
+      this.executor(resolve, reject);
+    };
+  }
+
+  function MIDIAccess() {
+    var watcher;
+    this.sysexEnabled = true;
+    this.outputs = new Map();
+    this.inputs = new Map();
+    Object.defineProperty(this, 'onstatechange', {
+      get: function() { return _onstatechange; },
+      set: function(value) {
+        if (value instanceof Function) {
+          if (!_onstatechange) {
+            watcher = setInterval(refresh, 250);
+          }
+          _onstatechange = value;
+        }
+        else {
+          if (_onstatechange) {
+            clearInterval(watcher);
+            _onstatechange = undefined;
+          }
+        }
+      }
+    });
+  }
+  MIDIAccess.prototype.onstatechange = function() {};
+
+  JZZ.requestMIDIAccess = function() {
+    return new Promise(function(resolve, reject) {
+      if (_midi_access) resolve(_midi_access);
+      else {
+        //JZZ().or(function() { })
+        reject('Web MIDI API is not yet implemented!');
+      }
+    });
+  };
+  if (typeof navigator !== 'undefined' && !navigator.requestMIDIAccess) navigator.requestMIDIAccess = JZZ.requestMIDIAccess;
+
   return JZZ;
 });
