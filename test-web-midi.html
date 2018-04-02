@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>web-midi test</title>
+<script src="javascript/JZZ.js"></script>
+<style type="text/css">
+#midiin { height: 11em;}
+</style>
+</head>
+
+<body>
+<h1>web-midi test</h1>
+<pre id=output>WebMIDI is not working</pre>
+<pre id=midiin></pre>
+
+</body>
+<script><!--
+var output = document.getElementById('output');
+var midiin = document.getElementById('midiin');
+var midilog = [];
+var webmidi;
+
+function printMidi(name) {
+  return function(msg) {
+    var s = name + ':';
+    for (var i = 0; i < msg.data.length; i++) s += (msg.data[i] <16 ? ' 0' : ' ') + msg.data[i].toString(16);
+    midilog.push(s);
+    if (midilog.length > 16) midilog.splice(0, 1);
+    midiin.innerHTML = midilog.join('\n');
+  }
+}
+
+function refresh() {
+  output.innerHTML = 'WebMIDI is working!\n';
+  if (webmidi.outputs.size) {
+    output.innerHTML += '\nMIDI-Out ports available: ' + webmidi.outputs.size + '\n';
+    var time = window.performance.now();
+    webmidi.outputs.forEach(function(port) {
+      output.innerHTML += '    ' + port.name +
+        '; manufacturer: ' + port.manufacturer +
+        '; version: ' + port.version +
+        '; state: ' + port.state + '\n';
+      port.send([0x90, 0x40, 0x7f], time);
+      time += 200;
+      port.send([0x80, 0x40, 0x00], time);
+      time += 200;
+    });
+  }
+  else {
+    output.innerHTML += '\nNo MIDI-Out ports available.\n';
+  }
+  if (webmidi.inputs.size) {
+    output.innerHTML += '\nMIDI-In ports available: ' + webmidi.inputs.size + '\n';
+    webmidi.inputs.forEach(function(port) {
+      port.onmidimessage = printMidi(port.name);
+      output.innerHTML += '    ' + port.name +
+        '; manufacturer: ' + port.manufacturer +
+        '; version: ' + port.version +
+        '; state: ' + port.state + '\n';
+    });
+  }
+  else {
+    output.innerHTML += '\nNo MIDI-In ports available.\n';
+  }
+}
+
+function fail(err) {
+  var s = 'Cannot start WebMIDI';
+  if (err) s += ': ' + err;
+  output.innerHTML = s; 
+}
+
+function success(midiaccess) {
+  webmidi = midiaccess;
+  webmidi.onstatechange = refresh;
+  refresh();
+}
+
+try {
+  navigator.requestMIDIAccess().then(success, fail);
+}
+catch (err) {
+  output.innerHTML = 'Cannot start WebMIDI: ' + err; 
+}
+--></script>
+</html>
