@@ -15,6 +15,11 @@
   var _version = '0.4.5';
   var i, j, k, m, n;
 
+  var _time = Date.now || function () { return new Date().getTime(); };
+  var _startTime = _time();
+  var _now = typeof performance != 'undefined' && performance.now ?
+    function() { return performance.now(); } : function() { return _time() - _startTime; };
+
   // _R: common root for all async objects
   function _R() {
     this._orig = this;
@@ -1880,6 +1885,7 @@
   var _inputUUID = {};
   var _outputMap = {};
   var _inputMap = {};
+  function _noop() {}
 
   var Promise = _scope.Promise;
   if (typeof Promise !== 'function') {
@@ -1924,13 +1930,13 @@
       set: function(value) {
         if (value instanceof Function) {
           if (!_onstatechange) {
-            watcher = setInterval(refresh, 250);
+            //watcher = setInterval(refresh, 250);
           }
           _onstatechange = value;
         }
         else {
           if (_onstatechange) {
-            clearInterval(watcher);
+            //clearInterval(watcher);
             _onstatechange = undefined;
           }
         }
@@ -1938,6 +1944,39 @@
     });
   }
   MIDIAccess.prototype.onstatechange = function() {};
+
+  function MIDIConnectionEvent(port, target) {
+    this.bubbles = false;
+    this.cancelBubble = false;
+    this.cancelable = false;
+    this.currentTarget = target;
+    this.defaultPrevented = false;
+    this.eventPhase = 0;
+    this.path = [];
+    this.port = port;
+    this.returnValue = true;
+    this.srcElement = target;
+    this.target = target;
+    this.timeStamp = _now();
+    this.type = 'statechange';
+  }
+
+  function MIDIMessageEvent(port, data) {
+    this.bubbles = false;
+    this.cancelBubble = false;
+    this.cancelable = false;
+    this.currentTarget = port;
+    this.data = data;
+    this.defaultPrevented = false;
+    this.eventPhase = 0;
+    this.path = [];
+    this.receivedTime = _now();
+    this.returnValue = true;
+    this.srcElement = port;
+    this.target = port;
+    this.timeStamp = this.receivedTime;
+    this.type = 'midimessage';
+  }
 
   function MIDIOutput(a) {
     var self = this;
@@ -1978,31 +2017,34 @@
     });
   };
   MIDIOutput.prototype.close = function() {
-    //var impl = outputMap[this.name];
-    //if (impl.open) {
-    //  impl.open = false;
-    //  this.state = 'disconnected';
-    //  this.connection = 'closed';
-    //  document.dispatchEvent(new CustomEvent('jazz-midi', { detail: ['closeout', impl.plugin.id, impl.name] }));
+    var port = _outputMap[this.name];
+    if (port) {
+      port.close();
+      this.state = 'disconnected';
+      this.connection = 'closed';
+      _outputMap[this.name] = undefined;
     //  if (impl.onstatechange) impl.onstatechange(new MIDIConnectionEvent(this, this));
-    //}
-    //return this;
+    }
+    return this;
   };
   MIDIOutput.prototype.clear = function() {};
   MIDIOutput.prototype.send = function(data, timestamp) {
-    var impl = _outputMap[this.name];
-    var v = [];
-    for (var i = 0; i < data.length; i++) {
-      if (data[i] == Math.floor(data[i]) && data[i] >=0 && data[i] <= 255) v.push(data[i]);
-      else return;
+    var port = _outputMap[this.name];
+    if (port) {
+      var v = [];
+      for (var i = 0; i < data.length; i++) {
+        if (data[i] == Math.floor(data[i]) && data[i] >=0 && data[i] <= 255) v.push(data[i]);
+        else return;
+      }
+      if (timestamp > _now()) {
+        setTimeout(function() { port.send(v); }, timestamp - _now()); 
+      }
+      else port.send(v);
     }
-    //if (timestamp > performance.now()) {
-    //  setTimeout(function() {
-    //    document.dispatchEvent(new CustomEvent('jazz-midi', { detail: v }));
-    //  }, timestamp - performance.now()); 
-    //}
-    //else document.dispatchEvent(new CustomEvent('jazz-midi', { detail: v }));
-    impl.send(v);
+    else {
+      var self = this;
+      self.open().then(function() { self.send(data, timestamp); }, _noop);
+    }
   };
 
   function MIDIInput(a) {
@@ -2031,20 +2073,29 @@
   MIDIInput.prototype.open = function() {
     var self = this;
     return new Promise(function(resolve, reject) {
-      var impl = inputMap[self.name];
-      impl.resolve = resolve;
-      impl.reject = reject;
-      document.dispatchEvent(new CustomEvent('jazz-midi', { detail: ['openin', impl.plugin.id, impl.name] }));
+      var port = _inputMap[self.name];
+      if (port) resolve(self);
+      else {
+        JZZ().openMidiIn(self.name).or(reject).and(function() {
+          _inputMap[self.name] = this;
+          self.state = 'connected';
+          self.connection = 'open';
+          this.connect(function(msg) {
+            self.onmidimessage(new MIDIMessageEvent(self, new Uint8Array(msg)));
+          });
+          resolve(self);
+        });
+      }
     });
   };
   MIDIInput.prototype.close = function() {
-    var impl = inputMap[this.name];
-    if (impl.open) {
-      impl.open = false;
+    var port = _inputMap[this.name];
+    if (port) {
+      port.close();
       this.state = 'disconnected';
       this.connection = 'closed';
-      document.dispatchEvent(new CustomEvent('jazz-midi', { detail: ['closein', impl.plugin.id, impl.name] }));
-      if (impl.onstatechange) impl.onstatechange(new MIDIConnectionEvent(this, this));
+      _outputMap[this.name] = undefined;
+    //  if (impl.onstatechange) impl.onstatechange(new MIDIConnectionEvent(this, this));
     }
     this.onmidimessage = MIDIInput.prototype.onmidimessage;
     return this;
@@ -2070,7 +2121,11 @@
               wma.outputs.set(p.id, p);
               p.open().then(countdown, countdown);
             }
-//ready();
+            for (i = 0; i < info.inputs.length; i++) {
+              p = new MIDIInput(info.inputs[i]);
+              wma.inputs.set(p.id, p);
+              p.open().then(countdown, countdown);
+            }
           });
         }
       }
