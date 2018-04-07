@@ -86,12 +86,10 @@ or get the full development version and minified scripts from [**Github**](https
 ##### Connecting MIDI nodes
 
     var input = JZZ().openMidiIn();
-    var output = JZZ().openMidiIn();
-    var logger = JZZ.Widget({ _receive: function(msg) {
-      console.log(msg.toString());
-    }});
-    input.connect(logger);
-    logger.connect(output);
+    var output = JZZ().openMidiOut();
+    var delay = JZZ.Widget({ _receive: function(msg) { this.wait(500).emit(msg); }});
+    input.connect(delay);
+    delay.connect(output);
 
 ##### Helpers and shortcuts
 
