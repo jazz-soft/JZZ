@@ -1190,6 +1190,7 @@
     if (!_jzz) _initJZZ(opt);
     return _jzz;
   };
+  JZZ.now = _now;
   JZZ.info = function() { return _J.prototype.info();};
   JZZ.Widget = function(arg) {
     var obj = new _M();
@@ -1900,6 +1901,27 @@
         reject = function() {};
       }
       this.executor(resolve, reject);
+    };
+  }
+  var Map = _scope.Map;
+  if (typeof Map !== 'function') { // for some really antique browsers
+    Map = function() {
+      this.store = {};
+      this.keys = [];
+    };
+    Map.prototype.set = function(id, obj) {
+      this.keys.push(id);
+      this.store[id] = obj;
+      this.size = this.keys.length;
+      return this;
+    };
+    Map.prototype.forEach = function(cb) {
+      var l = this.keys.length;
+      var i, e;
+      for (i = 0; i < l; i++) {
+        e = this.store[this.keys[i]];
+        cb(e);
+      }
     };
   }
   function generateUUID() {

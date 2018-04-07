@@ -33,7 +33,7 @@ function refresh() {
   output.innerHTML = 'WebMIDI is working!\n';
   if (webmidi.outputs.size) {
     output.innerHTML += '\nMIDI-Out ports available: ' + webmidi.outputs.size + '\n';
-    var time = window.performance.now();
+    var time = JZZ.now();
     webmidi.outputs.forEach(function(port) {
       output.innerHTML += '    ' + port.name +
         '; manufacturer: ' + port.manufacturer +
