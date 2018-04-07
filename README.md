@@ -102,6 +102,13 @@ or get the full development version and minified scripts from [**Github**](https
     port.ch(0).noteOn('C#5').wait(500).noteOff('C#5');          // using channels
     port.ch(0).note('C#5', 127, 500);                           // using channels
 
+## Additional modules
+- [**JZZ-midi-GM**](https://github.com/jazz-soft/JZZ-midi-GM) - General MIDI instrument names: MIDI to string / string to MIDI 
+- [**JZZ-midi-Gear**](https://github.com/jazz-soft/JZZ-midi-Gear) - Retrieve your MIDI device model and manufacturer
+- [**JZZ-input-Kbd**](https://github.com/jazz-soft/JZZ-input-Kbd) - Virtual piano controls for your MIDI projects
+- [**JZZ-synth-OSC**](https://github.com/jazz-soft/JZZ-synth-OSC) - A simple Web Audio synth to use when MIDI is not available
+- [**etc...**](https://github.com/jazz-soft/JZZ-modules) - Import third-party solutions into the JZZ framework 
+
 *Check the [**Getting Started**](https://jazz-soft.net/doc/JZZ) page
 and the [**API reference**](https://jazz-soft.net/doc/JZZ/reference.html)
 for more information.  
