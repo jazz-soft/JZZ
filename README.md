@@ -18,10 +18,21 @@ in **Node.js** and **all major browsers**
 in **Linux**, **MacOS** and **Windows**.
 Some features are available on **iOS** and **Android** devices.
 
+**JZZ.js** enables [**Web MIDI API**](http://webaudio.github.io/web-midi-api/)
+in **Node.js** and those browsers that don't support it,
+and provides additional functionality to make developer's life easier.
+
 For the best user experience, it's *highly RECOMMENDED (though not required)*
 to install the latest version of [**Jazz-Plugin**](http://jazz-soft.net)
 and browser extensions from [**Chrome Web Store**](https://chrome.google.com/webstore/detail/jazz-midi/jhdoobfdaejmldnpihidjemjcbpfmbkm)
 or [**Mozilla Add-ons**](https://addons.mozilla.org/en-US/firefox/addon/jazz-midi).
+
+## Features
+- MIDI In/Out
+- User-defined MIDI nodes
+- MPE
+- SMPTE
+- Additional modules
 
 ## Install
 
@@ -72,10 +83,19 @@ or get the full development version and minified scripts from [**Github**](https
          .connect(function(msg) { console.log(msg.toString()); })
          .wait(10000).close();
 
+##### Connecting MIDI nodes
+
+    var input = JZZ().openMidiIn();
+    var output = JZZ().openMidiIn();
+    var logger = JZZ.Widget({ _receive: function(msg) {
+      console.log(msg.toString());
+    }});
+    input.connect(logger);
+    logger.connect(output);
+
 ##### Helpers and shortcuts
 
-All calls below will do the same job:
-
+    // All calls below will do the same job:
     port.send([0x90, 61, 127]).wait(500).send([0x80, 61, 0]);   // arrays
     port.send(0x90, 61, 127).wait(500).send(0x80, 61, 0);       // comma-separated
     port.send(0x90, 'C#5', 127).wait(500).send(0x80, 'Db5', 0); // note names
