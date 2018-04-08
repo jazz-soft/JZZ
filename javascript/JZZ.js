@@ -1941,24 +1941,42 @@
       return _outputUUID[name];
     }
   }
-
   function MIDIAccess() {
-    var watcher;
     this.sysexEnabled = true;
     this.outputs = new Map();
     this.inputs = new Map();
+    var self = this;
+    function _onwatch(x) {
+      var i, p;
+      for (i = 0; i < x.inputs.added.length; i++) {
+        p = new MIDIInput(x.inputs.added[i]);
+        self.inputs.set(p.id, p);
+        p.open().then(_noop, _noop);
+      }
+      for (i = 0; i < x.outputs.added.length; i++) {
+        p = new MIDIOutput(x.outputs.added[i]);
+        self.outputs.set(p.id, p);
+        p.open().then(_noop, _noop);
+      }
+      for (i = 0; i < x.inputs.removed.length; i++) {
+//console.log('removed:', x.inputs.removed[i]);
+      }
+      for (i = 0; i < x.outputs.removed.length; i++) {
+//console.log('removed:', x.outputs.removed[i]);
+      }
+    }
     Object.defineProperty(this, 'onstatechange', {
       get: function() { return _onstatechange; },
       set: function(value) {
         if (value instanceof Function) {
           if (!_onstatechange) {
-            //watcher = setInterval(refresh, 250);
+            JZZ().onChange(_onwatch);
           }
           _onstatechange = value;
         }
         else {
           if (_onstatechange) {
-            //clearInterval(watcher);
+            JZZ().onChange().disconnect(_onwatch);
             _onstatechange = undefined;
           }
         }
