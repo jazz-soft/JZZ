@@ -2077,7 +2077,7 @@
             self.connection = 'open';
             for (var i = 0; i < self._resolves.length; i++) resolve(self._resolves[i]);
             delete self._resolves;
-            //if (self.onstatechange) self.onstatechange(new MIDIConnectionEvent(self, self));
+            if (self.onstatechange) self.onstatechange(new MIDIConnectionEvent(self, self));
           });
         }
       }
@@ -2089,8 +2089,8 @@
       port.close();
       this.state = 'disconnected';
       this.connection = 'closed';
+      if (this.onstatechange) this.onstatechange(new MIDIConnectionEvent(this, this));
       _outputMap[this.name] = undefined;
-      //if (this.onstatechange) this.onstatechange(new MIDIConnectionEvent(this, this));
     }
     return this;
   };
@@ -2155,7 +2155,7 @@
             });
             for (var i = 0; i < self._resolves.length; i++) resolve(self._resolves[i]);
             delete self._resolves;
-            //if (self.onstatechange) self.onstatechange(new MIDIConnectionEvent(self, self));
+            if (self.onstatechange) self.onstatechange(new MIDIConnectionEvent(self, self));
           });
         }
       }
@@ -2167,8 +2167,8 @@
       port.close();
       this.state = 'disconnected';
       this.connection = 'closed';
+      if (this.onstatechange) this.onstatechange(new MIDIConnectionEvent(this, this));
       _inputMap[this.name] = undefined;
-      //if (this.onstatechange) this.onstatechange(new MIDIConnectionEvent(this, this));
     }
     this.onmidimessage = MIDIInput.prototype.onmidimessage;
     return this;
