@@ -1910,8 +1910,18 @@
       this.keys = [];
     };
     Map.prototype.set = function(id, obj) {
-      this.keys.push(id);
+      if (typeof this.store[id] === 'undefined') this.keys.push(id);
       this.store[id] = obj;
+      this.size = this.keys.length;
+      return this;
+    };
+    Map.prototype.get = function(id) {
+      return this.store[id];
+    };
+    Map.prototype.delete = function(id) {
+      delete this.store[id];
+      var index = this.keys.indexOf(id);
+      if (index > -1) this.keys.splice(index, 1);
       this.size = this.keys.length;
       return this;
     };
@@ -1946,23 +1956,34 @@
     this.outputs = new Map();
     this.inputs = new Map();
     var self = this;
+    function _notify(p) {
+      return function() { _onstatechange(new MIDIConnectionEvent(p, self)); };
+    }
     function _onwatch(x) {
-      var i, p;
+      var i, p, f;
       for (i = 0; i < x.inputs.added.length; i++) {
         p = new MIDIInput(x.inputs.added[i]);
         self.inputs.set(p.id, p);
-        p.open().then(_noop, _noop);
+        f = _notify(p);
+        p.open().then(f, f);
       }
       for (i = 0; i < x.outputs.added.length; i++) {
         p = new MIDIOutput(x.outputs.added[i]);
         self.outputs.set(p.id, p);
-        p.open().then(_noop, _noop);
+        f = _notify(p);
+        p.open().then(f, f);
       }
       for (i = 0; i < x.inputs.removed.length; i++) {
-//console.log('removed:', x.inputs.removed[i]);
+        p = self.inputs.get(_inputUUID[x.inputs.removed[i].name]);
+        p.close();
+        self.inputs.delete(p.id);
+        _onstatechange(new MIDIConnectionEvent(p, self));
       }
       for (i = 0; i < x.outputs.removed.length; i++) {
-//console.log('removed:', x.outputs.removed[i]);
+        p = self.outputs.get(_outputUUID[x.outputs.removed[i].name]);
+        p.close();
+        self.outputs.delete(p.id);
+        _onstatechange(new MIDIConnectionEvent(p, self));
       }
     }
     Object.defineProperty(this, 'onstatechange', {
@@ -2028,14 +2049,14 @@
     this.state = 'disconnected';
     this.connection = 'closed';
     Object.defineProperty(this, 'onstatechange', {
-      get: function() { return outputMap[self.name].onstatechange; },
+      get: function() { return _outputMap[self.name].onstatechange; },
       set: function(value) {
         if (value instanceof Function) {
-          outputMap[self.name].onstatechange = value;
-          outputMap[self.name].onstatechange(new MIDIConnectionEvent(self, self));
+          _outputMap[self.name].onstatechange = value;
+          //_outputMap[self.name].onstatechange(new MIDIConnectionEvent(self, self));
         }
         else {
-          outputMap[self.name].onstatechange = value;
+          _outputMap[self.name].onstatechange = value;
         }
       }
     });
@@ -2047,12 +2068,18 @@
       var port = _outputMap[self.name];
       if (port) resolve(self);
       else {
-        JZZ().openMidiOut(self.name).or(reject).and(function() {
-          _outputMap[self.name] = this;
-          self.state = 'connected';
-          self.connection = 'open';
-          resolve(self);
-        });
+        if (!self._resolves) self._resolves = [];
+        self._resolves.push(resolve);
+        if (self._resolves.length == 1) {
+          JZZ().openMidiOut(self.name).or(reject).and(function() {
+            _outputMap[self.name] = this;
+            self.state = 'connected';
+            self.connection = 'open';
+            for (var i = 0; i < self._resolves.length; i++) resolve(self._resolves[i]);
+            delete self._resolves;
+            //if (self.onstatechange) self.onstatechange(new MIDIConnectionEvent(self, self));
+          });
+        }
       }
     });
   };
@@ -2063,7 +2090,7 @@
       this.state = 'disconnected';
       this.connection = 'closed';
       _outputMap[this.name] = undefined;
-    //  if (impl.onstatechange) impl.onstatechange(new MIDIConnectionEvent(this, this));
+      //if (this.onstatechange) this.onstatechange(new MIDIConnectionEvent(this, this));
     }
     return this;
   };
@@ -2097,14 +2124,14 @@
     this.state = 'disconnected';
     this.connection = 'closed';
     Object.defineProperty(this, 'onstatechange', {
-      get: function() { return inputMap[self.name].onstatechange; },
+      get: function() { return _inputMap[self.name].onstatechange; },
       set: function(value) {
         if (value instanceof Function) {
-          inputMap[self.name].onstatechange = value;
-          inputMap[self.name].onstatechange(new MIDIConnectionEvent(self, self));
+          _inputMap[self.name].onstatechange = value;
+          //_inputMap[self.name].onstatechange(new MIDIConnectionEvent(self, self));
         }
         else {
-          inputMap[self.name].onstatechange = value;
+          _inputMap[self.name].onstatechange = value;
         }
       }
     });
@@ -2116,15 +2143,21 @@
       var port = _inputMap[self.name];
       if (port) resolve(self);
       else {
-        JZZ().openMidiIn(self.name).or(reject).and(function() {
-          _inputMap[self.name] = this;
-          self.state = 'connected';
-          self.connection = 'open';
-          this.connect(function(msg) {
-            self.onmidimessage(new MIDIMessageEvent(self, new Uint8Array(msg)));
+        if (!self._resolves) self._resolves = [];
+        self._resolves.push(resolve);
+        if (self._resolves.length == 1) {
+          JZZ().openMidiIn(self.name).or(reject).and(function() {
+            _inputMap[self.name] = this;
+            self.state = 'connected';
+            self.connection = 'open';
+            this.connect(function(msg) {
+              self.onmidimessage(new MIDIMessageEvent(self, new Uint8Array(msg)));
+            });
+            for (var i = 0; i < self._resolves.length; i++) resolve(self._resolves[i]);
+            delete self._resolves;
+            //if (self.onstatechange) self.onstatechange(new MIDIConnectionEvent(self, self));
           });
-          resolve(self);
-        });
+        }
       }
     });
   };
@@ -2134,8 +2167,8 @@
       port.close();
       this.state = 'disconnected';
       this.connection = 'closed';
-      _outputMap[this.name] = undefined;
-    //  if (impl.onstatechange) impl.onstatechange(new MIDIConnectionEvent(this, this));
+      _inputMap[this.name] = undefined;
+      //if (this.onstatechange) this.onstatechange(new MIDIConnectionEvent(this, this));
     }
     this.onmidimessage = MIDIInput.prototype.onmidimessage;
     return this;
