@@ -45,7 +45,13 @@ or get the full development version and minified scripts from [**Github**](https
 
 ##### Plain HTML
 
-    <script src="scripts/JZZ.js"></script>
+    <script src="JZZ.js"></script>
+    //...
+
+##### CDN
+
+    <script src="https://cdn.jsdelivr.net/npm/jzz"></script>       // the latest version, or
+    <script src="https://cdn.jsdelivr.net/npm/jzz@0.4.6"></script> // any particular version
     //...
 
 ##### CommonJS (Browserify and Node.js command line applications)
