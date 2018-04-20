@@ -137,14 +137,6 @@
   }
   _J.prototype = new _R();
 
-  _J.prototype.time = function() { return 0; };
-  if (typeof performance != 'undefined' && performance.now) _J.prototype._time = function() { return performance.now(); };
-  function _initTimer() {
-    if (!_J.prototype._time) _J.prototype._time = function() { return Date.now(); };
-    _J.prototype._startTime = _J.prototype._time();
-    _J.prototype.time = function() { return _J.prototype._time() - _J.prototype._startTime; };
-  }
-
   function _clone(obj, key, val) {
     if (typeof key == 'undefined') return _clone(obj, [], []);
     if (obj instanceof Object) {
@@ -633,7 +625,6 @@
     _jzz._options = opt;
     _jzz._push(_tryAny, [_filterEngines(opt)]);
     _jzz.refresh();
-    _jzz._push(_initTimer, []);
     _jzz._push(function(){ if (!_outs.length && !_ins.length) this._break(); }, []);
     _jzz._resume();
   }
@@ -808,7 +799,6 @@
       _engine._main.OnDisconnectMidiIn();
       _engine._main.OnDisconnectMidiOut();
     };
-    _J.prototype._time = function() { return _engine._main.Time(); };
   }
 
   function _initNode(obj) {

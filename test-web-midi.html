@@ -19,6 +19,11 @@ var midiin = document.getElementById('midiin');
 var midilog = [];
 var webmidi;
 
+var _time = Date.now || function () { return new Date().getTime(); };
+var _startTime = _time();
+var _now = typeof performance != 'undefined' && performance.now ?
+    function() { return performance.now(); } : function() { return _time() - _startTime; };
+
 function printMidi(name) {
   return function(msg) {
     var s = name + ':';
@@ -33,7 +38,7 @@ function refresh() {
   output.innerHTML = 'WebMIDI is working!\n';
   if (webmidi.outputs.size) {
     output.innerHTML += '\nMIDI-Out ports available: ' + webmidi.outputs.size + '\n';
-    var time = JZZ.now();
+    var time = _now();
     webmidi.outputs.forEach(function(port) {
       output.innerHTML += '    ' + port.name +
         '; manufacturer: ' + port.manufacturer +
