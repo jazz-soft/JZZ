@@ -12,13 +12,16 @@
 })(this, function(){
 
   var _scope = typeof window === 'undefined' ? global : window;
-  var _version = '0.4.6';
+  var _version = '0.4.7';
   var i, j, k, m, n;
 
   var _time = Date.now || function () { return new Date().getTime(); };
   var _startTime = _time();
   var _now = typeof performance != 'undefined' && performance.now ?
     function() { return performance.now(); } : function() { return _time() - _startTime; };
+  var _schedule = function(f) {
+    setTimeout(f, 0);
+  };
 
   // _R: common root for all async objects
   function _R() {
@@ -1180,7 +1183,6 @@
     if (!_jzz) _initJZZ(opt);
     return _jzz;
   };
-  JZZ.now = _now;
   JZZ.info = function() { return _J.prototype.info();};
   JZZ.Widget = function(arg) {
     var obj = new _M();
@@ -1807,6 +1809,8 @@
   JZZ.MPE = MPE;
 
   JZZ.lib = {};
+  JZZ.lib.now = _now;
+  JZZ.lib.schedule = _schedule;
   JZZ.lib.openMidiOut = function(name, engine) {
     var port = new _M();
     engine._openOut(port, name);
