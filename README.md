@@ -32,6 +32,7 @@ or [**Mozilla Add-ons**](https://addons.mozilla.org/en-US/firefox/addon/jazz-mid
 - User-defined MIDI nodes
 - MPE
 - SMPTE
+- MIDI files
 - Additional modules
 
 ## Install
@@ -109,6 +110,7 @@ or get the full development version and minified scripts from [**Github**](https
     port.ch(0).note('C#5', 127, 500);                           // using channels
 
 ## Additional modules
+- [**JZZ-midi-SMF**](https://github.com/jazz-soft/JZZ-midi-SMF) - Standard MIDI files: read / write / play 
 - [**JZZ-midi-GM**](https://github.com/jazz-soft/JZZ-midi-GM) - General MIDI instrument names: MIDI to string / string to MIDI 
 - [**JZZ-midi-Gear**](https://github.com/jazz-soft/JZZ-midi-Gear) - Retrieve your MIDI device model and manufacturer
 - [**JZZ-input-Kbd**](https://github.com/jazz-soft/JZZ-input-Kbd) - Virtual piano controls for your MIDI projects
