@@ -7,7 +7,7 @@
 [![safari](http://jazz-soft.github.io/img/safari.jpg)](https://jazz-soft.net/download/Jazz-Plugin)
 [![msie](http://jazz-soft.github.io/img/msie.jpg)](https://jazz-soft.net/download/Jazz-Plugin)
 [![windows](http://jazz-soft.github.io/img/windows.jpg)](https://jazz-soft.net/download/Jazz-Plugin)
-[![mocos](http://jazz-soft.github.io/img/macos.jpg)](https://jazz-soft.net/download/Jazz-Plugin)
+[![macos](http://jazz-soft.github.io/img/macos.jpg)](https://jazz-soft.net/download/Jazz-Plugin)
 [![linux](http://jazz-soft.github.io/img/linux.jpg)](https://jazz-soft.net/download/Jazz-Plugin)
 [![raspberry pi](http://jazz-soft.github.io/img/rpi.jpg)](https://www.npmjs.com/package/jazz-midi)
 [![ios](http://jazz-soft.github.io/img/ios.jpg)](https://github.com/jazz-soft/JZZ-modules)
@@ -52,7 +52,7 @@ or get the full development version and minified scripts from [**Github**](https
 ##### CDN
 
     <script src="https://cdn.jsdelivr.net/npm/jzz"></script>       // the latest version, or
-    <script src="https://cdn.jsdelivr.net/npm/jzz@0.4.6"></script> // any particular version
+    <script src="https://cdn.jsdelivr.net/npm/jzz@0.4.8"></script> // any particular version
     //...
 
 ##### CommonJS (Browserify and Node.js command line applications)
