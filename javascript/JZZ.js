@@ -12,7 +12,7 @@
 })(this, function(){
 
   var _scope = typeof window === 'undefined' ? global : window;
-  var _version = '0.4.8';
+  var _version = '0.4.9';
   var i, j, k, m, n;
 
   var _time = Date.now || function () { return new Date().getTime(); };
@@ -1874,6 +1874,49 @@
     }
   }
   JZZ.lib.getAudioContext = function() { _initAudioContext(); return _ac; };
+  var _b64 = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
+  JZZ.lib.fromBase64 = function(input) {
+    var output = '';
+    var chr1, chr2, chr3;
+    var enc1, enc2, enc3, enc4;
+    var i = 0;
+    input = input.replace(/[^A-Za-z0-9\+\/\=]/g, '');
+    while (i < input.length) {
+      enc1 = _b64.indexOf(input.charAt(i++));
+      enc2 = _b64.indexOf(input.charAt(i++));
+      enc3 = _b64.indexOf(input.charAt(i++));
+      enc4 = _b64.indexOf(input.charAt(i++));
+      chr1 = (enc1 << 2) | (enc2 >> 4);
+      chr2 = ((enc2 & 15) << 4) | (enc3 >> 2);
+      chr3 = ((enc3 & 3) << 6) | enc4;
+      output = output + String.fromCharCode(chr1);
+      if (enc3 != 64) {
+        output = output + String.fromCharCode(chr2);
+      }
+      if (enc4 != 64) {
+        output = output + String.fromCharCode(chr3);
+      }
+    }
+    return output;
+  };
+  JZZ.lib.toBase64 = function(data) {
+    var o1, o2, o3, h1, h2, h3, h4, bits, i = 0, ac = 0, enc = '', arr = [];
+    if (!data) return data;
+    do {
+      o1 = data.charCodeAt(i++);
+      o2 = data.charCodeAt(i++);
+      o3 = data.charCodeAt(i++);
+      bits = o1 << 16 | o2 << 8 | o3;
+      h1 = bits >> 18 & 0x3f;
+      h2 = bits >> 12 & 0x3f;
+      h3 = bits >> 6 & 0x3f;
+      h4 = bits & 0x3f;
+      arr[ac++] = _b64.charAt(h1) + _b64.charAt(h2) + _b64.charAt(h3) + _b64.charAt(h4);
+    } while(i < data.length);
+    enc = arr.join('');
+    var r = data.length % 3;
+    return (r ? enc.slice(0, r - 3) + '==='.slice(r) : enc);
+  };
 
   // Web MIDI API
   var _wma;
