@@ -49,10 +49,10 @@ or get the full development version and minified scripts from [**Github**](https
     <script src="JZZ.js"></script>
     //...
 
-##### CDN
+##### CDN [![](https://data.jsdelivr.com/v1/package/npm/jzz/badge)](https://www.jsdelivr.com/package/npm/jzz)
 
     <script src="https://cdn.jsdelivr.net/npm/jzz"></script>       // the latest version, or
-    <script src="https://cdn.jsdelivr.net/npm/jzz@0.4.8"></script> // any particular version
+    <script src="https://cdn.jsdelivr.net/npm/jzz@0.4.9"></script> // any particular version
     //...
 
 ##### CommonJS (Browserify and Node.js command line applications)
