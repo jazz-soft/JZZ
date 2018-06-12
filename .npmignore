@@ -1,7 +1,6 @@
 minified
-.gitattributes
-.gitignore
-.npmignore
+test
+.*
 bower.json
 Gruntfile.js
 *.html

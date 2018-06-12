@@ -4,7 +4,7 @@
   "description": "MIDI library for Node.js and web-browsers",
   "main": "javascript/JZZ.js",
   "scripts": {
-    "test": "node test.js"
+    "test": "mocha"
   },
   "keywords": [
     "MIDI",
@@ -16,12 +16,13 @@
   ],
   "author": "jazz-soft (http://jazz-soft.net/)",
   "dependencies": {
-    "jazz-midi": "^1.6.2"
+    "jazz-midi": "^1.6.3"
   },
   "devDependencies": {
-    "grunt": "^1.0.2",
+    "grunt": "^1.0.3",
     "grunt-contrib-jshint": "^1.1.0",
-    "grunt-contrib-uglify": "^3.3.0"
+    "grunt-contrib-uglify": "^3.3.0",
+    "mocha": "^5.2.0"
   },
   "repository": {
     "type": "git",
