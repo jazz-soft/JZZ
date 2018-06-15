@@ -12,7 +12,7 @@
 })(this, function(){
 
   var _scope = typeof window === 'undefined' ? global : window;
-  var _version = '0.4.9';
+  var _version = '0.5.0';
   var i, j, k, m, n;
 
   var _time = Date.now || function () { return new Date().getTime(); };
@@ -1408,12 +1408,14 @@
 
   function MIDI(arg) {
     var self = this instanceof MIDI ? this : self = new MIDI();
+    var i;
     if (arg instanceof MIDI) {
       self._from = arg._from.slice();
-      self._mpe = arg._mpe;
+      for (i in arg) if (arg.hasOwnProperty(i) && i != '_from') self[i] = arg[i];
+      return self;
     }
     else self._from = [];
-    if (!arguments.length) return self;
+    if (typeof arg == 'undefined') return self;
     var arr = arg instanceof Array ? arg : arguments;
     for (i = 0; i < arr.length; i++) {
       n = arr[i];
@@ -1448,60 +1450,90 @@
     }
   }
   for (n = 0; n < 128; n++) _noteNum[n] = n;
-  function _throw(x){ throw RangeError('Bad MIDI value: ' + x);}
-  function _ch(n) { if (n != parseInt(n) || n<0 || n>0xf) _throw(n); return n;}
-  function _7b(n, m) { if (n != parseInt(n) || n<0 || n>0x7f) _throw(typeof m == 'undefined' ? n : m); return n;}
-  function _lsb(n){ if (n != parseInt(n) || n<0 || n>0x3fff) _throw(n); return n & 0x7f;}
-  function _msb(n){ if (n != parseInt(n) || n<0 || n>0x3fff) _throw(n); return n >> 7;}
+  function _throw(x) { throw RangeError('Bad MIDI value: ' + x); }
+  function _ch(n) { if (n != parseInt(n) || n < 0 || n > 0xf) _throw(n); return n; }
+  function _7b(n, m) { if (n != parseInt(n) || n < 0 || n > 0x7f) _throw(typeof m == 'undefined' ? n : m); return n; }
+  function _lsb(n) { if (n != parseInt(n) || n < 0 || n > 0x3fff) _throw(n); return n & 0x7f; }
+  function _msb(n) { if (n != parseInt(n) || n < 0 || n > 0x3fff) _throw(n); return n >> 7; }
   var _helper = {
-    noteOff : function(c, n, v){ if (typeof v == 'undefined') v = 64; return [0x80+_ch(c), _7b(MIDI.noteValue(n), n), _7b(v)];},
-    noteOn  : function(c, n, v){ if (typeof v == 'undefined') v = 127; return [0x90+_ch(c), _7b(MIDI.noteValue(n), n), _7b(v)];},
-    aftertouch : function(c, n, v){ return [0xA0+_ch(c), _7b(MIDI.noteValue(n), n), _7b(v)];},
-    control : function(c, n, v){ return [0xB0+_ch(c), _7b(n), _7b(v)];},
-    program : function(c, n){ return [0xC0+_ch(c), _7b(MIDI.programValue(n), n)];},
-    pressure: function(c, n){ return [0xD0+_ch(c), _7b(n)];},
-    pitchBend: function(c, n){ return [0xE0+_ch(c), _lsb(n), _msb(n)];},
-    bankMSB : function(c, n){ return [0xB0+_ch(c), 0x00, _7b(n)];},
-    bankLSB : function(c, n){ return [0xB0+_ch(c), 0x20, _7b(n)];},
-    modMSB  : function(c, n){ return [0xB0+_ch(c), 0x01, _7b(n)];},
-    modLSB  : function(c, n){ return [0xB0+_ch(c), 0x21, _7b(n)];},
-    breathMSB : function(c, n){ return [0xB0+_ch(c), 0x02, _7b(n)];},
-    breathLSB : function(c, n){ return [0xB0+_ch(c), 0x22, _7b(n)];},
-    footMSB : function(c, n){ return [0xB0+_ch(c), 0x04, _7b(n)];},
-    footLSB : function(c, n){ return [0xB0+_ch(c), 0x24, _7b(n)];},
-    portamentoMSB : function(c, n){ return [0xB0+_ch(c), 0x05, _7b(n)];},
-    portamentoLSB : function(c, n){ return [0xB0+_ch(c), 0x25, _7b(n)];},
-    volumeMSB : function(c, n){ return [0xB0+_ch(c), 0x07, _7b(n)];},
-    volumeLSB : function(c, n){ return [0xB0+_ch(c), 0x27, _7b(n)];},
-    balanceMSB : function(c, n){ return [0xB0+_ch(c), 0x08, _7b(n)];},
-    balanceLSB : function(c, n){ return [0xB0+_ch(c), 0x28, _7b(n)];},
-    panMSB  : function(c, n){ return [0xB0+_ch(c), 0x0A, _7b(n)];},
-    panLSB  : function(c, n){ return [0xB0+_ch(c), 0x2A, _7b(n)];},
-    expressionMSB : function(c, n){ return [0xB0+_ch(c), 0x0B, _7b(n)];},
-    expressionLSB : function(c, n){ return [0xB0+_ch(c), 0x2B, _7b(n)];},
-    damper : function(c, b){ return [0xB0+_ch(c), 0x40, b ? 127 : 0];},
-    portamento : function(c, b){ return [0xB0+_ch(c), 0x41, b ? 127 : 0];},
-    sostenuto : function(c, b){ return [0xB0+_ch(c), 0x42, b ? 127 : 0];},
-    soft   : function(c, b){ return [0xB0+_ch(c), 0x43, b ? 127 : 0];},
-    allSoundOff : function(c){ return [0xB0+_ch(c), 0x78, 0];},
-    allNotesOff : function(c){ return [0xB0+_ch(c), 0x7b, 0];},
+    noteOff: function(c, n, v) { if (typeof v == 'undefined') v = 64; return [0x80 + _ch(c), _7b(MIDI.noteValue(n), n), _7b(v)]; },
+    noteOn: function(c, n, v) { if (typeof v == 'undefined') v = 127; return [0x90 + _ch(c), _7b(MIDI.noteValue(n), n), _7b(v)]; },
+    aftertouch: function(c, n, v) { return [0xA0 + _ch(c), _7b(MIDI.noteValue(n), n), _7b(v)]; },
+    control: function(c, n, v) { return [0xB0 + _ch(c), _7b(n), _7b(v)]; },
+    program: function(c, n) { return [0xC0 + _ch(c), _7b(MIDI.programValue(n), n)]; },
+    pressure: function(c, n) { return [0xD0 + _ch(c), _7b(n)]; },
+    pitchBend: function(c, n) { return [0xE0 + _ch(c), _lsb(n), _msb(n)]; },
+    bankMSB: function(c, n) { return [0xB0 + _ch(c), 0x00, _7b(n)]; },
+    bankLSB: function(c, n) { return [0xB0 + _ch(c), 0x20, _7b(n)]; },
+    modMSB: function(c, n) { return [0xB0 + _ch(c), 0x01, _7b(n)]; },
+    modLSB: function(c, n) { return [0xB0 + _ch(c), 0x21, _7b(n)]; },
+    breathMSB: function(c, n) { return [0xB0 + _ch(c), 0x02, _7b(n)]; },
+    breathLSB: function(c, n) { return [0xB0 + _ch(c), 0x22, _7b(n)]; },
+    footMSB: function(c, n) { return [0xB0 + _ch(c), 0x04, _7b(n)]; },
+    footLSB: function(c, n) { return [0xB0 + _ch(c), 0x24, _7b(n)]; },
+    portamentoMSB: function(c, n) { return [0xB0 + _ch(c), 0x05, _7b(n)]; },
+    portamentoLSB: function(c, n) { return [0xB0 + _ch(c), 0x25, _7b(n)]; },
+    volumeMSB: function(c, n) { return [0xB0 + _ch(c), 0x07, _7b(n)]; },
+    volumeLSB: function(c, n) { return [0xB0 + _ch(c), 0x27, _7b(n)]; },
+    balanceMSB: function(c, n) { return [0xB0 + _ch(c), 0x08, _7b(n)]; },
+    balanceLSB: function(c, n) { return [0xB0 + _ch(c), 0x28, _7b(n)]; },
+    panMSB: function(c, n) { return [0xB0 + _ch(c), 0x0A, _7b(n)]; },
+    panLSB: function(c, n) { return [0xB0 + _ch(c), 0x2A, _7b(n)]; },
+    expressionMSB: function(c, n) { return [0xB0 + _ch(c), 0x0B, _7b(n)]; },
+    expressionLSB: function(c, n) { return [0xB0 + _ch(c), 0x2B, _7b(n)]; },
+    damper: function(c, b) { return [0xB0 + _ch(c), 0x40, b ? 127 : 0]; },
+    portamento: function(c, b) { return [0xB0 + _ch(c), 0x41, b ? 127 : 0]; },
+    sostenuto: function(c, b) { return [0xB0 + _ch(c), 0x42, b ? 127 : 0]; },
+    soft: function(c, b) { return [0xB0 + _ch(c), 0x43, b ? 127 : 0]; },
+    allSoundOff: function(c) { return [0xB0 + _ch(c), 0x78, 0]; },
+    allNotesOff: function(c) { return [0xB0 + _ch(c), 0x7b, 0]; },
   };
   var _helperNC = { // no channel
-    mtc: function(t){ return [0xF1, _mtc(t)];},
-    songPosition: function(n){ return [0xF2, _lsb(n), _msb(n)];},
-    songSelect : function(n){ return [0xF3, _7b(n)];},
-    tune : function(){ return [0xF6];},
-    clock : function(){ return [0xF8];},
-    start : function(){ return [0xFA];},
-    continue : function(){ return [0xFB];},
-    stop : function(){ return [0xFC];},
-    active : function(){ return [0xFE];},
-    sxIdRequest : function(){ return [0xF0, 0x7E, 0x7F, 0x06, 0x01, 0xF7];},
-    sxFullFrame : function(t){ return [0xF0, 0x7F, 0x7F, 0x01, 0x01, _hrtype(t), t.getMinute(), t.getSecond(), t.getFrame(), 0xF7];},
-    reset : function(){ return [0xFF];}
+    mtc: function(t) { return [0xF1, _mtc(t)]; },
+    songPosition: function(n) { return [0xF2, _lsb(n), _msb(n)]; },
+    songSelect: function(n) { return [0xF3, _7b(n)]; },
+    tune: function() { return [0xF6]; },
+    clock: function() { return [0xF8]; },
+    start: function() { return [0xFA]; },
+    continue: function() { return [0xFB]; },
+    stop: function() { return [0xFC]; },
+    active: function() { return [0xFE]; },
+    sxIdRequest: function() { return [0xF0, 0x7E, 0x7F, 0x06, 0x01, 0xF7]; },
+    sxFullFrame: function(t) { return [0xF0, 0x7F, 0x7F, 0x01, 0x01, _hrtype(t), t.getMinute(), t.getSecond(), t.getFrame(), 0xF7]; },
+    reset: function() { return [0xFF]; },
+  };
+  function _smf(ff, dd) {
+    var midi = new MIDI();
+    midi.ff = _7b(ff);
+    midi.dd = dd;
+    return midi;
+  }
+  var _helperSMF = { // Standard MIDI File events
+    smf: function(ff, dd) { return _smf(ff, dd); },
+    smfSeqNumber: function(dd) { return _smf(0, dd); },
+    smfText: function(dd) { return _smf(1, dd); },
+    smfCopyright: function(dd) { return _smf(2, dd); },
+    smfSeqName: function(dd) { return _smf(3, dd); },
+    smfInstrName: function(dd) { return _smf(4, dd); },
+    smfLyric: function(dd) { return _smf(5, dd); },
+    smfMarker: function(dd) { return _smf(6, dd); },
+    smfCuePoint: function(dd) { return _smf(7, dd); },
+    smfProgName: function(dd) { return _smf(8, dd); },
+    smfDevName: function(dd) { return _smf(9, dd); },
+    smfChannelPrefix: function(dd) { return _smf(32, dd); },
+    smfEndOfTrack: function() { return _smf(47); },
+    smfTempo: function() { return _smf(81); },
+    smfSMPTE: function() { return _smf(84); },
+    smfTimeSignature: function() { return _smf(88); },
+    smfKeySignature: function() { return _smf(89); },
+    smfMetaEvent: function(dd) { return _smf(127, dd); }
   };
   function _copyHelperNC(name, func) {
     MIDI[name] = function() { return new MIDI(func.apply(0, arguments)); };
+    _M.prototype[name] = function() { this.send(func.apply(0, arguments)); return this; };
+  }
+  function _copyHelperSMF(name, func) {
+    MIDI[name] = function() { return func.apply(0, arguments); };
     _M.prototype[name] = function() { this.send(func.apply(0, arguments)); return this; };
   }
   function _copyHelper(name, func) {
@@ -1524,6 +1556,7 @@
     };
   }
   for (k in _helperNC) if (_helperNC.hasOwnProperty(k)) _copyHelper(k, _helperNC[k]);
+  for (k in _helperSMF) if (_helperSMF.hasOwnProperty(k)) _copyHelper(k, _helperSMF[k]);
   for (k in _helper) if (_helper.hasOwnProperty(k)) _copyHelper(k, _helper[k]);
   _E.prototype.noteOn = function(n, v) {
     var msg = MIDI.noteOn(this._master, n, v);
@@ -1570,12 +1603,12 @@
   };
   MIDI.prototype.getVelocity = function() {
     var c = this[0];
-    if (typeof c == 'undefined' || c < 0x90 || c > 0x9f) return;
+    if (typeof c == 'undefined' || c < 0x80 || c > 0x9f) return;
     return this[2];
   };
   MIDI.prototype.setVelocity = function(x) {
     var c = this[0];
-    if (typeof c == 'undefined' || c < 0x90 || c > 0x9f) return this;
+    if (typeof c == 'undefined' || c < 0x80 || c > 0x9f) return this;
     x = parseInt(x);
     if (x >= 0 && x < 128) this[2] = x;
     return this;
@@ -1608,18 +1641,47 @@
     return this[0] == 0xf0 && this[this.length - 1] == 0xf7;
   };
 
-  function _hex(x){
-    var a=[];
-    for (var i=0; i<x.length; i++) {
-      a[i] = (x[i]<16 ? '0' : '') + x[i].toString(16);
+  function __hex(x) { return (x < 16 ? '0' : '') + x.toString(16); }
+  function _hex(x) {
+    var a = [];
+    for (var i = 0; i < x.length; i++) {
+      a[i] = __hex(x[i]);
     }
     return a.join(' ');
   }
   MIDI.prototype.toString = function() {
-    if (!this.length) return 'empty';
-    var s = _hex(this);
+    var s;
+    var ss;
+    if (!this.length) {
+      if (typeof this.ff != 'undefined') {
+        s = 'smf ff ' + __hex(this.ff);
+        ss = {
+          0: 'Sequence Number',
+          1: 'Text',
+          2: 'Copyright',
+          3: 'Sequence Name',
+          4: 'Instrument Name',
+          5: 'Lyric',
+          6: 'Marker',
+          7: 'Cue Point',
+          8: 'Program Name',
+          9: 'Device Name',
+          32: 'Channel Prefix',
+          47: 'End of Track',
+          81: 'Tempo',
+          84: 'SMPTE Offset',
+          88: 'Time Signature',
+          89: 'Key Signature',
+          127: 'Meta Event'
+        }[this.ff];
+        if (!ss) ss = 'Undefined';
+        return s + ' -- ' + ss;
+      }
+      return 'empty';
+    }
+    s = _hex(this);
     if (this[0] < 0x80) return s;
-    var ss = {
+    ss = {
       241: 'MIDI Time Code',
       242: 'Song Position',
       243: 'Song Select',
@@ -1633,7 +1695,8 @@
       252: 'Stop',
       253: 'Undefined',
       254: 'Active Sensing',
-      255: 'Reset'}[this[0]];
+      255: 'Reset'
+    }[this[0]];
     if (ss) return s + ' -- ' + ss;
     var c = this[0] >> 4;
     ss = {8: 'Note Off', 10: 'Aftertouch', 12: 'Program Change', 13: 'Channel Aftertouch', 14: 'Pitch Wheel'}[c];
@@ -1713,7 +1776,8 @@
       124: 'Omni Mode Off',
       125: 'Omni Mode On',
       126: 'Mono Mode On',
-      127: 'Poly Mode On'}[this[1]];
+      127: 'Poly Mode On'
+    }[this[1]];
     if (!ss) ss = 'Undefined';
     return s + ' -- ' + ss;
   };
