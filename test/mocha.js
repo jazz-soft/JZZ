@@ -1,4 +1,4 @@
-var assert = require('assert');
+﻿var assert = require('assert');
 var JZZ = require('..');
 
 describe('MIDI messages', function() {
@@ -16,5 +16,18 @@ describe('MIDI messages', function() {
 describe('SMF events', function() {
   it('smfEndOfTrack', function() {
     assert.equal(JZZ.MIDI.smfEndOfTrack().toString(), 'smf ff 2f -- End of Track');
+  });
+});
+
+describe('JZZ.lib', function() {
+  it('toBase64', function() {
+    assert.equal(JZZ.lib.toBase64('MIDI'), 'TUlESQ==');
+  });
+  it('fromBase64', function() {
+    assert.equal(JZZ.lib.fromBase64('TUlESQ=='), 'MIDI');
+  });
+  it('toUTF8', function() {
+    assert.equal(JZZ.lib.toUTF8('МИДИ'), '\xD0\x9C\xD0\x98\xD0\x94\xD0\x98');
+    assert.equal(JZZ.lib.toUTF8('音樂'), '\xE9\x9F\xB3\xE6\xA8\x82');
   });
 });

@@ -1982,6 +1982,32 @@
     return (r ? enc.slice(0, r - 3) + '==='.slice(r) : enc);
   };
 
+  JZZ.lib.toUTF8 = function(data) {
+    data = '' + data;
+    var out = '';
+    var i, n;
+    for (i = 0; i < data.length; i++) {
+      n = data.charCodeAt(i);
+      if (n < 0x80) out += data[i];
+      else if (n < 0x800) {
+        out += String.fromCharCode(0xc0 + (n >> 6));
+        out += String.fromCharCode(0x80 + (n & 0x3f));
+      }
+      else if (n < 0x10000) {
+        out += String.fromCharCode(0xe0 + (n >> 12));
+        out += String.fromCharCode(0x80 + ((n >> 6) & 0x3f));
+        out += String.fromCharCode(0x80 + (n & 0x3f));
+      }
+      else {
+        out += String.fromCharCode(0xf0 + (n >> 18));
+        out += String.fromCharCode(0x80 + ((n >> 12) & 0x3f));
+        out += String.fromCharCode(0x80 + ((n >> 6) & 0x3f));
+        out += String.fromCharCode(0x80 + (n & 0x3f));
+      }
+    }
+    return out;
+  };
+
   // Web MIDI API
   var _wma;
   var _resolves = [];
