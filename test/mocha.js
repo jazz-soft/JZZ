@@ -29,5 +29,14 @@ describe('JZZ.lib', function() {
   it('toUTF8', function() {
     assert.equal(JZZ.lib.toUTF8('МИДИ'), '\xD0\x9C\xD0\x98\xD0\x94\xD0\x98');
     assert.equal(JZZ.lib.toUTF8('音樂'), '\xE9\x9F\xB3\xE6\xA8\x82');
+    assert.equal(JZZ.lib.toUTF8('𝄞'), '\xED\xA0\xB4\xED\xB4\x9E'); // C-Clef
+  });
+  it('fromUTF8', function() {
+    assert.equal(JZZ.lib.fromUTF8('\xD0\x9C\xD0\x98\xD0\x94\xD0\x98'), 'МИДИ');
+    assert.equal(JZZ.lib.fromUTF8('МИДИ'), 'МИДИ');
+    assert.equal(JZZ.lib.fromUTF8('\xE9\x9F\xB3\xE6\xA8\x82'), '音樂');
+    assert.equal(JZZ.lib.fromUTF8('音樂'), '音樂');
+    assert.equal(JZZ.lib.fromUTF8('\xF0\x9D\x84\x9e'), '𝄞'); // C-Clef 4-byte
+    assert.equal(JZZ.lib.fromUTF8('\xED\xA0\xB4\xED\xB4\x9E'), '𝄞'); // C-Clef surrogate pair
   });
 });

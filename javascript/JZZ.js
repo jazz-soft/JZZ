@@ -1981,7 +1981,56 @@
     var r = data.length % 3;
     return (r ? enc.slice(0, r - 3) + '==='.slice(r) : enc);
   };
-
+  JZZ.lib.fromUTF8 = function(data) {
+    data = '' + data;
+    var out = '';
+    var i, n, m;
+    for (i = 0; i < data.length; i++) {
+      n = data.charCodeAt(i);
+      if (n > 0xff) return data;
+      if (n < 0x80) out += data[i];
+      else if ((n & 0xe0) == 0xc0) {
+        n = (n & 0x1f) << 6;
+        i++; if (i >= data.length) return data;
+        m = data.charCodeAt(i);
+        if ((m & 0xc0) != 0x80) return data;
+        n += (m & 0x3f);
+        out += String.fromCharCode(n);
+      }
+      else if ((n & 0xf0) == 0xe0) {
+        n = (n & 0x0f) << 12;
+        i++; if (i >= data.length) return data;
+        m = data.charCodeAt(i);
+        if ((m & 0xc0) != 0x80) return data;
+        n += (m & 0x3f) << 6;
+        i++; if (i >= data.length) return data;
+        m = data.charCodeAt(i);
+        if ((m & 0xc0) != 0x80) return data;
+        n += (m & 0x3f);
+        out += String.fromCharCode(n);
+      }
+      else if ((n & 0xf8) == 0xf0) {
+        n = (n & 0x07) << 18;
+        i++; if (i >= data.length) return data;
+        m = data.charCodeAt(i);
+        if ((m & 0xc0) != 0x80) return data;
+        n += (m & 0x3f) << 12;
+        i++; if (i >= data.length) return data;
+        m = data.charCodeAt(i);
+        if ((m & 0xc0) != 0x80) return data;
+        n += (m & 0x3f) << 6;
+        i++; if (i >= data.length) return data;
+        m = data.charCodeAt(i);
+        if ((m & 0xc0) != 0x80) return data;
+        n += (m & 0x3f);
+        if (n > 0x10ffff) return data;
+        n -= 0x10000;
+        out += String.fromCharCode(0xd800 + (n >> 10));
+        out += String.fromCharCode(0xdc00 + (n & 0x3ff));
+      }
+    }
+    return out;
+  };
   JZZ.lib.toUTF8 = function(data) {
     data = '' + data;
     var out = '';
