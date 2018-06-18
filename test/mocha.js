@@ -14,6 +14,33 @@ describe('MIDI messages', function() {
 });
 
 describe('SMF events', function() {
+  it('smfText', function() {
+    assert.equal(JZZ.MIDI.smfText('\ttwo\nlines\x00').toString(), 'smf ff 01 -- Text: \\ttwo\\nlines\\x00');
+  });
+  it('smfCopyright', function() {
+    assert.equal(JZZ.MIDI.smfCopyright('© ...').toString(), 'smf ff 02 -- Copyright: © ...');
+  });
+  it('smfSeqName', function() {
+    assert.equal(JZZ.MIDI.smfSeqName('sequence').toString(), 'smf ff 03 -- Sequence Name: sequence');
+  });
+  it('smfInstrName', function() {
+    assert.equal(JZZ.MIDI.smfInstrName('instrument').toString(), 'smf ff 04 -- Instrument Name: instrument');
+  });
+  it('smfLyric', function() {
+    assert.equal(JZZ.MIDI.smfLyric('𝄋𝄋𝄋').toString(), 'smf ff 05 -- Lyric: 𝄋𝄋𝄋');
+  });
+  it('smfMarker', function() {
+    assert.equal(JZZ.MIDI.smfMarker('marker').toString(), 'smf ff 06 -- Marker: marker');
+  });
+  it('smfCuePoint', function() {
+    assert.equal(JZZ.MIDI.smfCuePoint('cue point').toString(), 'smf ff 07 -- Cue Point: cue point');
+  });
+  it('smfProgName', function() {
+    assert.equal(JZZ.MIDI.smfProgName('program').toString(), 'smf ff 08 -- Program Name: program');
+  });
+  it('smfDevName', function() {
+    assert.equal(JZZ.MIDI.smfDevName('device').toString(), 'smf ff 09 -- Device Name: device');
+  });
   it('smfEndOfTrack', function() {
     assert.equal(JZZ.MIDI.smfEndOfTrack().toString(), 'smf ff 2f -- End of Track');
   });
@@ -36,7 +63,7 @@ describe('JZZ.lib', function() {
     assert.equal(JZZ.lib.fromUTF8('МИДИ'), 'МИДИ');
     assert.equal(JZZ.lib.fromUTF8('\xE9\x9F\xB3\xE6\xA8\x82'), '音樂');
     assert.equal(JZZ.lib.fromUTF8('音樂'), '音樂');
-    assert.equal(JZZ.lib.fromUTF8('\xF0\x9D\x84\x9e'), '𝄞'); // C-Clef 4-byte
+    assert.equal(JZZ.lib.fromUTF8('\xF0\x9D\x84\x9E'), '𝄞'); // C-Clef 4-byte
     assert.equal(JZZ.lib.fromUTF8('\xED\xA0\xB4\xED\xB4\x9E'), '𝄞'); // C-Clef surrogate pair
   });
 });

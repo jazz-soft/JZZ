@@ -1455,6 +1455,7 @@
   function _7b(n, m) { if (n != parseInt(n) || n < 0 || n > 0x7f) _throw(typeof m == 'undefined' ? n : m); return n; }
   function _lsb(n) { if (n != parseInt(n) || n < 0 || n > 0x3fff) _throw(n); return n & 0x7f; }
   function _msb(n) { if (n != parseInt(n) || n < 0 || n > 0x3fff) _throw(n); return n >> 7; }
+  function _8bs(s) { s = '' + s; for (var i = 0; i < s.length; i++) if (s.charCodeAt(i) > 255) _throw(s[i]); return s; }
   var _helper = {
     noteOff: function(c, n, v) { if (typeof v == 'undefined') v = 64; return [0x80 + _ch(c), _7b(MIDI.noteValue(n), n), _7b(v)]; },
     noteOn: function(c, n, v) { if (typeof v == 'undefined') v = 127; return [0x90 + _ch(c), _7b(MIDI.noteValue(n), n), _7b(v)]; },
@@ -1505,21 +1506,42 @@
   function _smf(ff, dd) {
     var midi = new MIDI();
     midi.ff = _7b(ff);
-    midi.dd = dd;
+    midi.dd = typeof dd == 'undefined' ? '' : _8bs(dd);
     return midi;
   }
   var _helperSMF = { // Standard MIDI File events
-    smf: function(ff, dd) { return _smf(ff, dd); },
+    smf: function(ff, dd) {
+      var f = {
+        0: _helperSMF.smfSeqNumber,
+        1: _helperSMF.smfText,
+        2: _helperSMF.smfCopyright,
+        3: _helperSMF.smfSeqName,
+        4: _helperSMF.smfInstrName,
+        5: _helperSMF.smfLyric,
+        6: _helperSMF.smfMarker,
+        7: _helperSMF.smfCuePoint,
+        8: _helperSMF.smfProgName,
+        9: _helperSMF.smfDevName,
+        32: _helperSMF.smfChannelPrefix,
+        47: _helperSMF.smfEndOfTrack,
+        81: _helperSMF.smfTempo,
+        84: _helperSMF.smfSMPTE,
+        88: _helperSMF.smfTimeSignature,
+        89: _helperSMF.smfKeySignature,
+        127: _helperSMF.smfMetaEvent
+      }[ff];
+      return f ? f(ff, dd) : _smf(ff, dd);
+    },
     smfSeqNumber: function(dd) { return _smf(0, dd); },
-    smfText: function(dd) { return _smf(1, dd); },
-    smfCopyright: function(dd) { return _smf(2, dd); },
-    smfSeqName: function(dd) { return _smf(3, dd); },
-    smfInstrName: function(dd) { return _smf(4, dd); },
-    smfLyric: function(dd) { return _smf(5, dd); },
-    smfMarker: function(dd) { return _smf(6, dd); },
-    smfCuePoint: function(dd) { return _smf(7, dd); },
-    smfProgName: function(dd) { return _smf(8, dd); },
-    smfDevName: function(dd) { return _smf(9, dd); },
+    smfText: function(dd) { return _smf(1, JZZ.lib.toUTF8(dd)); },
+    smfCopyright: function(dd) { return _smf(2, JZZ.lib.toUTF8(dd)); },
+    smfSeqName: function(dd) { return _smf(3, JZZ.lib.toUTF8(dd)); },
+    smfInstrName: function(dd) { return _smf(4, JZZ.lib.toUTF8(dd)); },
+    smfLyric: function(dd) { return _smf(5, JZZ.lib.toUTF8(dd)); },
+    smfMarker: function(dd) { return _smf(6, JZZ.lib.toUTF8(dd)); },
+    smfCuePoint: function(dd) { return _smf(7, JZZ.lib.toUTF8(dd)); },
+    smfProgName: function(dd) { return _smf(8, JZZ.lib.toUTF8(dd)); },
+    smfDevName: function(dd) { return _smf(9, JZZ.lib.toUTF8(dd)); },
     smfChannelPrefix: function(dd) { return _smf(32, dd); },
     smfEndOfTrack: function() { return _smf(47); },
     smfTempo: function() { return _smf(81); },
@@ -1649,6 +1671,17 @@
     }
     return a.join(' ');
   }
+  function _toLine(s) {
+    var out = '';
+    for (var i = 0; i < s.length; i++) {
+      if (s[i] == '\n') out += '\\n';
+      else if (s[i] == '\r') out += '\\r';
+      else if (s[i] == '\t') out += '\\t';
+      else if (s.charCodeAt(i) < 32) out += '\\x' + __hex(s.charCodeAt(i));
+      else out += s[i];
+    }
+    return out;
+  }
   MIDI.prototype.toString = function() {
     var s;
     var ss;
@@ -1675,6 +1708,9 @@
           127: 'Meta Event'
         }[this.ff];
         if (!ss) ss = 'Undefined';
+        if (this.ff > 0 && this.ff < 10) {
+          ss += ': ' + _toLine(JZZ.lib.fromUTF8(this.dd));
+        }
         return s + ' -- ' + ss;
       }
       return 'empty';
