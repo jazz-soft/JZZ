@@ -30,9 +30,9 @@ or [**Mozilla Add-ons**](https://addons.mozilla.org/en-US/firefox/addon/jazz-mid
 ## Features
 - MIDI In/Out
 - User-defined MIDI nodes
+- MIDI files
 - MPE
 - SMPTE
-- MIDI files
 - Additional modules
 
 ## Install
