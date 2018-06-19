@@ -673,7 +673,7 @@
           if (impl) impl._closeAll();
         }
         for (j = 0; j < diff.outputs.removed.length; j++) {
-          impl = _engine._outMap[diff.inputs.removed[j].name];
+          impl = _engine._outMap[diff.outputs.removed[j].name];
           if (impl) impl._closeAll();
         }
         _engine._insW = _engine._ins;
@@ -858,7 +858,7 @@
           if (impl) impl._closeAll();
         }
         for (j = 0; j < diff.outputs.removed.length; j++) {
-          impl = _engine._outMap[diff.inputs.removed[j].name];
+          impl = _engine._outMap[diff.outputs.removed[j].name];
           if (impl) impl._closeAll();
         }
         _engine._insW = _engine._ins;
@@ -1542,9 +1542,15 @@
     smfCuePoint: function(dd) { return _smf(7, JZZ.lib.toUTF8(dd)); },
     smfProgName: function(dd) { return _smf(8, JZZ.lib.toUTF8(dd)); },
     smfDevName: function(dd) { return _smf(9, JZZ.lib.toUTF8(dd)); },
-    smfChannelPrefix: function(dd) { return _smf(32, dd); },
-    smfEndOfTrack: function() { return _smf(47); },
-    smfTempo: function() { return _smf(81); },
+    smfChannelPrefix: function(dd) {
+      return _smf(32, dd);
+    },
+    smfEndOfTrack: function() {
+      return _smf(47);
+    },
+    smfTempo: function() {
+      return _smf(81);
+    },
     smfSMPTE: function() { return _smf(84); },
     smfTimeSignature: function() { return _smf(88); },
     smfKeySignature: function() { return _smf(89); },
