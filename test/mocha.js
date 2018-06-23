@@ -46,6 +46,18 @@ describe('SMF events', function() {
   });
 });
 
+describe('SMPTE', function() {
+  it('00:00:00:00', function() {
+    assert.equal(JZZ.SMPTE().toString(), '00:00:00:00');
+  });
+  it('23:59:59:23', function() {
+    assert.equal(JZZ.SMPTE().decrQF().toString(), '23:59:59:23');
+  });
+  it('23:59:59:29', function() {
+    assert.equal(JZZ.SMPTE(30, 23, 59, 59, 29).toString(), '23:59:59:29');
+  });
+});
+
 describe('JZZ.lib', function() {
   it('toBase64', function() {
     assert.equal(JZZ.lib.toBase64('MIDI'), 'TUlESQ==');

@@ -1669,6 +1669,20 @@
     return this[0] == 0xf0 && this[this.length - 1] == 0xf7;
   };
 
+  function _s2a(x) {
+    var a = [];
+    for (var i = 0; i < x.length; i++) {
+      a[i] = x.charCodeAt(i);
+    }
+    return a;
+  }
+  function _a2s(x) {
+    var a = '';
+    for (var i = 0; i < x.length; i++) {
+      a += String.fromCharCode(x[i]);
+    }
+    return a;
+  }
   function __hex(x) { return (x < 16 ? '0' : '') + x.toString(16); }
   function _hex(x) {
     var a = [];
@@ -1676,6 +1690,14 @@
       a[i] = __hex(x[i]);
     }
     return a.join(' ');
+  }
+  function __dex(x) { return (x < 10 ? '0' : '') + x.toString(); }
+  function _dex(x) {
+    var a = [];
+    for (var i = 0; i < x.length; i++) {
+      a[i] = __dex(x[i]);
+    }
+    return a.join(':');
   }
   function _toLine(s) {
     var out = '';
@@ -1693,31 +1715,37 @@
     var ss;
     if (!this.length) {
       if (typeof this.ff != 'undefined') {
-        s = 'smf ff ' + __hex(this.ff);
-        ss = {
-          0: 'Sequence Number',
-          1: 'Text',
-          2: 'Copyright',
-          3: 'Sequence Name',
-          4: 'Instrument Name',
-          5: 'Lyric',
-          6: 'Marker',
-          7: 'Cue Point',
-          8: 'Program Name',
-          9: 'Device Name',
-          32: 'Channel Prefix',
-          47: 'End of Track',
-          81: 'Tempo',
-          84: 'SMPTE Offset',
-          88: 'Time Signature',
-          89: 'Key Signature',
-          127: 'Meta Event'
-        }[this.ff];
-        if (!ss) ss = 'Undefined';
-        if (this.ff > 0 && this.ff < 10) {
-          ss += ': ' + _toLine(JZZ.lib.fromUTF8(this.dd));
+        s = 'smf ff ' + __hex(this.ff) + ' -- ';
+        if (this.ff == 0) s += 'Sequence Number: ' + __hex(this.dd);
+        else if (this.ff > 0 && this.ff < 10) s += ['', 'Text', 'Copyright', 'Sequence Name', 'Instrument Name', 'Lyric', 'Marker', 'Cue Point', 'Program Name', 'Device Name'][this.ff] + ': ' + _toLine(JZZ.lib.fromUTF8(this.dd));
+        else if (this.ff == 32) s += 'Channel Prefix: ' + __hex(this.dd);
+        else if (this.ff == 47) s += 'End of Track';
+        else if (this.ff == 81) {
+          var ms = this.dd.charCodeAt(0) * 65536 + this.dd.charCodeAt(1) * 256 + this.dd.charCodeAt(2);
+          var bpm = Math.round(60000000 * 100 / ms) / 100;
+          s += 'Tempo: ' + bpm + ' bpm';
         }
-        return s + ' -- ' + ss;
+        else if (this.ff == 84) s += 'SMPTE Offset: ' + SMPTE(30, this.dd.charCodeAt(0), this.dd.charCodeAt(1), this.dd.charCodeAt(2), this.dd.charCodeAt(3)).toString();
+        else if (this.ff == 88) {
+          var d = 1 << this.dd.charCodeAt(1);
+          s += 'Time Signature: ' + this.dd.charCodeAt(0) + '/' + d;
+          s += ' ' + this.dd.charCodeAt(2) + ' ' + this.dd.charCodeAt(3);
+        }
+        else if (this.ff == 89) {
+          s += 'Key Signature: ';
+          var sf = this.dd.charCodeAt(0);
+          var mi = this.dd.charCodeAt(1);
+          if (sf & 0x80) sf = sf - 0x100;
+          sf += 7;
+          if (sf >= 0 && sf <= 14 && mi >= 0 && mi <= 1) {
+            if (mi) sf += 3;
+            s += ['Cb', 'Gb', 'Db', 'Ab', 'Eb', 'Bb', 'F', 'C', 'G', 'D', 'A', 'E', 'B', 'F#', 'C#', 'G#', 'D#', 'A#'][sf];
+            if (mi) s += 'min';
+          }
+        }
+        else if (this.ff == 127) s += 'Meta Event: ' + __hex(_s2a(this.dd));
+        else s += 'Unknown';
+        return s;
       }
       return 'empty';
     }
