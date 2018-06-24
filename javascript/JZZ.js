@@ -1400,8 +1400,13 @@
     if (t.type == 30) return t.hour | 0x60;
     return t.hour;
   }
-  function _dec(x){ return x < 10 ? '0' + x : x; }
-  SMPTE.prototype.toString = function() { return [_dec(this.hour), _dec(this.minute), _dec(this.second), _dec(this.frame)].join(':'); };
+  function _dec(x) { return x < 10 ? '0' + x : x; }
+  function _smptetxt(x) {
+    var arr = [];
+    for (var i = 0; i < x.length; i++) arr[i] = _dec(x[i]);
+    return arr.join(':');
+  }
+  SMPTE.prototype.toString = function() { return _smptetxt([this.hour, this.minute, this.second, this.frame]); };
   JZZ.SMPTE = SMPTE;
 
   // JZZ.MIDI
@@ -1530,7 +1535,7 @@
         89: _helperSMF.smfKeySignature,
         127: _helperSMF.smfMetaEvent
       }[ff];
-      return f ? f(ff, dd) : _smf(ff, dd);
+      return f ? f(typeof dd == 'undefined' ? '' : _8bs(dd)) : _smf(ff, dd);
     },
     smfSeqNumber: function(dd) { return _smf(0, dd); },
     smfText: function(dd) { return _smf(1, JZZ.lib.toUTF8(dd)); },
@@ -1545,16 +1550,24 @@
     smfChannelPrefix: function(dd) {
       return _smf(32, dd);
     },
-    smfEndOfTrack: function() {
-      return _smf(47);
+    smfEndOfTrack: function(dd) {
+      return _smf(47, dd);
     },
-    smfTempo: function() {
-      return _smf(81);
+    smfTempo: function(dd) {
+      return _smf(81, dd);
     },
-    smfSMPTE: function() { return _smf(84); },
-    smfTimeSignature: function() { return _smf(88); },
-    smfKeySignature: function() { return _smf(89); },
-    smfMetaEvent: function(dd) { return _smf(127, dd); }
+    smfSMPTE: function(dd) {
+      return _smf(84, dd);
+    },
+    smfTimeSignature: function(dd) {
+      return _smf(88, dd);
+    },
+    smfKeySignature: function(dd) {
+      return _smf(89, dd);
+    },
+    smfMetaEvent: function(dd) {
+      return _smf(127, dd);
+    }
   };
   function _copyHelperNC(name, func) {
     MIDI[name] = function() { return new MIDI(func.apply(0, arguments)); };
@@ -1691,14 +1704,6 @@
     }
     return a.join(' ');
   }
-  function __dex(x) { return (x < 10 ? '0' : '') + x.toString(); }
-  function _dex(x) {
-    var a = [];
-    for (var i = 0; i < x.length; i++) {
-      a[i] = __dex(x[i]);
-    }
-    return a.join(':');
-  }
   function _toLine(s) {
     var out = '';
     for (var i = 0; i < s.length; i++) {
@@ -1710,22 +1715,28 @@
     }
     return out;
   }
+  function _smfhex(dd) {
+    return dd.length ? ': ' + _hex(_s2a(dd)) : '';
+  }
+  function _smftxt(dd) {
+    return dd.length ? ': ' + _toLine(JZZ.lib.fromUTF8(dd)) : '';
+  }
   MIDI.prototype.toString = function() {
     var s;
     var ss;
     if (!this.length) {
       if (typeof this.ff != 'undefined') {
         s = 'smf ff ' + __hex(this.ff) + ' -- ';
-        if (this.ff == 0) s += 'Sequence Number: ' + __hex(this.dd);
-        else if (this.ff > 0 && this.ff < 10) s += ['', 'Text', 'Copyright', 'Sequence Name', 'Instrument Name', 'Lyric', 'Marker', 'Cue Point', 'Program Name', 'Device Name'][this.ff] + ': ' + _toLine(JZZ.lib.fromUTF8(this.dd));
-        else if (this.ff == 32) s += 'Channel Prefix: ' + __hex(this.dd);
-        else if (this.ff == 47) s += 'End of Track';
+        if (this.ff == 0) s += 'Sequence Number' + _smfhex(this.dd);
+        else if (this.ff > 0 && this.ff < 10) s += ['', 'Text', 'Copyright', 'Sequence Name', 'Instrument Name', 'Lyric', 'Marker', 'Cue Point', 'Program Name', 'Device Name'][this.ff] + _smftxt(this.dd);
+        else if (this.ff == 32) s += 'Channel Prefix' + _smfhex(this.dd);
+        else if (this.ff == 47) s += 'End of Track' + _smfhex(this.dd);
         else if (this.ff == 81) {
           var ms = this.dd.charCodeAt(0) * 65536 + this.dd.charCodeAt(1) * 256 + this.dd.charCodeAt(2);
           var bpm = Math.round(60000000 * 100 / ms) / 100;
           s += 'Tempo: ' + bpm + ' bpm';
         }
-        else if (this.ff == 84) s += 'SMPTE Offset: ' + SMPTE(30, this.dd.charCodeAt(0), this.dd.charCodeAt(1), this.dd.charCodeAt(2), this.dd.charCodeAt(3)).toString();
+        else if (this.ff == 84) s += 'SMPTE Offset: ' + _smptetxt(_s2a(this.dd));
         else if (this.ff == 88) {
           var d = 1 << this.dd.charCodeAt(1);
           s += 'Time Signature: ' + this.dd.charCodeAt(0) + '/' + d;
@@ -1740,11 +1751,11 @@
           if (sf >= 0 && sf <= 14 && mi >= 0 && mi <= 1) {
             if (mi) sf += 3;
             s += ['Cb', 'Gb', 'Db', 'Ab', 'Eb', 'Bb', 'F', 'C', 'G', 'D', 'A', 'E', 'B', 'F#', 'C#', 'G#', 'D#', 'A#'][sf];
-            if (mi) s += 'min';
+            if (mi) s += ' min';
           }
         }
-        else if (this.ff == 127) s += 'Meta Event: ' + __hex(_s2a(this.dd));
-        else s += 'Unknown';
+        else if (this.ff == 127) s += 'Meta Event' + _smfhex(this.dd);
+        else s += 'Unknown' + _smfhex(this.dd);
         return s;
       }
       return 'empty';

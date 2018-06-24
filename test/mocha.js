@@ -14,6 +14,12 @@ describe('MIDI messages', function() {
 });
 
 describe('SMF events', function() {
+  it('empty', function() {
+    assert.equal(JZZ.MIDI.smf(1).toString(), 'smf ff 01 -- Text');
+  });
+  it('smf/Text', function() {
+    assert.equal(JZZ.MIDI.smf(1, 'smf').toString(), 'smf ff 01 -- Text: smf');
+  });
   it('smfText', function() {
     assert.equal(JZZ.MIDI.smfText('\ttwo\nlines\x00').toString(), 'smf ff 01 -- Text: \\ttwo\\nlines\\x00');
   });
@@ -43,6 +49,21 @@ describe('SMF events', function() {
   });
   it('smfEndOfTrack', function() {
     assert.equal(JZZ.MIDI.smfEndOfTrack().toString(), 'smf ff 2f -- End of Track');
+  });
+  it('smf/SMPTE', function() {
+    assert.equal(JZZ.MIDI.smf(0x54, '\x17\x3b\x3b\x17\x4b').toString(), 'smf ff 54 -- SMPTE Offset: 23:59:59:23:75');
+  });
+  it('smf/KeySignature', function() {
+    assert.equal(JZZ.MIDI.smf(0x59, '\xfb\x01').toString(), 'smf ff 59 -- Key Signature: Bb min');
+  });
+  it('smf/MetaEvent', function() {
+    assert.equal(JZZ.MIDI.smf(0x7f).toString(), 'smf ff 7f -- Meta Event');
+  });
+  it('smf/MetaEvent', function() {
+    assert.equal(JZZ.MIDI.smf(0x7f, '\x0a\x0b\x0c').toString(), 'smf ff 7f -- Meta Event: 0a 0b 0c');
+  });
+  it('smf/Channel', function() {
+    assert.equal(JZZ.MIDI.smf(0x20, '\x0a').toString(), 'smf ff 20 -- Channel Prefix: 0a');
   });
 });
 
