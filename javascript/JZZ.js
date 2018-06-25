@@ -1515,7 +1515,13 @@
     return midi;
   }
   var _helperSMF = { // Standard MIDI File events
-    smf: function(ff, dd) {
+    smf: function(arg) {
+      if (arg instanceof MIDI) return new MIDI(arg);
+      var arr = arg instanceof Array ? arg : arguments;
+      var ff = _7b(arr[0]);
+      var dd = '';
+      if (arr.length == 2) dd = _2s(arr[1]);
+      else if (arr.length > 2) dd = _2s(Array.prototype.slice.call(arr, 1));
       var f = {
         0: _helperSMF.smfSeqNumber,
         1: _helperSMF.smfText,
@@ -1537,7 +1543,19 @@
       }[ff];
       return f ? f(typeof dd == 'undefined' ? '' : _8bs(dd)) : _smf(ff, dd);
     },
-    smfSeqNumber: function(dd) { return _smf(0, dd); },
+    smfSeqNumber: function(dd) {
+      if (dd == parseInt(dd)) {
+        if (dd < 0 || dd > 0xffff) throw RangeError('Sequence number out of range: ' + dd);
+        dd = String.fromCharCode(dd >> 8) + String.fromCharCode(dd & 0xff);
+      }
+      else {
+        dd = '' + dd;
+        if (dd.length == 0) dd = '\x00\x00';
+        else if (dd.length == 1) dd = '\x00' + dd;
+        else if (dd.length > 2) throw RangeError('Sequence number out of range: ' + dd);
+      }
+      return _smf(0, dd);
+    },
     smfText: function(dd) { return _smf(1, JZZ.lib.toUTF8(dd)); },
     smfCopyright: function(dd) { return _smf(2, JZZ.lib.toUTF8(dd)); },
     smfSeqName: function(dd) { return _smf(3, JZZ.lib.toUTF8(dd)); },
@@ -1696,6 +1714,15 @@
     }
     return a;
   }
+  function _2s(x) {
+    return x instanceof Array ? _a2s(x) : '' + x;
+  }
+  function _s2n(x) {
+    var n = 0;
+    for (var i = 0; i < x.length; i++) n = (n << 8) + x.charCodeAt(i);
+    return n;
+  }
+
   function __hex(x) { return (x < 16 ? '0' : '') + x.toString(16); }
   function _hex(x) {
     var a = [];
@@ -1727,7 +1754,7 @@
     if (!this.length) {
       if (typeof this.ff != 'undefined') {
         s = 'smf ff ' + __hex(this.ff) + ' -- ';
-        if (this.ff == 0) s += 'Sequence Number' + _smfhex(this.dd);
+        if (this.ff == 0) s += 'Sequence Number: ' + _s2n(this.dd);
         else if (this.ff > 0 && this.ff < 10) s += ['', 'Text', 'Copyright', 'Sequence Name', 'Instrument Name', 'Lyric', 'Marker', 'Cue Point', 'Program Name', 'Device Name'][this.ff] + _smftxt(this.dd);
         else if (this.ff == 32) s += 'Channel Prefix' + _smfhex(this.dd);
         else if (this.ff == 47) s += 'End of Track' + _smfhex(this.dd);

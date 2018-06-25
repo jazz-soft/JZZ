@@ -17,6 +17,21 @@ describe('SMF events', function() {
   it('empty', function() {
     assert.equal(JZZ.MIDI.smf(1).toString(), 'smf ff 01 -- Text');
   });
+  it('smf', function() {
+    assert.equal(JZZ.MIDI.smf(JZZ.MIDI.smf(0x7f)).toString(), 'smf ff 7f -- Meta Event');
+    assert.equal(JZZ.MIDI.smf([0x7f]).toString(), 'smf ff 7f -- Meta Event');
+    assert.equal(JZZ.MIDI.smf(0x7f, [0, 1]).toString(), 'smf ff 7f -- Meta Event: 00 01');
+    assert.equal(JZZ.MIDI.smf(0x7f, 0, 1).toString(), 'smf ff 7f -- Meta Event: 00 01');
+    assert.equal(JZZ.MIDI.smf([0x7f, 0, 1]).toString(), 'smf ff 7f -- Meta Event: 00 01');
+  });
+
+  it('smf/SeqNumber', function() {
+    assert.equal(JZZ.MIDI.smf(0, [1]).toString(), 'smf ff 00 -- Sequence Number: 1');
+  });
+  it('smfSeqNumber', function() {
+    assert.equal(JZZ.MIDI.smfSeqNumber(300).toString(), 'smf ff 00 -- Sequence Number: 300');
+  });
+
   it('smf/Text', function() {
     assert.equal(JZZ.MIDI.smf(1, 'smf').toString(), 'smf ff 01 -- Text: smf');
   });
