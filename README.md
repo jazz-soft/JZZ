@@ -75,7 +75,7 @@ or get the full development version and minified scripts from [**Github**](https
     // ...
     navigator.close(); // This will close MIDI inputs,
                        // otherwise Node.js will wait for MIDI input forever.
-    // In browser this call is not required, and the function does not exist.
+    // In browsers the funcion is neither defined nor required.
 
 ## JZZ API
 

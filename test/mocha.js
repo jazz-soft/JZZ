@@ -24,45 +24,45 @@ describe('SMF events', function() {
     assert.equal(JZZ.MIDI.smf(0x7f, 0, 1).toString(), 'smf ff 7f -- Meta Event: 00 01');
     assert.equal(JZZ.MIDI.smf([0x7f, 0, 1]).toString(), 'smf ff 7f -- Meta Event: 00 01');
   });
-
   it('smf/SeqNumber', function() {
     assert.equal(JZZ.MIDI.smf(0, [1]).toString(), 'smf ff 00 -- Sequence Number: 1');
-  });
-  it('smfSeqNumber', function() {
     assert.equal(JZZ.MIDI.smfSeqNumber(300).toString(), 'smf ff 00 -- Sequence Number: 300');
   });
-
   it('smf/Text', function() {
     assert.equal(JZZ.MIDI.smf(1, 'smf').toString(), 'smf ff 01 -- Text: smf');
-  });
-  it('smfText', function() {
     assert.equal(JZZ.MIDI.smfText('\ttwo\nlines\x00').toString(), 'smf ff 01 -- Text: \\ttwo\\nlines\\x00');
   });
-  it('smfCopyright', function() {
+  it('smf/Copyright', function() {
     assert.equal(JZZ.MIDI.smfCopyright('© ...').toString(), 'smf ff 02 -- Copyright: © ...');
   });
-  it('smfSeqName', function() {
+  it('smf/SeqName', function() {
     assert.equal(JZZ.MIDI.smfSeqName('sequence').toString(), 'smf ff 03 -- Sequence Name: sequence');
   });
-  it('smfInstrName', function() {
+  it('smf/InstrName', function() {
     assert.equal(JZZ.MIDI.smfInstrName('instrument').toString(), 'smf ff 04 -- Instrument Name: instrument');
   });
-  it('smfLyric', function() {
+  it('smf/Lyric', function() {
     assert.equal(JZZ.MIDI.smfLyric('𝄋𝄋𝄋').toString(), 'smf ff 05 -- Lyric: 𝄋𝄋𝄋');
   });
-  it('smfMarker', function() {
+  it('smf/Marker', function() {
     assert.equal(JZZ.MIDI.smfMarker('marker').toString(), 'smf ff 06 -- Marker: marker');
   });
-  it('smfCuePoint', function() {
+  it('smf/CuePoint', function() {
     assert.equal(JZZ.MIDI.smfCuePoint('cue point').toString(), 'smf ff 07 -- Cue Point: cue point');
   });
-  it('smfProgName', function() {
+  it('smf/ProgName', function() {
     assert.equal(JZZ.MIDI.smfProgName('program').toString(), 'smf ff 08 -- Program Name: program');
   });
-  it('smfDevName', function() {
+  it('smf/DevName', function() {
     assert.equal(JZZ.MIDI.smfDevName('device').toString(), 'smf ff 09 -- Device Name: device');
   });
-  it('smfEndOfTrack', function() {
+  it('smf/ChannelPrefix', function() {
+    assert.equal(JZZ.MIDI.smf(0x20, '\x0a').toString(), 'smf ff 20 -- Channel Prefix: 0a');
+    assert.equal(JZZ.MIDI.smfChannelPrefix(10).toString(), 'smf ff 20 -- Channel Prefix: 0a');
+    assert.equal(JZZ.MIDI.smfChannelPrefix('\n').toString(), 'smf ff 20 -- Channel Prefix: 0a');
+  });
+  it('smf/EndOfTrack', function() {
+    assert.equal(JZZ.MIDI.smf(0x2f).toString(), 'smf ff 2f -- End of Track');
     assert.equal(JZZ.MIDI.smfEndOfTrack().toString(), 'smf ff 2f -- End of Track');
   });
   it('smf/SMPTE', function() {
@@ -73,12 +73,9 @@ describe('SMF events', function() {
   });
   it('smf/MetaEvent', function() {
     assert.equal(JZZ.MIDI.smf(0x7f).toString(), 'smf ff 7f -- Meta Event');
-  });
-  it('smf/MetaEvent', function() {
     assert.equal(JZZ.MIDI.smf(0x7f, '\x0a\x0b\x0c').toString(), 'smf ff 7f -- Meta Event: 0a 0b 0c');
-  });
-  it('smf/Channel', function() {
-    assert.equal(JZZ.MIDI.smf(0x20, '\x0a').toString(), 'smf ff 20 -- Channel Prefix: 0a');
+    assert.equal(JZZ.MIDI.smfMetaEvent('\x0a\x0b\x0c').toString(), 'smf ff 7f -- Meta Event: 0a 0b 0c');
+    assert.equal(JZZ.MIDI.smfMetaEvent([0xa, 0xb, 0xc]).toString(), 'smf ff 7f -- Meta Event: 0a 0b 0c');
   });
 });
 

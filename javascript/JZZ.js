@@ -1552,7 +1552,7 @@
         dd = '' + dd;
         if (dd.length == 0) dd = '\x00\x00';
         else if (dd.length == 1) dd = '\x00' + dd;
-        else if (dd.length > 2) throw RangeError('Sequence number out of range: ' + dd);
+        else if (dd.length > 2) throw RangeError('Sequence number out of range: ' + _smftxt(dd));
       }
       return _smf(0, dd);
     },
@@ -1566,10 +1566,20 @@
     smfProgName: function(dd) { return _smf(8, JZZ.lib.toUTF8(dd)); },
     smfDevName: function(dd) { return _smf(9, JZZ.lib.toUTF8(dd)); },
     smfChannelPrefix: function(dd) {
+      if (dd == parseInt(dd)) {
+        if (dd < 0 || dd > 15) throw RangeError('Channel number out of range: ' + dd);
+        dd = String.fromCharCode(dd);
+      }
+      else {
+        dd = '' + dd;
+        if (dd.length == 0) dd = '\x00';
+        else if (dd.length > 1 || dd.charCodeAt(0) > 15) throw RangeError('Channel number out of range: ' + _smftxt(dd));
+      }
       return _smf(32, dd);
     },
     smfEndOfTrack: function(dd) {
-      return _smf(47, dd);
+      if (_2s(dd) != '') throw RangeError('Unexpected data: ' + _smftxt(_2s(dd)));
+      return _smf(47);
     },
     smfTempo: function(dd) {
       return _smf(81, dd);
@@ -1583,9 +1593,7 @@
     smfKeySignature: function(dd) {
       return _smf(89, dd);
     },
-    smfMetaEvent: function(dd) {
-      return _smf(127, dd);
-    }
+    smfMetaEvent: function(dd) { return _smf(127, _2s(dd)); }
   };
   function _copyHelperNC(name, func) {
     MIDI[name] = function() { return new MIDI(func.apply(0, arguments)); };
@@ -1715,7 +1723,7 @@
     return a;
   }
   function _2s(x) {
-    return x instanceof Array ? _a2s(x) : '' + x;
+    return x instanceof Array ? _a2s(x) : typeof x == 'undefined' ? '' : '' + x;
   }
   function _s2n(x) {
     var n = 0;
