@@ -70,6 +70,10 @@ describe('SMF events', function() {
   });
   it('smf/KeySignature', function() {
     assert.equal(JZZ.MIDI.smf(0x59, '\xfb\x01').toString(), 'smf ff 59 -- Key Signature: Bb min');
+    assert.equal(JZZ.MIDI.smfKeySignature('\xfb\x01').toString(), 'smf ff 59 -- Key Signature: Bb min');
+    assert.equal(JZZ.MIDI.smfKeySignature('a# moll').toString(), 'smf ff 59 -- Key Signature: A# min');
+    assert.equal(JZZ.MIDI.smfKeySignature('Eb major').toString(), 'smf ff 59 -- Key Signature: Eb');
+    assert.equal(JZZ.MIDI.smfKeySignature('C').toString(), 'smf ff 59 -- Key Signature: C');
   });
   it('smf/MetaEvent', function() {
     assert.equal(JZZ.MIDI.smf(0x7f).toString(), 'smf ff 7f -- Meta Event');

@@ -1591,7 +1591,23 @@
       return _smf(88, dd);
     },
     smfKeySignature: function(dd) {
-      return _smf(89, dd);
+      dd = '' + dd;
+      var m = dd.match(/^\s*([A-H][b#]?)\s*(|maj|major|dur|m|min|minor|moll)\s*$/i);
+      if (m) {
+        var sf = {
+          CB: 0, GB: 1, DB: 2, AB: 3, EB: 4, BB: 5, F: 6, C: 7, G: 8, D: 9, A: 10,
+          E:11, B: 12, H: 12, 'F#': 13, 'C#': 14, 'G#': 15, 'D#': 16, 'A#': 17
+        }[m[1].toUpperCase()];
+        var mi = { '': 0, MAJ: 0, MAJOR: 0, DUR: 0, M: 1, MIN: 1, MINOR: 1, MOLL: 1}[m[2].toUpperCase()];
+        if (typeof sf != 'undefined' && typeof mi != 'undefined') {
+          if (mi) sf -= 3;
+          sf -= 7;
+          if (sf >= -7 && sf < 0) dd = String.fromCharCode(256 + sf) + String.fromCharCode(mi);
+          else if (sf >= 0 && sf <= 7) dd = String.fromCharCode(sf) + String.fromCharCode(mi);
+        }
+      }
+      if (dd.length == 2 && dd.charCodeAt(1) <= 1 && (dd.charCodeAt(0) <= 7 || dd.charCodeAt(0) <= 255 && dd.charCodeAt(0) >= 249)) return _smf(89, dd);
+      throw RangeError('Incorrect key signature: ' + _smftxt(dd));
     },
     smfMetaEvent: function(dd) { return _smf(127, _2s(dd)); }
   };
