@@ -112,7 +112,7 @@
     var func = arr.shift();
     if (arr.length) {
       var self = this;
-      this._slip(_or, [ function(){ _tryAny.apply(self,[arr]);} ]);
+      this._slip(_or, [ function() { _tryAny.apply(self, [arr]); } ]);
     }
     try {
       this._repair();
@@ -227,14 +227,14 @@
     var i, n;
     var a = [];
     if (q instanceof RegExp) {
-      for (n=0; n<arr.length; n++) if (q.test(arr[n].name)) a.push(arr[n]);
+      for (n = 0; n < arr.length; n++) if (q.test(arr[n].name)) a.push(arr[n]);
       return a;
     }
     if (q instanceof Function) q = q(arr);
     if (!(q instanceof Array)) q = [q];
-    for (i=0; i<q.length; i++) {
-      for (n=0; n<arr.length; n++) {
-        if (q[i]+'' === n+'' || q[i] === arr[n].name || (q[i] instanceof Object && q[i].name === arr[n].name)) a.push(arr[n]);
+    for (i = 0; i < q.length; i++) {
+      for (n = 0; n < arr.length; n++) {
+        if (q[i] + '' === n + '' || q[i] === arr[n].name || (q[i] instanceof Object && q[i].name === arr[n].name)) a.push(arr[n]);
       }
     }
     return a;
@@ -252,7 +252,7 @@
     var arr = _filterList(arg, _outs);
     if (!arr.length) { _notFound(port, arg); return; }
     var pack = function(x) { return function() { x.engine._openOut(this, x.name); }; };
-    for (var i=0; i<arr.length; i++) arr[i] = pack(arr[i]);
+    for (var i = 0; i < arr.length; i++) arr[i] = pack(arr[i]);
     port._slip(_tryAny, [arr]);
     port._resume();
   }
@@ -267,7 +267,7 @@
     var arr = _filterList(arg, _ins);
     if (!arr.length) { _notFound(port, arg); return; }
     var pack = function(x) { return function() { x.engine._openIn(this, x.name); }; };
-    for (var i=0; i<arr.length; i++) arr[i] = pack(arr[i]);
+    for (var i = 0; i < arr.length; i++) arr[i] = pack(arr[i]);
     port._slip(_tryAny, [arr]);
     port._resume();
   }
@@ -505,11 +505,11 @@
   // Jazz-Plugin
   function _tryJazzPlugin() {
     var div = document.createElement('div');
-    div.style.visibility='hidden';
+    div.style.visibility = 'hidden';
     document.body.appendChild(div);
     var obj = document.createElement('object');
-    obj.style.visibility='hidden';
-    obj.style.width='0px'; obj.style.height='0px';
+    obj.style.visibility = 'hidden';
+    obj.style.width = '0px'; obj.style.height = '0px';
     obj.classid = 'CLSID:1ACE1618-1C7D-4561-AEE1-34842AA85E90';
     obj.type = 'audio/x-jazz';
     document.body.appendChild(obj);
@@ -590,7 +590,7 @@
   function _filterEngines(opt) {
     var ret = [_tryNODE, _zeroBreak];
     var arr = _filterEngineNames(opt);
-    for (var i=0; i<arr.length; i++) {
+    for (var i = 0; i < arr.length; i++) {
       if (arr[i] == 'webmidi') {
         if (opt && opt.sysex === true) ret.push(_tryWebMIDIsysex);
         if (!opt || opt.sysex !== true || opt.degrade === true) ret.push(_tryWebMIDI);
@@ -631,7 +631,6 @@
     _jzz._options = opt;
     _jzz._push(_tryAny, [_filterEngines(opt)]);
     _jzz.refresh();
-    _jzz._push(function(){ if (!_outs.length && !_ins.length) this._break(); }, []);
     _jzz._resume();
   }
 
@@ -820,8 +819,8 @@
     _engine._pool = [obj];
     _engine._newPlugin = function() {
       var plg = document.createElement('object');
-      plg.style.visibility='hidden';
-      plg.style.width='0px'; obj.style.height='0px';
+      plg.style.visibility = 'hidden';
+      plg.style.width = '0px'; obj.style.height = '0px';
       plg.classid = 'CLSID:1ACE1618-1C7D-4561-AEE1-34842AA85E90';
       plg.type = 'audio/x-jazz';
       document.body.appendChild(plg);
@@ -2411,7 +2410,7 @@
     if (port) {
       var v = [];
       for (var i = 0; i < data.length; i++) {
-        if (data[i] == Math.floor(data[i]) && data[i] >=0 && data[i] <= 255) v.push(data[i]);
+        if (data[i] == Math.floor(data[i]) && data[i] >= 0 && data[i] <= 255) v.push(data[i]);
         else return;
       }
       if (timestamp > _now()) {
