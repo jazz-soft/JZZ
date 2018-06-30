@@ -1580,14 +1580,43 @@
       if (_2s(dd) != '') throw RangeError('Unexpected data: ' + _smftxt(_2s(dd)));
       return _smf(47);
     },
-    smfTempo: function(dd) {
-      return _smf(81, dd);
+    smfTempo: function(dd) { // microseconds per quarter note
+      if (('' + dd).length == 3) return _smf(81, dd);
+      if (dd == parseInt(dd) && dd > 0 && dd <= 0xffffff) {
+        return _smf(81, String.fromCharCode(dd >> 16) + String.fromCharCode((dd >> 8) & 0xff) + String.fromCharCode(dd & 0xff));
+      }
+      throw RangeError('Out of range: ' + _smftxt(_2s(dd)));
     },
+    smfBPM: function(bpm) { return _helperSMF.smfTempo(Math.round(60000000.0 / bpm)); },
     smfSMPTE: function(dd) {
       return _smf(84, dd);
     },
-    smfTimeSignature: function(dd) {
-      return _smf(88, dd);
+    smfTimeSignature: function(a, b, c, d) {
+      var nn, dd, cc, bb;
+      var m = ('' + a ).match(/^\s*(\d+)\s*\/\s*(\d+)\s*$/);
+      if (m) {
+        nn = parseInt(m[1]);
+        dd = parseInt(m[2]);
+        if (nn > 0 && nn <= 0xff && !(dd & (dd - 1))) {
+          cc = dd; dd = 0;
+          for (cc >>= 1; cc; cc >>= 1) dd++;
+          cc = b == parseInt(b) ? b : 24;
+          bb = c == parseInt(c) ? c : 8;
+          return _smf(88, String.fromCharCode(nn) + String.fromCharCode(dd) + String.fromCharCode(cc) + String.fromCharCode(bb));
+        }
+        else if (('' + a ).length == 4) return _smf(88, a);
+      }
+      else if (a == parseInt(a) && b == parseInt(b) && !(b & (b - 1))) {
+        nn = a;
+        dd = 0;
+        cc = b;
+        for (cc >>= 1; cc; cc >>= 1) dd++;
+        cc = c == parseInt(c) ? c : 24;
+        bb = d == parseInt(d) ? d : 8;
+        return _smf(88, String.fromCharCode(nn) + String.fromCharCode(dd) + String.fromCharCode(cc) + String.fromCharCode(bb));
+      }
+      else if (('' + a ).length == 4) return _smf(88, a);
+      throw RangeError('Wrong time signature: ' + _smftxt(_2s(a)));
     },
     smfKeySignature: function(dd) {
       dd = '' + dd;
@@ -1776,7 +1805,7 @@
     var ss;
     if (!this.length) {
       if (typeof this.ff != 'undefined') {
-        s = 'smf ff ' + __hex(this.ff) + ' -- ';
+        s = 'ff' + __hex(this.ff) + ' -- ';
         if (this.ff == 0) s += 'Sequence Number: ' + _s2n(this.dd);
         else if (this.ff > 0 && this.ff < 10) s += ['', 'Text', 'Copyright', 'Sequence Name', 'Instrument Name', 'Lyric', 'Marker', 'Cue Point', 'Program Name', 'Device Name'][this.ff] + _smftxt(this.dd);
         else if (this.ff == 32) s += 'Channel Prefix' + _smfhex(this.dd);
@@ -1805,7 +1834,7 @@
           }
         }
         else if (this.ff == 127) s += 'Meta Event' + _smfhex(this.dd);
-        else s += 'Unknown' + _smfhex(this.dd);
+        else s += 'SMF' + _smfhex(this.dd);
         return s;
       }
       return 'empty';
