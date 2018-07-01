@@ -9,7 +9,7 @@
     if (global.JZZ && global.JZZ.MIDI) return;
     global.JZZ = factory();
   }
-})(this, function(){
+})(this, function() {
 
   var _scope = typeof window === 'undefined' ? global : window;
   var _version = '0.5.0';
@@ -564,7 +564,7 @@
       if (!msg) msg = document.getElementById('jazz-midi-msg');
       if (!msg) return;
       var a = [];
-      try { a = JSON.parse(msg.innerText);} catch (err) {}
+      try { a = JSON.parse(msg.innerText); } catch (err) {}
       msg.innerText = '';
       document.removeEventListener('jazz-midi-msg', eventHandle);
       if (a[0] === 'version') {
@@ -577,14 +577,14 @@
     }
     this._pause();
     document.addEventListener('jazz-midi-msg', eventHandle);
-    try { document.dispatchEvent(new Event('jazz-midi'));} catch (err) {}
-    window.setTimeout(function() { if (!inst) self._crash();}, 0);
+    try { document.dispatchEvent(new Event('jazz-midi')); } catch (err) {}
+    window.setTimeout(function() { if (!inst) self._crash(); }, 0);
   }
 
   function _zeroBreak() {
     this._pause();
     var self = this;
-    setTimeout(function(){ self._crash();}, 0);
+    setTimeout(function() { self._crash(); }, 0);
   }
 
   function _filterEngines(opt) {
@@ -695,9 +695,9 @@
             sysex: _engine._sysex,
             engine: _engine._type
           },
-          _close: function(port){ _engine._closeOut(port); },
+          _close: function(port) { _engine._closeOut(port); },
           _closeAll: _closeAll,
-          _receive: function(a){ this.plugin.MidiOutRaw(a.slice()); }
+          _receive: function(a) { this.plugin.MidiOutRaw(a.slice()); }
         };
         var plugin = _engine._pool[_engine._outArr.length];
         impl.plugin = plugin;
@@ -733,7 +733,7 @@
             sysex: _engine._sysex,
             engine: _engine._type
           },
-          _close: function(port){ _engine._closeIn(port); },
+          _close: function(port) { _engine._closeIn(port); },
           _closeAll: _closeAll,
           handle: function(t, a) {
             for (var i = 0; i < this.clients.length; i++) {
@@ -879,9 +879,9 @@
             sysex: _engine._sysex,
             engine: _engine._type
           },
-          _close: function(port){ _engine._closeOut(port); },
+          _close: function(port) { _engine._closeOut(port); },
           _closeAll: _closeAll,
-          _receive: function(a){ if (impl.dev) this.dev.send(a.slice());}
+          _receive: function(a) { if (impl.dev) this.dev.send(a.slice()); }
         };
       }
       var found;
@@ -914,7 +914,7 @@
             sysex: _engine._sysex,
             engine: _engine._type
           },
-          _close: function(port){ _engine._closeIn(port); },
+          _close: function(port) { _engine._closeIn(port); },
           _closeAll: _closeAll,
           handle: function(evt) {
             for (var i = 0; i < this.clients.length; i++) {
@@ -1022,10 +1022,10 @@
             sysex: _engine._sysex,
             engine: _engine._type
           },
-          _start: function(){ document.dispatchEvent(new CustomEvent('jazz-midi', {detail:['openout', plugin.id, name]})); },
-          _close: function(port){ _engine._closeOut(port); },
+          _start: function() { document.dispatchEvent(new CustomEvent('jazz-midi', { detail: ['openout', plugin.id, name] })); },
+          _close: function(port) { _engine._closeOut(port); },
           _closeAll: _closeAll,
-          _receive: function(a){ var v = a.slice(); v.splice(0, 0, 'play', plugin.id); document.dispatchEvent(new CustomEvent('jazz-midi', {detail: v})); }
+          _receive: function(a) { var v = a.slice(); v.splice(0, 0, 'play', plugin.id); document.dispatchEvent(new CustomEvent('jazz-midi', {detail: v})); }
         };
         impl.plugin = plugin;
         plugin.output = impl;
@@ -1058,8 +1058,8 @@
             sysex: _engine._sysex,
             engine: _engine._type
           },
-          _start: function(){ document.dispatchEvent(new CustomEvent('jazz-midi', {detail:['openin', plugin.id, name]})); },
-          _close: function(port){ _engine._closeIn(port); },
+          _start: function() { document.dispatchEvent(new CustomEvent('jazz-midi', { detail: ['openin', plugin.id, name] })); },
+          _close: function(port) { _engine._closeIn(port); },
           _closeAll: _closeAll
         };
         impl.plugin = plugin;
@@ -1081,7 +1081,7 @@
       _pop(impl.clients, port._orig);
       if (!impl.clients.length) {
         impl.open = false;
-        document.dispatchEvent(new CustomEvent('jazz-midi', {detail:['closeout', impl.plugin.id]}));
+        document.dispatchEvent(new CustomEvent('jazz-midi', { detail: ['closeout', impl.plugin.id] }));
       }
     };
     _engine._closeIn = function(port) {
@@ -1089,7 +1089,7 @@
       _pop(impl.clients, port._orig);
       if (!impl.clients.length) {
         impl.open = false;
-        document.dispatchEvent(new CustomEvent('jazz-midi', {detail:['closein', impl.plugin.id]}));
+        document.dispatchEvent(new CustomEvent('jazz-midi', { detail: ['closein', impl.plugin.id] }));
       }
     };
     _engine._close = function() {
@@ -1112,7 +1112,7 @@
       _engine._msg.innerText = '';
       for (i = 0; i < v.length; i++) {
         var a = [];
-        try { a = JSON.parse(v[i]);} catch (err) {}
+        try { a = JSON.parse(v[i]); } catch (err) {}
         if (!a.length) continue;
         if (a[0] === 'refresh') {
           if (a[1].ins) {
@@ -1185,7 +1185,7 @@
     if (!_jzz) _initJZZ(opt);
     return _jzz;
   };
-  JZZ.info = function() { return _J.prototype.info();};
+  JZZ.info = function() { return _J.prototype.info(); };
   JZZ.Widget = function(arg) {
     var obj = new _M();
     if (arg instanceof Object) for (var k in arg) if (arg.hasOwnProperty(k)) obj[k] = arg[k];
@@ -1589,7 +1589,15 @@
     },
     smfBPM: function(bpm) { return _helperSMF.smfTempo(Math.round(60000000.0 / bpm)); },
     smfSMPTE: function(dd) {
-      return _smf(84, dd);
+      if (dd instanceof SMPTE) return _smf(84, String.fromCharCode(dd.hour) + String.fromCharCode(dd.minute) + String.fromCharCode(dd.second) + String.fromCharCode(dd.frame) + String.fromCharCode((dd.quarter % 4) * 25));
+      var s = '' + dd;
+      if (s.length == 5 && s.charCodeAt(4) < 100) {
+        new SMPTE(30, s.charCodeAt(0), s.charCodeAt(1), s.charCodeAt(2), s.charCodeAt(3), s.charCodeAt(4) / 25);
+        return _smf(84, dd);
+      }
+      var arr = dd instanceof Array ? dd : Array.prototype.slice.call(arguments);
+      arr.splice(0, 0, 30);
+      return _helperSMF.smfSMPTE(new SMPTE(arr));
     },
     smfTimeSignature: function(a, b, c, d) {
       var nn, dd, cc, bb;

@@ -16,6 +16,7 @@ describe('MIDI messages', function() {
 describe('SMF events', function() {
   it('empty', function() {
     assert.equal(JZZ.MIDI.smf(1).toString(), 'ff01 -- Text');
+    assert.equal(JZZ.MIDI.smf(0x70).toString(), 'ff70 -- SMF');
   });
   it('smf', function() {
     assert.equal(JZZ.MIDI.smf(JZZ.MIDI.smf(0x7f)).toString(), 'ff7f -- Meta Event');
@@ -23,6 +24,7 @@ describe('SMF events', function() {
     assert.equal(JZZ.MIDI.smf(0x7f, [0, 1]).toString(), 'ff7f -- Meta Event: 00 01');
     assert.equal(JZZ.MIDI.smf(0x7f, 0, 1).toString(), 'ff7f -- Meta Event: 00 01');
     assert.equal(JZZ.MIDI.smf([0x7f, 0, 1]).toString(), 'ff7f -- Meta Event: 00 01');
+    assert.equal(JZZ.MIDI.smf(0x70, 'abc').toString(), 'ff70 -- SMF: 61 62 63');
   });
   it('smf/SeqNumber', function() {
     assert.equal(JZZ.MIDI.smf(0, [1]).toString(), 'ff00 -- Sequence Number: 1');
@@ -72,6 +74,10 @@ describe('SMF events', function() {
   });
   it('smf/SMPTE', function() {
     assert.equal(JZZ.MIDI.smf(0x54, '\x17\x3b\x3b\x17\x4b').toString(), 'ff54 -- SMPTE Offset: 23:59:59:23:75');
+    assert.equal(JZZ.MIDI.smfSMPTE(JZZ.SMPTE(30, 7, 40).incrQF().incrQF().incrQF().incrQF().incrQF()).toString(), 'ff54 -- SMPTE Offset: 07:40:00:01:25');
+    assert.equal(JZZ.MIDI.smfSMPTE().toString(), 'ff54 -- SMPTE Offset: 00:00:00:00:00');
+    assert.equal(JZZ.MIDI.smfSMPTE(7, 40).toString(), 'ff54 -- SMPTE Offset: 07:40:00:00:00');
+    assert.equal(JZZ.MIDI.smfSMPTE([7, 40, 30]).toString(), 'ff54 -- SMPTE Offset: 07:40:30:00:00');
   });
   it('smf/TimeSignature', function() {
     assert.equal(JZZ.MIDI.smf(0x58, '\x03\x02\x18\x08').toString(), 'ff58 -- Time Signature: 3/4 24 8');
@@ -115,14 +121,14 @@ describe('JZZ.lib', function() {
   it('toUTF8', function() {
     assert.equal(JZZ.lib.toUTF8('МИДИ'), '\xD0\x9C\xD0\x98\xD0\x94\xD0\x98');
     assert.equal(JZZ.lib.toUTF8('音樂'), '\xE9\x9F\xB3\xE6\xA8\x82');
-    assert.equal(JZZ.lib.toUTF8('𝄞'), '\xED\xA0\xB4\xED\xB4\x9E'); // C-Clef
+    assert.equal(JZZ.lib.toUTF8('𝄞'), '\xED\xA0\xB4\xED\xB4\x9E'); // G-Clef
   });
   it('fromUTF8', function() {
     assert.equal(JZZ.lib.fromUTF8('\xD0\x9C\xD0\x98\xD0\x94\xD0\x98'), 'МИДИ');
     assert.equal(JZZ.lib.fromUTF8('МИДИ'), 'МИДИ');
     assert.equal(JZZ.lib.fromUTF8('\xE9\x9F\xB3\xE6\xA8\x82'), '音樂');
     assert.equal(JZZ.lib.fromUTF8('音樂'), '音樂');
-    assert.equal(JZZ.lib.fromUTF8('\xF0\x9D\x84\x9E'), '𝄞'); // C-Clef 4-byte
-    assert.equal(JZZ.lib.fromUTF8('\xED\xA0\xB4\xED\xB4\x9E'), '𝄞'); // C-Clef surrogate pair
+    assert.equal(JZZ.lib.fromUTF8('\xF0\x9D\x84\x9E'), '𝄞'); // G-Clef 4-byte
+    assert.equal(JZZ.lib.fromUTF8('\xED\xA0\xB4\xED\xB4\x9E'), '𝄞'); // G-Clef surrogate pair
   });
 });
