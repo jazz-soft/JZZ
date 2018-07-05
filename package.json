@@ -14,7 +14,7 @@
     "web-midi",
     "web-midi-api"
   ],
-  "author": "jazz-soft (http://jazz-soft.net/)",
+  "author": "jazz-soft (https://jazz-soft.net/)",
   "dependencies": {
     "jazz-midi": "^1.6.4"
   },
@@ -28,7 +28,7 @@
     "type": "git",
     "url": "https://github.com/jazz-soft/JZZ.git"
   },
-  "homepage": "http://jazz-soft.net",
-  "bugs": "http://jazz-soft.org",
+  "homepage": "https://jazz-soft.net",
+  "bugs": "https://jazz-soft.org",
   "license": "MIT"
 }

@@ -2,7 +2,7 @@
   "name": "jzz",
   "description": "MIDI library for Node.js and web-browsers",
   "authors": [
-    "jazz-soft (http://jazz-soft.net/)"
+    "jazz-soft (https://jazz-soft.net/)"
   ],
   "main": "javascript/JZZ.js",
   "moduleType": [
