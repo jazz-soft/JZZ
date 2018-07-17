@@ -7,4 +7,4 @@ os:
   - linux
   - osx
 before_install:
-  - if [[ "$TRAVIS_OS_NAME" == "linux" || "$TRAVIS_NODE_VERSION" == "8" || "$TRAVIS_NODE_VERSION" == "9"]]; then npm remove midi-test --save-dev; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" || "$TRAVIS_NODE_VERSION" == "8" || "$TRAVIS_NODE_VERSION" == "9" ]]; then npm remove midi-test --save-dev; fi
