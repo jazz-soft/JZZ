@@ -1,6 +1,12 @@
 ﻿var assert = require('assert');
 var JZZ = require('..');
-var MT = require('midi-test');
+var MT;
+try {
+  MT = require('midi-test');
+}
+catch(err) {
+  console.log('midi-test module disabled:', err.toString());
+}
 
 describe('MIDI messages', function() {
   it('empty', function() {
@@ -148,7 +154,7 @@ describe('Engine', function() {
       JZZ().openMidiOut('Apple DLS Synth').and(function() { this.close(); done(); });
     });
   }
-  if (process.platform == 'darwin' || process.platform == 'linux') {
+  if (MT && (process.platform == 'darwin' || process.platform == 'linux')) {
     it('Virtual MIDI-In', function(done) {
       var port = MT.MidiSrc('Virtual MIDI-In');
       port.connect();
