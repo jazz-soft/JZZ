@@ -1,5 +1,6 @@
 ﻿var assert = require('assert');
 var JZZ = require('..');
+var MT = require('midi-test');
 
 describe('MIDI messages', function() {
   it('empty', function() {
@@ -131,4 +132,27 @@ describe('JZZ.lib', function() {
     assert.equal(JZZ.lib.fromUTF8('\xF0\x9D\x84\x9E'), '𝄞'); // G-Clef 4-byte
     assert.equal(JZZ.lib.fromUTF8('\xED\xA0\xB4\xED\xB4\x9E'), '𝄞'); // G-Clef surrogate pair
   });
+});
+
+describe('Engine', function() {
+  it('JZZ()', function(done) {
+    JZZ().and(function() { console.log(this.info()); done(); });
+  });
+  if (process.platform == 'win32') {
+    it('Microsoft GS Wavetable Synth', function(done) {
+      JZZ().openMidiOut('Microsoft GS Wavetable Synth').and(function() { this.close(); done(); });
+    });
+  }
+  if (process.platform == 'darwin') {
+    it('Apple DLS Synth', function(done) {
+      JZZ().openMidiOut('Apple DLS Synth').and(function() { this.close(); done(); });
+    });
+  }
+  if (process.platform == 'darwin' || process.platform == 'linux') {
+    it('Virtual MIDI-In', function(done) {
+      var port = MT.MidiSrc('Virtual MIDI-In');
+      port.connect();
+      JZZ().openMidiIn('Virtual MIDI-In').and(function() { this.close(); port.disconnect(); done(); });
+    });
+  }
 });
