@@ -7,6 +7,5 @@ os:
   - linux
   - osx
 before_install:
-  - echo TRAVIS_NODE_VERSION: $TRAVIS_NODE_VERSION
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install -y libasound2-dev ; fi
   - npm remove midi-test --save-dev
