@@ -1,17 +1,20 @@
 # JZZ: MIDI library for Node.js and web-browsers
+![nodejs](https://jazz-soft.github.io/img/nodejs.jpg)
+![firefox](https://jazz-soft.github.io/img/firefox.jpg)
+![chrome](https://jazz-soft.github.io/img/chrome.jpg)
+![opera](https://jazz-soft.github.io/img/opera.jpg)
+![safari](https://jazz-soft.github.io/img/safari.jpg)
+![msie](https://jazz-soft.github.io/img/msie.jpg)
+![windows](https://jazz-soft.github.io/img/windows.jpg)
+![macos](https://jazz-soft.github.io/img/macos.jpg)
+![linux](https://jazz-soft.github.io/img/linux.jpg)
+![raspberry pi](https://jazz-soft.github.io/img/rpi.jpg)
+![ios](https://jazz-soft.github.io/img/ios.jpg)
+![android](https://jazz-soft.github.io/img/android.jpg)
 
-[![nodejs](https://jazz-soft.github.io/img/nodejs.jpg)](https://www.npmjs.com/package/jzz)
-[![firefox](https://jazz-soft.github.io/img/firefox.jpg)](https://addons.mozilla.org/en-US/firefox/addon/jazz-midi)
-[![chrome](https://jazz-soft.github.io/img/chrome.jpg)](https://chrome.google.com/webstore/detail/jazz-midi/jhdoobfdaejmldnpihidjemjcbpfmbkm)
-[![opera](https://jazz-soft.github.io/img/opera.jpg)](https://chrome.google.com/webstore/detail/jazz-midi/jhdoobfdaejmldnpihidjemjcbpfmbkm)
-[![safari](https://jazz-soft.github.io/img/safari.jpg)](https://jazz-soft.net/download/Jazz-Plugin)
-[![msie](https://jazz-soft.github.io/img/msie.jpg)](https://jazz-soft.net/download/Jazz-Plugin)
-[![windows](https://jazz-soft.github.io/img/windows.jpg)](https://jazz-soft.net/download/Jazz-Plugin)
-[![macos](https://jazz-soft.github.io/img/macos.jpg)](https://jazz-soft.net/download/Jazz-Plugin)
-[![linux](https://jazz-soft.github.io/img/linux.jpg)](https://jazz-soft.net/download/Jazz-Plugin)
-[![raspberry pi](https://jazz-soft.github.io/img/rpi.jpg)](https://www.npmjs.com/package/jazz-midi)
-[![ios](https://jazz-soft.github.io/img/ios.jpg)](https://github.com/jazz-soft/JZZ-modules)
-[![android](https://jazz-soft.github.io/img/android.jpg)](https://github.com/jazz-soft/JZZ-modules)
+[![npm](https://img.shields.io/npm/dt/jzz.svg)](https://www.npmjs.com/package/jzz)
+[![jsDelivr](https://data.jsdelivr.com/v1/package/npm/jzz/badge)](https://www.jsdelivr.com/package/npm/jzz)
+[![Build Status](https://travis-ci.org/jazz-soft/JZZ.svg?branch=master)](https://travis-ci.org/jazz-soft/JZZ)
 
 **JZZ.js** allows sending, receiving and playing MIDI messages
 in **Node.js** and **all major browsers**
@@ -37,10 +40,16 @@ or [**Mozilla Add-ons**](https://addons.mozilla.org/en-US/firefox/addon/jazz-mid
 
 ## Install
 
-[**npm install jzz**](https://www.npmjs.com/package/jzz)  
+[**npm install jzz**](https://www.npmjs.com/package/jzz) --save  
 or **bower install jzz**  
 or **yarn add jzz**  
 or get the full development version and minified scripts from [**Github**](https://github.com/jazz-soft/JZZ)
+
+*Note:* in the (unlikely) case you get into trouble installing the
+[**midi-test**](https://www.npmjs.com/package/midi-test) module,
+that requires special system configuration,
+you can safely remove it from the *devDependencies*
+by running `npm remove midi-test --save-dev`.
 
 ## Usage
 
@@ -52,7 +61,7 @@ or get the full development version and minified scripts from [**Github**](https
 ##### CDN
 
     <script src="https://cdn.jsdelivr.net/npm/jzz"></script>       // the latest version, or
-    <script src="https://cdn.jsdelivr.net/npm/jzz@0.5.0"></script> // any particular version
+    <script src="https://cdn.jsdelivr.net/npm/jzz@0.5.1"></script> // any particular version
     //...
 
 ##### CommonJS (Browserify and Node.js command line applications)

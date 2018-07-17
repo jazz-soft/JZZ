@@ -5,7 +5,7 @@ try {
   MT = require('midi-test');
 }
 catch(err) {
-  console.log('midi-test module disabled:', err.toString());
+  console.log('midi-test module is disabled in this configuration');
 }
 
 describe('MIDI messages', function() {
