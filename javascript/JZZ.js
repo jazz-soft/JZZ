@@ -223,21 +223,31 @@
   };
 
   function _filterList(q, arr) {
-    if (typeof q == 'undefined') return arr.slice();
     var i, n;
-    var a = [];
-    if (q instanceof RegExp) {
-      for (n = 0; n < arr.length; n++) if (q.test(arr[n].name)) a.push(arr[n]);
-      return a;
-    }
     if (q instanceof Function) q = q(arr);
     if (!(q instanceof Array)) q = [q];
+    var before = [];
+    var after = [];
+    var etc = arr.slice();
+    var a = before;
     for (i = 0; i < q.length; i++) {
-      for (n = 0; n < arr.length; n++) {
-        if (q[i] + '' === n + '' || q[i] === arr[n].name || (q[i] instanceof Object && q[i].name === arr[n].name)) a.push(arr[n]);
+      if (typeof q[i] == 'undefined') a = after;
+      else if (q[i] instanceof RegExp) for (n = 0; n < etc.length; n++) {
+        if (q[i].test(etc[n].name)) {
+          a.push(etc[n]);
+          etc.splice(n, 1);
+          n--;
+        }
+      }
+      else {
+        for (n = 0; n < etc.length; n++) if (q[i] + '' === n + '' || q[i] === etc[n].name || (q[i] instanceof Object && q[i].name === etc[n].name)) {
+          a.push(etc[n]);
+          etc.splice(n, 1);
+          n--;
+        }
       }
     }
-    return a;
+    return a == before ? before : before.concat(etc).concat(after);
   }
 
   function _notFound(port, q) {

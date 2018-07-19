@@ -144,14 +144,25 @@ describe('Engine', function() {
   it('JZZ()', function(done) {
     JZZ().and(function() { console.log(this.info()); done(); });
   });
+  if (process.platform == 'win32' || process.platform == 'darwin') {
+    it('Default MIDI-Out', function(done) {
+      JZZ().openMidiOut().and(function() { this.close(); done(); });
+    });
+  }
   if (process.platform == 'win32') {
     it('Microsoft GS Wavetable Synth', function(done) {
       JZZ().openMidiOut('Microsoft GS Wavetable Synth').and(function() { this.close(); done(); });
+    });
+    it('/Microsoft/', function(done) {
+      JZZ().openMidiOut(/Microsoft/).and(function() { this.close(); done(); });
     });
   }
   if (process.platform == 'darwin') {
     it('Apple DLS Synth', function(done) {
       JZZ().openMidiOut('Apple DLS Synth').and(function() { this.close(); done(); });
+    });
+    it('/Apple/', function(done) {
+      JZZ().openMidiOut(/Apple/).and(function() { this.close(); done(); });
     });
   }
   if (MT && (process.platform == 'darwin' || process.platform == 'linux')) {
