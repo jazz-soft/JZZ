@@ -144,6 +144,9 @@ describe('Engine', function() {
   it('JZZ()', function(done) {
     JZZ().and(function() { console.log(this.info()); done(); });
   });
+  it('Non-existing port', function(done) {
+    JZZ().openMidiOut('Non-existing port').or(function() { done(); });
+  });
   if (process.platform == 'win32' || process.platform == 'darwin') {
     it('Default MIDI-Out', function(done) {
       JZZ().openMidiOut().and(function() { this.close(); done(); });
@@ -165,6 +168,18 @@ describe('Engine', function() {
       JZZ().openMidiOut(/Apple/).and(function() { this.close(); done(); });
     });
   }
+  it('Dummy MIDI-Out', function(done) {
+    JZZ.lib.registerMidiOut('Dummy MIDI-Out', {
+      _info: function(name) { return { name: name } },
+      _openOut: function(port, name) {
+        port._info = this._info(name);
+        port._receive = function(msg) { done(); };
+        port._close = function(msg) {};
+        port._resume();
+      }
+    });
+    var out = JZZ().openMidiOut('Dummy MIDI-Out').and(function() { this.noteOn(0, 60); });
+  });
   if (MT && (process.platform == 'darwin' || process.platform == 'linux')) {
     it('Virtual MIDI-In', function(done) {
       var port = MT.MidiSrc('Virtual MIDI-In');
