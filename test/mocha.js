@@ -170,7 +170,7 @@ describe('Engine', function() {
   }
   it('Dummy MIDI-Out', function(done) {
     JZZ.lib.registerMidiOut('Dummy MIDI-Out', {
-      _info: function(name) { return { name: name } },
+      _info: function(name) { return { name: name }; },
       _openOut: function(port, name) {
         port._info = this._info(name);
         port._receive = function(msg) { done(); };

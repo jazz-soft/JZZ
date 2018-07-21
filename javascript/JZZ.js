@@ -12,7 +12,7 @@
 })(this, function() {
 
   var _scope = typeof window === 'undefined' ? global : window;
-  var _version = '0.5.1';
+  var _version = '0.5.2';
   var i, j, k, m, n;
 
   var _time = Date.now || function () { return new Date().getTime(); };
@@ -627,7 +627,7 @@
       if (dup[name]) continue;
       dup[name] = true;
       if (name === 'none') none = true;
-      if (name === 'etc') etc = true;
+      if (name === 'etc' || typeof name == 'undefined') etc = true;
       if (etc) tail.push(name); else head.push(name);
       _pop(web, name);
     }
