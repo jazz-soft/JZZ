@@ -12,7 +12,7 @@
 })(this, function() {
 
   var _scope = typeof window === 'undefined' ? global : window;
-  var _version = '0.5.2';
+  var _version = '0.5.3';
   var i, j, k, m, n;
 
   var _time = Date.now || function () { return new Date().getTime(); };
