@@ -19,11 +19,14 @@
     "jazz-midi": "^1.6.4"
   },
   "devDependencies": {
+    "coveralls": "^3.0.2",
     "grunt": "^1.0.3",
     "grunt-contrib-jshint": "^1.1.0",
     "grunt-contrib-uglify": "^3.3.0",
+    "istanbul": "^0.4.5",
     "midi-test": "^0.0.2",
-    "mocha": "^5.2.0"
+    "mocha": "^5.2.0",
+    "mocha-lcov-reporter": "^1.3.0"
   },
   "repository": {
     "type": "git",
