@@ -18,6 +18,129 @@ describe('MIDI messages', function() {
   it('noteOff', function() {
     assert.equal(JZZ.MIDI.noteOff(0, 'C6').toString(), '80 48 40 -- Note Off');
   });
+  it('aftertouch', function() {
+    assert.equal(JZZ.MIDI.aftertouch(0, 'C6', 127).toString(), 'a0 48 7f -- Aftertouch');
+  });
+  it('control', function() {
+    assert.equal(JZZ.MIDI.control(0, 6, 15).toString(), 'b0 06 0f -- Data Entry MSB');
+  });
+  it('program', function() {
+    assert.equal(JZZ.MIDI.program(0, 0).toString(), 'c0 00 -- Program Change');
+  });
+  it('pressure', function() {
+    assert.equal(JZZ.MIDI.pressure(0, 127).toString(), 'd0 7f -- Channel Aftertouch');
+  });
+  it('pitchBend', function() {
+    assert.equal(JZZ.MIDI.pitchBend(0, 300).toString(), 'e0 2c 02 -- Pitch Wheel');
+  });
+  it('bankMSB', function() {
+    assert.equal(JZZ.MIDI.bankMSB(0, 15).toString(), 'b0 00 0f -- Bank Select MSB');
+  });
+  it('bankLSB', function() {
+    assert.equal(JZZ.MIDI.bankLSB(0, 15).toString(), 'b0 20 0f -- Bank Select LSB');
+  });
+  it('modMSB', function() {
+    assert.equal(JZZ.MIDI.modMSB(0, 15).toString(), 'b0 01 0f -- Modulation Wheel MSB');
+  });
+  it('modLSB', function() {
+    assert.equal(JZZ.MIDI.modLSB(0, 15).toString(), 'b0 21 0f -- Modulation Wheel LSB');
+  });
+  it('breathMSB', function() {
+    assert.equal(JZZ.MIDI.breathMSB(0, 15).toString(), 'b0 02 0f -- Breath Controller MSB');
+  });
+  it('breathLSB', function() {
+    assert.equal(JZZ.MIDI.breathLSB(0, 15).toString(), 'b0 22 0f -- Breath Controller LSB');
+  });
+  it('footMSB', function() {
+    assert.equal(JZZ.MIDI.footMSB(0, 15).toString(), 'b0 04 0f -- Foot Controller MSB');
+  });
+  it('footLSB', function() {
+    assert.equal(JZZ.MIDI.footLSB(0, 15).toString(), 'b0 24 0f -- Foot Controller LSB');
+  });
+  it('portamentoMSB', function() {
+    assert.equal(JZZ.MIDI.portamentoMSB(0, 15).toString(), 'b0 05 0f -- Portamento Time MSB');
+  });
+  it('portamentoLSB', function() {
+    assert.equal(JZZ.MIDI.portamentoLSB(0, 15).toString(), 'b0 25 0f -- Portamento Time LSB');
+  });
+  it('volumeMSB', function() {
+    assert.equal(JZZ.MIDI.volumeMSB(0, 15).toString(), 'b0 07 0f -- Channel Volume MSB');
+  });
+  it('volumeLSB', function() {
+    assert.equal(JZZ.MIDI.volumeLSB(0, 15).toString(), 'b0 27 0f -- Channel Volume LSB');
+  });
+  it('balanceMSB', function() {
+    assert.equal(JZZ.MIDI.balanceMSB(0, 15).toString(), 'b0 08 0f -- Balance MSB');
+  });
+  it('balanceLSB', function() {
+    assert.equal(JZZ.MIDI.balanceLSB(0, 15).toString(), 'b0 28 0f -- Balance LSB');
+  });
+  it('panMSB', function() {
+    assert.equal(JZZ.MIDI.panMSB(0, 15).toString(), 'b0 0a 0f -- Pan MSB');
+  });
+  it('panLSB', function() {
+    assert.equal(JZZ.MIDI.panLSB(0, 15).toString(), 'b0 2a 0f -- Pan LSB');
+  });
+  it('expressionMSB', function() {
+    assert.equal(JZZ.MIDI.expressionMSB(0, 15).toString(), 'b0 0b 0f -- Expression Controller MSB');
+  });
+  it('expressionLSB', function() {
+    assert.equal(JZZ.MIDI.expressionLSB(0, 15).toString(), 'b0 2b 0f -- Expression Controller LSB');
+  });
+  it('damper', function() {
+    assert.equal(JZZ.MIDI.damper(0, true).toString(), 'b0 40 7f -- Damper Pedal On/Off');
+  });
+  it('portamento', function() {
+    assert.equal(JZZ.MIDI.portamento(0, true).toString(), 'b0 41 7f -- Portamento On/Off');
+  });
+  it('sostenuto', function() {
+    assert.equal(JZZ.MIDI.sostenuto(0, true).toString(), 'b0 42 7f -- Sostenuto On/Off');
+  });
+  it('soft', function() {
+    assert.equal(JZZ.MIDI.soft(0, true).toString(), 'b0 43 7f -- Soft Pedal On/Off');
+  });
+  it('allSoundOff', function() {
+    assert.equal(JZZ.MIDI.allSoundOff(0).toString(), 'b0 78 00 -- All Sound Off');
+  });
+  it('allNotesOff', function() {
+    assert.equal(JZZ.MIDI.allNotesOff(0).toString(), 'b0 7b 00 -- All Notes Off');
+  });
+  it('mtc', function() {
+    assert.equal(JZZ.MIDI.mtc(0).toString(), 'f1 00 -- MIDI Time Code');
+  });
+  it('songPosition', function() {
+    assert.equal(JZZ.MIDI.songPosition(300).toString(), 'f2 2c 02 -- Song Position');
+  });
+  it('songSelect', function() {
+    assert.equal(JZZ.MIDI.songSelect(15).toString(), 'f3 0f -- Song Select');
+  });
+  it('tune', function() {
+    assert.equal(JZZ.MIDI.tune().toString(), 'f6 -- Tune request');
+  });
+  it('clock', function() {
+    assert.equal(JZZ.MIDI.clock().toString(), 'f8 -- Timing clock');
+  });
+  it('start', function() {
+    assert.equal(JZZ.MIDI.start().toString(), 'fa -- Start');
+  });
+  it('continue', function() {
+    assert.equal(JZZ.MIDI.continue().toString(), 'fb -- Continue');
+  });
+  it('stop', function() {
+    assert.equal(JZZ.MIDI.stop().toString(), 'fc -- Stop');
+  });
+  it('active', function() {
+    assert.equal(JZZ.MIDI.active().toString(), 'fe -- Active Sensing');
+  });
+  it('sxIdRequest', function() {
+    assert.equal(JZZ.MIDI.sxIdRequest().toString(), 'f0 7e 7f 06 01 f7');
+  });
+  it('sxFullFrame', function() {
+    assert.equal(JZZ.MIDI.sxFullFrame(JZZ.SMPTE()).toString(), 'f0 7f 7f 01 01 00 00 00 00 f7');
+  });
+  it('reset', function() {
+    assert.equal(JZZ.MIDI.reset().toString(), 'ff -- Reset');
+  });
 });
 
 describe('SMF events', function() {
