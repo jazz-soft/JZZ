@@ -305,9 +305,21 @@ describe('Engine', function() {
   });
   if (MT && (process.platform == 'darwin' || process.platform == 'linux')) {
     it('Virtual MIDI-In', function(done) {
-      var port = MT.MidiSrc('Virtual MIDI-In');
-      port.connect();
-      JZZ().openMidiIn('Virtual MIDI-In').and(function() { this.close(); port.disconnect(); done(); });
+      var src = MT.MidiSrc('Virtual MIDI-In');
+      src.connect();
+      JZZ().openMidiIn('Virtual MIDI-In').and(function() { this.close(); src.disconnect(); done(); });
+    });
+    it('Virtual MIDI-Out', function(done) {
+      var port;
+      var dst = MT.MidiDst('Virtual MIDI-Out');
+      dst.connect();
+      dst.receive = function(msg) {
+        console.log(msg);
+        port.close();
+        dst.disconnect();
+        done();
+      }
+      port = JZZ().openMidiOut('Virtual MIDI-Out').and(function() { this.noteOn(0, 60, 127); });
     });
   }
 });

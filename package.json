@@ -24,7 +24,7 @@
     "grunt-contrib-jshint": "^1.1.0",
     "grunt-contrib-uglify": "^3.4.0",
     "istanbul": "^0.4.5",
-    "midi-test": "^0.0.2",
+    "midi-test": "^0.0.4",
     "mocha": "^5.2.0"
   },
   "repository": {
