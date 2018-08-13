@@ -2545,6 +2545,12 @@
           JZZ().or(ready).and(function() {
             var info = this.info();
             counter = info.inputs.length + info.outputs.length;
+            // Promise never resolves or rejects if no inputs and outputs are available; this happens
+            // for instance when no Jazz plugin or extension is installed.
+            if(counter === 0) {
+              resolve(wma);
+              return;
+            }
             var i, p;
             for (i = 0; i < info.outputs.length; i++) {
               p = new MIDIOutput(info.outputs[i]);
