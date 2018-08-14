@@ -314,12 +314,20 @@ describe('Engine', function() {
       var dst = MT.MidiDst('Virtual MIDI-Out');
       dst.connect();
       dst.receive = function(msg) {
-        console.log(msg);
         port.close();
         dst.disconnect();
         done();
-      }
+      };
       port = JZZ().openMidiOut('Virtual MIDI-Out').and(function() { this.noteOn(0, 60, 127); });
     });
   }
 });
+
+describe('Web MIDI API', function() {
+  it('requestMIDIAccess', function(done) {
+    function onSuccess(midiaccess) { done(); }
+    function onFail(err) { console.log('fail!', err); }
+    JZZ.requestMIDIAccess().then(onSuccess, onFail);
+  });
+});
+

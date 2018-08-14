@@ -12,7 +12,7 @@
 })(this, function() {
 
   var _scope = typeof window === 'undefined' ? global : window;
-  var _version = '0.5.3';
+  var _version = '0.5.4';
   var i, j, k, m, n;
 
   var _time = Date.now || function () { return new Date().getTime(); };
@@ -2545,12 +2545,7 @@
           JZZ().or(ready).and(function() {
             var info = this.info();
             counter = info.inputs.length + info.outputs.length;
-            // Promise never resolves or rejects if no inputs and outputs are available; this happens
-            // for instance when no Jazz plugin or extension is installed.
-            if(counter === 0) {
-              resolve(wma);
-              return;
-            }
+            if (!counter) { ready(); return; }
             var i, p;
             for (i = 0; i < info.outputs.length; i++) {
               p = new MIDIOutput(info.outputs[i]);
