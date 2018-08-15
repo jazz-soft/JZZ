@@ -10,8 +10,7 @@
 ![linux](https://jazz-soft.github.io/img/linux.jpg)
 ![raspberry pi](https://jazz-soft.github.io/img/rpi.jpg)
 ![ios](https://jazz-soft.github.io/img/ios.jpg)
-![android](https://jazz-soft.github.io/img/android.jpg)
-
+![android](https://jazz-soft.github.io/img/android.jpg)  
 [![npm](https://img.shields.io/npm/v/jzz.svg)](https://www.npmjs.com/package/jzz)
 [![npm](https://img.shields.io/npm/dt/jzz.svg)](https://www.npmjs.com/package/jzz)
 [![jsDelivr](https://data.jsdelivr.com/v1/package/npm/jzz/badge)](https://www.jsdelivr.com/package/npm/jzz)
