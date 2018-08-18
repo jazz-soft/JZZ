@@ -326,8 +326,19 @@ describe('Engine', function() {
 describe('Web MIDI API', function() {
   it('requestMIDIAccess', function(done) {
     function onSuccess(midiaccess) { done(); }
-    function onFail(err) { console.log('fail!', err); }
+    function onFail(err) { console.log('requestMIDIAccess failed!', err); }
     JZZ.requestMIDIAccess().then(onSuccess, onFail);
   });
+  if (MT && (process.platform == 'darwin' || process.platform == 'linux')) {
+    it('onstatechange', function(done) {
+      var src = MT.MidiSrc('Virtual MIDI-In');
+      function onSuccess(midiaccess) {
+        midiaccess.onstatechange = function() { src.disconnect(); done(); };
+        setImmediate(function() { src.connect(); });
+      }
+      function onFail(err) { console.log('requestMIDIAccess failed!', err); }
+      JZZ.requestMIDIAccess().then(onSuccess, onFail);
+    });
+  }
 });
 
