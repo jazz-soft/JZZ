@@ -330,7 +330,7 @@ describe('Web MIDI API', function() {
     JZZ.requestMIDIAccess().then(onSuccess, onFail);
   });
   if (MT && (process.platform == 'darwin' || process.platform == 'linux')) {
-    it('onstatechange', function(done) {
+    it.skip('onstatechange', function(done) {
       var src = MT.MidiSrc('Virtual MIDI-In');
       function onSuccess(midiaccess) {
         midiaccess.onstatechange = function() { src.disconnect(); done(); };
