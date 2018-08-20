@@ -8,6 +8,17 @@ catch(err) {
   console.log('midi-test module is disabled in this configuration');
 }
 
+function Sample(done, list) {
+  this.done = done;
+  this.list = list.slice();
+  this.count = 0;
+  this.compare = function(msg) {
+    if (this.count < this.list.length) assert.equal(msg.slice().toString(), this.list[this.count].toString());
+    this.count++;
+    if (this.count == this.list.length) this.done();
+  };
+}
+
 describe('MIDI messages', function() {
   it('empty', function() {
     assert.equal(JZZ.MIDI().toString(), 'empty');
@@ -260,6 +271,19 @@ describe('JZZ.lib', function() {
     assert.equal(JZZ.lib.fromUTF8('音樂'), '音樂');
     assert.equal(JZZ.lib.fromUTF8('\xF0\x9D\x84\x9E'), '𝄞'); // G-Clef 4-byte
     assert.equal(JZZ.lib.fromUTF8('\xED\xA0\xB4\xED\xB4\x9E'), '𝄞'); // G-Clef surrogate pair
+  });
+});
+
+describe('JZZ.Widget', function() {
+  it('ch', function(done) {
+    var sample = new Sample(done, [[0x91, 0x3c, 0x7f], [0x82, 0x3c, 0x7f]]);
+    var port = JZZ.Widget({ _receive: function(msg) { sample.compare(msg); }});
+    port.ch(1).noteOn('C5').ch(2).noteOff('C5', 127);
+  });
+  it.skip('mpe', function(done) {
+    var sample = new Sample(done, [[0xc0, 0x19], [0x90, 0x3c, 0x7f], [0x90, 0x3c, 0x7f]]);
+    var port = JZZ.Widget({ _receive: function(msg) { sample.compare(msg); }});
+    port.mpe(0, 4).noteOn('C5').noteOn('D5');
   });
 });
 
