@@ -152,6 +152,9 @@ describe('MIDI messages', function() {
   it('reset', function() {
     assert.equal(JZZ.MIDI.reset().toString(), 'ff -- Reset');
   });
+  it('freq', function() {
+    assert.equal(JZZ.MIDI.freq('A6'), 880);
+  });
 });
 
 describe('SMF events', function() {
@@ -280,10 +283,11 @@ describe('JZZ.Widget', function() {
     var port = JZZ.Widget({ _receive: function(msg) { sample.compare(msg); }});
     port.ch(1).noteOn('C5').ch(2).noteOff('C5', 127);
   });
-  it.skip('mpe', function(done) {
-    var sample = new Sample(done, [[0xc0, 0x19], [0x90, 0x3c, 0x7f], [0x90, 0x3c, 0x7f]]);
-    var port = JZZ.Widget({ _receive: function(msg) { sample.compare(msg); }});
-    port.mpe(0, 4).noteOn('C5').noteOn('D5');
+  it('mpe', function(done) {
+    var sample = new Sample(done, [[0xc0, 0x19], [0x91, 0x3c, 0x7f], [0x92, 0x3e, 0x7f], [0x81, 0x3c, 0x40]]);
+    var port = JZZ.Widget();
+    port.connect(function(msg) { sample.compare(msg); });
+    port.mpe(0, 4).program(25).noteOn('C5').noteOn('D5').noteOff('C5');
   });
 });
 
