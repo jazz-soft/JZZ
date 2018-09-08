@@ -41,9 +41,9 @@ or [**Mozilla Add-ons**](https://addons.mozilla.org/en-US/firefox/addon/jazz-mid
 
 ## Install
 
-**npm install jzz --save**  
-or **bower install jzz**  
-or **yarn add jzz**  
+`npm install jzz --save`  
+or `bower install jzz`  
+or `yarn add jzz`  
 or get the full development version and minified scripts from [**Github**](https://github.com/jazz-soft/JZZ)
 
 *Note:* in the (unlikely) case you get into trouble installing the
