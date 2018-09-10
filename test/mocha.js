@@ -24,7 +24,12 @@ describe('MIDI messages', function() {
     assert.equal(JZZ.MIDI().toString(), 'empty');
   });
   it('noteOn', function() {
-    assert.equal(JZZ.MIDI.noteOn(0, 'C6').toString(), '90 48 7f -- Note On');
+    var msg = JZZ.MIDI.noteOn(1, 'C5', 20);
+    assert.equal(msg.getChannel(), 1);
+    assert.equal(msg.getNote(), 60);
+    assert.equal(msg.getVelocity(), 20);
+    msg.setChannel(0).setNote('c6').setVelocity(127);
+    assert.equal(msg.toString(), '90 48 7f -- Note On');
   });
   it('noteOff', function() {
     assert.equal(JZZ.MIDI.noteOff(0, 'C6').toString(), '80 48 40 -- Note Off');
@@ -175,6 +180,10 @@ describe('SMF events', function() {
     assert.equal(JZZ.MIDI.smfSeqNumber(300).toString(), 'ff00 -- Sequence Number: 300');
   });
   it('smf/Text', function() {
+    var msg = JZZ.MIDI.smf(1, 'smf');
+    assert.equal(msg.getData(), 'smf');
+    msg.setData('data');
+    assert.equal(msg.getData(), 'data');
     assert.equal(JZZ.MIDI.smf(1, 'smf').toString(), 'ff01 -- Text: smf');
     assert.equal(JZZ.MIDI.smfText('\ttwo\nlines\x00').toString(), 'ff01 -- Text: \\ttwo\\nlines\\x00');
   });
@@ -203,6 +212,11 @@ describe('SMF events', function() {
     assert.equal(JZZ.MIDI.smfDevName('device').toString(), 'ff09 -- Device Name: device');
   });
   it('smf/ChannelPrefix', function() {
+    var msg = JZZ.MIDI.smfChannelPrefix(10);
+    assert.equal(msg.isSMF(), true);
+    assert.equal(msg.getChannel(), 10);
+    msg.setChannel(0);
+    assert.equal(msg.getChannel(), 0);
     assert.equal(JZZ.MIDI.smf(0x20, '\x0a').toString(), 'ff20 -- Channel Prefix: 0a');
     assert.equal(JZZ.MIDI.smfChannelPrefix(10).toString(), 'ff20 -- Channel Prefix: 0a');
     assert.equal(JZZ.MIDI.smfChannelPrefix('\n').toString(), 'ff20 -- Channel Prefix: 0a');

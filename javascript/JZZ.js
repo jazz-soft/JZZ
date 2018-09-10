@@ -1719,15 +1719,19 @@
   var _channelMap = { a:10, b:11, c:12, d:13, e:14, f:15, A:10, B:11, C:12, D:13, E:14, F:15 };
   for (k = 0; k < 16; k++) _channelMap[k] = k;
   MIDI.prototype.getChannel = function() {
+    if (this.ff == 0x20 && this.dd.length == 1 && this.dd.charCodeAt(0) < 16) return this.dd.charCodeAt(0);
     var c = this[0];
     if (typeof c == 'undefined' || c < 0x80 || c > 0xef) return;
     return c & 15;
   };
   MIDI.prototype.setChannel = function(x) {
-    var c = this[0];
-    if (typeof c == 'undefined' || c < 0x80 || c > 0xef) return this;
     x = _channelMap[x];
-    if (typeof x != 'undefined') this[0] = (c & 0xf0) | x;
+    if (typeof x == 'undefined') return this;
+    if (this.ff == 0x20) this.dd = String.fromCharCode(x);
+    else {
+      var c = this[0];
+      if (typeof c != 'undefined' && c >= 0x80 || c <= 0xef) this[0] = (c & 0xf0) | x;
+    }
     return this;
   };
   MIDI.prototype.getNote = function() {
@@ -1764,6 +1768,15 @@
     }
     return this;
   };
+  MIDI.prototype.getData = function() {
+    if (typeof this.ff != 'undefined') return this.dd;
+  };
+  MIDI.prototype.setData = function(dd) {
+    if (typeof this.ff != 'undefined') this.dd = _2s(dd);
+    return this;
+  };
+
+
   MIDI.prototype.isNoteOn = function() {
     var c = this[0];
     if (typeof c == 'undefined' || c < 0x90 || c > 0x9f) return false;
@@ -1780,6 +1793,9 @@
   };
   MIDI.prototype.isFullSysEx = function() {
     return this[0] == 0xf0 && this[this.length - 1] == 0xf7;
+  };
+  MIDI.prototype.isSMF = function() {
+    return this.ff >= 0 && this.ff <= 0x7f;
   };
 
   function _s2a(x) {
