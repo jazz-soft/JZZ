@@ -262,10 +262,19 @@ describe('SMPTE', function() {
     assert.equal(JZZ.SMPTE().toString(), '00:00:00:00');
   });
   it('23:59:59:23', function() {
-    assert.equal(JZZ.SMPTE().decrQF().toString(), '23:59:59:23');
+    assert.equal(JZZ.SMPTE().decrQF().incrFrame().decrFrame().toString(), '23:59:59:23');
   });
   it('23:59:59:29', function() {
-    assert.equal(JZZ.SMPTE(30, 23, 59, 59, 29).toString(), '23:59:59:29');
+    assert.equal(JZZ.SMPTE(JZZ.SMPTE(30, 23, 59, 59, 29)).toString(), '23:59:59:29');
+  });
+  it('master/slave', function() {
+    var master = JZZ.SMPTE(24, 7, 39, 59);
+    var slave = JZZ.SMPTE();
+    for (var n = 0; n < 9; n++) {
+      slave.read(JZZ.MIDI.mtc(master));
+      master.incrQF();
+    }
+    assert.equal(slave.toString(), '07:39:59:02');
   });
 });
 
@@ -308,7 +317,7 @@ describe('JZZ.Widget', function() {
 
 describe('Engine', function() {
   it('JZZ()', function(done) {
-    JZZ().and(function() { console.log(this.info()); done(); });
+    JZZ().wait(0).wait(1).and(function() { console.log(this.info()); done(); });
   });
   it('Non-existing port', function(done) {
     JZZ().openMidiOut('Non-existing port').or(function() { done(); });
