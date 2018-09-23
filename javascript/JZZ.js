@@ -12,7 +12,7 @@
 })(this, function() {
 
   var _scope = typeof window === 'undefined' ? global : window;
-  var _version = '0.5.6';
+  var _version = '0.5.7';
   var i, j, k, m, n;
 
   var _time = Date.now || function () { return new Date().getTime(); };
@@ -1769,10 +1769,17 @@
     return this;
   };
   MIDI.prototype.getData = function() {
-    if (typeof this.ff != 'undefined') return this.dd;
+    if (typeof this.dd != 'undefined') return this.dd.toString();
   };
   MIDI.prototype.setData = function(dd) {
-    if (typeof this.ff != 'undefined') this.dd = _2s(dd);
+    this.dd = _2s(dd);
+    return this;
+  };
+  MIDI.prototype.getText = function() {
+    return JZZ.lib.fromUTF8(this.dd);
+  };
+  MIDI.prototype.setText = function(dd) {
+    this.dd = JZZ.lib.toUTF8(dd);
     return this;
   };
 
@@ -2189,7 +2196,7 @@
     return (r ? enc.slice(0, r - 3) + '==='.slice(r) : enc);
   };
   JZZ.lib.fromUTF8 = function(data) {
-    data = '' + data;
+    data = typeof data == 'undefined' ? '' : '' + data;
     var out = '';
     var i, n, m;
     for (i = 0; i < data.length; i++) {
@@ -2239,7 +2246,7 @@
     return out;
   };
   JZZ.lib.toUTF8 = function(data) {
-    data = '' + data;
+    data = typeof data == 'undefined' ? '' : '' + data;
     var out = '';
     var i, n;
     for (i = 0; i < data.length; i++) {

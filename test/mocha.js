@@ -182,8 +182,11 @@ describe('SMF events', function() {
   it('smf/Text', function() {
     var msg = JZZ.MIDI.smf(1, 'smf');
     assert.equal(msg.getData(), 'smf');
-    msg.setData('data');
-    assert.equal(msg.getData(), 'data');
+    msg.setData();
+    assert.equal(msg.getData(), '');
+    msg.setText('音樂');
+    assert.equal(msg.getText(), '音樂');
+    assert.equal(msg.getData(), '\xE9\x9F\xB3\xE6\xA8\x82');
     assert.equal(JZZ.MIDI.smf(1, 'smf').toString(), 'ff01 -- Text: smf');
     assert.equal(JZZ.MIDI.smfText('\ttwo\nlines\x00').toString(), 'ff01 -- Text: \\ttwo\\nlines\\x00');
   });
@@ -286,11 +289,13 @@ describe('JZZ.lib', function() {
     assert.equal(JZZ.lib.fromBase64('TUlESQ=='), 'MIDI');
   });
   it('toUTF8', function() {
+    assert.equal(JZZ.lib.toUTF8(), '');
     assert.equal(JZZ.lib.toUTF8('МИДИ'), '\xD0\x9C\xD0\x98\xD0\x94\xD0\x98');
     assert.equal(JZZ.lib.toUTF8('音樂'), '\xE9\x9F\xB3\xE6\xA8\x82');
     assert.equal(JZZ.lib.toUTF8('𝄞'), '\xED\xA0\xB4\xED\xB4\x9E'); // G-Clef
   });
   it('fromUTF8', function() {
+    assert.equal(JZZ.lib.fromUTF8(), '');
     assert.equal(JZZ.lib.fromUTF8('\xD0\x9C\xD0\x98\xD0\x94\xD0\x98'), 'МИДИ');
     assert.equal(JZZ.lib.fromUTF8('МИДИ'), 'МИДИ');
     assert.equal(JZZ.lib.fromUTF8('\xE9\x9F\xB3\xE6\xA8\x82'), '音樂');
