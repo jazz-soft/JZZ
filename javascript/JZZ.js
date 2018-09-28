@@ -336,7 +336,7 @@
   };
   _M.prototype.note = function(c, n, v, t) {
     this.noteOn(c, n, v);
-    if (t) this.wait(t).noteOff(c, n);
+    if (t > 0) this.wait(t).noteOff(c, n);
     return this;
   };
   _M.prototype._emit = function(msg) {
