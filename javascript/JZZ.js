@@ -12,7 +12,7 @@
 })(this, function() {
 
   var _scope = typeof window === 'undefined' ? global : window;
-  var _version = '0.5.7';
+  var _version = '0.5.8';
   var i, j, k, m, n;
 
   var _time = Date.now || function () { return new Date().getTime(); };
@@ -2093,12 +2093,14 @@
   JZZ.lib.schedule = _schedule;
   JZZ.lib.openMidiOut = function(name, engine) {
     var port = new _M();
-    engine._openOut(port, name);
+    engine._openOut(port);
+    port._info = engine._info(name);
     return port;
   };
   JZZ.lib.openMidiIn = function(name, engine) {
     var port = new _M();
-    engine._openIn(port, name);
+    engine._openIn(port);
+    port._info = engine._info(name);
     return port;
   };
   JZZ.lib.registerMidiOut = function(name, engine) {
