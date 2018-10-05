@@ -307,16 +307,24 @@ describe('JZZ.lib', function() {
 
 describe('JZZ.Widget', function() {
   it('ch', function(done) {
-    var sample = new Sample(done, [[0x91, 0x3c, 0x7f], [0x82, 0x3c, 0x7f], [0xff], [0xf1, 0x04], [0xf1, 0x04]]);
+    var sample = new Sample(done, [
+      [0x91, 0x3c, 0x7f], [0x82, 0x3c, 0x7f], [0xff],
+      [0xf1, 0x04], [0xf1, 0x04],
+      [0x90, 0x3c, 0x7f], [0x80, 0x3c, 0x40], [0x95, 0x3c, 0x7f], [0x85, 0x3c, 0x40]
+    ]);
     var port = JZZ.Widget({ _receive: function(msg) { sample.compare(msg); }});
     port.ch(1).noteOn('C5').ch(2).noteOff('C5', 127).ch(3).reset();
     port.ch(4).mtc(JZZ.SMPTE(30, 1, 2, 3, 4)).ch().mtc(JZZ.SMPTE(30, 1, 2, 3, 4));
+    port.note(0, 'B#4', 127, 1).ch(5).wait(10).note('Dbb5', 127, 1).wait(10).disconnect().close();
   });
   it('mpe', function(done) {
-    var sample = new Sample(done, [[0xc0, 0x19], [0x91, 0x3c, 0x7f], [0x92, 0x3e, 0x7f], [0x81, 0x3c, 0x40]]);
+    var sample = new Sample(done, [
+      [0xc0, 0x19], [0x91, 0x3c, 0x7f], [0x92, 0x3e, 0x7f], [0x81, 0x3c, 0x40],
+      [0x91, 0x40, 0x7f], [0x81, 0x40, 0x40]
+    ]);
     var port = JZZ.Widget();
     port.connect(function(msg) { sample.compare(msg); });
-    port.mpe(0, 4).program(25).noteOn('C5').noteOn('D5').noteOff('C5');
+    port.mpe(0, 4).program(25).noteOn('C5').noteOn('D5').noteOff('C5').note('E5', 127, 1);
   });
 });
 
