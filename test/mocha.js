@@ -33,12 +33,14 @@ describe('MIDI messages', function() {
   });
   it('noteOff', function() {
     assert.equal(JZZ.MIDI.noteOff(0, 'C6').toString(), '80 48 40 -- Note Off');
+    assert.equal(JZZ.MIDI.noteOff('0', 'C6').toString(), '80 48 40 -- Note Off');
   });
   it('aftertouch', function() {
     assert.equal(JZZ.MIDI.aftertouch(0, 'C6', 127).toString(), 'a0 48 7f -- Aftertouch');
   });
   it('control', function() {
     assert.equal(JZZ.MIDI.control(0, 6, 15).toString(), 'b0 06 0f -- Data Entry MSB');
+    assert.equal(JZZ.MIDI.control('0', '6', '15').toString(), 'b0 06 0f -- Data Entry MSB');
   });
   it('program', function() {
     assert.equal(JZZ.MIDI.program(0, 0).toString(), 'c0 00 -- Program Change');
@@ -48,6 +50,7 @@ describe('MIDI messages', function() {
   });
   it('pitchBend', function() {
     assert.equal(JZZ.MIDI.pitchBend(0, 300).toString(), 'e0 2c 02 -- Pitch Wheel');
+    assert.equal(JZZ.MIDI.pitchBend('0', '300').toString(), 'e0 2c 02 -- Pitch Wheel');
   });
   it('bankMSB', function() {
     assert.equal(JZZ.MIDI.bankMSB(0, 15).toString(), 'b0 00 0f -- Bank Select MSB');
@@ -69,6 +72,7 @@ describe('MIDI messages', function() {
   });
   it('footMSB', function() {
     assert.equal(JZZ.MIDI.footMSB(0, 15).toString(), 'b0 04 0f -- Foot Controller MSB');
+    assert.equal(JZZ.MIDI.footMSB('0', '15').toString(), 'b0 04 0f -- Foot Controller MSB');
   });
   it('footLSB', function() {
     assert.equal(JZZ.MIDI.footLSB(0, 15).toString(), 'b0 24 0f -- Foot Controller LSB');
