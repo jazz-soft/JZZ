@@ -19,6 +19,13 @@ function Sample(done, list) {
   };
 }
 
+describe('Info', function() {
+  console.log('Node:', process.versions.node);
+  console.log('process.platform:', process.platform);
+  console.log('process.arch:', process.arch);
+  console.log('JZZ:', JZZ().info().ver);
+});
+
 describe('MIDI messages', function() {
   it('empty', function() {
     assert.equal(JZZ.MIDI().toString(), 'empty');
