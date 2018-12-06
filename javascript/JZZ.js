@@ -892,7 +892,7 @@
           },
           _close: function(port) { _engine._closeOut(port); },
           _closeAll: _closeAll,
-          _receive: function(a) { if (impl.dev) this.dev.send(a.slice()); }
+          _receive: function(a) { if (impl.dev && a.length) this.dev.send(a.slice()); }
         };
       }
       var found;
@@ -1036,7 +1036,7 @@
           _start: function() { document.dispatchEvent(new CustomEvent('jazz-midi', { detail: ['openout', plugin.id, name] })); },
           _close: function(port) { _engine._closeOut(port); },
           _closeAll: _closeAll,
-          _receive: function(a) { var v = a.slice(); v.splice(0, 0, 'play', plugin.id); document.dispatchEvent(new CustomEvent('jazz-midi', {detail: v})); }
+          _receive: function(a) { if (a.length) { var v = a.slice(); v.splice(0, 0, 'play', plugin.id); document.dispatchEvent(new CustomEvent('jazz-midi', {detail: v})); } }
         };
         impl.plugin = plugin;
         plugin.output = impl;
