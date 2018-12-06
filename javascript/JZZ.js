@@ -13,7 +13,7 @@
 })(this, function() {
 
   var _scope = typeof window === 'undefined' ? global : window;
-  var _version = '0.6.3';
+  var _version = '0.6.4';
   var i, j, k, m, n;
 
   var _time = Date.now || function () { return new Date().getTime(); };
@@ -708,7 +708,7 @@
           },
           _close: function(port) { _engine._closeOut(port); },
           _closeAll: _closeAll,
-          _receive: function(a) { this.plugin.MidiOutRaw(a.slice()); }
+          _receive: function(a) { if (a.length) this.plugin.MidiOutRaw(a.slice()); }
         };
         var plugin = _engine._pool[_engine._outArr.length];
         impl.plugin = plugin;
