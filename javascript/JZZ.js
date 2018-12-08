@@ -13,7 +13,7 @@
 })(this, function() {
 
   var _scope = typeof window === 'undefined' ? global : window;
-  var _version = '0.6.4';
+  var _version = '0.6.5';
   var i, j, k, m, n;
 
   var _time = Date.now || function () { return new Date().getTime(); };
@@ -1602,8 +1602,7 @@
     smfSMPTE: function(dd) {
       if (dd instanceof SMPTE) return _smf(84, String.fromCharCode(dd.hour) + String.fromCharCode(dd.minute) + String.fromCharCode(dd.second) + String.fromCharCode(dd.frame) + String.fromCharCode((dd.quarter % 4) * 25));
       var s = '' + dd;
-      if (s.length == 5 && s.charCodeAt(4) < 100) {
-        new SMPTE(30, s.charCodeAt(0), s.charCodeAt(1), s.charCodeAt(2), s.charCodeAt(3), s.charCodeAt(4) / 25);
+      if (s.length == 5) {
         return _smf(84, dd);
       }
       var arr = dd instanceof Array ? dd : Array.prototype.slice.call(arguments);
