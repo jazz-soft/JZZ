@@ -13,7 +13,7 @@
 })(this, function() {
 
   var _scope = typeof window === 'undefined' ? global : window;
-  var _version = '0.6.5';
+  var _version = '0.6.6';
   var i, j, k, m, n;
 
   var _time = Date.now || function () { return new Date().getTime(); };
@@ -1534,15 +1534,6 @@
       else if (arr.length > 2) dd = _2s(Array.prototype.slice.call(arr, 1));
       var f = {
         0: _helperSMF.smfSeqNumber,
-        1: _helperSMF.smfText,
-        2: _helperSMF.smfCopyright,
-        3: _helperSMF.smfSeqName,
-        4: _helperSMF.smfInstrName,
-        5: _helperSMF.smfLyric,
-        6: _helperSMF.smfMarker,
-        7: _helperSMF.smfCuePoint,
-        8: _helperSMF.smfProgName,
-        9: _helperSMF.smfDevName,
         32: _helperSMF.smfChannelPrefix,
         47: _helperSMF.smfEndOfTrack,
         81: _helperSMF.smfTempo,

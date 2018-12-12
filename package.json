@@ -1,6 +1,6 @@
 {
   "name": "jzz",
-  "version": "0.6.5",
+  "version": "0.6.6",
   "description": "MIDI library for Node.js and web-browsers",
   "main": "javascript/JZZ.js",
   "scripts": {
@@ -16,7 +16,7 @@
   ],
   "author": "jazz-soft (https://jazz-soft.net/)",
   "dependencies": {
-    "jazz-midi": "^1.6.6"
+    "jazz-midi": "^1.6.7"
   },
   "devDependencies": {
     "coveralls": "^3.0.2",
