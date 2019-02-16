@@ -13,7 +13,7 @@
 })(this, function() {
 
   var _scope = typeof window === 'undefined' ? global : window;
-  var _version = '0.6.7';
+  var _version = '0.6.8';
   var i, j, k, m, n;
 
   var _time = Date.now || function () { return new Date().getTime(); };
@@ -532,19 +532,26 @@
   }
   // Web MIDI API
   function _tryWebMIDI() {
-    if (navigator.requestMIDIAccess && navigator.requestMIDIAccess != JZZ.requestMIDIAccess) {
-      var self = this;
-      var onGood = function(midi) {
-        _initWebMIDI(midi);
-        self._resume();
-      };
-      var onBad = function(msg) {
-        self._crash(msg);
-      };
-      var opt = {};
-      navigator.requestMIDIAccess(opt).then(onGood, onBad);
-      this._pause();
-      return;
+    if (navigator.requestMIDIAccess) {
+      var native = true;
+      try {
+        if (navigator.requestMIDIAccess.toString().indexOf('JZZ(') != -1) native = false;
+      }
+      catch (err) {}
+      if (native) {
+        var self = this;
+        var onGood = function(midi) {
+          _initWebMIDI(midi);
+          self._resume();
+        };
+        var onBad = function(msg) {
+          self._crash(msg);
+        };
+        var opt = {};
+        navigator.requestMIDIAccess(opt).then(onGood, onBad);
+        this._pause();
+        return;
+      }
     }
     this._break();
   }
