@@ -13,7 +13,7 @@
 })(this, function() {
 
   var _scope = typeof window === 'undefined' ? global : window;
-  var _version = '0.6.9';
+  var _version = '0.7.0';
   var i, j, k, m, n;
 
   var _time = Date.now || function () { return new Date().getTime(); };
@@ -1539,17 +1539,7 @@
       var dd = '';
       if (arr.length == 2) dd = _2s(arr[1]);
       else if (arr.length > 2) dd = _2s(Array.prototype.slice.call(arr, 1));
-      var f = {
-        0: _helperSMF.smfSeqNumber,
-        32: _helperSMF.smfChannelPrefix,
-        47: _helperSMF.smfEndOfTrack,
-        81: _helperSMF.smfTempo,
-        84: _helperSMF.smfSMPTE,
-        88: _helperSMF.smfTimeSignature,
-        89: function(dd) { if (dd.length == 2) return _smf(89, dd); throw RangeError('Incorrect key signature: ' + _smftxt(dd)); },
-        127: _helperSMF.smfMetaEvent
-      }[ff];
-      return f ? f(typeof dd == 'undefined' ? '' : _8bs(dd)) : _smf(ff, dd);
+      return _smf(ff, dd);
     },
     smfSeqNumber: function(dd) {
       if (dd == parseInt(dd)) {
