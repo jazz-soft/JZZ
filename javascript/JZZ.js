@@ -13,7 +13,7 @@
 })(this, function() {
 
   var _scope = typeof window === 'undefined' ? global : window;
-  var _version = '0.7.0';
+  var _version = '0.7.1';
   var i, j, k, m, n;
 
   var _time = Date.now || function () { return new Date().getTime(); };
@@ -1475,6 +1475,7 @@
   function _throw(x) { throw RangeError('Bad MIDI value: ' + x); }
   function _ch(n) { if (n != parseInt(n) || n < 0 || n > 0xf) _throw(n); return parseInt(n); }
   function _7b(n, m) { if (n != parseInt(n) || n < 0 || n > 0x7f) _throw(typeof m == 'undefined' ? n : m); return parseInt(n); }
+  function _8b(n, m) { if (n != parseInt(n) || n < 0 || n > 0xff) _throw(typeof m == 'undefined' ? n : m); return parseInt(n); }
   function _lsb(n) { if (n != parseInt(n) || n < 0 || n > 0x3fff) _throw(n); return parseInt(n) & 0x7f; }
   function _msb(n) { if (n != parseInt(n) || n < 0 || n > 0x3fff) _throw(n); return parseInt(n) >> 7; }
   function _8bs(s) { s = '' + s; for (var i = 0; i < s.length; i++) if (s.charCodeAt(i) > 255) _throw(s[i]); return s; }
@@ -1527,7 +1528,7 @@
   };
   function _smf(ff, dd) {
     var midi = new MIDI();
-    midi.ff = _7b(ff);
+    midi.ff = _8b(ff);
     midi.dd = typeof dd == 'undefined' ? '' : _8bs(dd);
     return midi;
   }
@@ -1535,7 +1536,7 @@
     smf: function(arg) {
       if (arg instanceof MIDI) return new MIDI(arg);
       var arr = arg instanceof Array ? arg : arguments;
-      var ff = _7b(arr[0]);
+      var ff = _8b(arr[0]);
       var dd = '';
       if (arr.length == 2) dd = _2s(arr[1]);
       else if (arr.length > 2) dd = _2s(Array.prototype.slice.call(arr, 1));
