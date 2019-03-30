@@ -179,11 +179,11 @@ describe('SMF events', function() {
     assert.equal(JZZ.MIDI.smf(0x70).toString(), 'ff70 -- SMF');
   });
   it('smf', function() {
-    assert.equal(JZZ.MIDI.smf(JZZ.MIDI.smf(0x7f)).toString(), 'ff7f -- Meta Event');
-    assert.equal(JZZ.MIDI.smf([0x7f]).toString(), 'ff7f -- Meta Event');
-    assert.equal(JZZ.MIDI.smf(0x7f, [0, 1]).toString(), 'ff7f -- Meta Event: 00 01');
-    assert.equal(JZZ.MIDI.smf(0x7f, 0, 1).toString(), 'ff7f -- Meta Event: 00 01');
-    assert.equal(JZZ.MIDI.smf([0x7f, 0, 1]).toString(), 'ff7f -- Meta Event: 00 01');
+    assert.equal(JZZ.MIDI.smf(JZZ.MIDI.smf(0x7f)).toString(), 'ff7f -- Sequencer Specific');
+    assert.equal(JZZ.MIDI.smf([0x7f]).toString(), 'ff7f -- Sequencer Specific');
+    assert.equal(JZZ.MIDI.smf(0x7f, [0, 1]).toString(), 'ff7f -- Sequencer Specific: 00 01');
+    assert.equal(JZZ.MIDI.smf(0x7f, 0, 1).toString(), 'ff7f -- Sequencer Specific: 00 01');
+    assert.equal(JZZ.MIDI.smf([0x7f, 0, 1]).toString(), 'ff7f -- Sequencer Specific: 00 01');
     assert.equal(JZZ.MIDI.smf(0x70, 'abc').toString(), 'ff70 -- SMF: 61 62 63');
   });
   it('smf/SeqNumber', function() {
@@ -235,6 +235,11 @@ describe('SMF events', function() {
     assert.equal(JZZ.MIDI.smfChannelPrefix(10).toString(), 'ff20 -- Channel Prefix: 0a');
     assert.equal(JZZ.MIDI.smfChannelPrefix('\n').toString(), 'ff20 -- Channel Prefix: 0a');
   });
+  it('smf/MidiPort', function() {
+    assert.equal(JZZ.MIDI.smf(0x21, '\x0a').toString(), 'ff21 -- MIDI Port: 0a');
+    assert.equal(JZZ.MIDI.smfMidiPort(10).toString(), 'ff21 -- MIDI Port: 0a');
+    assert.equal(JZZ.MIDI.smfMidiPort('\n').toString(), 'ff21 -- MIDI Port: 0a');
+  });
   it('smf/EndOfTrack', function() {
     assert.equal(JZZ.MIDI.smf(0x2f).toString(), 'ff2f -- End of Track');
     assert.equal(JZZ.MIDI.smfEndOfTrack().toString(), 'ff2f -- End of Track');
@@ -263,11 +268,11 @@ describe('SMF events', function() {
     assert.equal(JZZ.MIDI.smfKeySignature('Eb major').toString(), 'ff59 -- Key Signature: Eb');
     assert.equal(JZZ.MIDI.smfKeySignature('C').toString(), 'ff59 -- Key Signature: C');
   });
-  it('smf/MetaEvent', function() {
-    assert.equal(JZZ.MIDI.smf(0x7f).toString(), 'ff7f -- Meta Event');
-    assert.equal(JZZ.MIDI.smf(0x7f, '\x0a\x0b\x0c').toString(), 'ff7f -- Meta Event: 0a 0b 0c');
-    assert.equal(JZZ.MIDI.smfMetaEvent('\x0a\x0b\x0c').toString(), 'ff7f -- Meta Event: 0a 0b 0c');
-    assert.equal(JZZ.MIDI.smfMetaEvent([0xa, 0xb, 0xc]).toString(), 'ff7f -- Meta Event: 0a 0b 0c');
+  it('smf/Sequencer', function() {
+    assert.equal(JZZ.MIDI.smf(0x7f).toString(), 'ff7f -- Sequencer Specific');
+    assert.equal(JZZ.MIDI.smf(0x7f, '\x0a\x0b\x0c').toString(), 'ff7f -- Sequencer Specific: 0a 0b 0c');
+    assert.equal(JZZ.MIDI.smfSequencer('\x0a\x0b\x0c').toString(), 'ff7f -- Sequencer Specific: 0a 0b 0c');
+    assert.equal(JZZ.MIDI.smfSequencer([0xa, 0xb, 0xc]).toString(), 'ff7f -- Sequencer Specific: 0a 0b 0c');
   });
 });
 

@@ -13,7 +13,7 @@
 })(this, function() {
 
   var _scope = typeof window === 'undefined' ? global : window;
-  var _version = '0.7.1';
+  var _version = '0.7.2';
   var i, j, k, m, n;
 
   var _time = Date.now || function () { return new Date().getTime(); };
@@ -1576,6 +1576,18 @@
       }
       return _smf(32, dd);
     },
+    smfMidiPort: function(dd) {
+      if (dd == parseInt(dd)) {
+        if (dd < 0 || dd > 127) throw RangeError('Port number out of range: ' + dd);
+        dd = String.fromCharCode(dd);
+      }
+      else {
+        dd = '' + dd;
+        if (dd.length == 0) dd = '\x00';
+        else if (dd.length > 1 || dd.charCodeAt(0) > 127) throw RangeError('Port number out of range: ' + _smftxt(dd));
+      }
+      return _smf(33, dd);
+    },
     smfEndOfTrack: function(dd) {
       if (_2s(dd) != '') throw RangeError('Unexpected data: ' + _smftxt(_2s(dd)));
       return _smf(47);
@@ -1644,7 +1656,7 @@
       if (dd.length == 2 && dd.charCodeAt(1) <= 1 && (dd.charCodeAt(0) <= 7 || dd.charCodeAt(0) <= 255 && dd.charCodeAt(0) >= 249)) return _smf(89, dd);
       throw RangeError('Incorrect key signature: ' + _smftxt(dd));
     },
-    smfMetaEvent: function(dd) { return _smf(127, _2s(dd)); }
+    smfSequencer: function(dd) { return _smf(127, _2s(dd)); }
   };
 
   function _copyPortHelper(M, name, func) {
@@ -1851,6 +1863,7 @@
         if (this.ff == 0) s += 'Sequence Number: ' + _s2n(this.dd);
         else if (this.ff > 0 && this.ff < 10) s += ['', 'Text', 'Copyright', 'Sequence Name', 'Instrument Name', 'Lyric', 'Marker', 'Cue Point', 'Program Name', 'Device Name'][this.ff] + _smftxt(this.dd);
         else if (this.ff == 32) s += 'Channel Prefix' + _smfhex(this.dd);
+        else if (this.ff == 33) s += 'MIDI Port' + _smfhex(this.dd);
         else if (this.ff == 47) s += 'End of Track' + _smfhex(this.dd);
         else if (this.ff == 81) {
           var ms = this.dd.charCodeAt(0) * 65536 + this.dd.charCodeAt(1) * 256 + this.dd.charCodeAt(2);
@@ -1875,7 +1888,7 @@
             if (mi) s += ' min';
           }
         }
-        else if (this.ff == 127) s += 'Meta Event' + _smfhex(this.dd);
+        else if (this.ff == 127) s += 'Sequencer Specific' + _smfhex(this.dd);
         else s += 'SMF' + _smfhex(this.dd);
         return s;
       }
