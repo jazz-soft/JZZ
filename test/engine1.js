@@ -1,4 +1,6 @@
-﻿var assert = require('assert');
+﻿//// testing 'node'/'plugin' engine
+
+var assert = require('assert');
 var JZZ = require('..');
 var MT;
 try {

@@ -13,7 +13,7 @@
 })(this, function() {
 
   var _scope = typeof window === 'undefined' ? global : window;
-  var _version = '0.7.5';
+  var _version = '0.7.6';
   var i, j, k, m, n;
 
   var _time = Date.now || function () { return new Date().getTime(); };
@@ -606,13 +606,14 @@
   }
 
   function _filterEngines(opt) {
-    var ret = [_tryNODE, _zeroBreak];
+    var ret = [];
     var arr = _filterEngineNames(opt);
     for (var i = 0; i < arr.length; i++) {
       if (arr[i] == 'webmidi') {
         if (opt && opt.sysex === true) ret.push(_tryWebMIDIsysex);
         if (!opt || opt.sysex !== true || opt.degrade === true) ret.push(_tryWebMIDI);
       }
+      else if (arr[i] == 'node') { ret.push(_tryNODE); ret.push(_zeroBreak); }
       else if (arr[i] == 'extension') ret.push(_tryCRX);
       else if (arr[i] == 'plugin') ret.push(_tryJazzPlugin);
     }
@@ -621,7 +622,7 @@
   }
 
   function _filterEngineNames(opt) {
-    var web = ['extension', 'plugin', 'webmidi'];
+    var web = ['node', 'extension', 'plugin', 'webmidi'];
     if (!opt || !opt.engine) return web;
     var arr = opt.engine instanceof Array ? opt.engine : [opt.engine];
     var dup = {};

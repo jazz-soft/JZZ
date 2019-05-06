@@ -12,11 +12,13 @@ function Sample(done, list) {
   };
 }
 
+var engine = JZZ({ engine: 'none' });
+
 describe('Info', function() {
   console.log('Node:', process.versions.node);
   console.log('process.platform:', process.platform);
   console.log('process.arch:', process.arch);
-  console.log('JZZ:', JZZ('none').info().ver);
+  console.log('JZZ:', engine.info().ver);
 });
 
 describe('MIDI messages', function() {
@@ -339,10 +341,10 @@ describe('JZZ.Widget', function() {
 
 describe('Engine', function() {
   it('JZZ()', function(done) {
-    JZZ('none').wait(0).wait(1).and(function() { console.log(this.info()); done(); });
+    engine.wait(0).wait(1).and(function() { console.log(this.info()); done(); });
   });
   it('Non-existing port', function(done) {
-    JZZ('none').openMidiOut('Non-existing port').or(function() { done(); });
+    engine.openMidiOut('Non-existing port').or(function() { done(); });
   });
   it('Dummy MIDI-Out', function(done) {
     JZZ.lib.registerMidiOut('Dummy MIDI-Out', {
@@ -354,7 +356,7 @@ describe('Engine', function() {
         port._resume();
       }
     });
-    var out = JZZ('none').openMidiOut('Dummy MIDI-Out').and(function() { this.noteOn(0, 60); });
+    var out = engine.openMidiOut('Dummy MIDI-Out').and(function() { this.noteOn(0, 60); });
   });
 });
 
