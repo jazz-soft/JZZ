@@ -339,25 +339,14 @@ describe('JZZ.Widget', function() {
   });
 });
 
-describe('Engine', function() {
-  it('JZZ()', function(done) {
-    engine.wait(0).wait(1).and(function() { console.log(this.info()); done(); });
-  });
-  it('Non-existing port', function(done) {
-    engine.openMidiOut('Non-existing port').or(function() { done(); });
-  });
-  it('Dummy MIDI-Out', function(done) {
-    JZZ.lib.registerMidiOut('Dummy MIDI-Out', {
-      _info: function(name) { return { name: name }; },
-      _openOut: function(port, name) {
-        port._info = this._info(name);
-        port._receive = function(msg) { done(); };
-        port._close = function(msg) {};
-        port._resume();
-      }
-    });
-    var out = engine.openMidiOut('Dummy MIDI-Out').and(function() { this.noteOn(0, 60); });
-  });
+var test = require('./tests.js')(JZZ, 'none');
+
+describe('Engine: none', function() {
+  test.engine_name();
+  test.non_existent_midi_in();
+  test.non_existent_midi_out();
+  test.dummy_midi_in();
+  test.dummy_midi_out();
 });
 
 describe('Web MIDI API', function() {
