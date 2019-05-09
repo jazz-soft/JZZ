@@ -596,7 +596,7 @@
     this._pause();
     document.addEventListener('jazz-midi-msg', eventHandle);
     try { document.dispatchEvent(new Event('jazz-midi')); } catch (err) {}
-    window.setTimeout(function() { if (!inst) self._crash(); }, 0);
+    setTimeout(function() { if (!inst) self._crash(); }, 0);
   }
 
   function _zeroBreak() {
