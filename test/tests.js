@@ -49,7 +49,7 @@ module.exports = function(JZZ, ENGINE, DRIVER) {
     },
 
     dummy_midi_in: function() {
-      it('Dummy MIDI-In', function(done) {
+      it('Widget MIDI-In', function(done) {
         JZZ.lib.registerMidiIn('Dummy MIDI-In', {
           _info: function(name) { return { name: name }; },
           _openIn: function(port, name) {
@@ -62,7 +62,7 @@ module.exports = function(JZZ, ENGINE, DRIVER) {
     },
 
     dummy_midi_out: function() {
-      it('Dummy MIDI-Out', function(done) {
+      it('Widget MIDI-Out', function(done) {
         JZZ.lib.registerMidiOut('Dummy MIDI-Out', {
           _info: function(name) { return { name: name }; },
           _openOut: function(port, name) {
