@@ -79,7 +79,7 @@ module.exports = function(JZZ, ENGINE, DRIVER) {
       it('Virtual MIDI-In', function(done) {
         var src = DRIVER.MidiSrc('Virtual MIDI-In');
         src.connect();
-        JZZ().openMidiIn('Virtual MIDI-In').and(function() { this.close(); src.disconnect(); done(); });
+        engine.openMidiIn('Virtual MIDI-In').and(function() { this.close(); src.disconnect(); done(); });
       });
     },
 
@@ -93,7 +93,7 @@ module.exports = function(JZZ, ENGINE, DRIVER) {
           dst.disconnect();
           done();
         };
-        port = JZZ().openMidiOut('Virtual MIDI-Out').and(function() { this.noteOn(0, 60, 127); });
+        port = engine.openMidiOut('Virtual MIDI-Out').and(function() { this.noteOn(0, 60, 127); });
       });
     },
 
