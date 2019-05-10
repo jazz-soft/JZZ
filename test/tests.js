@@ -48,22 +48,22 @@ module.exports = function(JZZ, ENGINE, DRIVER) {
       });
     },
 
-    dummy_midi_in: function() {
+    widget_midi_in: function() {
       it('Widget MIDI-In', function(done) {
-        JZZ.lib.registerMidiIn('Dummy MIDI-In', {
+        JZZ.lib.registerMidiIn('Widget MIDI-In', {
           _info: function(name) { return { name: name }; },
           _openIn: function(port, name) {
             port._info = this._info(name);
             port._resume();
           }
         });
-        engine.openMidiIn('Dummy MIDI-In').connect(function(msg) { done(); }).emit([0x90, 0x40, 0x7f]);
+        engine.openMidiIn('Widget MIDI-In').connect(function(msg) { done(); }).emit([0x90, 0x40, 0x7f]);
       });
     },
 
-    dummy_midi_out: function() {
+    widget_midi_out: function() {
       it('Widget MIDI-Out', function(done) {
-        JZZ.lib.registerMidiOut('Dummy MIDI-Out', {
+        JZZ.lib.registerMidiOut('Widget MIDI-Out', {
           _info: function(name) { return { name: name }; },
           _openOut: function(port, name) {
             port._info = this._info(name);
@@ -71,15 +71,17 @@ module.exports = function(JZZ, ENGINE, DRIVER) {
             port._resume();
           }
         });
-        engine.openMidiOut('Dummy MIDI-Out').and(function() { this.noteOn(0, 60); });
+        engine.openMidiOut('Widget MIDI-Out').and(function() { this.noteOn(0, 60); });
       });
     },
 
     virtual_midi_in: function() {
       it('Virtual MIDI-In', function(done) {
+        var port;
         var src = DRIVER.MidiSrc('Virtual MIDI-In');
         src.connect();
-        engine.openMidiIn('Virtual MIDI-In').and(function() { this.close(); src.disconnect(); done(); });
+        port = engine.openMidiIn('Virtual MIDI-In').and(function() { setTimeout(function() { src.emit([0x90, 0x40, 0x7f]); }, 0); });
+        port.connect(function(msg) { port.close(); src.disconnect(); done(); });
       });
     },
 

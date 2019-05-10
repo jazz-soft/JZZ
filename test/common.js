@@ -345,8 +345,8 @@ describe('Engine: none', function() {
   test.engine_name();
   test.non_existent_midi_in();
   test.non_existent_midi_out();
-  test.dummy_midi_in();
-  test.dummy_midi_out();
+  test.widget_midi_in();
+  test.widget_midi_out();
 });
 
 describe('Web MIDI API', function() {

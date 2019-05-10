@@ -28,6 +28,7 @@ var DOM = {
         this.exchange.innerText += JSON.stringify(v) + '\n';
       }
       else if (func == 'openin') {
+        this.inMap[evt.data.detail[2]].pos = evt.data.detail[1];
         this.inArr[evt.data.detail[1]] = this.inMap[evt.data.detail[2]];
         this.exchange.innerText += JSON.stringify(evt.data.detail) + '\n';
       }
@@ -58,6 +59,10 @@ var DOM = {
       },
       disconnect: function() {
         if (DOM.inMap[name]) delete DOM.inMap[name];
+      },
+      emit: function(msg) {
+        DOM.exchange.innerText += JSON.stringify(['midi', this.pos, 0].concat(msg)) + '\n';
+        if (DOM.handle) DOM.handle();
       }
     };
   },
@@ -83,8 +88,8 @@ describe('Engine: extension', function() {
   test.engine_name();
   test.non_existent_midi_in();
   test.non_existent_midi_out();
-  test.dummy_midi_in();
-  test.dummy_midi_out();
+  test.widget_midi_in();
+  test.widget_midi_out();
   test.virtual_midi_in();
   test.virtual_midi_out();
 });
