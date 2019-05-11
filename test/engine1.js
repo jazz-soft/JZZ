@@ -1,4 +1,4 @@
-﻿//// testing 'node'/'plugin' engine
+﻿//// testing the 'node'/'plugin' engine
 
 var assert = require('assert');
 var JZZ = require('..');

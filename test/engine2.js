@@ -1,4 +1,4 @@
-﻿//// testing 'extension' engine
+﻿//// testing the 'extension' engine
 
 var assert = require('assert');
 var JZZ = require('..');
@@ -8,23 +8,29 @@ var DOM = {
   outArr: [],
   inMap: {},
   outMap: {},
+  handle: {},
   exchange: { innerText: '' },
   Event: function(name) { this.name = name; },
   CustomEvent: function(name, data) { this.name = name; this.data = data; },
   getElementById: function() { return this.exchange; },
-  addEventListener: function(name, handle) { this.handle = handle; },
-  removeEventListener: function(name, handle) { delete this.handle; },
+  addEventListener: function(name, handle) { this.handle[name] = handle; },
+  removeEventListener: function(name, handle) { delete this.handle[name]; },
   dispatchEvent: function(evt) {
     //console.log('dispatchEvent', evt);
+    if (evt.name != 'jazz-midi') {
+      if (this.handle[evt.name]) this.handle[evt.name]();
+      return;
+    }
     if (!evt.data) {
       this.exchange.innerText += '["version", 0, "99"]\n';
     }
     else {
       var func = evt.data.detail[0];
       if (func == 'refresh') {
+        var k;
         var v = ['refresh', { ins: [], outs: [] }];
-        for (var k in this.inMap) v[1].ins.push({ name: k });
-        for (var k in this.outMap) v[1].outs.push({ name: k });
+        for (k in this.inMap) v[1].ins.push({ name: k });
+        for (k in this.outMap) v[1].outs.push({ name: k });
         this.exchange.innerText += JSON.stringify(v) + '\n';
       }
       else if (func == 'openin') {
@@ -49,7 +55,7 @@ var DOM = {
         console.log('function', func, 'not yet implemented!');
       }
     }
-    if (this.handle) this.handle();
+    if (this.handle['jazz-midi-msg']) this.handle['jazz-midi-msg']();
   },
   MidiSrc: function(name) {
     return {
@@ -62,7 +68,7 @@ var DOM = {
       },
       emit: function(msg) {
         DOM.exchange.innerText += JSON.stringify(['midi', this.pos, 0].concat(msg)) + '\n';
-        if (DOM.handle) DOM.handle();
+        if (DOM.handle) DOM.handle['jazz-midi-msg']();
       }
     };
   },
@@ -76,9 +82,28 @@ var DOM = {
         if (DOM.outMap[name]) delete DOM.outMap[name];
       }
     };
+  },
+  AudioContext: function() {
+    return {
+      resume: function() { this.state = 'running'; },
+      createOscillator: function() {
+        return {
+          connect: function() {},
+          start: function() {},
+          stop: function() {}
+        };
+      },
+      createGainNode: function() {
+        return {
+          connect: function() {},
+          gain: { setTargetAtTime: function() {} }
+        };
+      }
+    };
   }
 };
 global.document = DOM;
+global.window = DOM;
 global.Event = DOM.Event;
 global.CustomEvent = DOM.CustomEvent;
 
@@ -92,4 +117,5 @@ describe('Engine: extension', function() {
   test.widget_midi_out();
   test.virtual_midi_in();
   test.virtual_midi_out();
+  it('Dummy AudioContext', function() { DOM.dispatchEvent({ name: 'keydown' }); });
 });
