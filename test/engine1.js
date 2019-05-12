@@ -1,6 +1,5 @@
 ﻿//// testing the 'node'/'plugin' engine
 
-var assert = require('assert');
 var JZZ = require('..');
 var MT;
 if (process.platform == 'darwin' || process.platform == 'linux') {

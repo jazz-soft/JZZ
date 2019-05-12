@@ -351,7 +351,7 @@ describe('Engine: none', function() {
 
 describe('Web MIDI API', function() {
   it('requestMIDIAccess', function(done) {
-    function onSuccess(midiaccess) { done(); }
+    function onSuccess(/*midiaccess*/) { done(); }
     function onFail(err) { console.log('requestMIDIAccess failed!', err); }
     JZZ.requestMIDIAccess().then(onSuccess, onFail);
   });

@@ -57,7 +57,7 @@ module.exports = function(JZZ, ENGINE, DRIVER) {
             port._resume();
           }
         });
-        engine.openMidiIn('Widget MIDI-In').connect(function(msg) { done(); }).emit([0x90, 0x40, 0x7f]);
+        engine.openMidiIn('Widget MIDI-In').connect(function() { done(); }).emit([0x90, 0x40, 0x7f]);
       });
     },
 
@@ -67,7 +67,7 @@ module.exports = function(JZZ, ENGINE, DRIVER) {
           _info: function(name) { return { name: name }; },
           _openOut: function(port, name) {
             port._info = this._info(name);
-            port._receive = function(msg) { done(); };
+            port._receive = function() { done(); };
             port._resume();
           }
         });
@@ -81,7 +81,7 @@ module.exports = function(JZZ, ENGINE, DRIVER) {
         var src = DRIVER.MidiSrc('Virtual MIDI-In');
         src.connect();
         port = engine.openMidiIn('Virtual MIDI-In').and(function() { setTimeout(function() { src.emit([0x90, 0x40, 0x7f]); }, 0); });
-        port.connect(function(msg) { port.close(); src.disconnect(); done(); });
+        port.connect(function() { port.close(); src.disconnect(); done(); });
       });
     },
 
@@ -90,7 +90,7 @@ module.exports = function(JZZ, ENGINE, DRIVER) {
         var port;
         var dst = DRIVER.MidiDst('Virtual MIDI-Out');
         dst.connect();
-        dst.receive = function(msg) {
+        dst.receive = function() {
           port.close();
           dst.disconnect();
           done();

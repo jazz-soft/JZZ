@@ -1,6 +1,5 @@
 ﻿//// testing the 'extension' engine
 
-var assert = require('assert');
 var JZZ = require('..');
 
 var DOM = {
@@ -14,7 +13,7 @@ var DOM = {
   CustomEvent: function(name, data) { this.name = name; this.data = data; },
   getElementById: function() { return this.exchange; },
   addEventListener: function(name, handle) { this.handle[name] = handle; },
-  removeEventListener: function(name, handle) { delete this.handle[name]; },
+  removeEventListener: function(name /*, handle*/) { delete this.handle[name]; },
   dispatchEvent: function(evt) {
     //console.log('dispatchEvent', evt);
     if (evt.name != 'jazz-midi') {
