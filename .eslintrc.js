@@ -26,7 +26,7 @@ module.exports = {
       },
       "rules": {
         "no-console" : "off",
-        "no-empty" : "off"
+        "no-empty" : ["warn", { "allowEmptyCatch": true }]
       }
     }
   ]
