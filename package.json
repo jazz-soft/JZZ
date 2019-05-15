@@ -27,7 +27,7 @@
     "grunt-contrib-uglify": "^4.0.1",
     "midi-test": "^1.0.4",
     "mocha": "^6.1.4",
-    "nyc": "^14.0.0"
+    "nyc": "^14.1.1"
   },
   "repository": {
     "type": "git",
