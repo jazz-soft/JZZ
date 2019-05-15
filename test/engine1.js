@@ -11,7 +11,7 @@ if (process.platform == 'darwin' || process.platform == 'linux') {
   }
 }
 
-var test = require('./tests.js')(JZZ, 'node', MT);
+var test = require('./tests.js')(JZZ, undefined, 'node', MT);
 
 describe('Engine: node', function() {
   test.engine_name();

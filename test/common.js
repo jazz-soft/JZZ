@@ -12,13 +12,13 @@ function Sample(done, list) {
   };
 }
 
-var engine = JZZ({ engine: 'none' });
+var test = require('./tests.js')(JZZ, { engine: ['webmidi', 'none'] }, 'none');
 
 describe('Info', function() {
   console.log('Node:', process.versions.node);
   console.log('process.platform:', process.platform);
   console.log('process.arch:', process.arch);
-  console.log('JZZ:', engine.info().ver);
+  console.log('JZZ:', JZZ.info().ver);
 });
 
 describe('MIDI messages', function() {
@@ -338,8 +338,6 @@ describe('JZZ.Widget', function() {
     port.mpe(0, 4).program(25).noteOn('C5').noteOn('D5').noteOff('C5').note('E5', 127, 1);
   });
 });
-
-var test = require('./tests.js')(JZZ, 'none');
 
 describe('Engine: none', function() {
   test.engine_name();

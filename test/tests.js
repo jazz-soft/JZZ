@@ -1,6 +1,6 @@
 var assert = require('assert');
-module.exports = function(JZZ, ENGINE, DRIVER) {
-  var engine = JZZ({ engine: ENGINE });
+module.exports = function(JZZ, PARAMS, ENGINE, DRIVER) {
+  var engine = JZZ(PARAMS);
   return {
 
     engine_name: function() {

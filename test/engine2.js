@@ -106,7 +106,7 @@ global.window = DOM;
 global.Event = DOM.Event;
 global.CustomEvent = DOM.CustomEvent;
 
-var test = require('./tests.js')(JZZ, 'extension', DOM);
+var test = require('./tests.js')(JZZ, { engine: ['webmidi', 'extension'] }, 'extension', DOM);
 
 describe('Engine: extension', function() {
   test.engine_name();
