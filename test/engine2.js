@@ -1,6 +1,7 @@
 ﻿//// testing the 'extension' engine
 
 var JZZ = require('..');
+var WMT = require('web-midi-test');
 
 var DOM = {
   inArr: [],
@@ -105,11 +106,13 @@ global.document = DOM;
 global.window = DOM;
 global.Event = DOM.Event;
 global.CustomEvent = DOM.CustomEvent;
+WMT.midi = false;
+global.navigator = WMT;
 
-var test = require('./tests.js')(JZZ, { engine: ['webmidi', 'extension'] }, 'extension', DOM);
+var test = require('./tests.js')(JZZ, { engine: ['webmidi', 'extension'] }, DOM);
 
 describe('Engine: extension', function() {
-  test.engine_name();
+  test.engine_name('extension', true);
   test.non_existent_midi_in();
   test.non_existent_midi_out();
   test.widget_midi_in();

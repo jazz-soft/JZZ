@@ -11,10 +11,10 @@ if (process.platform == 'darwin' || process.platform == 'linux') {
   }
 }
 
-var test = require('./tests.js')(JZZ, undefined, 'node', MT);
+var test = require('./tests.js')(JZZ, undefined, MT);
 
 describe('Engine: node', function() {
-  test.engine_name();
+  test.engine_name('node', true);
   test.native_midi_out();
   test.non_existent_midi_in();
   test.non_existent_midi_out();

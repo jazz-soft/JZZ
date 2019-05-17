@@ -1,12 +1,13 @@
 var assert = require('assert');
-module.exports = function(JZZ, PARAMS, ENGINE, DRIVER) {
+module.exports = function(JZZ, PARAMS, DRIVER) {
   var engine = JZZ(PARAMS);
   return {
 
-    engine_name: function() {
-      it('engine: ' + ENGINE, function(done) {
+    engine_name: function(name, sysex) {
+      it('engine: ' + name, function(done) {
         engine.wait(0).wait(1).and(function() { // console.log(this.info());
-          assert.equal(this.info().engine, ENGINE);
+          assert.equal(this.info().engine, name);
+          assert.equal(this.info().sysex, sysex);
           done();
         });
       });

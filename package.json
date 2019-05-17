@@ -4,7 +4,7 @@
   "description": "MIDI library for Node.js and web-browsers",
   "main": "javascript/JZZ.js",
   "scripts": {
-    "test": "nyc mocha test/common.js && nyc --no-clean mocha test/engine1.js && nyc --no-clean mocha test/engine2.js",
+    "test": "nyc mocha test/common.js && nyc --no-clean mocha test/engine1.js && nyc --no-clean mocha test/engine2.js && nyc --no-clean mocha test/engine3.js",
     "lint": "eslint javascript test",
     "coverage": "nyc report --reporter=text-lcov | coveralls"
   },
@@ -27,7 +27,8 @@
     "grunt-contrib-uglify": "^4.0.1",
     "midi-test": "^1.0.4",
     "mocha": "^6.1.4",
-    "nyc": "^14.1.1"
+    "nyc": "^14.1.1",
+    "web-midi-test": "^0.0.1"
   },
   "repository": {
     "type": "git",

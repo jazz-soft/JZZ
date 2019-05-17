@@ -12,7 +12,7 @@ function Sample(done, list) {
   };
 }
 
-var test = require('./tests.js')(JZZ, { engine: ['webmidi', 'none'] }, 'none');
+var test = require('./tests.js')(JZZ, { engine: ['webmidi', 'none'] });
 
 describe('Info', function() {
   console.log('Node:', process.versions.node);
@@ -340,7 +340,7 @@ describe('JZZ.Widget', function() {
 });
 
 describe('Engine: none', function() {
-  test.engine_name();
+  test.engine_name('none', true);
   test.non_existent_midi_in();
   test.non_existent_midi_out();
   test.widget_midi_in();
