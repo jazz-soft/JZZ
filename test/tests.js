@@ -96,7 +96,8 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
           dst.disconnect();
           done();
         };
-        port = engine.openMidiOut('Virtual MIDI-Out').and(function() { this.noteOn(0, 60, 127); });
+        port = engine.openMidiOut('Virtual MIDI-Out');
+        port.and(function() { this.noteOn(0, 60, 127); });
       });
     },
 

@@ -14,6 +14,6 @@ describe('Engine: webmidi', function() {
   test.non_existent_midi_out();
   test.widget_midi_in();
   test.widget_midi_out();
-//  test.virtual_midi_in();
-//  test.virtual_midi_out();
+  test.virtual_midi_in();
+  test.virtual_midi_out();
 });
