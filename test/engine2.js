@@ -100,6 +100,12 @@ var DOM = {
         };
       }
     };
+  },
+  body: { appendChild: function() {} },
+  createElement: function() {
+    return {
+      style: {},
+    };
   }
 };
 global.document = DOM;
@@ -109,7 +115,7 @@ global.CustomEvent = DOM.CustomEvent;
 WMT.midi = false;
 global.navigator = WMT;
 
-var test = require('./tests.js')(JZZ, { engine: ['webmidi', 'extension'] }, DOM);
+var test = require('./tests.js')(JZZ, { engine: ['webmidi', 'plugin', 'extension'] }, DOM);
 
 describe('Engine: extension', function() {
   test.engine_name('extension', true);
