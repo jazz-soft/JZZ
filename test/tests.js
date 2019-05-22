@@ -154,7 +154,7 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
         var name = 'Virtual MIDI-Out to remove';
         var dst = DRIVER.MidiDst(name);
         dst.connect();
-        engine.refresh().onChange(function(arg) {
+        engine.refresh().onChange().connect(function(arg) {
           assert.equal(arg.outputs.removed[0].name, name);
           engine.onChange().disconnect();
           done();
