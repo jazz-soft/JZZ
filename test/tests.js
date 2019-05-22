@@ -101,5 +101,69 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
       });
     },
 
+    add_midi_in: function() {
+      it('Add MIDI-In', function(done) {
+        var name = 'Virtual MIDI-In to add';
+        var src = DRIVER.MidiSrc(name);
+        engine.refresh().onChange(function(arg) {
+          assert.equal(arg.inputs.added[0].name, name);
+          engine.onChange().disconnect();
+          src.disconnect();
+          done();
+        });
+        engine.refresh().and(function() {
+          src.connect();
+        });
+      });
+    },
+
+    add_midi_out: function() {
+      it('Add MIDI-Out', function(done) {
+        var name = 'Virtual MIDI-Out to add';
+        var dst = DRIVER.MidiDst(name);
+        engine.refresh().onChange(function(arg) {
+          assert.equal(arg.outputs.added[0].name, name);
+          engine.onChange().disconnect();
+          dst.disconnect();
+          done();
+        });
+        engine.refresh().and(function() {
+          dst.connect();
+        });
+      });
+    },
+
+    remove_midi_in: function() {
+      it('Remove MIDI-In', function(done) {
+        var name = 'Virtual MIDI-In to remove';
+        var src = DRIVER.MidiSrc(name);
+        src.connect();
+        engine.refresh().onChange(function(arg) {
+          assert.equal(arg.inputs.removed[0].name, name);
+          engine.onChange().disconnect();
+          done();
+        });
+        engine.refresh().and(function() {
+          src.disconnect();
+        });
+      });
+    },
+
+    remove_midi_out: function() {
+      it('Remove MIDI-Out', function(done) {
+        var name = 'Virtual MIDI-Out to remove';
+        var dst = DRIVER.MidiDst(name);
+        dst.connect();
+        engine.refresh().onChange(function(arg) {
+          assert.equal(arg.outputs.removed[0].name, name);
+          engine.onChange().disconnect();
+          done();
+        });
+        engine.refresh().and(function() {
+          dst.disconnect();
+        });
+      });
+    }
+
   };
 };
