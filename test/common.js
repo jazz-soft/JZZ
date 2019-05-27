@@ -30,11 +30,19 @@ describe('MIDI messages', function() {
     assert.equal(msg.getChannel(), 1);
     assert.equal(msg.getNote(), 60);
     assert.equal(msg.getVelocity(), 20);
+    assert.equal(msg.isNoteOn(), true);
+    assert.equal(msg.isNoteOff(), false);
     msg.setChannel(0).setNote('c6').setVelocity(127);
     assert.equal(msg.toString(), '90 48 7f -- Note On');
+    msg.setVelocity(0);
+    assert.equal(msg.isNoteOn(), false);
+    assert.equal(msg.isNoteOff(), true);
   });
   it('noteOff', function() {
-    assert.equal(JZZ.MIDI.noteOff(0, 'C6').toString(), '80 48 40 -- Note Off');
+    var msg = JZZ.MIDI.noteOff(0, 'C6');
+    assert.equal(msg.isNoteOn(), false);
+    assert.equal(msg.isNoteOff(), true);
+    assert.equal(msg.toString(), '80 48 40 -- Note Off');
     assert.equal(JZZ.MIDI.noteOff('0', 'C6').toString(), '80 48 40 -- Note Off');
   });
   it('aftertouch', function() {
@@ -111,15 +119,19 @@ describe('MIDI messages', function() {
   });
   it('damper', function() {
     assert.equal(JZZ.MIDI.damper(0, true).toString(), 'b0 40 7f -- Damper Pedal On/Off');
+    assert.equal(JZZ.MIDI.damper(0, false).toString(), 'b0 40 00 -- Damper Pedal On/Off');
   });
   it('portamento', function() {
     assert.equal(JZZ.MIDI.portamento(0, true).toString(), 'b0 41 7f -- Portamento On/Off');
+    assert.equal(JZZ.MIDI.portamento(0, false).toString(), 'b0 41 00 -- Portamento On/Off');
   });
   it('sostenuto', function() {
     assert.equal(JZZ.MIDI.sostenuto(0, true).toString(), 'b0 42 7f -- Sostenuto On/Off');
+    assert.equal(JZZ.MIDI.sostenuto(0, false).toString(), 'b0 42 00 -- Sostenuto On/Off');
   });
   it('soft', function() {
     assert.equal(JZZ.MIDI.soft(0, true).toString(), 'b0 43 7f -- Soft Pedal On/Off');
+    assert.equal(JZZ.MIDI.soft(0, false).toString(), 'b0 43 00 -- Soft Pedal On/Off');
   });
   it('allSoundOff', function() {
     assert.equal(JZZ.MIDI.allSoundOff(0).toString(), 'b0 78 00 -- All Sound Off');
@@ -155,7 +167,10 @@ describe('MIDI messages', function() {
     assert.equal(JZZ.MIDI.active().toString(), 'fe -- Active Sensing');
   });
   it('sxIdRequest', function() {
-    assert.equal(JZZ.MIDI.sxIdRequest().toString(), 'f0 7e 7f 06 01 f7');
+    var msg = JZZ.MIDI.sxIdRequest();
+    assert.equal(msg.isSysEx(), true);
+    assert.equal(msg.isFullSysEx(), true);
+    assert.equal(msg.toString(), 'f0 7e 7f 06 01 f7');
   });
   it('sxFullFrame', function() {
     assert.equal(JZZ.MIDI.sxFullFrame(JZZ.SMPTE()).toString(), 'f0 7f 7f 01 01 00 00 00 00 f7');
@@ -330,12 +345,12 @@ describe('JZZ.Widget', function() {
   });
   it('mpe', function(done) {
     var sample = new Sample(done, [
-      [0xc0, 0x19], [0x91, 0x3c, 0x7f], [0x92, 0x3e, 0x7f], [0x81, 0x3c, 0x40],
+      [0xc0, 0x19], [0x91, 0x3c, 0x7f], [0x92, 0x3e, 0x7f], [0xa2, 0x3e, 0x7f], [0x81, 0x3c, 0x40],
       [0x91, 0x40, 0x7f], [0x81, 0x40, 0x40]
     ]);
     var port = JZZ.Widget();
     port.connect(function(msg) { sample.compare(msg); });
-    port.mpe(0, 4).program(25).noteOn('C5').noteOn('D5').noteOff('C5').note('E5', 127, 1);
+    port.mpe(0, 4).program(25).noteOn('C5').noteOn('D5').aftertouch('D5', 127).noteOff('C5').note('E5', 127, 1);
   });
 });
 

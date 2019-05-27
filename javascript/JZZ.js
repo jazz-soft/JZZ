@@ -13,7 +13,7 @@
 })(this, function() {
 
   var _scope = typeof window === 'undefined' ? global : window;
-  var _version = '0.7.8';
+  var _version = '0.7.9';
   var i, j, k, m, n;
 
   var _time = Date.now || function () { return new Date().getTime(); };
@@ -1715,7 +1715,9 @@
     return this;
   };
   _E.prototype.aftertouch = function(n, v) {
-    this.send(MIDI.aftertouch(this._master, n, v));
+    var msg = MIDI.aftertouch(this._master, n, v);
+    msg._mpe = msg[1];
+    this.send(msg);
     return this;
   };
 
