@@ -51,28 +51,56 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
 
     widget_midi_in: function() {
       it('Widget MIDI-In', function(done) {
-        JZZ.lib.registerMidiIn('Widget MIDI-In', {
+        var port1, port2;
+        var widget = {
           _info: function(name) { return { name: name }; },
           _openIn: function(port, name) {
             port._info = this._info(name);
             port._resume();
           }
+        };
+        port1 = JZZ.lib.openMidiIn('Widget MIDI-In', widget);
+        JZZ.lib.registerMidiIn('Widget MIDI-In', widget);
+        JZZ.lib.registerMidiIn('Widget MIDI-In', widget);
+        port2 = engine.openMidiIn('Widget MIDI-In');
+        port1.connect(function() {
+          port1.disconnect().close();
+          port2.disconnect(port1).close();
+          done();
         });
-        engine.openMidiIn('Widget MIDI-In').connect(function() { done(); }).emit([0x90, 0x40, 0x7f]);
+        port2.connect(port1);
+        port2.emit([0x90, 0x40, 0x7f]);
       });
     },
 
     widget_midi_out: function() {
       it('Widget MIDI-Out', function(done) {
-        JZZ.lib.registerMidiOut('Widget MIDI-Out', {
+        var port1, port2;
+        var widget1 = {
           _info: function(name) { return { name: name }; },
           _openOut: function(port, name) {
             port._info = this._info(name);
-            port._receive = function() { done(); };
+            port._receive = function() {
+              port1.disconnect().close();
+              port2.disconnect(port1).close();
+              done();
+            };
             port._resume();
           }
-        });
-        engine.openMidiOut('Widget MIDI-Out').and(function() { this.noteOn(0, 60); });
+        };
+        var widget2 = {
+          _info: function(name) { return { name: name }; },
+          _openOut: function(port, name) {
+            port._info = this._info(name);
+            port._resume();
+          }
+        };
+        port1 = JZZ.lib.openMidiOut('Widget MIDI-Out', widget1);
+        JZZ.lib.registerMidiOut('Widget MIDI-Out', widget2);
+        JZZ.lib.registerMidiOut('Widget MIDI-Out', widget2); // should ignore second call
+        port2 = engine.openMidiOut('Widget MIDI-Out');
+        port2.connect(port1);
+        port2.and(function() { this.noteOn(0, 60); });
       });
     },
 
@@ -82,7 +110,7 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
         var src = DRIVER.MidiSrc('Virtual MIDI-In');
         src.connect();
         port = engine.openMidiIn('Virtual MIDI-In').and(function() { setTimeout(function() { src.emit([0x90, 0x40, 0x7f]); }, 0); });
-        port.connect(function() { port.close(); src.disconnect(); done(); });
+        port.connect(function() { port.disconnect().close(); src.disconnect(); done(); });
       });
     },
 
@@ -92,7 +120,7 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
         var dst = DRIVER.MidiDst('Virtual MIDI-Out');
         dst.connect();
         dst.receive = function() {
-          port.close();
+          port.disconnect().close();
           dst.disconnect();
           done();
         };
