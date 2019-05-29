@@ -191,6 +191,20 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
           dst.disconnect();
         });
       });
+    },
+
+    web_midi_access: function() {
+      it('requestMIDIAccess', function(done) {
+        function onSuccess(/*midiaccess*/) { done(); }
+        function onFail(err) { console.log('requestMIDIAccess failed!', err); }
+        JZZ.requestMIDIAccess().then(onSuccess, onFail);
+      });
+    },
+
+    close_engine: function() {
+      it('Close engine', function() {
+        engine.refresh().close();
+      });
     }
 
   };

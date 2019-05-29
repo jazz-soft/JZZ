@@ -659,6 +659,7 @@
     _engine._refresh = function() { _engine._outs = []; _engine._ins = []; };
     _engine._watch = function() {};
     _engine._unwatch = function() {};
+    _engine._close = function() {};
   }
   // common initialization for Jazz-Plugin and jazz-midi
   function _initEngineJP() {

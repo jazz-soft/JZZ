@@ -130,4 +130,6 @@ describe('Engine: extension', function() {
   test.remove_midi_in();
   test.remove_midi_out();
   it('Dummy AudioContext', function() { DOM.dispatchEvent({ name: 'keydown' }); });
+  test.web_midi_access();
+  test.close_engine();
 });

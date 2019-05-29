@@ -25,19 +25,7 @@ describe('Engine: node', function() {
   if (MT) {
     test.virtual_midi_in();
     test.virtual_midi_out();
+    test.web_midi_access();
   }
-});
-
-describe('Web MIDI API', function() {
-  if (MT) {
-    it.skip('onstatechange', function(done) {
-      var src = MT.MidiSrc('Virtual MIDI-In');
-      function onSuccess(midiaccess) {
-        midiaccess.onstatechange = function() { src.disconnect(); done(); };
-        setImmediate(function() { src.connect(); });
-      }
-      function onFail(err) { console.log('requestMIDIAccess failed!', err); }
-      JZZ.requestMIDIAccess().then(onSuccess, onFail);
-    });
-  }
+  test.close_engine();
 });

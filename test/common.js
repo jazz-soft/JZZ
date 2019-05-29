@@ -382,18 +382,8 @@ describe('Engine: none', function() {
   test.non_existent_midi_out();
   test.widget_midi_in();
   test.widget_midi_out();
-});
-
-describe('Web MIDI API', function() {
-  it('requestMIDIAccess', function(done) {
-    function onSuccess(/*midiaccess*/) { done(); }
-    function onFail(err) { console.log('requestMIDIAccess failed!', err); }
-    JZZ.requestMIDIAccess().then(onSuccess, onFail);
-  });
-});
-
-describe('JZZ.close()', function() {
-  it('JZZ.close()', function() {
+  test.web_midi_access();
+  it('Close engine', function() {
     JZZ.close();
   });
 });
