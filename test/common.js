@@ -37,6 +37,8 @@ describe('MIDI messages', function() {
     msg.setVelocity(0);
     assert.equal(msg.isNoteOn(), false);
     assert.equal(msg.isNoteOff(), true);
+    msg.setSysExChannel(20);
+    assert.equal(msg.getSysExChannel(), undefined);
   });
   it('noteOff', function() {
     var msg = JZZ.MIDI.noteOff(0, 'C6');
@@ -170,7 +172,18 @@ describe('MIDI messages', function() {
     var msg = JZZ.MIDI.sxIdRequest();
     assert.equal(msg.isSysEx(), true);
     assert.equal(msg.isFullSysEx(), true);
-    assert.equal(msg.toString(), 'f0 7e 7f 06 01 f7');
+    msg.setSysExChannel(20);
+    assert.equal(msg.getSysExChannel(), 20);
+    assert.equal(msg.toString(), 'f0 7e 14 06 01 f7');
+    msg.setChannel(10);
+    msg.setNote(60);
+    msg.setVelocity(120);
+    assert.equal(msg.getChannel(), undefined);
+    assert.equal(msg.getNote(), undefined);
+    assert.equal(msg.getVelocity(), undefined);
+    assert.equal(msg.getData(), undefined);
+    assert.equal(msg.isNoteOn(), false);
+    assert.equal(msg.isNoteOff(), false);
   });
   it('sxFullFrame', function() {
     assert.equal(JZZ.MIDI.sxFullFrame(JZZ.SMPTE()).toString(), 'f0 7f 7f 01 01 00 00 00 00 f7');
@@ -332,6 +345,15 @@ describe('JZZ.lib', function() {
 });
 
 describe('JZZ.Widget', function() {
+  it('connect', function(done) {
+    var port1 = JZZ.Widget({ _receive: function(msg) { this._emit(msg); done(); }});
+    var port2 = JZZ.Widget();
+    var port3 = JZZ.Widget();
+    port1.connect(port2);
+    port2.connect(port3);
+    port3.connect(port1);
+    port2.noteOn(0, 'C5', 127);
+  });
   it('ch', function(done) {
     var sample = new Sample(done, [
       [0x91, 0x3c, 0x7f], [0x82, 0x3c, 0x7f], [0xff],
@@ -370,3 +392,8 @@ describe('Web MIDI API', function() {
   });
 });
 
+describe('JZZ.close()', function() {
+  it('JZZ.close()', function() {
+    JZZ.close();
+  });
+});
