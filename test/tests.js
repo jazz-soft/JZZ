@@ -104,6 +104,18 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
       });
     },
 
+    connect_watcher: function() {
+      it('Connection watcher', function() {
+        var dummy = function() {};
+        engine.refresh().onChange().connect(dummy);
+        engine.refresh().onChange().connect(function() {});
+        engine.refresh().onChange().disconnect(dummy);
+        engine.refresh().onChange().disconnect();
+        engine.refresh().onChange().connect(function() {});
+        engine.refresh().onChange().disconnect();
+      });
+    },
+
     virtual_midi_in: function() {
       it('Virtual MIDI-In', function(done) {
         var port;

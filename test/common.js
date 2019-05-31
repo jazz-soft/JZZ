@@ -382,6 +382,7 @@ describe('Engine: none', function() {
   test.non_existent_midi_out();
   test.widget_midi_in();
   test.widget_midi_out();
+  test.connect_watcher();
   test.web_midi_access();
   it('Close engine', function() {
     JZZ.close();
