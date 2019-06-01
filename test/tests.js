@@ -3,6 +3,17 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
   var engine = JZZ(PARAMS);
   return {
 
+    Sample: function(done, list) {
+      this.done = done;
+      this.list = list.slice();
+      this.count = 0;
+      this.compare = function(msg) {
+        if (this.count < this.list.length) assert.equal(msg.slice().toString(), this.list[this.count].toString());
+        this.count++;
+        if (this.count == this.list.length) this.done();
+      };
+    },
+
     engine_name: function(name, sysex) {
       it('engine: ' + name, function(done) {
         engine.wait(0).wait(1).and(function() { // console.log(this.info());

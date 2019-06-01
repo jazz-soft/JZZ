@@ -1,17 +1,5 @@
 ﻿var assert = require('assert');
 var JZZ = require('..');
-
-function Sample(done, list) {
-  this.done = done;
-  this.list = list.slice();
-  this.count = 0;
-  this.compare = function(msg) {
-    if (this.count < this.list.length) assert.equal(msg.slice().toString(), this.list[this.count].toString());
-    this.count++;
-    if (this.count == this.list.length) this.done();
-  };
-}
-
 var test = require('./tests.js')(JZZ, { engine: ['webmidi', 'none'] });
 
 describe('Info', function() {
@@ -355,7 +343,7 @@ describe('JZZ.Widget', function() {
     port2.noteOn(0, 'C5', 127);
   });
   it('ch', function(done) {
-    var sample = new Sample(done, [
+    var sample = new test.Sample(done, [
       [0x91, 0x3c, 0x7f], [0x82, 0x3c, 0x7f], [0xff],
       [0xf1, 0x04], [0xf1, 0x04],
       [0x90, 0x3c, 0x7f], [0x80, 0x3c, 0x40], [0x95, 0x3c, 0x7f], [0x85, 0x3c, 0x40]
@@ -366,7 +354,7 @@ describe('JZZ.Widget', function() {
     port.note(0, 'B#4', 127, 1).ch(5).wait(10).note('Dbb5', 127, 1).wait(10).disconnect().close();
   });
   it('mpe', function(done) {
-    var sample = new Sample(done, [
+    var sample = new test.Sample(done, [
       [0xc0, 0x19], [0x91, 0x3c, 0x7f], [0x92, 0x3e, 0x7f], [0xa2, 0x3e, 0x7f], [0x81, 0x3c, 0x40],
       [0x91, 0x40, 0x7f], [0x81, 0x40, 0x40]
     ]);
