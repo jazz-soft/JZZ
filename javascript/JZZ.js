@@ -802,27 +802,12 @@
       for (var i = 0; i < _engine._inArr.length; i++) if (_engine._inArr[i].open) _engine._inArr[i].plugin.MidiInClose();
       _engine._unwatch();
     };
-    function onChange() {
-      if (watcher) {
-        _engine._refresh();
-        watcher = false;
-      }
-    }
-    function watch() {
-      watcher = true;
-      setTimeout(onChange, 0);
-    }
     _engine._watch = function() {
-      _engine._main.OnConnectMidiIn(watch);
-      _engine._main.OnConnectMidiOut(watch);
-      _engine._main.OnDisconnectMidiIn(watch);
-      _engine._main.OnDisconnectMidiOut(watch);
+      if (!watcher) watcher = setInterval(function() { _engine._refresh(); }, 250);
     };
     _engine._unwatch = function() {
-      _engine._main.OnConnectMidiIn();
-      _engine._main.OnConnectMidiOut();
-      _engine._main.OnDisconnectMidiIn();
-      _engine._main.OnDisconnectMidiOut();
+      if (watcher) clearInterval(watcher);
+      watcher = undefined;
     };
   }
 
@@ -979,6 +964,7 @@
       }
     };
     _engine._close = function() {
+      _engine._unwatch();
     };
     _engine._watch = function() {
       _engine._access.onstatechange = function() {
@@ -1114,6 +1100,7 @@
       }
     };
     _engine._close = function() {
+      _engine._unwatch();
     };
     var watcher;
     _engine._watch = function() {

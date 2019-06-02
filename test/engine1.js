@@ -22,10 +22,14 @@ describe('Engine: node', function() {
   test.non_existent_midi_out();
   test.widget_midi_in();
   test.widget_midi_out();
-  //test.connect_watcher();
+  test.connect_watcher();
   if (MT) {
     test.virtual_midi_in();
     test.virtual_midi_out();
+    test.add_midi_in();
+    test.add_midi_out();
+    test.remove_midi_in();
+    test.remove_midi_out();
     test.web_midi_access();
   }
   test.close_engine();
