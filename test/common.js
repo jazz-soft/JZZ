@@ -11,7 +11,14 @@ describe('Info', function() {
 
 describe('MIDI messages', function() {
   it('empty', function() {
-    assert.equal(JZZ.MIDI().toString(), 'empty');
+    var msg = JZZ.MIDI();
+    var dummy = 'dummy';
+    msg._stamp(dummy);
+    msg._stamp(dummy);
+    assert.equal(msg._stamped(dummy), true);
+    msg._unstamp(dummy);
+    msg._unstamp();
+    assert.equal(msg.toString(), 'empty');
   });
   it('noteOn', function() {
     var msg = JZZ.MIDI.noteOn(1, 'C5', 20);
@@ -25,6 +32,7 @@ describe('MIDI messages', function() {
     msg.setVelocity(0);
     assert.equal(msg.isNoteOn(), false);
     assert.equal(msg.isNoteOff(), true);
+    assert.equal(msg.toString(), '90 48 00 -- Note Off');
     msg.setSysExChannel(20);
     assert.equal(msg.getSysExChannel(), undefined);
   });
@@ -200,6 +208,9 @@ describe('SMF events', function() {
   it('smf/SeqNumber', function() {
     assert.equal(JZZ.MIDI.smf(0, [1]).toString(), 'ff00 -- Sequence Number: 1');
     assert.equal(JZZ.MIDI.smfSeqNumber(300).toString(), 'ff00 -- Sequence Number: 300');
+    assert.equal(JZZ.MIDI.smfSeqNumber('').toString(), 'ff00 -- Sequence Number: 0');
+    assert.equal(JZZ.MIDI.smfSeqNumber('\x01').toString(), 'ff00 -- Sequence Number: 1');
+    assert.equal(JZZ.MIDI.smfSeqNumber('\x01\x01').toString(), 'ff00 -- Sequence Number: 257');
   });
   it('smf/Text', function() {
     var msg = JZZ.MIDI.smf(1, 'smf');
@@ -244,11 +255,13 @@ describe('SMF events', function() {
     assert.equal(msg.getChannel(), 0);
     assert.equal(JZZ.MIDI.smf(0x20, '\x0a').toString(), 'ff20 -- Channel Prefix: 0a');
     assert.equal(JZZ.MIDI.smfChannelPrefix(10).toString(), 'ff20 -- Channel Prefix: 0a');
+    assert.equal(JZZ.MIDI.smfChannelPrefix('').toString(), 'ff20 -- Channel Prefix: 00');
     assert.equal(JZZ.MIDI.smfChannelPrefix('\n').toString(), 'ff20 -- Channel Prefix: 0a');
   });
   it('smf/MidiPort', function() {
     assert.equal(JZZ.MIDI.smf(0x21, '\x0a').toString(), 'ff21 -- MIDI Port: 0a');
     assert.equal(JZZ.MIDI.smfMidiPort(10).toString(), 'ff21 -- MIDI Port: 0a');
+    assert.equal(JZZ.MIDI.smfMidiPort('').toString(), 'ff21 -- MIDI Port: 00');
     assert.equal(JZZ.MIDI.smfMidiPort('\n').toString(), 'ff21 -- MIDI Port: 0a');
   });
   it('smf/EndOfTrack', function() {
@@ -257,11 +270,13 @@ describe('SMF events', function() {
   });
   it('smf/Tempo', function() {
     assert.equal(JZZ.MIDI.smf(0x51, '\x07\xa1\x20').toString(), 'ff51 -- Tempo: 120 bpm');
+    assert.equal(JZZ.MIDI.smfTempo('\x07\xa1\x20').toString(), 'ff51 -- Tempo: 120 bpm');
     assert.equal(JZZ.MIDI.smfTempo(500000).toString(), 'ff51 -- Tempo: 120 bpm');
     assert.equal(JZZ.MIDI.smfBPM(120).toString(), 'ff51 -- Tempo: 120 bpm');
   });
   it('smf/SMPTE', function() {
     assert.equal(JZZ.MIDI.smf(0x54, '\x17\x3b\x3b\x17\x4b').toString(), 'ff54 -- SMPTE Offset: 23:59:59:23:75');
+    assert.equal(JZZ.MIDI.smfSMPTE('\x17\x3b\x3b\x17\x4b').toString(), 'ff54 -- SMPTE Offset: 23:59:59:23:75');
     assert.equal(JZZ.MIDI.smfSMPTE(JZZ.SMPTE(30, 7, 40).incrQF().incrQF().incrQF().incrQF().incrQF()).toString(), 'ff54 -- SMPTE Offset: 07:40:00:01:25');
     assert.equal(JZZ.MIDI.smfSMPTE().toString(), 'ff54 -- SMPTE Offset: 00:00:00:00:00');
     assert.equal(JZZ.MIDI.smfSMPTE(7, 40).toString(), 'ff54 -- SMPTE Offset: 07:40:00:00:00');
@@ -269,6 +284,7 @@ describe('SMF events', function() {
   });
   it('smf/TimeSignature', function() {
     assert.equal(JZZ.MIDI.smf(0x58, '\x03\x02\x18\x08').toString(), 'ff58 -- Time Signature: 3/4 24 8');
+    assert.equal(JZZ.MIDI.smfTimeSignature('\x03\x02\x18\x08').toString(), 'ff58 -- Time Signature: 3/4 24 8');
     assert.equal(JZZ.MIDI.smfTimeSignature('7/8').toString(), 'ff58 -- Time Signature: 7/8 24 8');
     assert.equal(JZZ.MIDI.smfTimeSignature(7, 8).toString(), 'ff58 -- Time Signature: 7/8 24 8');
   });
@@ -365,6 +381,7 @@ describe('JZZ.Widget', function() {
 });
 
 describe('Engine: none', function() {
+  it('and/or', function() { JZZ().and('').openMidiIn('Non-existing port').or(''); });
   test.engine_name('none', true);
   test.non_existent_midi_in();
   test.non_existent_midi_out();
