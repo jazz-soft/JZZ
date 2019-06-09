@@ -313,6 +313,12 @@ describe('SMPTE', function() {
   it('23:59:59:29', function() {
     assert.equal(JZZ.SMPTE(JZZ.SMPTE(30, 23, 59, 59, 29)).toString(), '23:59:59:29');
   });
+  it('Full Frame SysEx', function() {
+    var smpte = JZZ.SMPTE();
+    smpte.read([0xf0, 0x7f, 0x7f, 1, 1, 1, 1, 1, 1, 0xf7]);
+    assert.equal(smpte.toString(), '01:01:01:01');
+    assert.equal(JZZ.MIDI.sxFullFrame(smpte).toString(), 'f0 7f 7f 01 01 01 01 01 01 f7');
+  });
   it('master/slave', function() {
     var master = JZZ.SMPTE(24, 7, 39, 59);
     var slave = JZZ.SMPTE();
@@ -320,6 +326,7 @@ describe('SMPTE', function() {
       slave.read(JZZ.MIDI.mtc(master));
       master.incrQF();
     }
+    assert.equal(slave.read([0x90, 0x40, 0x7f]), false);
     assert.equal(slave.toString(), '07:39:59:02');
   });
 });
