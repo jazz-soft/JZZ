@@ -51,6 +51,10 @@ var DOM = {
       else if (func == 'play') {
         this.outArr[evt.data.detail[1]].receive(evt.data.detail.slice(2));
       }
+      else if (func == 'new') {
+/////////
+        this.exchange.innerText += '["version", 1, "99"]\n';
+      }
       else {
         console.log('function', func, 'not yet implemented!');
       }

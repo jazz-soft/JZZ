@@ -139,16 +139,23 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
 
     virtual_midi_out: function() {
       it('Virtual MIDI-Out', function(done) {
-        var port;
-        var dst = DRIVER.MidiDst('Virtual MIDI-Out');
-        dst.connect();
-        dst.receive = function() {
-          port.disconnect().close();
-          dst.disconnect();
+        var name1 = 'Virtual MIDI-Out 1';
+        var name2 = 'Virtual MIDI-Out 2';
+        var port1, port2;
+        var dst1 = DRIVER.MidiDst(name1);
+        var dst2 = DRIVER.MidiDst(name2);
+        dst1.connect();
+        dst2.connect();
+        dst2.receive = function() {
+          port1.disconnect().close();
+          port2.disconnect().close();
+          dst1.disconnect();
+          dst2.disconnect();
           done();
         };
-        port = engine.openMidiOut('Virtual MIDI-Out');
-        port.and(function() { this.noteOn(0, 60, 127); });
+        port1 = engine.openMidiOut(name1);
+        port2 = engine.openMidiOut(name2);
+        port2.and(function() { this.noteOn(0, 60, 127); });
       });
     },
 

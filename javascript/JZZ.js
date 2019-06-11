@@ -13,7 +13,7 @@
 })(this, function() {
 
   var _scope = typeof window === 'undefined' ? global : window;
-  var _version = '0.8.0';
+  var _version = '0.8.1';
   var i, j, k, m, n;
 
   var _time = Date.now || function () { return new Date().getTime(); };
@@ -998,9 +998,9 @@
     _engine._msg = msg;
     _engine._newPlugin = function() {
       var plugin = { id: _engine._pool.length };
+      _engine._pool.push(plugin);
       if (!plugin.id) plugin.ready = true;
       else document.dispatchEvent(new CustomEvent('jazz-midi', {detail:['new']}));
-      _engine._pool.push(plugin);
     };
     _engine._newPlugin();
     _engine._refresh = function(client) {
