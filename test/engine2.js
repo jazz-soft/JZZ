@@ -4,6 +4,7 @@ var JZZ = require('..');
 var WMT = require('web-midi-test');
 
 var DOM = {
+  count: 0,
   inArr: [],
   outArr: [],
   inMap: {},
@@ -22,7 +23,7 @@ var DOM = {
       return;
     }
     if (!evt.data) {
-      this.exchange.innerText += '["version", 0, "99"]\n';
+      this.exchange.innerText += '["version", 0, "99.99"]\n';
     }
     else {
       var func = evt.data.detail[0];
@@ -52,8 +53,7 @@ var DOM = {
         this.outArr[evt.data.detail[1]].receive(evt.data.detail.slice(2));
       }
       else if (func == 'new') {
-/////////
-        this.exchange.innerText += '["version", 1, "99"]\n';
+        this.exchange.innerText += JSON.stringify(["version", ++this.count, "99.99"]) + '\n';
       }
       else {
         console.log('function', func, 'not yet implemented!');
