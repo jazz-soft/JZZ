@@ -190,6 +190,30 @@ describe('MIDI messages', function() {
   it('freq', function() {
     assert.equal(JZZ.MIDI.freq('A6'), 880);
   });
+  it('channel error handling for non-integer value', function() {
+    try {
+      JZZ.MIDI.noteOn(0.5, 'C4', 99);
+      assert.fail('expected midi channel value to be invalid');
+    } catch(error) {
+      assert.equal(error.constructor, RangeError);
+    }
+  });
+  it('channel error handling for low value', function() {
+    try {
+      JZZ.MIDI.noteOn(-1, 'C4', 99);
+      assert.fail('expected midi channel value to be invalid');
+    } catch(error) {
+      assert.equal(error.constructor, RangeError);
+    }
+  });
+  it('channel error handling for high value', function() {
+    try {
+      JZZ.MIDI.noteOn(16, 'C4', 99);
+      assert.fail('expected midi channel value to be invalid');
+    } catch(error) {
+      assert.equal(error.constructor, RangeError);
+    }
+  });
 });
 
 describe('SMF events', function() {
