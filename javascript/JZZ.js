@@ -378,7 +378,7 @@
   };
   _M.prototype.ch = function(n) {
     if (typeof n == 'undefined') return this;
-    if (n != parseInt(n) || n < 0 || n > 15) throw RangeError('Bad channel value: ' + n  + ' (must be from 0 to 15)');
+    _validateChannel(n);
     var chan = new _C(this, n);
     this._push(_kick, [chan]);
     return chan;
@@ -395,6 +395,10 @@
     this._push(_kick, [chan]);
     return chan;
   };
+  function _validateChannel(c) {
+    if (c != parseInt(c) || c < 0 || c > 15)
+      throw RangeError('Bad channel value (must not be less than 0 or more than 15): ' + c);
+  }
 
   // _C: MIDI Channel object
   function _C(port, chan) {
@@ -1463,7 +1467,7 @@
   }
   for (n = 0; n < 128; n++) _noteNum[n] = n;
   function _throw(x) { throw RangeError('Bad MIDI value: ' + x); }
-  function _ch(n) { if (n != parseInt(n) || n < 0 || n > 0xf) _throw(n); return parseInt(n); }
+  function _ch(c) { _validateChannel(c); return parseInt(c); }
   function _7b(n, m) { if (n != parseInt(n) || n < 0 || n > 0x7f) _throw(typeof m == 'undefined' ? n : m); return parseInt(n); }
   function _8b(n, m) { if (n != parseInt(n) || n < 0 || n > 0xff) _throw(typeof m == 'undefined' ? n : m); return parseInt(n); }
   function _lsb(n) { if (n != parseInt(n) || n < 0 || n > 0x3fff) _throw(n); return parseInt(n) & 0x7f; }
@@ -1556,7 +1560,7 @@
     smfDevName: function(dd) { return _smf(9, JZZ.lib.toUTF8(dd)); },
     smfChannelPrefix: function(dd) {
       if (dd == parseInt(dd)) {
-        if (dd < 0 || dd > 15) throw RangeError('Channel number out of range: ' + dd);
+        _validateChannel(dd);
         dd = String.fromCharCode(dd);
       }
       else {
