@@ -35,6 +35,16 @@ describe('MIDI messages', function() {
     assert.equal(msg.toString(), '90 48 00 -- Note Off');
     msg.setSysExChannel(20);
     assert.equal(msg.getSysExChannel(), undefined);
+    assert.equal(msg.isSMF(), false);
+    assert.equal(msg.isEOT(), false);
+    assert.equal(msg.isTempo(), false);
+    assert.equal(msg.isTimeSignature(), false);
+    assert.equal(msg.isKeySignature(), false);
+    assert.equal(msg.getData(), undefined);
+    assert.equal(msg.getText(), undefined);
+    assert.equal(msg.getBPM(), undefined);
+    assert.equal(msg.getTimeSignature(), undefined);
+    assert.equal(msg.getKeySignature(), undefined);
   });
   it('noteOff', function() {
     var msg = JZZ.MIDI.noteOff(0, 'C6');
@@ -289,11 +299,17 @@ describe('SMF events', function() {
     assert.equal(JZZ.MIDI.smfMidiPort('\n').toString(), 'ff21 -- MIDI Port: 0a');
   });
   it('smf/EndOfTrack', function() {
-    assert.equal(JZZ.MIDI.smf(0x2f).toString(), 'ff2f -- End of Track');
+    var msg = JZZ.MIDI.smf(0x2f);
+    assert.equal(msg.isEOT(), true);
+    assert.equal(msg.toString(), 'ff2f -- End of Track');
     assert.equal(JZZ.MIDI.smfEndOfTrack().toString(), 'ff2f -- End of Track');
   });
   it('smf/Tempo', function() {
-    assert.equal(JZZ.MIDI.smf(0x51, '\x07\xa1\x20').toString(), 'ff51 -- Tempo: 120 bpm');
+    var msg = JZZ.MIDI.smf(0x51, '\x07\xa1\x20');
+    assert.equal(msg.isTempo(), true);
+    assert.equal(msg.getTempo(), 500000);
+    assert.equal(msg.getBPM(), 120);
+    assert.equal(msg.toString(), 'ff51 -- Tempo: 120 bpm');
     assert.equal(JZZ.MIDI.smfTempo('\x07\xa1\x20').toString(), 'ff51 -- Tempo: 120 bpm');
     assert.equal(JZZ.MIDI.smfTempo(500000).toString(), 'ff51 -- Tempo: 120 bpm');
     assert.equal(JZZ.MIDI.smfBPM(120).toString(), 'ff51 -- Tempo: 120 bpm');
@@ -307,13 +323,22 @@ describe('SMF events', function() {
     assert.equal(JZZ.MIDI.smfSMPTE([7, 40, 30]).toString(), 'ff54 -- SMPTE Offset: 07:40:30:00:00');
   });
   it('smf/TimeSignature', function() {
-    assert.equal(JZZ.MIDI.smf(0x58, '\x03\x02\x18\x08').toString(), 'ff58 -- Time Signature: 3/4 24 8');
+    var msg = JZZ.MIDI.smf(0x58, '\x03\x02\x18\x08');
+    assert.equal(msg.isTimeSignature(), true);
+    assert.equal(msg.getTimeSignature()[0], 3);
+    assert.equal(msg.getTimeSignature()[1], 4);
+    assert.equal(msg.toString(), 'ff58 -- Time Signature: 3/4 24 8');
     assert.equal(JZZ.MIDI.smfTimeSignature('\x03\x02\x18\x08').toString(), 'ff58 -- Time Signature: 3/4 24 8');
     assert.equal(JZZ.MIDI.smfTimeSignature('7/8').toString(), 'ff58 -- Time Signature: 7/8 24 8');
     assert.equal(JZZ.MIDI.smfTimeSignature(7, 8).toString(), 'ff58 -- Time Signature: 7/8 24 8');
   });
   it('smf/KeySignature', function() {
-    assert.equal(JZZ.MIDI.smf(0x59, '\xfb\x01').toString(), 'ff59 -- Key Signature: Bb min');
+    var msg = JZZ.MIDI.smf(0x59, '\xfb\x01');
+    assert.equal(msg.isKeySignature(), true);
+    assert.equal(msg.getKeySignature()[0], -5);
+    assert.equal(msg.getKeySignature()[1], 'Bb');
+    assert.equal(msg.getKeySignature()[2], true);
+    assert.equal(msg.toString(), 'ff59 -- Key Signature: Bb min');
     assert.equal(JZZ.MIDI.smfKeySignature('\xfb\x01').toString(), 'ff59 -- Key Signature: Bb min');
     assert.equal(JZZ.MIDI.smfKeySignature('a# moll').toString(), 'ff59 -- Key Signature: A# min');
     assert.equal(JZZ.MIDI.smfKeySignature('Eb major').toString(), 'ff59 -- Key Signature: Eb');

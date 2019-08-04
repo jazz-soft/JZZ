@@ -13,7 +13,7 @@
 })(this, function() {
 
   var _scope = typeof window === 'undefined' ? global : window;
-  var _version = '0.8.5';
+  var _version = '0.8.6';
   var i, j, k, m, n;
 
   var _time = Date.now || function () { return new Date().getTime(); };
@@ -1773,13 +1773,39 @@
     return this;
   };
   MIDI.prototype.getText = function() {
-    return JZZ.lib.fromUTF8(this.dd);
+    if (typeof this.dd != 'undefined') return JZZ.lib.fromUTF8(this.dd);
   };
   MIDI.prototype.setText = function(dd) {
     this.dd = JZZ.lib.toUTF8(dd);
     return this;
   };
-
+  MIDI.prototype.getTempo = function() {
+    if (this.ff == 0x51 && typeof this.dd != 'undefined') {
+      return this.dd.charCodeAt(0) * 65536 + this.dd.charCodeAt(1) * 256 + this.dd.charCodeAt(2);
+    }
+  };
+  MIDI.prototype.getBPM = function() {
+    var ms = this.getTempo();
+    if (ms) return 60000000 / ms;
+  };
+  MIDI.prototype.getTimeSignature = function() {
+    if (this.ff == 0x58 && typeof this.dd != 'undefined') {
+       return [this.dd.charCodeAt(0), 1 << this.dd.charCodeAt(1)];
+    }
+  };
+  MIDI.prototype.getKeySignature = function() {
+    if (this.ff == 0x59 && typeof this.dd != 'undefined') {
+      var sf = this.dd.charCodeAt(0);
+      var mi = this.dd.charCodeAt(1);
+      if (sf & 0x80) sf = sf - 0x100;
+      if (sf >= -7 && sf <= 7 && mi >= 0 && mi <= 1) {
+        return [sf,
+          ['Cb', 'Gb', 'Db', 'Ab', 'Eb', 'Bb', 'F', 'C', 'G', 'D', 'A', 'E', 'B', 'F#', 'C#', 'G#', 'D#', 'A#'][mi ? sf + 10 : sf + 7],
+          !!mi
+        ];
+      }
+    }
+  };
 
   MIDI.prototype.isNoteOn = function() {
     var c = this[0];
@@ -1800,6 +1826,18 @@
   };
   MIDI.prototype.isSMF = function() {
     return this.ff >= 0 && this.ff <= 0x7f;
+  };
+  MIDI.prototype.isEOT = function() {
+    return this.ff == 0x2f;
+  };
+  MIDI.prototype.isTempo = function() {
+    return this.ff == 0x51;
+  };
+  MIDI.prototype.isTimeSignature = function() {
+    return this.ff == 0x58;
+  };
+  MIDI.prototype.isKeySignature = function() {
+    return this.ff == 0x59;
   };
 
   function _s2a(x) {
@@ -1862,8 +1900,7 @@
         else if (this.ff == 33) s += 'MIDI Port' + _smfhex(this.dd);
         else if (this.ff == 47) s += 'End of Track' + _smfhex(this.dd);
         else if (this.ff == 81) {
-          var ms = this.dd.charCodeAt(0) * 65536 + this.dd.charCodeAt(1) * 256 + this.dd.charCodeAt(2);
-          var bpm = Math.round(60000000 * 100 / ms) / 100;
+          var bpm = Math.round(this.getBPM() * 100) / 100;
           s += 'Tempo: ' + bpm + ' bpm';
         }
         else if (this.ff == 84) s += 'SMPTE Offset: ' + _smptetxt(_s2a(this.dd));
@@ -1874,14 +1911,10 @@
         }
         else if (this.ff == 89) {
           s += 'Key Signature: ';
-          var sf = this.dd.charCodeAt(0);
-          var mi = this.dd.charCodeAt(1);
-          if (sf & 0x80) sf = sf - 0x100;
-          sf += 7;
-          if (sf >= 0 && sf <= 14 && mi >= 0 && mi <= 1) {
-            if (mi) sf += 3;
-            s += ['Cb', 'Gb', 'Db', 'Ab', 'Eb', 'Bb', 'F', 'C', 'G', 'D', 'A', 'E', 'B', 'F#', 'C#', 'G#', 'D#', 'A#'][sf];
-            if (mi) s += ' min';
+          var ks = this.getKeySignature();
+          if (ks) {
+            s += ks[1];
+            if (ks[2]) s += ' min';
           }
         }
         else if (this.ff == 127) s += 'Sequencer Specific' + _smfhex(this.dd);
