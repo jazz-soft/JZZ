@@ -223,11 +223,19 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
       });
     },
 
-    web_midi_access: function() {
-      it('requestMIDIAccess', function(done) {
+    web_midi_access_no_sysex: function() {
+      it('requestMIDIAccess no sysex', function(done) {
         function onSuccess(/*midiaccess*/) { done(); }
         function onFail(err) { console.log('requestMIDIAccess failed!', err); }
         JZZ.requestMIDIAccess().then(onSuccess, onFail);
+      });
+    },
+
+    web_midi_access_sysex: function() {
+      it('requestMIDIAccess sysex', function(done) {
+        function onSuccess(/*midiaccess*/) { done(); }
+        function onFail(err) { console.log('requestMIDIAccess failed!', err); }
+        JZZ.requestMIDIAccess({ sysex: true }).then(onSuccess, onFail);
       });
     },
 

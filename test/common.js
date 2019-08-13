@@ -444,7 +444,8 @@ describe('Engine: none', function() {
   test.widget_midi_in();
   test.widget_midi_out();
   test.connect_watcher();
-  test.web_midi_access();
+  test.web_midi_access_no_sysex();
+  test.web_midi_access_sysex();
   it('Close engine', function() {
     JZZ.close();
   });
