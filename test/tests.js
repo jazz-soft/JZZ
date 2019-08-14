@@ -225,7 +225,7 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
 
     web_midi_access_no_sysex: function() {
       it('requestMIDIAccess no sysex', function(done) {
-        function onSuccess(/*midiaccess*/) { done(); }
+        function onSuccess(midiaccess) { assert.equal(midiaccess.sysexEnabled, false); done(); }
         function onFail(err) { console.log('requestMIDIAccess failed!', err); }
         JZZ.requestMIDIAccess().then(onSuccess, onFail);
       });
@@ -233,8 +233,16 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
 
     web_midi_access_sysex: function() {
       it('requestMIDIAccess sysex', function(done) {
-        function onSuccess(/*midiaccess*/) { done(); }
+        function onSuccess(midiaccess) { assert.equal(midiaccess.sysexEnabled, true); done(); }
         function onFail(err) { console.log('requestMIDIAccess failed!', err); }
+        JZZ.requestMIDIAccess({ sysex: true }).then(onSuccess, onFail);
+      });
+    },
+
+    web_midi_access_sysex_fail: function() {
+      it('requestMIDIAccess sysex must fail', function(done) {
+        function onSuccess(/*midiaccess*/) { console.log('Must fail!'); }
+        function onFail(err) { done(); }
         JZZ.requestMIDIAccess({ sysex: true }).then(onSuccess, onFail);
       });
     },

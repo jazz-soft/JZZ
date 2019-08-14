@@ -22,6 +22,6 @@ describe('Engine: webmidi', function() {
   test.remove_midi_in();
   test.remove_midi_out();
   test.web_midi_access_no_sysex();
-  test.web_midi_access_sysex();
+  test.web_midi_access_sysex_fail();
   test.close_engine();
 });

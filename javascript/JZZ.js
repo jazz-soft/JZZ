@@ -2306,8 +2306,8 @@
   };
 
   // Web MIDI API
-  var _wma;
-  var _resolves = [];
+  //var _wma;
+  //var _resolves = [];
   var _onstatechange;
   var _outputUUID = {};
   var _inputUUID = {};
@@ -2361,6 +2361,13 @@
       }
     };
   }
+
+  function DOMException(name, message, code) {
+    this.name = name;
+    this.message = message;
+    this.code = code;
+  }
+
   function getUUID(name, input) {
     if (input) {
       _inputUUID[name] = name;
@@ -2371,8 +2378,8 @@
       return _outputUUID[name];
     }
   }
-  function MIDIAccess() {
-    this.sysexEnabled = true;
+  function MIDIAccess(sysex) {
+    this.sysexEnabled = sysex;
     this.outputs = new Map();
     this.inputs = new Map();
     var self = this;
@@ -2595,34 +2602,16 @@
   };
 
   JZZ.requestMIDIAccess = function(opt) {
-    var wma;
-    var counter;
-    function ready() { _wma = wma; for (var i = 0; i < _resolves.length; i++) _resolves[i](_wma); }
-    function countdown() { counter--; if (!counter) ready(); }
-    return new Promise(function(resolve /*, reject*/) {
-      if (_wma) resolve(_wma);
-      else {
-        _resolves.push(resolve);
-        if (_resolves.length == 1) {
-          wma = new MIDIAccess();
-          JZZ.JZZ(opt).or(ready).and(function() {
-            var info = this.info();
-            counter = info.inputs.length + info.outputs.length;
-            if (!counter) { ready(); return; }
-            var i, p;
-            for (i = 0; i < info.outputs.length; i++) {
-              p = new MIDIOutput(info.outputs[i]);
-              wma.outputs.set(p.id, p);
-              p.open().then(countdown, countdown);
-            }
-            for (i = 0; i < info.inputs.length; i++) {
-              p = new MIDIInput(info.inputs[i]);
-              wma.inputs.set(p.id, p);
-              p.open().then(countdown, countdown);
-            }
-          });
+    return new Promise(function(resolve, reject) {
+      JZZ.JZZ(opt).or(function() {
+      }).and(function() {
+        var sysex = !!(opt && opt.sysex);
+        if (sysex && !this.info().sysex) reject(new DOMException('SecurityError', 'Sysex is not allowed', 18));
+        else {
+          var wma = new MIDIAccess(sysex);
+          resolve(wma);
         }
-      }
+      });
     });
   };
   if (typeof navigator !== 'undefined' && !navigator.requestMIDIAccess) navigator.requestMIDIAccess = JZZ.requestMIDIAccess;
