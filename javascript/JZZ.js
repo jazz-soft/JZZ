@@ -174,6 +174,7 @@
       x.engine = _engine;
       _engine._allOuts[x.name] = x;
       this._orig._info.outputs.push({
+        id: x.name,
         name: x.name,
         manufacturer: x.manufacturer,
         version: x.version,
@@ -184,6 +185,7 @@
     for (i = 0; i < _virtual._outs.length; i++) {
       x = _virtual._outs[i];
       this._orig._info.outputs.push({
+        id: x.name,
         name: x.name,
         manufacturer: x.manufacturer,
         version: x.version,
@@ -196,6 +198,7 @@
       x.engine = _engine;
       _engine._allIns[x.name] = x;
       this._orig._info.inputs.push({
+        id: x.name,
         name: x.name,
         manufacturer: x.manufacturer,
         version: x.version,
@@ -206,6 +209,7 @@
     for (i = 0; i < _virtual._ins.length; i++) {
       x = _virtual._ins[i];
       this._orig._info.inputs.push({
+        id: x.name,
         name: x.name,
         manufacturer: x.manufacturer,
         version: x.version,
@@ -2306,8 +2310,7 @@
   };
 
   // Web MIDI API
-  //var _wma;
-  //var _resolves = [];
+  var _wma = [];
   var _onstatechange;
   var _outputUUID = {};
   var _inputUUID = {};
@@ -2330,38 +2333,6 @@
       this.executor(resolve, reject);
     };
   }
-  var Map = _scope.Map;
-  if (typeof Map !== 'function') { // for some really antique browsers
-    Map = function() {
-      this.store = {};
-      this.keys = [];
-    };
-    Map.prototype.set = function(id, obj) {
-      if (typeof this.store[id] === 'undefined') this.keys.push(id);
-      this.store[id] = obj;
-      this.size = this.keys.length;
-      return this;
-    };
-    Map.prototype.get = function(id) {
-      return this.store[id];
-    };
-    Map.prototype.delete = function(id) {
-      delete this.store[id];
-      var index = this.keys.indexOf(id);
-      if (index > -1) this.keys.splice(index, 1);
-      this.size = this.keys.length;
-      return this;
-    };
-    Map.prototype.forEach = function(cb) {
-      var l = this.keys.length;
-      var i, e;
-      for (i = 0; i < l; i++) {
-        e = this.store[this.keys[i]];
-        cb(e);
-      }
-    };
-  }
-
   function DOMException(name, message, code) {
     this.name = name;
     this.message = message;
@@ -2378,60 +2349,6 @@
       return _outputUUID[name];
     }
   }
-  function MIDIAccess(sysex) {
-    this.sysexEnabled = sysex;
-    this.outputs = new Map();
-    this.inputs = new Map();
-    var self = this;
-    function _notify(p) {
-      return function() { _onstatechange(new MIDIConnectionEvent(p, self)); };
-    }
-    function _onwatch(x) {
-      var i, p, f;
-      for (i = 0; i < x.inputs.added.length; i++) {
-        p = new MIDIInput(x.inputs.added[i]);
-        self.inputs.set(p.id, p);
-        f = _notify(p);
-        p.open().then(f, f);
-      }
-      for (i = 0; i < x.outputs.added.length; i++) {
-        p = new MIDIOutput(x.outputs.added[i]);
-        self.outputs.set(p.id, p);
-        f = _notify(p);
-        p.open().then(f, f);
-      }
-      for (i = 0; i < x.inputs.removed.length; i++) {
-        p = self.inputs.get(_inputUUID[x.inputs.removed[i].name]);
-        p.close();
-        self.inputs.delete(p.id);
-        _onstatechange(new MIDIConnectionEvent(p, self));
-      }
-      for (i = 0; i < x.outputs.removed.length; i++) {
-        p = self.outputs.get(_outputUUID[x.outputs.removed[i].name]);
-        p.close();
-        self.outputs.delete(p.id);
-        _onstatechange(new MIDIConnectionEvent(p, self));
-      }
-    }
-    Object.defineProperty(this, 'onstatechange', {
-      get: function() { return _onstatechange; },
-      set: function(value) {
-        if (value instanceof Function) {
-          if (!_onstatechange) {
-            JZZ().onChange(_onwatch);
-          }
-          _onstatechange = value;
-        }
-        else {
-          if (_onstatechange) {
-            JZZ().onChange().disconnect(_onwatch);
-            _onstatechange = undefined;
-          }
-        }
-      }
-    });
-  }
-  MIDIAccess.prototype.onstatechange = function() {};
 
   function MIDIConnectionEvent(port, target) {
     this.bubbles = false;
@@ -2600,6 +2517,122 @@
     this.onmidimessage = MIDIInput.prototype.onmidimessage;
     return this;
   };
+
+  function _Maplike(data) {
+    this.has = function(id) {
+      return data.hasOwnProperty(id) && data[id].connected;
+    };
+    this.keys = function() {
+      var m = new Map();
+      for (var id in data) if (this.has(id)) m.set(id, this.get(id));
+      return m.keys();
+    };
+    this.values = function() {
+      var m = new Map();
+      for (var id in data) if (this.has(id)) m.set(id, this.get(id));
+      return m.values();
+    };
+    this.entries = function() {
+      var m = new Map();
+      for (var id in data) if (this.has(id)) m.set(id, this.get(id));
+      return m.entries();
+    };
+    this.forEach = function(fun, self) {
+      if (typeof self == 'undefined') self = this;
+      for (var id in data) if (this.has(id)) fun.call(self, this.get(id), id, this);
+    };
+    Object.defineProperty(this, 'size', {
+      get: function() {
+        var len = 0;
+        for (var id in data) if (this.has(id)) len++;
+        return len;
+      },
+      enumerable: true
+    });
+  }
+
+  function MIDIInputMap(_access, _inputs) {
+    this.get = function(id) {
+      if (_Src.hasOwnProperty(id) && _Src[id].connected) {
+        if (!_inputs[id]) {
+          _inputs[id] = new MIDIInput(_access, _Src[id].port);
+          _Src[id].ports.push(_inputs[id]);
+        }
+        return _inputs[id];
+      }
+    };
+    Object.freeze(this);
+  }
+
+  MIDIInputMap.prototype = new _Maplike();
+  MIDIInputMap.prototype.constructor = MIDIInputMap;
+
+  function MIDIOutputMap(_access, _outputs) {
+    this.get = function(id) {
+      if (_Dst.hasOwnProperty(id) && _Dst[id].connected) {
+        if (!_outputs[id]) {
+          _outputs[id] = new MIDIOutput(_access, _Dst[id].port);
+          _Dst[id].ports.push(_outputs[id]);
+        }
+        return _outputs[id];
+      }
+    };
+    Object.freeze(this);
+  }
+
+  MIDIOutputMap.prototype = new _Maplike();
+  MIDIOutputMap.prototype.constructor = MIDIOutputMap;
+
+  //function _notify(p) {
+  //  return function() { _onstatechange(new MIDIConnectionEvent(p, self)); };
+  //}
+
+  function _wm_watch(x) {
+    var i, p, f;
+    for (i = 0; i < x.inputs.added.length; i++) {
+      //p = new MIDIInput(x.inputs.added[i]);
+      //self.inputs.set(p.id, p);
+      //f = _notify(p);
+      //p.open().then(f, f);
+    }
+    for (i = 0; i < x.outputs.added.length; i++) {
+      //p = new MIDIOutput(x.outputs.added[i]);
+      //self.outputs.set(p.id, p);
+      //f = _notify(p);
+      //p.open().then(f, f);
+    }
+    for (i = 0; i < x.inputs.removed.length; i++) {
+      //p = self.inputs.get(_inputUUID[x.inputs.removed[i].name]);
+      //p.close();
+      //self.inputs.delete(p.id);
+      //_onstatechange(new MIDIConnectionEvent(p, self));
+    }
+    for (i = 0; i < x.outputs.removed.length; i++) {
+      //p = self.outputs.get(_outputUUID[x.outputs.removed[i].name]);
+      //p.close();
+      //self.outputs.delete(p.id);
+      //_onstatechange(new MIDIConnectionEvent(p, self));
+    }
+  }
+
+  function MIDIAccess(sysex) {
+    var _inputs = {};
+    var _outputs = {};
+    var _onstatechange = null;
+    var self = this;
+    this.sysexEnabled = sysex;
+    this.inputs = new MIDIInputMap(self, _inputs);
+    this.outputs = new MIDIOutputMap(self, _outputs);
+    Object.defineProperty(this, 'onstatechange', {
+      get: function() { return _onstatechange; },
+      set: function(f) { _onstatechange = f instanceof Function ? f : null; },
+      enumerable: true
+    });
+    Object.freeze(this);
+console.log(JZZ().info());
+    if (!_wma.length) JZZ().onChange(_wm_watch);
+    _wma.push(this);
+  }
 
   JZZ.requestMIDIAccess = function(opt) {
     return new Promise(function(resolve, reject) {
