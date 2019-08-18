@@ -247,6 +247,32 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
       });
     },
 
+    web_midi_input_sysex: function() {
+      it('MIDIInput sysex', function(done) {
+        function onSuccess(midi) {
+          midi.inputs.forEach(function(p) {
+            //console.log(p);
+          });
+          done();
+        }
+        function onFail(err) { console.log('requestMIDIAccess failed!', err); }
+        JZZ.requestMIDIAccess({ sysex: true }).then(onSuccess, onFail);
+      });
+    },
+
+    web_midi_output_sysex: function() {
+      it('MIDIOutput sysex', function(done) {
+        function onSuccess(midi) {
+          midi.outputs.forEach(function(p) {
+            //console.log(p);
+          });
+          done();
+        }
+        function onFail(err) { console.log('requestMIDIAccess failed!', err); }
+        JZZ.requestMIDIAccess({ sysex: true }).then(onSuccess, onFail);
+      });
+    },
+
     close_engine: function() {
       it('Close engine', function() {
         engine.refresh().close();
