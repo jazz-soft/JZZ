@@ -247,6 +247,36 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
       });
     },
 
+    web_midi_input_no_sysex: function() {
+      it('MIDIInput no sysex', function(done) {
+        var name = 'Widget MIDI-In no sysex';
+        var widget = {
+          _info: function(name) { return { name: name }; },
+          _openIn: function(port, name) {
+            port._info = this._info(name);
+            port._resume();
+          }
+        };
+        function onSuccess(midi) {
+          assert.equal(midi.inputs.size > 0, true);
+          midi.inputs.keys();
+          midi.inputs.values();
+          midi.inputs.entries();
+          midi.inputs.forEach(function(p) {
+            if (p.name == name) {
+              assert.equal(midi.inputs.has(p.id), true);
+              p.onmidimessage = function() {
+              };
+              done();
+            }
+          });
+        }
+        function onFail(err) { console.log('requestMIDIAccess failed!', err); }
+        JZZ.lib.registerMidiIn(name, widget);
+        JZZ.requestMIDIAccess().then(onSuccess, onFail);
+      });
+    },
+
     web_midi_input_sysex: function() {
       it('MIDIInput sysex', function(done) {
         function onSuccess(midi) {
@@ -257,6 +287,19 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
         }
         function onFail(err) { console.log('requestMIDIAccess failed!', err); }
         JZZ.requestMIDIAccess({ sysex: true }).then(onSuccess, onFail);
+      });
+    },
+
+    web_midi_output_no_sysex: function() {
+      it('MIDIOutput no sysex', function(done) {
+        function onSuccess(midi) {
+          midi.outputs.forEach(function(p) {
+            //console.log(p);
+          });
+          done();
+        }
+        function onFail(err) { console.log('requestMIDIAccess failed!', err); }
+        JZZ.requestMIDIAccess().then(onSuccess, onFail);
       });
     },
 
@@ -278,6 +321,5 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
         engine.refresh().close();
       });
     }
-
   };
 };

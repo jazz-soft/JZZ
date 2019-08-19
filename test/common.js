@@ -446,7 +446,9 @@ describe('Engine: none', function() {
   test.connect_watcher();
   test.web_midi_access_no_sysex();
   test.web_midi_access_sysex();
+  test.web_midi_input_no_sysex();
   test.web_midi_input_sysex();
+  test.web_midi_output_no_sysex();
   test.web_midi_output_sysex();
   test.close_engine();
 });

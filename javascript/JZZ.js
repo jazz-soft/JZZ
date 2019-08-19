@@ -2144,7 +2144,10 @@
     for (var i = 0; i < _virtual._outs.length; i++) if (_virtual._outs[i].name == x.name) return false;
     x.engine = engine;
     _virtual._outs.push(x);
-    if (_jzz && _jzz._bad) { _jzz._repair(); _jzz._resume(); }
+    if (_jzz) {
+      _postRefresh.call(_jzz);
+      if (_jzz._bad) { _jzz._repair(); _jzz._resume(); }
+    }
     return true;
   };
   JZZ.lib.registerMidiIn = function(name, engine) {
@@ -2152,7 +2155,10 @@
     for (var i = 0; i < _virtual._ins.length; i++) if (_virtual._ins[i].name == x.name) return false;
     x.engine = engine;
     _virtual._ins.push(x);
-    if (_jzz && _jzz._bad) { _jzz._repair(); _jzz._resume(); }
+    if (_jzz) {
+      _postRefresh.call(_jzz);
+      if (_jzz._bad) { _jzz._repair(); _jzz._resume(); }
+    }
     return true;
   };
   var _ac;
@@ -2446,29 +2452,37 @@
   };
 
   function MIDIInput(a, p) {
-//console.log('creating port:', a, p);
     var self = this;
+    var _open = false;
+    var _ochng = null;
+    var _onmsg = null;
     this.type = 'input';
-    this.name = a.name;
-    this.manufacturer = a.manufacturer;
-    this.version = a.version;
-    this.id = a.id;
-    this.state = 'disconnected';
-    this.connection = 'closed';
-    Object.defineProperty(this, 'onstatechange', {
-      get: function() { return _inputMap[self.name].onstatechange; },
+    this.id = p.id;
+    this.name = p.name;
+    this.manufacturer = p.manufacturer;
+    this.version = p.version;
+    Object.defineProperty(this, 'state', { get: function() { return p.connected ? 'connected' : 'disconnected'; }, enumerable: true });
+    Object.defineProperty(this, 'connection', { get: function() {
+      return _open ? p.connected ? 'open' : 'pending' : 'closed';
+    }, enumerable: true });
+    Object.defineProperty(this, 'onmidimessage', {
+      get: function() { return _onmsg; },
       set: function(value) {
-        if (value instanceof Function) {
-          _inputMap[self.name].onstatechange = value;
-          //_inputMap[self.name].onstatechange(new MIDIConnectionEvent(self, self));
-        }
-        else {
-          _inputMap[self.name].onstatechange = value;
-        }
-      }
+        if (value instanceof Function) { _onmsg = value; self.open(); }
+        else _onmsg = null;
+      },
+      enumerable: true
     });
+    Object.defineProperty(this, 'onstatechange', {
+      get: function() { return _ochng; },
+      set: function(value) {
+        if (value instanceof Function) _ochng = value;
+        else _ochng = null;
+      },
+      enumerable: true
+    });
+    Object.freeze(this);
   }
-  MIDIInput.prototype.onmidimessage = function() {};
   MIDIInput.prototype.open = function() {
     var self = this;
     return new Promise(function(resolve, reject) {
@@ -2511,19 +2525,25 @@
       return data.hasOwnProperty(id) && data[id].connected;
     };
     this.keys = function() {
-      var m = new Map();
-      for (var id in data) if (this.has(id)) m.set(id, this.get(id));
-      return m.keys();
+      try { // some old browsers may have no Map object
+        var m = new Map();
+        for (var id in data) if (this.has(id)) m.set(id, this.get(id));
+        return m.keys();
+      } catch (e) {}
     };
     this.values = function() {
-      var m = new Map();
-      for (var id in data) if (this.has(id)) m.set(id, this.get(id));
-      return m.values();
+      try {
+        var m = new Map();
+        for (var id in data) if (this.has(id)) m.set(id, this.get(id));
+        return m.values();
+      } catch (e) {}
     };
     this.entries = function() {
-      var m = new Map();
-      for (var id in data) if (this.has(id)) m.set(id, this.get(id));
-      return m.entries();
+      try {
+        var m = new Map();
+        for (var id in data) if (this.has(id)) m.set(id, this.get(id));
+        return m.entries();
+      } catch (e) {}
     };
     this.forEach = function(fun, self) {
       if (typeof self == 'undefined') self = this;
@@ -2618,7 +2638,6 @@
     var i;
     var p;
     var info = JZZ().info();
-//console.log(info);
     for (i = 0; i < info.inputs.length; i++) {
       p = info.inputs[i];
       if (!_inputMap.hasOwnProperty(p.id)) _inputMap[p.id] = {
