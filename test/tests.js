@@ -1,18 +1,21 @@
 var assert = require('assert');
+
+function Sample(done, list) {
+  this.done = done;
+  this.list = list.slice();
+  this.count = 0;
+  this.compare = function(msg) {
+    if (this.count < this.list.length) assert.equal(msg.slice().toString(), this.list[this.count].toString());
+    this.count++;
+    if (this.count == this.list.length) this.done();
+  };
+}
+
 module.exports = function(JZZ, PARAMS, DRIVER) {
   var engine = JZZ(PARAMS);
   return {
 
-    Sample: function(done, list) {
-      this.done = done;
-      this.list = list.slice();
-      this.count = 0;
-      this.compare = function(msg) {
-        if (this.count < this.list.length) assert.equal(msg.slice().toString(), this.list[this.count].toString());
-        this.count++;
-        if (this.count == this.list.length) this.done();
-      };
-    },
+    Sample: Sample,
 
     engine_name: function(name, sysex) {
       it('engine: ' + name, function(done) {
@@ -250,13 +253,16 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
     web_midi_input_no_sysex: function() {
       it('MIDIInput no sysex', function(done) {
         var name = 'Widget MIDI-In no sysex';
+        var myport;
         var widget = {
           _info: function(name) { return { name: name }; },
           _openIn: function(port, name) {
+            myport = port;
             port._info = this._info(name);
             port._resume();
           }
         };
+        var sample = new Sample(done, [[0x90, 0x40, 0x7f]]);
         function onSuccess(midi) {
           assert.equal(midi.inputs.size > 0, true);
           midi.inputs.keys();
@@ -265,9 +271,12 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
           midi.inputs.forEach(function(p) {
             if (p.name == name) {
               assert.equal(midi.inputs.has(p.id), true);
-              p.onmidimessage = function() {
+              p.onmidimessage = function(msg) {
+                sample.compare(msg.data);
               };
-              done();
+              setTimeout(function() {
+                myport.emit([0x90, 0x40, 0x7f]);
+              }, 0);
             }
           });
         }

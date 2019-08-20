@@ -2459,8 +2459,8 @@
     this.type = 'input';
     this.id = p.id;
     this.name = p.name;
-    this.manufacturer = p.manufacturer;
-    this.version = p.version;
+    this.manufacturer = p.man;
+    this.version = p.ver;
     Object.defineProperty(this, 'state', { get: function() { return p.connected ? 'connected' : 'disconnected'; }, enumerable: true });
     Object.defineProperty(this, 'connection', { get: function() {
       return _open ? p.connected ? 'open' : 'pending' : 'closed';
@@ -2481,43 +2481,72 @@
       },
       enumerable: true
     });
-    Object.freeze(this);
-  }
-  MIDIInput.prototype.open = function() {
-    var self = this;
-    return new Promise(function(resolve, reject) {
-      var port = _inputMap[self.name];
-      if (port) resolve(self);
-      else {
-        if (!self._resolves) self._resolves = [];
-        self._resolves.push(resolve);
-        if (self._resolves.length == 1) {
-          JZZ().openMidiIn(self.name).or(reject).and(function() {
-            _inputMap[self.name] = this;
-            self.state = 'connected';
-            self.connection = 'open';
-            this.connect(function(msg) {
-              self.onmidimessage(new MIDIMessageEvent(self, new Uint8Array(msg)));
-            });
-            for (var i = 0; i < self._resolves.length; i++) resolve(self._resolves[i]);
-            delete self._resolves;
-            if (self.onstatechange) self.onstatechange(new MIDIConnectionEvent(self, self));
+    this.open = function() {
+      return new Promise(function(resolve, reject) {
+        if (_open) resolve(self);
+        else {
+          p.open().then(function() {
+            if (!_open) {
+              _open = true;
+              if (self.onstatechange) self.onstatechange(new MIDIConnectionEvent(self, self));
+              if (a.onstatechange) a.onstatechange(new MIDIConnectionEvent(self, a));
+            }
+            resolve(self);
+          }, function() {
+            reject(/* */);
           });
         }
+      });
+    };
+    this.close = function() {
+      return new Promise(function(resolve, reject) {
+        if (_open) {
+          _open = false;
+          p.close();
+          if (self.onstatechange) self.onstatechange(new MIDIConnectionEvent(self, self));
+          if (a.onstatechange) a.onstatechange(new MIDIConnectionEvent(self, a));
+        }
+        resolve(self);
+      });
+    };
+    Object.freeze(this);
+  }
+
+  function _InputProxy(id, name, man, ver) {
+    this.id = id;
+    this.name = name;
+    this.man = man;
+    this.ver = ver;
+    this.connected = true;
+    this.ports = [];
+    this.pending = [];
+    this.count = 0;
+    this.proxy = undefined;
+  }
+  _InputProxy.prototype.open = function() {
+    var self = this;
+    return new Promise(function(resolve, reject) {
+      var i;
+      if (self.proxy) resolve();
+      else {
+        if (!self.pending.length) {
+          var port = JZZ().openMidiIn(self.name).or(function() {
+            for (i = 0; i < self.pending; i++) self.pending[i][1]();
+            self.pending = [];
+          }).and(function() {
+            self.proxy = this;
+            self.proxy.connect(function(msg) {
+              for (i = 0; i < self.ports.length; i++) {
+                if (self.ports[i][0].onmidimessage) self.ports[i][0].onmidimessage(new MIDIMessageEvent(self, new Uint8Array(msg)));
+              }
+            });
+            for (i = 0; i < self.pending; i++) self.pending[i][0]();
+            self.pending = [];
+          });
+        }
+        self.pending.push([resolve, reject]);
       }
     });
-  };
-  MIDIInput.prototype.close = function() {
-    var port = _inputMap[this.name];
-    if (port) {
-      port.close();
-      this.state = 'disconnected';
-      this.connection = 'closed';
-      if (this.onstatechange) this.onstatechange(new MIDIConnectionEvent(this, this));
-      _inputMap[this.name] = undefined;
-    }
-    this.onmidimessage = MIDIInput.prototype.onmidimessage;
-    return this;
   };
 
   function _Maplike(data) {
@@ -2564,7 +2593,7 @@
       if (_inputMap.hasOwnProperty(id) && _inputMap[id].connected) {
         if (!_inputs[id]) {
           _inputs[id] = new MIDIInput(_access, _inputMap[id]);
-          _inputMap[id].ports.push(_inputs[id]);
+          _inputMap[id].ports.push([_inputs[id], _access.sysexEnabled]);
         }
         return _inputs[id];
       }
@@ -2579,7 +2608,7 @@
       if (_outputMap.hasOwnProperty(id) && _outputMap[id].connected) {
         if (!_outputs[id]) {
           _outputs[id] = new MIDIOutput(_access, _outputMap[id]);
-          _outputMap[id].ports.push(_outputs[id]);
+          _outputMap[id].ports.push([_outputs[id], _access.sysexEnabled]);
         }
         return _outputs[id];
       }
@@ -2640,9 +2669,7 @@
     var info = JZZ().info();
     for (i = 0; i < info.inputs.length; i++) {
       p = info.inputs[i];
-      if (!_inputMap.hasOwnProperty(p.id)) _inputMap[p.id] = {
-        id: p.id, name: p.name, manufacturer: p.manufacturer, version: p.version, connected: true, ports: [], count: 0, proxy: undefined
-      };
+      if (!_inputMap.hasOwnProperty(p.id)) _inputMap[p.id] = new _InputProxy(p.id, p.name, p.manufacturer, p.version);
     }
     for (i = 0; i < info.outputs.length; i++) {
       p = info.outputs[i];
