@@ -2438,6 +2438,27 @@
     Object.freeze(this);
   }
 
+  function _split(q) {
+    var i, k;
+    while (q.length) {
+      for (i = 0; i < q.length; i++) if (q[i] == parseInt(q[i]) && q[i] >= 0x80 && q[i] <= 0xff && q[i] != 0xf7) break;
+      q.splice(0, i);
+      if (!q.length) return;
+      if (q[0] == 0xf0) {
+        for (i = 1; i < q.length; i++) if (q[i] == 0xf7) break;
+        if (i == q.length) return;
+        return q.splice(0, i + 1);
+      }
+      else {
+        k = _datalen(q[0]) + 1;
+        if (k > q.length) return;
+        for (i = 1; i < k; i++) if (q[i] != parseInt(q[i]) || q[i] < 0 || q[i] >= 0x80) break;
+        if (i == k) return q.splice(0, i);
+        else q.splice(0, i);
+      }
+    }
+  }
+
   function _InputProxy(id, name, man, ver) {
     this.id = id;
     this.name = name;
@@ -2447,6 +2468,7 @@
     this.ports = [];
     this.pending = [];
     this.proxy = undefined;
+    this.queue = [];
   }
   _InputProxy.prototype.open = function() {
     var self = this;
@@ -2462,8 +2484,14 @@
           }).and(function() {
             self.proxy = this;
             self.proxy.connect(function(msg) {
-              for (i = 0; i < self.ports.length; i++) {
-                if (self.ports[i][0].onmidimessage) self.ports[i][0].onmidimessage(new MIDIMessageEvent(self, new Uint8Array(msg)));
+              var m;
+              self.queue = self.queue.concat(msg.slice());
+              for (m = _split(self.queue); m; m = _split(self.queue)) {
+                for (i = 0; i < self.ports.length; i++) {
+                  if (self.ports[i][0].onmidimessage && (m[0] != 0xf0 || self.ports[i][1])) {
+                    self.ports[i][0].onmidimessage(new MIDIMessageEvent(self, new Uint8Array(m)));
+                  }
+                }
               }
             });
             for (i = 0; i < self.pending; i++) self.pending[i][0]();

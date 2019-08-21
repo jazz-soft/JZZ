@@ -278,7 +278,7 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
                 sample.compare(msg.data);
               };
               setTimeout(function() {
-                myport.emit([0x90, 0x40, 0x7f]);
+                myport.emit([0xf0, 0x7e, 0x7f, 0x06, 0x01, 0xf7, 0x90, 0x40, 0x7f]);
               }, 0);
             }
           });
@@ -304,7 +304,7 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
         function onSuccess(midi) {
           midi.inputs.forEach(function(p) {
             if (p.name == name) {
-              var sample = new Sample(done, [[0x90, 0x40, 0x7f]]);
+              var sample = new Sample(done, [[0xf0, 0x7e, 0x7f, 0x06, 0x01, 0xf7], [0x90, 0x40, 0x7f]]);
               p.open();
               p.open(); // test multiple open()
               p.onmidimessage = function(msg) {
@@ -312,7 +312,10 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
               };
               p.open().then(function(port) { assert.equal(port.connection, 'open'); }, function(err) { throw err; });
               setTimeout(function() {
-                myport.emit([0x90, 0x40, 0x7f]);
+                myport.emit([0xf0, 0x7e, 0x7f]);
+                myport.emit([0x06, 0x01]);
+                myport.emit([0xf7, 0x90]);
+                myport.emit([0x40, 0x7f]);
               }, 0);
             }
           });
@@ -349,20 +352,20 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
               assert.equal(p.state, 'connected');
               assert.equal(p.connection, 'closed');
               myport = p;
-              p.send([0xf8]);
-              p.send([0xc0, 0x10]);
+              var now = JZZ.lib.now();
               var bad = false;
               try {
-                p.send([0x20, 0x20, 0x20]);
+                p.send([0x20, 0x20, 0x20], now + 20);
                 bad = true;
-              } catch(err) {}
-              assert.equal(bad, false);
+              } catch(err) {/**/}
               try {
-                p.send([0xf0, 0x7e, 0x7f, 0x06, 0x01, 0xf7]);
+                p.send([0xf0, 0x7e, 0x7f, 0x06, 0x01, 0xf7], now + 30);
                 bad = true;
-              } catch(err) {}
+              } catch(err) {/**/}
               assert.equal(bad, false);
-              p.send([0x90, 0x40, 0x7f]);
+              p.send([0x90, 0x40, 0x7f], now + 40);
+              p.send([0xf8]);
+              p.send([0xc0, 0x10], now + 10);
             }
           });
         }
@@ -375,7 +378,10 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
     web_midi_output_sysex: function() {
       it('MIDIOutput sysex', function(done) {
         var name = 'Widget MIDI-Out sysex';
-        var sample = new Sample(done, [[0x90, 0x40, 0x7f]]);
+        var sample = new Sample(done, [
+          [0x90, 0x40, 0x7f],
+          [0xf0, 0x7e, 0x7f, 0x06, 0x01, 0xf7]
+        ]);
         var widget = {
           _info: function(name) { return { name: name }; },
           _openOut: function(port, name) {
@@ -392,6 +398,7 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
               p.open();
               p.open(); // test multiple open()
               p.send([0x90, 0x40, 0x7f]);
+              p.send([0xf0, 0x7e, 0x7f, 0x06, 0x01, 0xf7]);
               p.open().then(function(port) { assert.equal(port.connection, 'open'); }, function(err) { throw err; });
             }
           });
