@@ -245,7 +245,7 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
     web_midi_access_sysex_fail: function() {
       it('requestMIDIAccess sysex must fail', function(done) {
         function onSuccess(/*midiaccess*/) { console.log('Must fail!'); }
-        function onFail(err) { done(); }
+        function onFail(/*err*/) { done(); }
         JZZ.requestMIDIAccess({ sysex: true }).then(onSuccess, onFail);
       });
     },
@@ -262,7 +262,6 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
             port._resume();
           }
         };
-        var sample = new Sample(done, [[0x90, 0x40, 0x7f]]);
         function onSuccess(midi) {
           assert.equal(midi.inputs.size > 0, true);
           midi.inputs.keys();
@@ -270,6 +269,10 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
           midi.inputs.entries();
           midi.inputs.forEach(function(p) {
             if (p.name == name) {
+              var sample = new Sample(function() { p.close(); p.close().then(function() { done(); }); }, [[0x90, 0x40, 0x7f]]);
+              assert.equal(p.type, 'input');
+              assert.equal(p.state, 'connected');
+              assert.equal(p.connection, 'closed');
               assert.equal(midi.inputs.has(p.id), true);
               p.onmidimessage = function(msg) {
                 sample.compare(msg.data);
@@ -288,39 +291,113 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
 
     web_midi_input_sysex: function() {
       it('MIDIInput sysex', function(done) {
+        var name = 'Widget MIDI-In sysex';
+        var myport;
+        var widget = {
+          _info: function(name) { return { name: name }; },
+          _openIn: function(port, name) {
+            myport = port;
+            port._info = this._info(name);
+            port._resume();
+          }
+        };
         function onSuccess(midi) {
           midi.inputs.forEach(function(p) {
-            //console.log(p);
+            if (p.name == name) {
+              var sample = new Sample(done, [[0x90, 0x40, 0x7f]]);
+              p.open();
+              p.open(); // test multiple open()
+              p.onmidimessage = function(msg) {
+                sample.compare(msg.data);
+              };
+              p.open().then(function(port) { assert.equal(port.connection, 'open'); }, function(err) { throw err; });
+              setTimeout(function() {
+                myport.emit([0x90, 0x40, 0x7f]);
+              }, 0);
+            }
           });
-          done();
         }
         function onFail(err) { console.log('requestMIDIAccess failed!', err); }
+        JZZ.lib.registerMidiIn(name, widget);
         JZZ.requestMIDIAccess({ sysex: true }).then(onSuccess, onFail);
       });
     },
 
     web_midi_output_no_sysex: function() {
       it('MIDIOutput no sysex', function(done) {
+        var name = 'Widget MIDI-Out no sysex';
+        var myport;
+        var sample = new Sample(function() { myport.close(); myport.close().then(function() { done(); }); }, [
+          [0xf8],
+          [0xc0, 0x10],
+          [0x90, 0x40, 0x7f]
+        ]);
+        var widget = {
+          _info: function(name) { return { name: name }; },
+          _openOut: function(port, name) {
+            port._info = this._info(name);
+            port._resume();
+            port.connect(function(msg) {
+              sample.compare(msg);
+            });
+          }
+        };
         function onSuccess(midi) {
           midi.outputs.forEach(function(p) {
-            //console.log(p);
+            if (p.name == name) {
+              assert.equal(p.type, 'output');
+              assert.equal(p.state, 'connected');
+              assert.equal(p.connection, 'closed');
+              myport = p;
+              p.send([0xf8]);
+              p.send([0xc0, 0x10]);
+              var bad = false;
+              try {
+                p.send([0x20, 0x20, 0x20]);
+                bad = true;
+              } catch(err) {}
+              assert.equal(bad, false);
+              try {
+                p.send([0xf0, 0x7e, 0x7f, 0x06, 0x01, 0xf7]);
+                bad = true;
+              } catch(err) {}
+              assert.equal(bad, false);
+              p.send([0x90, 0x40, 0x7f]);
+            }
           });
-          done();
         }
         function onFail(err) { console.log('requestMIDIAccess failed!', err); }
+        JZZ.lib.registerMidiOut(name, widget);
         JZZ.requestMIDIAccess().then(onSuccess, onFail);
       });
     },
 
     web_midi_output_sysex: function() {
       it('MIDIOutput sysex', function(done) {
+        var name = 'Widget MIDI-Out sysex';
+        var sample = new Sample(done, [[0x90, 0x40, 0x7f]]);
+        var widget = {
+          _info: function(name) { return { name: name }; },
+          _openOut: function(port, name) {
+            port._info = this._info(name);
+            port._resume();
+            port.connect(function(msg) {
+              sample.compare(msg);
+            });
+          }
+        };
         function onSuccess(midi) {
           midi.outputs.forEach(function(p) {
-            //console.log(p);
+            if (p.name == name) {
+              p.open();
+              p.open(); // test multiple open()
+              p.send([0x90, 0x40, 0x7f]);
+              p.open().then(function(port) { assert.equal(port.connection, 'open'); }, function(err) { throw err; });
+            }
           });
-          done();
         }
         function onFail(err) { console.log('requestMIDIAccess failed!', err); }
+        JZZ.lib.registerMidiOut(name, widget);
         JZZ.requestMIDIAccess({ sysex: true }).then(onSuccess, onFail);
       });
     },

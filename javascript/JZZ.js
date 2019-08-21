@@ -2317,10 +2317,8 @@
 
   // Web MIDI API
   var _wma = [];
-  var _onstatechange;
   var _outputMap = {};
   var _inputMap = {};
-  function _noop() {}
 
   var Promise = _scope.Promise;
   if (typeof Promise !== 'function') {
@@ -2376,81 +2374,6 @@
     this.type = 'midimessage';
   }
 
-  function MIDIOutput(a) {
-    var self = this;
-    this.type = 'output';
-    this.name = a.name;
-    this.manufacturer = a.manufacturer;
-    this.version = a.version;
-    this.id = a.id;
-    this.state = 'disconnected';
-    this.connection = 'closed';
-    Object.defineProperty(this, 'onstatechange', {
-      get: function() { return _outputMap[self.name].onstatechange; },
-      set: function(value) {
-        if (value instanceof Function) {
-          _outputMap[self.name].onstatechange = value;
-          //_outputMap[self.name].onstatechange(new MIDIConnectionEvent(self, self));
-        }
-        else {
-          _outputMap[self.name].onstatechange = value;
-        }
-      }
-    });
-  }
-
-  MIDIOutput.prototype.open = function() {
-    var self = this;
-    return new Promise(function(resolve, reject) {
-      var port = _outputMap[self.name];
-      if (port) resolve(self);
-      else {
-        if (!self._resolves) self._resolves = [];
-        self._resolves.push(resolve);
-        if (self._resolves.length == 1) {
-          JZZ().openMidiOut(self.name).or(reject).and(function() {
-            _outputMap[self.name] = this;
-            self.state = 'connected';
-            self.connection = 'open';
-            for (var i = 0; i < self._resolves.length; i++) resolve(self._resolves[i]);
-            delete self._resolves;
-            if (self.onstatechange) self.onstatechange(new MIDIConnectionEvent(self, self));
-          });
-        }
-      }
-    });
-  };
-  MIDIOutput.prototype.close = function() {
-    var port = _outputMap[this.name];
-    if (port) {
-      port.close();
-      this.state = 'disconnected';
-      this.connection = 'closed';
-      if (this.onstatechange) this.onstatechange(new MIDIConnectionEvent(this, this));
-      _outputMap[this.name] = undefined;
-    }
-    return this;
-  };
-  MIDIOutput.prototype.clear = function() {};
-  MIDIOutput.prototype.send = function(data, timestamp) {
-    var port = _outputMap[this.name];
-    if (port) {
-      var v = [];
-      for (var i = 0; i < data.length; i++) {
-        if (data[i] == Math.floor(data[i]) && data[i] >= 0 && data[i] <= 255) v.push(data[i]);
-        else return;
-      }
-      if (timestamp > _now()) {
-        setTimeout(function() { port.send(v); }, timestamp - _now());
-      }
-      else port.send(v);
-    }
-    else {
-      var self = this;
-      self.open().then(function() { self.send(data, timestamp); }, _noop);
-    }
-  };
-
   function MIDIInput(a, p) {
     var self = this;
     var _open = false;
@@ -2468,7 +2391,10 @@
     Object.defineProperty(this, 'onmidimessage', {
       get: function() { return _onmsg; },
       set: function(value) {
-        if (value instanceof Function) { _onmsg = value; self.open(); }
+        if (value instanceof Function) {
+          _onmsg = value;
+          if (!_open) self.open();
+        }
         else _onmsg = null;
       },
       enumerable: true
@@ -2493,13 +2419,13 @@
             }
             resolve(self);
           }, function() {
-            reject(/* */);
+            reject(new DOMException('InvalidAccessError', 'Port is not available', 15));
           });
         }
       });
     };
     this.close = function() {
-      return new Promise(function(resolve, reject) {
+      return new Promise(function(resolve/*, reject*/) {
         if (_open) {
           _open = false;
           p.close();
@@ -2520,7 +2446,6 @@
     this.connected = true;
     this.ports = [];
     this.pending = [];
-    this.count = 0;
     this.proxy = undefined;
   }
   _InputProxy.prototype.open = function() {
@@ -2529,9 +2454,10 @@
       var i;
       if (self.proxy) resolve();
       else {
-        if (!self.pending.length) {
-          var port = JZZ().openMidiIn(self.name).or(function() {
-            for (i = 0; i < self.pending; i++) self.pending[i][1]();
+        self.pending.push([resolve, reject]);
+        if (self.pending.length == 1) {
+          JZZ().openMidiIn(self.name).or(function() {
+            for (i = 0; i < self.pending.length; i++) self.pending[i][1]();
             self.pending = [];
           }).and(function() {
             self.proxy = this;
@@ -2544,9 +2470,168 @@
             self.pending = [];
           });
         }
-        self.pending.push([resolve, reject]);
       }
     });
+  };
+  _InputProxy.prototype.close = function() {
+    var i;
+    if (this.proxy) {
+      for (i = 0; i < this.ports.length; i++) if (this.ports[i].connection == 'open') return;
+      this.proxy.close();
+      this.proxy = undefined;
+    }
+  };
+
+  function _datalen(x) {
+    if (x >= 0x80 && x <= 0xbf || x >= 0xe0 && x <= 0xef || x == 0xf2) return 2;
+    if (x >= 0xc0 && x <= 0xdf || x == 0xf1 || x == 0xf3) return 1;
+    return 0;
+  }
+
+  var _epr = "Failed to execute 'send' on 'MIDIOutput': ";
+
+  function _validate(arr, sysex) {
+    var i, k;
+    var msg;
+    var data = [];
+    for (i = 0; i < arr.length; i++) {
+      if (arr[i] != parseInt(arr[i]) || arr[i] < 0 || arr[i] > 255) throw TypeError(_epr + arr[i] + ' is not a UInt8 value.');
+    }
+    k = 0;
+    for (i = 0; i < arr.length; i++) {
+      if (!k) {
+        if (arr[i] < 0x80) throw TypeError(_epr + 'Running status is not allowed at index ' + i + ' (' + arr[i] + ').');
+        if (arr[i] == 0xf7) throw TypeError(_epr + 'Unexpected end of system exclusive message at index ' + i + ' (' + arr[i] + ').');
+        msg = [arr[i]];
+        data.push(msg);
+        if (arr[i] == 0xf0) {
+          if (!sysex) throw new DOMException('InvalidAccessError', _epr + 'System exclusive messag is not allowed at index ' + i + ' (' + arr[i] + ').', 15);
+          k = -1;
+          for (; i < arr.length; i++) {
+            msg.push(arr[i]);
+            if (arr[i] == 0xf7) {
+              k = 0;
+              break;
+            }
+          }
+        }
+        else {
+          k = _datalen(arr[i]);
+        }
+      }
+      else {
+        if (arr[i] > 0x7f) throw TypeError(_epr + 'Unexpected status byte at index ' + i + ' (' + arr[i] + ').');
+        msg.push(arr[i]);
+        k--;
+      }
+    }
+    if (k) throw TypeError(_epr + 'Message is incomplete');
+    return [data];
+  }
+
+  function MIDIOutput(a, p) {
+    var self = this;
+    var _open = false;
+    var _ochng = null;
+    this.type = 'output';
+    this.id = p.id;
+    this.name = p.name;
+    this.manufacturer = p.man;
+    this.version = p.ver;
+    Object.defineProperty(this, 'state', { get: function() { return p.connected ? 'connected' : 'disconnected'; }, enumerable: true });
+    Object.defineProperty(this, 'connection', { get: function() {
+      return _open ? p.connected ? 'open' : 'pending' : 'closed';
+    }, enumerable: true });
+    Object.defineProperty(this, 'onstatechange', {
+      get: function() { return _ochng; },
+      set: function(value) {
+        if (value instanceof Function) _ochng = value;
+        else _ochng = null;
+      },
+      enumerable: true
+    });
+    this.open = function() {
+      return new Promise(function(resolve, reject) {
+        if (_open) resolve(self);
+        else {
+          p.open().then(function() {
+            if (!_open) {
+              _open = true;
+              if (self.onstatechange) self.onstatechange(new MIDIConnectionEvent(self, self));
+              if (a.onstatechange) a.onstatechange(new MIDIConnectionEvent(self, a));
+            }
+            resolve(self);
+          }, function() {
+            reject(new DOMException('InvalidAccessError', 'Port is not available', 15));
+          });
+        }
+      });
+    };
+    this.close = function() {
+      return new Promise(function(resolve/*, reject*/) {
+        if (_open) {
+          _open = false;
+          self.clear();
+          p.close();
+          if (self.onstatechange) self.onstatechange(new MIDIConnectionEvent(self, self));
+          if (a.onstatechange) a.onstatechange(new MIDIConnectionEvent(self, a));
+        }
+        resolve(self);
+      });
+    };
+    this.clear = function() {
+    };
+    this.send = function(data, timestamp) {
+      _validate(data, a.sysexEnabled);
+      if (!p.connected) throw new DOMException('InvalidStateError', 'Port is not connected', 11);
+      if (_open) {
+        var now = _now();
+        if (timestamp > now) setTimeout(function() { p.proxy.send(data); }, timestamp - now);
+        else p.proxy.send(data);
+      }
+      else this.open().then(function() { self.send(data, timestamp); });
+
+    };
+    Object.freeze(this);
+  }
+
+  function _OutputProxy(id, name, man, ver) {
+    this.id = id;
+    this.name = name;
+    this.man = man;
+    this.ver = ver;
+    this.connected = true;
+    this.ports = [];
+    this.pending = [];
+    this.proxy = undefined;
+  }
+  _OutputProxy.prototype.open = function() {
+    var self = this;
+    return new Promise(function(resolve, reject) {
+      var i;
+      if (self.proxy) resolve();
+      else {
+        self.pending.push([resolve, reject]);
+        if (self.pending.length == 1) {
+          JZZ().openMidiOut(self.name).or(function() {
+            for (i = 0; i < self.pending.length; i++) self.pending[i][1]();
+            self.pending = [];
+          }).and(function() {
+            self.proxy = this;
+            for (i = 0; i < self.pending.length; i++) self.pending[i][0]();
+            self.pending = [];
+          });
+        }
+      }
+    });
+  };
+  _OutputProxy.prototype.close = function() {
+    var i;
+    if (this.proxy) {
+      for (i = 0; i < this.ports.length; i++) if (this.ports[i].connection == 'open') return;
+      this.proxy.close();
+      this.proxy = undefined;
+    }
   };
 
   function _Maplike(data) {
@@ -2673,9 +2758,7 @@
     }
     for (i = 0; i < info.outputs.length; i++) {
       p = info.outputs[i];
-      if (!_outputMap.hasOwnProperty(p.id)) _outputMap[p.id] = {
-        id: p.id, name: p.name, manufacturer: p.manufacturer, version: p.version, connected: true, ports: [], count: 0, proxy: undefined
-      };
+      if (!_outputMap.hasOwnProperty(p.id)) _outputMap[p.id] = new _OutputProxy(p.id, p.name, p.manufacturer, p.version);
     }
     if (!_wma.length) JZZ().onChange(_wm_watch);
     _wma.push(this);
