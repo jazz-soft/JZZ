@@ -157,6 +157,8 @@
 
   var _outs = [];
   var _ins = [];
+  var _outsW = [];
+  var _insW = [];
 
   function _postRefresh() {
     this._orig._info.engine = _engine._type;
@@ -217,9 +219,24 @@
       });
       _ins.push(x);
     }
+    if (_jzz._watcher && _jzz._watcher._handles.length) {
+      var diff = _diff(_insW, _outsW, this._orig._info.inputs, this._orig._info.outputs);
+       if (diff) {
+        for (j = 0; j < diff.inputs.removed.length; j++) {
+          x = _engine._inMap[diff.inputs.removed[j].name];
+          if (x) x._closeAll();
+        }
+        for (j = 0; j < diff.outputs.removed.length; j++) {
+          x = _engine._outMap[diff.outputs.removed[j].name];
+          if (x) x._closeAll();
+        }
+        _fireW(diff);
+      }
+    }
+    _insW = this._orig._info.inputs;
+    _outsW = this._orig._info.outputs;
   }
   function _refresh() {
-    this._slip(_postRefresh, []);
     _engine._refresh(this);
   }
   _J.prototype.refresh = function() {
@@ -664,7 +681,9 @@
   function _initNONE() {
     _engine._type = 'none';
     _engine._sysex = true;
-    _engine._refresh = function() { _engine._outs = []; _engine._ins = []; };
+    _engine._outs = [];
+    _engine._ins = [];
+    _engine._refresh = function() { _postRefresh.call(_jzz); };
     _engine._watch = function() {};
     _engine._unwatch = function() {};
     _engine._close = function() {};
@@ -686,27 +705,14 @@
     _engine._refresh = function() {
       _engine._outs = [];
       _engine._ins = [];
-      var i, x, impl;
+      var i, x;
       for (i = 0; (x = _engine._main.MidiOutInfo(i)).length; i++) {
         _engine._outs.push({ type: _engine._type, name: x[0], manufacturer: x[1], version: x[2] });
       }
       for (i = 0; (x = _engine._main.MidiInInfo(i)).length; i++) {
         _engine._ins.push({ type: _engine._type, name: x[0], manufacturer: x[1], version: x[2] });
       }
-      var diff = _diff(_engine._insW, _engine._outsW, _engine._ins, _engine._outs);
-      if (diff) {
-        for (j = 0; j < diff.inputs.removed.length; j++) {
-          impl = _engine._inMap[diff.inputs.removed[j].name];
-          if (impl) impl._closeAll();
-        }
-        for (j = 0; j < diff.outputs.removed.length; j++) {
-          impl = _engine._outMap[diff.outputs.removed[j].name];
-          if (impl) impl._closeAll();
-        }
-        _engine._insW = _engine._ins;
-        _engine._outsW = _engine._outs;
-        if (watcher) _fireW(diff);
-      }
+      _postRefresh.call(_jzz);
     };
     _engine._openOut = function(port, name) {
       var impl = _engine._outMap[name];
@@ -863,21 +869,7 @@
       _engine._access.inputs.forEach(function(port) {
         _engine._ins.push({type: _engine._type, name: port.name, manufacturer: port.manufacturer, version: port.version});
       });
-      var diff = _diff(_engine._insW, _engine._outsW, _engine._ins, _engine._outs);
-      if (diff) {
-        var impl;
-        for (j = 0; j < diff.inputs.removed.length; j++) {
-          impl = _engine._inMap[diff.inputs.removed[j].name];
-          if (impl) impl._closeAll();
-        }
-        for (j = 0; j < diff.outputs.removed.length; j++) {
-          impl = _engine._outMap[diff.outputs.removed[j].name];
-          if (impl) impl._closeAll();
-        }
-        _engine._insW = _engine._ins;
-        _engine._outsW = _engine._outs;
-        if (watcher) _fireW(diff);
-      }
+      _postRefresh.call(_jzz);
     };
     _engine._openOut = function(port, name) {
       var impl = _engine._outMap[name];
@@ -1139,22 +1131,9 @@
             for (j = 0; j < a[1].outs.length; j++) a[1].outs[j].type = _engine._type;
             _engine._outs = a[1].outs;
           }
+          _postRefresh.call(_jzz);
           for (j = 0; j < _engine.refreshClients.length; j++) _engine.refreshClients[j]._resume();
           _engine.refreshClients = [];
-          var diff = _diff(_engine._insW, _engine._outsW, _engine._ins, _engine._outs);
-          if (diff) {
-            _engine._insW = _engine._ins;
-            _engine._outsW = _engine._outs;
-            for (j = 0; j < diff.inputs.removed.length; j++) {
-              impl = _engine._inMap[diff.inputs.removed[j].name];
-              if (impl) impl._closeAll();
-            }
-            for (j = 0; j < diff.outputs.removed.length; j++) {
-              impl = _engine._outMap[diff.outputs.removed[j].name];
-              if (impl) impl._closeAll();
-            }
-            if (watcher) _fireW(diff);
-          }
         }
         else if (a[0] === 'version') {
           var plugin = _engine._pool[a[1]];
@@ -2374,6 +2353,13 @@
     this.type = 'midimessage';
   }
 
+  function _statechange(p, a) {
+    setTimeout(function() {
+      if (p.onstatechange) p.onstatechange(new MIDIConnectionEvent(p, p));
+      if (a.onstatechange) a.onstatechange(new MIDIConnectionEvent(p, a));
+    }, 0);
+  }
+
   function MIDIInput(a, p) {
     var self = this;
     var _open = false;
@@ -2414,8 +2400,7 @@
           p.open().then(function() {
             if (!_open) {
               _open = true;
-              if (self.onstatechange) self.onstatechange(new MIDIConnectionEvent(self, self));
-              if (a.onstatechange) a.onstatechange(new MIDIConnectionEvent(self, a));
+              _statechange(self, a);
             }
             resolve(self);
           }, function() {
@@ -2429,8 +2414,7 @@
         if (_open) {
           _open = false;
           p.close();
-          if (self.onstatechange) self.onstatechange(new MIDIConnectionEvent(self, self));
-          if (a.onstatechange) a.onstatechange(new MIDIConnectionEvent(self, a));
+          _statechange(self, a);
         }
         resolve(self);
       });
@@ -2585,8 +2569,7 @@
           p.open().then(function() {
             if (!_open) {
               _open = true;
-              if (self.onstatechange) self.onstatechange(new MIDIConnectionEvent(self, self));
-              if (a.onstatechange) a.onstatechange(new MIDIConnectionEvent(self, a));
+              _statechange(self, a);
             }
             resolve(self);
           }, function() {
@@ -2601,8 +2584,7 @@
           _open = false;
           self.clear();
           p.close();
-          if (self.onstatechange) self.onstatechange(new MIDIConnectionEvent(self, self));
-          if (a.onstatechange) a.onstatechange(new MIDIConnectionEvent(self, a));
+          _statechange(self, a);
         }
         resolve(self);
       });
@@ -2731,17 +2713,14 @@
   MIDIOutputMap.prototype = new _Maplike(_outputMap);
   MIDIOutputMap.prototype.constructor = MIDIOutputMap;
 
-  //function _notify(p) {
-  //  return function() { _onstatechange(new MIDIConnectionEvent(p, self)); };
-  //}
-
   function _wm_watch(x) {
-    var i, p, f;
+//console.log('STATE CHANGE:', JZZ().info());
+    var i, k, p, f;
     for (i = 0; i < x.inputs.added.length; i++) {
-      //p = new MIDIInput(x.inputs.added[i]);
-      //self.inputs.set(p.id, p);
-      //f = _notify(p);
-      //p.open().then(f, f);
+//console.log(x);
+      //if (!_inputMap.hasOwnProperty(p.id)) _inputMap[p.id] = new _InputProxy(p.id, p.name, p.manufacturer, p.version);
+      //for (k = 0; k < _wma.length; k++) {
+      //}
     }
     for (i = 0; i < x.outputs.added.length; i++) {
       //p = new MIDIOutput(x.outputs.added[i]);

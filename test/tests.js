@@ -409,6 +409,20 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
       });
     },
 
+    web_midi_input_connect: function() {
+      it.skip('MIDIInput connect', function(done) {
+        var name = 'Widget MIDI-In connect';
+        var src = DRIVER.MidiSrc(name);
+        function onSuccess(midi) {
+          midi.onstatechange = done;
+          //done();
+          setTimeout(function() { src.connect(); }, 10);
+        }
+        function onFail(err) { console.log('requestMIDIAccess failed!', err); }
+        JZZ.requestMIDIAccess().then(onSuccess, onFail);
+      });
+    },
+
     close_engine: function() {
       it('Close engine', function() {
         engine.refresh().close();
