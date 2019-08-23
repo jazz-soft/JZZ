@@ -161,11 +161,11 @@
   var _insW = [];
 
   function _postRefresh() {
-    this._orig._info.engine = _engine._type;
-    this._orig._info.version = _engine._version;
-    this._orig._info.sysex = _engine._sysex;
-    this._orig._info.inputs = [];
-    this._orig._info.outputs = [];
+    _jzz._info.engine = _engine._type;
+    _jzz._info.version = _engine._version;
+    _jzz._info.sysex = _engine._sysex;
+    _jzz._info.inputs = [];
+    _jzz._info.outputs = [];
     _outs = [];
     _ins = [];
     _engine._allOuts = {};
@@ -175,7 +175,7 @@
       x = _engine._outs[i];
       x.engine = _engine;
       _engine._allOuts[x.name] = x;
-      this._orig._info.outputs.push({
+      _jzz._info.outputs.push({
         id: x.name,
         name: x.name,
         manufacturer: x.manufacturer,
@@ -186,7 +186,7 @@
     }
     for (i = 0; i < _virtual._outs.length; i++) {
       x = _virtual._outs[i];
-      this._orig._info.outputs.push({
+      _jzz._info.outputs.push({
         id: x.name,
         name: x.name,
         manufacturer: x.manufacturer,
@@ -199,7 +199,7 @@
       x = _engine._ins[i];
       x.engine = _engine;
       _engine._allIns[x.name] = x;
-      this._orig._info.inputs.push({
+      _jzz._info.inputs.push({
         id: x.name,
         name: x.name,
         manufacturer: x.manufacturer,
@@ -210,7 +210,7 @@
     }
     for (i = 0; i < _virtual._ins.length; i++) {
       x = _virtual._ins[i];
-      this._orig._info.inputs.push({
+      _jzz._info.inputs.push({
         id: x.name,
         name: x.name,
         manufacturer: x.manufacturer,
@@ -220,7 +220,7 @@
       _ins.push(x);
     }
     if (_jzz._watcher && _jzz._watcher._handles.length) {
-      var diff = _diff(_insW, _outsW, this._orig._info.inputs, this._orig._info.outputs);
+      var diff = _diff(_insW, _outsW, _jzz._info.inputs, _jzz._info.outputs);
        if (diff) {
         for (j = 0; j < diff.inputs.removed.length; j++) {
           x = _engine._inMap[diff.inputs.removed[j].name];
@@ -233,8 +233,8 @@
         _fireW(diff);
       }
     }
-    _insW = this._orig._info.inputs;
-    _outsW = this._orig._info.outputs;
+    _insW = _jzz._info.inputs;
+    _outsW = _jzz._info.outputs;
   }
   function _refresh() {
     _engine._refresh(this);
@@ -683,7 +683,7 @@
     _engine._sysex = true;
     _engine._outs = [];
     _engine._ins = [];
-    _engine._refresh = function() { _postRefresh.call(_jzz); };
+    _engine._refresh = function() { _postRefresh(); };
     _engine._watch = function() {};
     _engine._unwatch = function() {};
     _engine._close = function() {};
@@ -712,7 +712,7 @@
       for (i = 0; (x = _engine._main.MidiInInfo(i)).length; i++) {
         _engine._ins.push({ type: _engine._type, name: x[0], manufacturer: x[1], version: x[2] });
       }
-      _postRefresh.call(_jzz);
+      _postRefresh();
     };
     _engine._openOut = function(port, name) {
       var impl = _engine._outMap[name];
@@ -869,7 +869,7 @@
       _engine._access.inputs.forEach(function(port) {
         _engine._ins.push({type: _engine._type, name: port.name, manufacturer: port.manufacturer, version: port.version});
       });
-      _postRefresh.call(_jzz);
+      _postRefresh();
     };
     _engine._openOut = function(port, name) {
       var impl = _engine._outMap[name];
@@ -1131,7 +1131,7 @@
             for (j = 0; j < a[1].outs.length; j++) a[1].outs[j].type = _engine._type;
             _engine._outs = a[1].outs;
           }
-          _postRefresh.call(_jzz);
+          _postRefresh();
           for (j = 0; j < _engine.refreshClients.length; j++) _engine.refreshClients[j]._resume();
           _engine.refreshClients = [];
         }
@@ -2124,7 +2124,7 @@
     x.engine = engine;
     _virtual._outs.push(x);
     if (_jzz) {
-      _postRefresh.call(_jzz);
+      _postRefresh();
       if (_jzz._bad) { _jzz._repair(); _jzz._resume(); }
     }
     return true;
@@ -2135,7 +2135,7 @@
     x.engine = engine;
     _virtual._ins.push(x);
     if (_jzz) {
-      _postRefresh.call(_jzz);
+      _postRefresh();
       if (_jzz._bad) { _jzz._repair(); _jzz._resume(); }
     }
     return true;
@@ -2714,31 +2714,40 @@
   MIDIOutputMap.prototype.constructor = MIDIOutputMap;
 
   function _wm_watch(x) {
-//console.log('STATE CHANGE:', JZZ().info());
-    var i, k, p, f;
+    var i, k, p, d, a;
     for (i = 0; i < x.inputs.added.length; i++) {
-//console.log(x);
-      //if (!_inputMap.hasOwnProperty(p.id)) _inputMap[p.id] = new _InputProxy(p.id, p.name, p.manufacturer, p.version);
-      //for (k = 0; k < _wma.length; k++) {
-      //}
+      p = x.inputs.added[i];
+      if (!_inputMap.hasOwnProperty(p.id)) _inputMap[p.id] = new _InputProxy(p.id, p.name, p.manufacturer, p.version);
+      for (k = 0; k < _wma.length; k++) {
+        d = _wma[k].inputs.get(p.id);
+        _statechange(d, _wma[k]);
+      }
     }
     for (i = 0; i < x.outputs.added.length; i++) {
-      //p = new MIDIOutput(x.outputs.added[i]);
-      //self.outputs.set(p.id, p);
-      //f = _notify(p);
-      //p.open().then(f, f);
+      p = x.outputs.added[i];
+      if (!_outputMap.hasOwnProperty(p.id)) _outputMap[p.id] = new _OutputProxy(p.id, p.name, p.manufacturer, p.version);
+      for (k = 0; k < _wma.length; k++) {
+        d = _wma[k].outputs.get(p.id);
+        _statechange(d, _wma[k]);
+      }
     }
     for (i = 0; i < x.inputs.removed.length; i++) {
-      //p = self.inputs.get(_inputUUID[x.inputs.removed[i].name]);
-      //p.close();
-      //self.inputs.delete(p.id);
-      //_onstatechange(new MIDIConnectionEvent(p, self));
+      p = x.inputs.removed[i];
+      if (_inputMap.hasOwnProperty(p.id)) {
+        a = [];
+        for (k = 0; k < _wma.length; k++) a.push([_wma[k].inputs.get(p.id), _wma[k]]);
+        _inputMap[p.id].connected = false;
+        for (k = 0; k < a.length; k++) _statechange(a[k][0], a[k][1]);
+      }
     }
     for (i = 0; i < x.outputs.removed.length; i++) {
-      //p = self.outputs.get(_outputUUID[x.outputs.removed[i].name]);
-      //p.close();
-      //self.outputs.delete(p.id);
-      //_onstatechange(new MIDIConnectionEvent(p, self));
+      p = x.outputs.removed[i];
+      if (_outputMap.hasOwnProperty(p.id)) {
+        a = [];
+        for (k = 0; k < _wma.length; k++) a.push([_wma[k].outputs.get(p.id), _wma[k]]);
+        _outputMap[p.id].connected = false;
+        for (k = 0; k < a.length; k++) _statechange(a[k][0], a[k][1]);
+      }
     }
   }
 
@@ -2758,7 +2767,7 @@
     Object.freeze(this);
     var i;
     var p;
-    var info = JZZ().info();
+    var info = _jzz._info;
     for (i = 0; i < info.inputs.length; i++) {
       p = info.inputs[i];
       if (!_inputMap.hasOwnProperty(p.id)) _inputMap[p.id] = new _InputProxy(p.id, p.name, p.manufacturer, p.version);

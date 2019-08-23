@@ -410,13 +410,87 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
     },
 
     web_midi_input_connect: function() {
-      it.skip('MIDIInput connect', function(done) {
+      it('MIDIInput connect', function(done) {
         var name = 'Widget MIDI-In connect';
         var src = DRIVER.MidiSrc(name);
         function onSuccess(midi) {
-          midi.onstatechange = done;
-          //done();
+          midi.onstatechange = function(e) {
+            assert.equal(e.port.state, 'connected');
+            assert.equal(e.port.connection, 'closed');
+            midi.onstatechange = null;
+            src.disconnect();
+            done();
+          };
           setTimeout(function() { src.connect(); }, 10);
+        }
+        function onFail(err) { console.log('requestMIDIAccess failed!', err); }
+        JZZ.requestMIDIAccess().then(onSuccess, onFail);
+      });
+    },
+
+    web_midi_input_disconnect: function() {
+      it('MIDIInput disconnect', function(done) {
+        var name = 'Widget MIDI-In disconnect';
+        var src = DRIVER.MidiSrc(name);
+        src.connect();
+        engine.refresh();
+        function onSuccess(midi) {
+          midi.inputs.forEach(function(p) {
+            if (p.name == name) {
+              assert.equal(p.state, 'connected');
+              p.onstatechange = function(e) {
+                assert.equal(e.port.state, 'disconnected');
+                assert.equal(e.port.connection, 'closed');
+                e.port.onstatechange = null;
+                done();
+              };
+            }
+          });
+          setTimeout(function() { src.disconnect(); }, 10);
+        }
+        function onFail(err) { console.log('requestMIDIAccess failed!', err); }
+        JZZ.requestMIDIAccess().then(onSuccess, onFail);
+      });
+    },
+
+    web_midi_output_connect: function() {
+      it('MIDIOutput connect', function(done) {
+        var name = 'Widget MIDI-Out connect';
+        var dst = DRIVER.MidiDst(name);
+        function onSuccess(midi) {
+          midi.onstatechange = function(e) {
+            assert.equal(e.port.state, 'connected');
+            assert.equal(e.port.connection, 'closed');
+            midi.onstatechange = null;
+            dst.disconnect();
+            done();
+          };
+          setTimeout(function() { dst.connect(); }, 10);
+        }
+        function onFail(err) { console.log('requestMIDIAccess failed!', err); }
+        JZZ.requestMIDIAccess().then(onSuccess, onFail);
+      });
+    },
+
+    web_midi_output_disconnect: function() {
+      it('MIDIOutput disconnect', function(done) {
+        var name = 'Widget MIDI-Out disconnect';
+        var dst = DRIVER.MidiDst(name);
+        dst.connect();
+        engine.refresh();
+        function onSuccess(midi) {
+          midi.outputs.forEach(function(p) {
+            if (p.name == name) {
+              assert.equal(p.state, 'connected');
+              p.onstatechange = function(e) {
+                assert.equal(e.port.state, 'disconnected');
+                assert.equal(e.port.connection, 'closed');
+                e.port.onstatechange = null;
+                done();
+              };
+            }
+          });
+          setTimeout(function() { dst.disconnect(); }, 10);
         }
         function onFail(err) { console.log('requestMIDIAccess failed!', err); }
         JZZ.requestMIDIAccess().then(onSuccess, onFail);

@@ -142,5 +142,8 @@ describe('Engine: extension', function() {
   test.web_midi_output_no_sysex();
   test.web_midi_output_sysex();
   test.web_midi_input_connect();
+  test.web_midi_input_disconnect();
+  test.web_midi_output_connect();
+  test.web_midi_output_disconnect();
   test.close_engine();
 });
