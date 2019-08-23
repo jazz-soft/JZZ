@@ -13,7 +13,7 @@
 })(this, function() {
 
   var _scope = typeof window === 'undefined' ? global : window;
-  var _version = '0.8.8';
+  var _version = '0.8.9';
   var i, j, k, m, n;
 
   var _time = Date.now || function () { return new Date().getTime(); };
@@ -2493,6 +2493,13 @@
       this.proxy = undefined;
     }
   };
+  _InputProxy.prototype.disconnect = function() {
+    this.connected = false;
+    if (this.proxy) {
+      this.proxy.close();
+      this.proxy = undefined;
+    }
+  };
 
   function _datalen(x) {
     if (x >= 0x80 && x <= 0xbf || x >= 0xe0 && x <= 0xef || x == 0xf2) return 2;
@@ -2643,6 +2650,13 @@
       this.proxy = undefined;
     }
   };
+  _OutputProxy.prototype.disconnect = function() {
+    this.connected = false;
+    if (this.proxy) {
+      this.proxy.close();
+      this.proxy = undefined;
+    }
+  };
 
   function _Maplike(data) {
     this.has = function(id) {
@@ -2736,7 +2750,7 @@
       if (_inputMap.hasOwnProperty(p.id)) {
         a = [];
         for (k = 0; k < _wma.length; k++) a.push([_wma[k].inputs.get(p.id), _wma[k]]);
-        _inputMap[p.id].connected = false;
+        _inputMap[p.id].disconnect();
         for (k = 0; k < a.length; k++) _statechange(a[k][0], a[k][1]);
       }
     }
@@ -2745,7 +2759,7 @@
       if (_outputMap.hasOwnProperty(p.id)) {
         a = [];
         for (k = 0; k < _wma.length; k++) a.push([_wma[k].outputs.get(p.id), _wma[k]]);
-        _outputMap[p.id].connected = false;
+        _outputMap[p.id].disconnect();
         for (k = 0; k < a.length; k++) _statechange(a[k][0], a[k][1]);
       }
     }
