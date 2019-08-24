@@ -8,15 +8,16 @@ module.exports = {
   "parserOptions": {
     "ecmaVersion": 5
   },
+  "rules": {
+    "no-console" : "off",
+    "no-empty" : ["warn", { "allowEmptyCatch": true }]
+  },
   "overrides": [
     {
       "files": ["test/*"],
       "globals": {
         "describe": "readonly",
         "it": "readonly"
-      },
-      "rules": {
-        "no-console" : "off"
       }
     },
     {
@@ -25,8 +26,6 @@ module.exports = {
         "define": "readonly"
       },
       "rules": {
-        "no-console" : "off",
-        "no-empty" : ["warn", { "allowEmptyCatch": true }],
         "no-prototype-builtins" : "off"
       }
     }

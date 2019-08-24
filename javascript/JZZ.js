@@ -2458,7 +2458,7 @@
     var self = this;
     return new Promise(function(resolve, reject) {
       var i;
-      if (self.proxy) resolve();
+      if (self.proxy || !self.connected) resolve();
       else {
         self.pending.push([resolve, reject]);
         if (self.pending.length == 1) {
@@ -2499,6 +2499,13 @@
       this.proxy.close();
       this.proxy = undefined;
     }
+  };
+  _InputProxy.prototype.reconnect = function() {
+    this.connected = true;
+    //if (this.proxy) {
+    //  this.proxy.close();
+    //  this.proxy = undefined;
+    //}
   };
 
   function _datalen(x) {
@@ -2626,7 +2633,7 @@
     var self = this;
     return new Promise(function(resolve, reject) {
       var i;
-      if (self.proxy) resolve();
+      if (self.proxy || !self.connected) resolve();
       else {
         self.pending.push([resolve, reject]);
         if (self.pending.length == 1) {
@@ -2656,6 +2663,23 @@
       this.proxy.close();
       this.proxy = undefined;
     }
+  };
+  _OutputProxy.prototype.reconnect = function() {
+    var self = this;
+    var i, p;
+    this.connected = true;
+    for (i = 0; i < this.ports.length; i++) if (this.ports[i].connection != 'closed') break;
+    //if (i < this.ports.length) {
+    //  JZZ().openMidiOut(self.name).or(function() {
+    //    for (i = 0; i < self.ports.length; i++) self.ports[i].close();
+    //  }).and(function() {
+    //    self.proxy = this;
+    //    for (i = 0; i < _wma.length; i++) {
+    //      //p = _wma[i].outputs.get(self.id);
+    //      //if (p.connection != 'closed') _statechange(p, _wma[i]);
+    //    }
+    //  });
+    //}
   };
 
   function _Maplike(data) {
@@ -2728,22 +2752,18 @@
   MIDIOutputMap.prototype.constructor = MIDIOutputMap;
 
   function _wm_watch(x) {
-    var i, k, p, d, a;
+    var i, k, p, a;
     for (i = 0; i < x.inputs.added.length; i++) {
       p = x.inputs.added[i];
       if (!_inputMap.hasOwnProperty(p.id)) _inputMap[p.id] = new _InputProxy(p.id, p.name, p.manufacturer, p.version);
-      for (k = 0; k < _wma.length; k++) {
-        d = _wma[k].inputs.get(p.id);
-        _statechange(d, _wma[k]);
-      }
+      for (k = 0; k < _wma.length; k++) _statechange(_wma[k].inputs.get(p.id), _wma[k]);
+      _inputMap[p.id].reconnect();
     }
     for (i = 0; i < x.outputs.added.length; i++) {
       p = x.outputs.added[i];
       if (!_outputMap.hasOwnProperty(p.id)) _outputMap[p.id] = new _OutputProxy(p.id, p.name, p.manufacturer, p.version);
-      for (k = 0; k < _wma.length; k++) {
-        d = _wma[k].outputs.get(p.id);
-        _statechange(d, _wma[k]);
-      }
+      for (k = 0; k < _wma.length; k++) _statechange(_wma[k].outputs.get(p.id), _wma[k]);
+      _outputMap[p.id].reconnect();
     }
     for (i = 0; i < x.inputs.removed.length; i++) {
       p = x.inputs.removed[i];

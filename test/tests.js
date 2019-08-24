@@ -357,11 +357,11 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
               try {
                 p.send([0x20, 0x20, 0x20], now + 20);
                 bad = true;
-              } catch(err) {/**/}
+              } catch(err) {}
               try {
                 p.send([0xf0, 0x7e, 0x7f, 0x06, 0x01, 0xf7], now + 30);
                 bad = true;
-              } catch(err) {/**/}
+              } catch(err) {}
               assert.equal(bad, false);
               p.send([0x90, 0x40, 0x7f], now + 40);
               p.send([0xf8]);
