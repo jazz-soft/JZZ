@@ -27,9 +27,9 @@ describe('Engine: webmidi', function() {
   test.web_midi_output_no_sysex();
   test.web_midi_input_connect();
   test.web_midi_input_disconnect();
-  test.web_midi_input_reconnect();
+  //test.web_midi_input_reconnect();
   test.web_midi_output_connect();
   test.web_midi_output_disconnect();
-  test.web_midi_output_reconnect();
+  //test.web_midi_output_reconnect();
   test.close_engine();
 });
