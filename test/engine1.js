@@ -1,5 +1,7 @@
 ﻿//// testing the 'node'/'plugin' engine
 
+global.navigator = {};
+
 var JZZ = require('..');
 var MT;
 if (process.platform == 'darwin' || process.platform == 'linux') {
@@ -10,8 +12,6 @@ if (process.platform == 'darwin' || process.platform == 'linux') {
     console.log('midi-test module is disabled in this configuration');
   }
 }
-
-global.navigator = {};
 
 var test = require('./tests.js')(JZZ, undefined, MT);
 
