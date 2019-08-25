@@ -294,6 +294,11 @@
     this._push(_openMidiOut, [port, arg]);
     return port;
   };
+  _J.prototype._openMidiOutNR = function(arg) {
+    var port = new _M();
+    this._push(_openMidiOut, [port, arg]);
+    return port;
+  };
 
   function _openMidiIn(port, arg) {
     var arr = _filterList(arg, _ins);
@@ -306,6 +311,11 @@
   _J.prototype.openMidiIn = function(arg) {
     var port = new _M();
     this._push(_refresh, []);
+    this._push(_openMidiIn, [port, arg]);
+    return port;
+  };
+  _J.prototype._openMidiInNR = function(arg) {
+    var port = new _M();
     this._push(_openMidiIn, [port, arg]);
     return port;
   };
@@ -2354,10 +2364,8 @@
   }
 
   function _statechange(p, a) {
-    setTimeout(function() {
-      if (p.onstatechange) p.onstatechange(new MIDIConnectionEvent(p, p));
-      if (a.onstatechange) a.onstatechange(new MIDIConnectionEvent(p, a));
-    }, 0);
+    if (p.onstatechange) p.onstatechange(new MIDIConnectionEvent(p, p));
+    if (a.onstatechange) a.onstatechange(new MIDIConnectionEvent(p, a));
   }
 
   function MIDIInput(a, p) {
@@ -2372,7 +2380,7 @@
     this.version = p.ver;
     Object.defineProperty(this, 'state', { get: function() { return p.connected ? 'connected' : 'disconnected'; }, enumerable: true });
     Object.defineProperty(this, 'connection', { get: function() {
-      return _open ? p.connected ? 'open' : 'pending' : 'closed';
+      return _open ? p.proxy ? 'open' : 'pending' : 'closed';
     }, enumerable: true });
     Object.defineProperty(this, 'onmidimessage', {
       get: function() { return _onmsg; },
@@ -2444,6 +2452,7 @@
   }
 
   function _InputProxy(id, name, man, ver) {
+    var self = this;
     this.id = id;
     this.name = name;
     this.man = man;
@@ -2453,6 +2462,17 @@
     this.pending = [];
     this.proxy = undefined;
     this.queue = [];
+    this.onmidi = function(msg) {
+      var m;
+      self.queue = self.queue.concat(msg.slice());
+      for (m = _split(self.queue); m; m = _split(self.queue)) {
+        for (i = 0; i < self.ports.length; i++) {
+          if (self.ports[i][0].onmidimessage && (m[0] != 0xf0 || self.ports[i][1])) {
+            self.ports[i][0].onmidimessage(new MIDIMessageEvent(self, new Uint8Array(m)));
+          }
+        }
+      }
+    };
   }
   _InputProxy.prototype.open = function() {
     var self = this;
@@ -2467,17 +2487,7 @@
             self.pending = [];
           }).and(function() {
             self.proxy = this;
-            self.proxy.connect(function(msg) {
-              var m;
-              self.queue = self.queue.concat(msg.slice());
-              for (m = _split(self.queue); m; m = _split(self.queue)) {
-                for (i = 0; i < self.ports.length; i++) {
-                  if (self.ports[i][0].onmidimessage && (m[0] != 0xf0 || self.ports[i][1])) {
-                    self.ports[i][0].onmidimessage(new MIDIMessageEvent(self, new Uint8Array(m)));
-                  }
-                }
-              }
-            });
+            self.proxy.connect(self.onmidi);
             for (i = 0; i < self.pending; i++) self.pending[i][0]();
             self.pending = [];
           });
@@ -2501,11 +2511,24 @@
     }
   };
   _InputProxy.prototype.reconnect = function() {
+    var self = this;
+    var i, p;
+    var a = [];
     this.connected = true;
-    //if (this.proxy) {
-    //  this.proxy.close();
-    //  this.proxy = undefined;
-    //}
+    for (i = 0; i < _wma.length; i++) {
+      p = _wma[i].inputs.get(this.id);
+      if (p.connection == 'closed') _statechange(p, _wma[i]);
+      else a.push([p, _wma[i]]);
+    }
+    if (a.length) {
+      JZZ()._openMidiInNR(self.name).or(function() {
+        for (i = 0; i < a.length; i++) a[i][0].close();
+      }).and(function() {
+        self.proxy = this;
+        self.proxy.connect(self.onmidi);
+        for (i = 0; i < a.length; i++) _statechange(a[i][0], a[i][1]);
+      });
+    }
   };
 
   function _datalen(x) {
@@ -2566,7 +2589,7 @@
     this.version = p.ver;
     Object.defineProperty(this, 'state', { get: function() { return p.connected ? 'connected' : 'disconnected'; }, enumerable: true });
     Object.defineProperty(this, 'connection', { get: function() {
-      return _open ? p.connected ? 'open' : 'pending' : 'closed';
+      return _open ? p.proxy ? 'open' : 'pending' : 'closed';
     }, enumerable: true });
     Object.defineProperty(this, 'onstatechange', {
       get: function() { return _ochng; },
@@ -2667,19 +2690,21 @@
   _OutputProxy.prototype.reconnect = function() {
     var self = this;
     var i, p;
+    var a = [];
     this.connected = true;
-    for (i = 0; i < this.ports.length; i++) if (this.ports[i].connection != 'closed') break;
-    //if (i < this.ports.length) {
-    //  JZZ().openMidiOut(self.name).or(function() {
-    //    for (i = 0; i < self.ports.length; i++) self.ports[i].close();
-    //  }).and(function() {
-    //    self.proxy = this;
-    //    for (i = 0; i < _wma.length; i++) {
-    //      //p = _wma[i].outputs.get(self.id);
-    //      //if (p.connection != 'closed') _statechange(p, _wma[i]);
-    //    }
-    //  });
-    //}
+    for (i = 0; i < _wma.length; i++) {
+      p = _wma[i].outputs.get(this.id);
+      if (p.connection == 'closed') _statechange(p, _wma[i]);
+      else a.push([p, _wma[i]]);
+    }
+    if (a.length) {
+      JZZ()._openMidiOutNR(self.name).or(function() {
+        for (i = 0; i < a.length; i++) a[i][0].close();
+      }).and(function() {
+        self.proxy = this;
+        for (i = 0; i < a.length; i++) _statechange(a[i][0], a[i][1]);
+      });
+    }
   };
 
   function _Maplike(data) {
@@ -2756,13 +2781,11 @@
     for (i = 0; i < x.inputs.added.length; i++) {
       p = x.inputs.added[i];
       if (!_inputMap.hasOwnProperty(p.id)) _inputMap[p.id] = new _InputProxy(p.id, p.name, p.manufacturer, p.version);
-      for (k = 0; k < _wma.length; k++) _statechange(_wma[k].inputs.get(p.id), _wma[k]);
       _inputMap[p.id].reconnect();
     }
     for (i = 0; i < x.outputs.added.length; i++) {
       p = x.outputs.added[i];
       if (!_outputMap.hasOwnProperty(p.id)) _outputMap[p.id] = new _OutputProxy(p.id, p.name, p.manufacturer, p.version);
-      for (k = 0; k < _wma.length; k++) _statechange(_wma[k].outputs.get(p.id), _wma[k]);
       _outputMap[p.id].reconnect();
     }
     for (i = 0; i < x.inputs.removed.length; i++) {
