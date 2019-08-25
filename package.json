@@ -28,7 +28,7 @@
     "midi-test": "^1.0.6",
     "mocha": "^6.2.0",
     "nyc": "^14.1.1",
-    "web-midi-test": "^1.0.2"
+    "web-midi-test": "^1.0.3"
   },
   "repository": {
     "type": "git",
