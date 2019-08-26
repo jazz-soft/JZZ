@@ -631,13 +631,13 @@
     this._pause();
     document.addEventListener('jazz-midi-msg', eventHandle);
     try { document.dispatchEvent(new Event('jazz-midi')); } catch (err) {}
-    setTimeout(function() { if (!inst) self._crash(); }, 0);
+    _schedule(function() { if (!inst) self._crash(); });
   }
 
   function _zeroBreak() {
     this._pause();
     var self = this;
-    setTimeout(function() { self._crash(); }, 0);
+    _schedule(function() { self._crash(); });
   }
 
   function _filterEngines(opt) {
@@ -979,12 +979,12 @@
     _engine._watch = function() {
       _engine._access.onstatechange = function() {
         watcher = true;
-        setTimeout(function() {
+        _schedule(function() {
           if (watcher) {
             _engine._refresh();
             watcher = false;
           }
-        }, 0);
+        });
       };
     };
     _engine._unwatch = function() {
@@ -1016,9 +1016,9 @@
     _engine._refresh = function(client) {
       _engine.refreshClients.push(client);
       client._pause();
-      setTimeout(function() {
+      _schedule(function() {
         document.dispatchEvent(new CustomEvent('jazz-midi', { detail: ['refresh'] }));
-      }, 0);
+      });
     };
     function _closeAll() {
       for (var i = 0; i < this.clients.length; i++) this._close(this.clients[i]);
