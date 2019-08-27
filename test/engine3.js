@@ -17,6 +17,8 @@ describe('Engine: webmidi', function() {
   test.connect_watcher();
   test.virtual_midi_in();
   test.virtual_midi_out();
+  test.virtual_midi_in_busy();
+  test.virtual_midi_out_busy();
   test.add_midi_in();
   test.add_midi_out();
   test.remove_midi_in();

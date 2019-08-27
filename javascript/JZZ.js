@@ -907,12 +907,19 @@
       if (found) {
         impl.dev = found;
         _engine._outMap[name] = impl;
-        if (impl.dev.open) impl.dev.open();
         port._orig._impl = impl;
         _push(impl.clients, port._orig);
         port._info = impl.info;
         port._receive = function(arg) { impl._receive(arg); };
         port._close = function() { impl._close(this); };
+        if (impl.dev.open) {
+          port._pause();
+          impl.dev.open().then(function() {
+            port._resume();
+          }, function() {
+            port._crash();
+          });
+        }
       }
       else port._break();
     };
@@ -949,11 +956,18 @@
         var makeHandle = function(x) { return function(evt) { x.handle(evt); }; };
         impl.dev.onmidimessage = makeHandle(impl);
         _engine._inMap[name] = impl;
-        if (impl.dev.open) impl.dev.open();
         port._orig._impl = impl;
         _push(impl.clients, port._orig);
         port._info = impl.info;
         port._close = function() { impl._close(this); };
+        if (impl.dev.open) {
+          port._pause();
+          impl.dev.open().then(function() {
+            port._resume();
+          }, function() {
+            port._crash();
+          });
+        }
       }
       else port._break();
     };

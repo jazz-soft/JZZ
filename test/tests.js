@@ -162,6 +162,26 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
       });
     },
 
+    virtual_midi_in_busy: function(done) {
+      it('Virtual MIDI-In busy', function(done) {
+        var name = 'Virtual MIDI-In busy';
+        var src = DRIVER.MidiSrc(name);
+        src.connect();
+        src.busy = true;
+        engine.openMidiIn(name).or(function() { src.connect(); done(); });
+      });
+    },
+
+    virtual_midi_out_busy: function(done) {
+      it('Virtual MIDI-Out busy', function(done) {
+        var name = 'Virtual MIDI-In busy';
+        var dst = DRIVER.MidiDst(name);
+        dst.connect();
+        dst.busy = true;
+        engine.openMidiOut(name).or(function() { dst.connect(); done(); });
+      });
+    },
+
     add_midi_in: function() {
       it('Add MIDI-In', function(done) {
         var name = 'Virtual MIDI-In to add';
@@ -495,7 +515,6 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
             if (p.name == name) {
               port = p;
               port.onstatechange = function(e) {
-                //console.log('PORT:', e.port.state, e.port.connection);
                 assert.equal(e.port.state, steps[step][0]);
                 assert.equal(e.port.connection, steps[step][1]);
                 step++;
@@ -608,7 +627,6 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
             if (p.name == name) {
               port = p;
               port.onstatechange = function(e) {
-                //console.log('PORT:', e.port.state, e.port.connection);
                 assert.equal(e.port.state, steps[step][0]);
                 assert.equal(e.port.connection, steps[step][1]);
                 step++;
