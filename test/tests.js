@@ -162,7 +162,7 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
       });
     },
 
-    virtual_midi_in_busy: function(done) {
+    virtual_midi_in_busy: function() {
       it('Virtual MIDI-In busy', function(done) {
         var name = 'Virtual MIDI-In busy';
         var src = DRIVER.MidiSrc(name);
@@ -172,7 +172,7 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
       });
     },
 
-    virtual_midi_out_busy: function(done) {
+    virtual_midi_out_busy: function() {
       it('Virtual MIDI-Out busy', function(done) {
         var name = 'Virtual MIDI-In busy';
         var dst = DRIVER.MidiDst(name);
@@ -429,9 +429,36 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
       });
     },
 
+    web_midi_input_busy: function() {
+      it('MIDIInput busy', function(done) {
+        var name = 'MIDIInput busy';
+        var src = DRIVER.MidiSrc(name);
+        src.connect();
+        src.busy = true;
+        engine.refresh();
+        function onSuccess(midi) {
+          midi.inputs.forEach(function(p) {
+            if (p.name == name) {
+              assert.equal(p.state, 'connected');
+              assert.equal(p.connection, 'closed');
+              p.open().then(function() {
+                console.log('MIDI port should not open!');
+              }, function() {
+                assert.equal(p.connection, 'closed');
+                src.disconnect();
+                done();
+              });
+            }
+          });
+        }
+        function onFail(err) { console.log('requestMIDIAccess failed!', err); }
+        JZZ.requestMIDIAccess().then(onSuccess, onFail);
+      });
+    },
+
     web_midi_input_connect: function() {
       it('MIDIInput connect', function(done) {
-        var name = 'Widget MIDI-In connect';
+        var name = 'MIDIInput connect';
         var src = DRIVER.MidiSrc(name);
         function onSuccess(midi) {
           midi.onstatechange = function(e) {
@@ -450,7 +477,7 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
 
     web_midi_input_disconnect: function() {
       it('MIDIInput disconnect', function(done) {
-        var name = 'Widget MIDI-In disconnect';
+        var name = 'MIDIInput disconnect';
         var src = DRIVER.MidiSrc(name);
         src.connect();
         engine.refresh();
@@ -476,7 +503,7 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
     web_midi_input_reconnect: function() {
       it('MIDIInput reconnect', function(done) {
         var port;
-        var name = 'Widget MIDI-In reconnect';
+        var name = 'MIDIInput reconnect';
         var src = DRIVER.MidiSrc(name);
         src.connect();
         engine.refresh();
@@ -533,9 +560,36 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
       });
     },
 
+    web_midi_output_busy: function() {
+      it('MIDIOutput busy', function(done) {
+        var name = 'MIDIOutput busy';
+        var dst = DRIVER.MidiDst(name);
+        dst.connect();
+        dst.busy = true;
+        engine.refresh();
+        function onSuccess(midi) {
+          midi.outputs.forEach(function(p) {
+            if (p.name == name) {
+              assert.equal(p.state, 'connected');
+              assert.equal(p.connection, 'closed');
+              p.open().then(function() {
+                console.log('MIDI port should not open!');
+              }, function() {
+                assert.equal(p.connection, 'closed');
+                dst.disconnect();
+                done();
+              });
+            }
+          });
+        }
+        function onFail(err) { console.log('requestMIDIAccess failed!', err); }
+        JZZ.requestMIDIAccess().then(onSuccess, onFail);
+      });
+    },
+
     web_midi_output_connect: function() {
       it('MIDIOutput connect', function(done) {
-        var name = 'Widget MIDI-Out connect';
+        var name = 'MIDIOutput connect';
         var dst = DRIVER.MidiDst(name);
         function onSuccess(midi) {
           midi.onstatechange = function(e) {
@@ -554,7 +608,7 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
 
     web_midi_output_disconnect: function() {
       it('MIDIOutput disconnect', function(done) {
-        var name = 'Widget MIDI-Out disconnect';
+        var name = 'MIDIOutput disconnect';
         var dst = DRIVER.MidiDst(name);
         dst.connect();
         engine.refresh();
@@ -581,7 +635,7 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
       it('MIDIOutput reconnect', function(done) {
         var port;
         var bad = false;
-        var name = 'Widget MIDI-Out reconnect';
+        var name = 'MIDIOutput reconnect';
         var dst = DRIVER.MidiDst(name);
         dst.connect();
         engine.refresh();
