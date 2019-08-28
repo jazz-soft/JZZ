@@ -35,12 +35,22 @@ var DOM = {
         this.exchange.innerText += JSON.stringify(v) + '\n';
       }
       else if (func == 'openin') {
-        this.inMap[evt.data.detail[2]].pos = evt.data.detail[1];
-        this.inArr[evt.data.detail[1]] = this.inMap[evt.data.detail[2]];
+        if (!this.inMap[evt.data.detail[2]].busy) {
+          this.inMap[evt.data.detail[2]].pos = evt.data.detail[1];
+          this.inArr[evt.data.detail[1]] = this.inMap[evt.data.detail[2]];
+        }
+        else {
+          evt.data.detail[2] = this.inArr[evt.data.detail[1]] ? this.inArr[evt.data.detail[1]].name : '';
+        }
         this.exchange.innerText += JSON.stringify(evt.data.detail) + '\n';
       }
       else if (func == 'openout') {
-        this.outArr[evt.data.detail[1]] = this.outMap[evt.data.detail[2]];
+        if (!this.outMap[evt.data.detail[2]].busy) {
+          this.outArr[evt.data.detail[1]] = this.outMap[evt.data.detail[2]];
+        }
+        else {
+          evt.data.detail[2] = this.outArr[evt.data.detail[1]] ? this.outArr[evt.data.detail[1]].name : '';
+        }
         this.exchange.innerText += JSON.stringify(evt.data.detail) + '\n';
       }
       else if (func == 'closein') {
@@ -130,6 +140,8 @@ describe('Engine: extension', function() {
   test.connect_watcher();
   test.virtual_midi_in();
   test.virtual_midi_out();
+  test.virtual_midi_in_busy();
+  test.virtual_midi_out_busy();
   test.add_midi_in();
   test.add_midi_out();
   test.remove_midi_in();
@@ -141,9 +153,11 @@ describe('Engine: extension', function() {
   test.web_midi_input_sysex();
   test.web_midi_output_no_sysex();
   test.web_midi_output_sysex();
+  test.web_midi_input_busy();
   test.web_midi_input_connect();
   test.web_midi_input_disconnect();
   test.web_midi_input_reconnect();
+  test.web_midi_output_busy();
   test.web_midi_output_connect();
   test.web_midi_output_disconnect();
   test.web_midi_output_reconnect();
