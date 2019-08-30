@@ -13,7 +13,7 @@
 })(this, function() {
 
   var _scope = typeof window === 'undefined' ? global : window;
-  var _version = '0.8.9';
+  var _version = '0.9.0';
   var i, j, k, m, n;
 
   var _time = Date.now || function () { return new Date().getTime(); };
@@ -983,7 +983,10 @@
       var impl = port._impl;
       _pop(impl.clients, port._orig);
       if (!impl.clients.length) {
-        if (impl.dev && impl.dev.close) impl.dev.close();
+        if (impl.dev) {
+          impl.dev.onmidimessage = null;
+          if (impl.dev.close) impl.dev.close();
+        }
         impl.dev = undefined;
       }
     };
