@@ -168,7 +168,7 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
         var src = DRIVER.MidiSrc(name);
         src.connect();
         src.busy = true;
-        engine.openMidiIn(name).or(function() { src.connect(); done(); });
+        engine.openMidiIn(name).or(function() { src.disconnect(); done(); });
       });
     },
 
@@ -178,7 +178,66 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
         var dst = DRIVER.MidiDst(name);
         dst.connect();
         dst.busy = true;
-        engine.openMidiOut(name).or(function() { dst.connect(); done(); });
+        engine.openMidiOut(name).or(function() { dst.disconnect(); done(); });
+      });
+    },
+
+    clone_midi_in: function() {
+      it('Clone MIDI-In', function(done) {
+        var port1, port2;
+        var name = 'Virtual MIDI-In clone';
+        var src = DRIVER.MidiSrc(name);
+        src.connect();
+        port1 = engine.openMidiIn(name);
+        port2 = engine.openMidiIn(name);
+        assert.notEqual(port1, port2);
+        var count = 3;
+        function onmidi(msg) {
+          count--;
+          if (!count) {
+            port2.close();
+            src.disconnect();
+            done();
+          }
+        }
+        port1.connect(onmidi);
+        port2.connect(onmidi);
+        setTimeout(function() {
+          src.emit([0x90, 0x40, 0x7f]);
+          setTimeout(function() {
+            port1.close();
+            src.emit([0x80, 0x40, 0x7f]);
+          }, 10);
+        }, 10);
+      });
+    },
+
+    clone_midi_out: function() {
+      it('Clone MIDI-Out', function(done) {
+        var port1, port2;
+        var name = 'Virtual MIDI-Out clone';
+        var dst = DRIVER.MidiDst(name);
+        dst.connect();
+        port1 = engine.openMidiOut(name);
+        port2 = engine.openMidiOut(name);
+        assert.notEqual(port1, port2);
+        var count = 3;
+        dst.receive = function(msg) {
+          count--;
+          if (!count) {
+            port2.close();
+            dst.disconnect();
+            done();
+          }
+        }
+        setTimeout(function() {
+          port1.send([0x90, 0x40, 0x7f]);
+          port2.send([0x90, 0x50, 0x7f]);
+          setTimeout(function() {
+            port1.close();
+            port2.send([0x80, 0x50, 0x7f]);
+          }, 10);
+        }, 10);
       });
     },
 
