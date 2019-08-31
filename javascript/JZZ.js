@@ -1072,8 +1072,8 @@
       port._receive = function(arg) { impl._receive(arg); };
       port._close = function() { impl._close(this); };
       if (!impl.open) {
-        if (impl.plugin.ready) impl._start();
         port._pause();
+        if (impl.plugin.ready) impl._start();
       }
     };
     _engine._openIn = function(port, name) {
@@ -1106,8 +1106,8 @@
       port._info = impl.info;
       port._close = function() { impl._close(this); };
       if (!impl.open) {
-        if (impl.plugin.ready) impl._start();
         port._pause();
+        if (impl.plugin.ready) impl._start();
       }
     };
     _engine._closeOut = function(port) {

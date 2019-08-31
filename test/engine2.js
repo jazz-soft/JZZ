@@ -143,6 +143,7 @@ describe('Engine: extension', function() {
   test.virtual_midi_in_busy();
   test.virtual_midi_out_busy();
   test.clone_midi_in();
+  test.clone_midi_out();
   test.add_midi_in();
   test.add_midi_out();
   test.remove_midi_in();
