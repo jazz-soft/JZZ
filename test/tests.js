@@ -342,13 +342,15 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
           }
         };
         function onSuccess(midi) {
-          assert.equal(midi.inputs.size > 0, true);
-          midi.inputs.keys();
-          midi.inputs.values();
-          midi.inputs.entries();
-          midi.inputs.forEach(function(p) {
+          var inputs = midi.inputs;
+          var dummy = inputs.size;
+          assert.equal(dummy > 0, true);
+          dummy = inputs.keys();
+          dummy = inputs.values();
+          dummy = inputs.entries();
+          inputs.forEach(function(p) {
             if (p.name == name) {
-              var sample = new Sample(function() { p.close(); p.close().then(function() { done(); }); }, [[0x90, 0x40, 0x7f]]);
+              var sample = new Sample(function() { p.open(); p.close(); p.close().then(function() { done(); }); }, [[0x90, 0x40, 0x7f]]);
               assert.equal(p.type, 'input');
               assert.equal(p.state, 'connected');
               assert.equal(p.connection, 'closed');
@@ -409,7 +411,7 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
       it('MIDIOutput no sysex', function(done) {
         var name = 'Widget MIDI-Out no sysex';
         var myport;
-        var sample = new Sample(function() { myport.close(); myport.close().then(function() { done(); }); }, [
+        var sample = new Sample(function() { myport.open(); myport.close(); myport.close().then(function() { done(); }); }, [
           [0xf8],
           [0xc0, 0x10],
           [0x90, 0x40, 0x7f]
@@ -433,6 +435,18 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
               myport = p;
               var now = JZZ.lib.now();
               var bad = false;
+              try {
+                p.send([300]);
+                bad = true;
+              } catch(err) {}
+              try {
+                p.send([0xf7]);
+                bad = true;
+              } catch(err) {}
+              try {
+                p.send([0x90, 0x90, 0x00]);
+                bad = true;
+              } catch(err) {}
               try {
                 p.send([0x20, 0x20, 0x20], now + 20);
                 bad = true;
@@ -547,6 +561,7 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
               p.onstatechange = function(e) {
                 assert.equal(e.port.state, 'disconnected');
                 assert.equal(e.port.connection, 'closed');
+                e.port.onmidimessage = null;
                 e.port.onstatechange = null;
                 done();
               };
@@ -562,6 +577,7 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
     web_midi_input_reconnect: function() {
       it('MIDIInput reconnect', function(done) {
         var port;
+        var access;
         var name = 'MIDIInput reconnect';
         var src = DRIVER.MidiSrc(name);
         src.connect();
@@ -583,6 +599,15 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
         function call2() {
           assert.equal(port.state, 'disconnected');
           assert.equal(port.connection, 'pending');
+          var inputs = access.inputs;
+          var dummy = inputs.size;
+          dummy = inputs.keys();
+          dummy = inputs.values();
+          dummy = inputs.entries();
+          assert.equal(inputs.get(port.id), undefined);
+          inputs.forEach(function(p) {
+            assert.notEqual(p.name, name);
+          });
           src.connect();
           engine.refresh();
           setTimeout(call3, 10);
@@ -597,6 +622,7 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
         var step = 0;
 
         function onSuccess(midi) {
+          access = midi;
           midi.inputs.forEach(function(p) {
             if (p.name == name) {
               port = p;

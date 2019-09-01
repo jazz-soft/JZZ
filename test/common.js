@@ -382,6 +382,10 @@ describe('SMPTE', function() {
 
 describe('JZZ.lib', function() {
   it('toBase64', function() {
+    assert.equal(JZZ.lib.toBase64(''), '');
+    assert.equal(JZZ.lib.toBase64('M'), 'TQ==');
+    assert.equal(JZZ.lib.toBase64('MI'), 'TUk=');
+    assert.equal(JZZ.lib.toBase64('MID'), 'TUlE');
     assert.equal(JZZ.lib.toBase64('MIDI'), 'TUlESQ==');
   });
   it('fromBase64', function() {
@@ -418,21 +422,21 @@ describe('JZZ.Widget', function() {
     var sample = new test.Sample(done, [
       [0x91, 0x3c, 0x7f], [0x82, 0x3c, 0x7f], [0xff],
       [0xf1, 0x04], [0xf1, 0x04],
-      [0x90, 0x3c, 0x7f], [0x80, 0x3c, 0x40], [0x95, 0x3c, 0x7f], [0x85, 0x3c, 0x40]
+      [0x90, 0x3c, 0x7f], [0x99, 0, 1], [0x80, 0x3c, 0x40], [0x95, 0x3c, 0x7f], [0x85, 0x3c, 0x40], [0x95, 0, 1]
     ]);
     var port = JZZ.Widget({ _receive: function(msg) { sample.compare(msg); }});
     port.ch(1).noteOn('C5').ch(2).noteOff('C5', 127).ch(3).reset();
     port.ch(4).mtc(JZZ.SMPTE(30, 1, 2, 3, 4)).ch().mtc(JZZ.SMPTE(30, 1, 2, 3, 4));
-    port.note(0, 'B#4', 127, 1).ch(5).wait(10).note('Dbb5', 127, 1).wait(10).disconnect().close();
+    port.note(0, 'B#4', 127, 1).note(9, 0, 1).ch(5).wait(10).note('Dbb5', 127, 1).wait(10).note(0, 1).disconnect().close();
   });
   it('mpe', function(done) {
     var sample = new test.Sample(done, [
       [0xc0, 0x19], [0x91, 0x3c, 0x7f], [0x92, 0x3e, 0x7f], [0xa2, 0x3e, 0x7f], [0x81, 0x3c, 0x40],
-      [0x91, 0x40, 0x7f], [0x81, 0x40, 0x40]
+      [0x91, 0x40, 0x7f], [0x93, 0, 1], [0x81, 0x40, 0x40]
     ]);
     var port = JZZ.Widget();
     port.connect(function(msg) { sample.compare(msg); });
-    port.mpe(0, 4).program(25).noteOn('C5').noteOn('D5').aftertouch('D5', 127).noteOff('C5').note('E5', 127, 1);
+    port.mpe(0, 4).program(25).noteOn('C5').noteOn('D5').aftertouch('D5', 127).noteOff('C5').note('E5', 127, 1).note(0, 1);
   });
 });
 
