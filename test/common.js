@@ -27,7 +27,7 @@ describe('MIDI messages', function() {
     assert.equal(msg.getVelocity(), 20);
     assert.equal(msg.isNoteOn(), true);
     assert.equal(msg.isNoteOff(), false);
-    msg.setChannel(0).setNote('c6').setVelocity(127);
+    msg.setChannel().setChannel(0).setNote('c6').setNote().setVelocity(127).setVelocity(128);
     assert.equal(msg.toString(), '90 48 7f -- Note On');
     msg.setVelocity(0);
     assert.equal(msg.isNoteOn(), false);
@@ -168,7 +168,9 @@ describe('MIDI messages', function() {
     assert.equal(JZZ.MIDI.tune().toString(), 'f6 -- Tune request');
   });
   it('clock', function() {
-    assert.equal(JZZ.MIDI.clock().toString(), 'f8 -- Timing clock');
+    var msg = JZZ.MIDI.clock();
+    msg.setChannel(1); // ignored
+    assert.equal(msg.toString(), 'f8 -- Timing clock');
   });
   it('start', function() {
     assert.equal(JZZ.MIDI.start().toString(), 'fa -- Start');
@@ -186,7 +188,7 @@ describe('MIDI messages', function() {
     var msg = JZZ.MIDI.sxIdRequest();
     assert.equal(msg.isSysEx(), true);
     assert.equal(msg.isFullSysEx(), true);
-    msg.setSysExChannel(20);
+    msg.setSysExChannel(20).setSysExChannel(128);
     assert.equal(msg.getSysExChannel(), 20);
     assert.equal(msg.toString(), 'f0 7e 14 06 01 f7');
     msg.setChannel(10);
@@ -329,6 +331,7 @@ describe('SMF events', function() {
     assert.equal(JZZ.MIDI.smfTimeSignature(7, 8).toString(), 'ff58 -- Time Signature: 7/8 24 8');
     assert.equal(JZZ.MIDI.smfTimeSignature(7, 8, 24, 8).toString(), 'ff58 -- Time Signature: 7/8 24 8');
     assert.throws(function() { JZZ.MIDI.smfTimeSignature('1/0'); });
+    assert.equal(JZZ.MIDI.smfTimeSignature('0/10').toString(), 'ff58 -- Time Signature: 48/32768 49 48');
     assert.throws(function() { JZZ.MIDI.smfTimeSignature('0/100'); });
     assert.throws(function() { JZZ.MIDI.smfTimeSignature('МИДИ'); });
     assert.throws(function() { JZZ.MIDI.smfTimeSignature(); });
@@ -340,10 +343,13 @@ describe('SMF events', function() {
     assert.equal(msg.getKeySignature()[1], 'Bb');
     assert.equal(msg.getKeySignature()[2], true);
     assert.equal(msg.toString(), 'ff59 -- Key Signature: Bb min');
+    assert.equal(JZZ.MIDI.smf(0x59, '\xfb\x02').toString(), 'ff59 -- Key Signature: invalid');
     assert.equal(JZZ.MIDI.smfKeySignature('\xfb\x01').toString(), 'ff59 -- Key Signature: Bb min');
     assert.equal(JZZ.MIDI.smfKeySignature('a# moll').toString(), 'ff59 -- Key Signature: A# min');
     assert.equal(JZZ.MIDI.smfKeySignature('Eb major').toString(), 'ff59 -- Key Signature: Eb');
     assert.equal(JZZ.MIDI.smfKeySignature('C').toString(), 'ff59 -- Key Signature: C');
+    assert.throws(function() { JZZ.MIDI.smfKeySignature('b#m'); });
+    assert.throws(function() { JZZ.MIDI.smfKeySignature('МИДИ'); });
   });
   it('smf/Sequencer', function() {
     assert.equal(JZZ.MIDI.smf(0x7f).toString(), 'ff7f -- Sequencer Specific');

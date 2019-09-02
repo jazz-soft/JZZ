@@ -1736,7 +1736,7 @@
     if (this.ff == 0x20) this.dd = String.fromCharCode(x);
     else {
       var c = this[0];
-      if (typeof c != 'undefined' && c >= 0x80 || c <= 0xef) this[0] = (c & 0xf0) | x;
+      if (typeof c != 'undefined' && c >= 0x80 && c <= 0xef) this[0] = (c & 0xf0) | x;
     }
     return this;
   };
@@ -1925,6 +1925,7 @@
             s += ks[1];
             if (ks[2]) s += ' min';
           }
+          else s+= 'invalid';
         }
         else if (this.ff == 127) s += 'Sequencer Specific' + _smfhex(this.dd);
         else s += 'SMF' + _smfhex(this.dd);
