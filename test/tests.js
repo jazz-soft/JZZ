@@ -231,7 +231,7 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
             dst.disconnect();
             done();
           }
-        }
+        };
         setTimeout(function() {
           port1.send([0x90, 0x40, 0x7f]);
           port2.send([0x90, 0x50, 0x7f]);

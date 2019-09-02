@@ -528,9 +528,7 @@
     h = {};
     for (i = 0; i < y1.length; i++) h[y1[i].name] = true;
     for (i = 0; i < y0.length; i++) if (!h[y0[i].name]) ry.push(y0[i]);
-    if (ax.length || rx.length || ay.length || ry.length) {
-      return { inputs: { added: ax, removed: rx }, outputs: { added: ay, removed: ry } };
-    }
+    return { inputs: { added: ax, removed: rx }, outputs: { added: ay, removed: ry } };
   }
   function _fireW(arg) {
     for (i = 0; i < _jzz._watcher._handles.length; i++) _jzz._watcher._handles[i].apply(_jzz, [arg]);
@@ -1621,7 +1619,7 @@
       if (m) {
         nn = parseInt(m[1]);
         dd = parseInt(m[2]);
-        if (nn > 0 && nn <= 0xff && !(dd & (dd - 1))) {
+        if (nn > 0 && nn <= 0xff && dd && !(dd & (dd - 1))) {
           cc = dd; dd = 0;
           for (cc >>= 1; cc; cc >>= 1) dd++;
           cc = b == parseInt(b) ? b : 24;
@@ -1630,7 +1628,7 @@
         }
         else if (('' + a ).length == 4) return _smf(88, a);
       }
-      else if (a == parseInt(a) && b == parseInt(b) && !(b & (b - 1))) {
+      else if (a == parseInt(a) && b == parseInt(b) && b && !(b & (b - 1))) {
         nn = a;
         dd = 0;
         cc = b;
