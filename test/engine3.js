@@ -1,5 +1,9 @@
 ﻿//// testing the 'webmidi' engine
 
+global.window = global;
+var _startTime = Date.now();
+global.performance = { now: function() { return Date.now() - _startTime; } };
+
 var JZZ = require('..');
 var WMT = require('web-midi-test');
 
@@ -25,6 +29,7 @@ describe('Engine: webmidi', function() {
   test.add_midi_out();
   test.remove_midi_in();
   test.remove_midi_out();
+  test.init_web_audio();
   test.web_midi_access_no_sysex();
   test.web_midi_access_sysex_fail();
   test.web_midi_input_no_sysex();

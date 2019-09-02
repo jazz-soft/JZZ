@@ -148,7 +148,7 @@ describe('Engine: extension', function() {
   test.add_midi_out();
   test.remove_midi_in();
   test.remove_midi_out();
-  it('Dummy AudioContext', function() { DOM.dispatchEvent({ name: 'keydown' }); });
+  test.init_web_audio();
   test.web_midi_access_no_sysex();
   test.web_midi_access_sysex();
   test.web_midi_input_no_sysex();

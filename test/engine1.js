@@ -13,6 +13,7 @@ if (process.platform == 'darwin' || process.platform == 'linux') {
   }
 }
 
+global.window = {};
 var test = require('./tests.js')(JZZ, undefined, MT);
 
 describe('Engine: node', function() {
@@ -33,6 +34,7 @@ describe('Engine: node', function() {
     test.remove_midi_in();
     test.remove_midi_out();
   }
+  test.init_web_audio();
   test.web_midi_access_no_sysex();
   test.web_midi_access_sysex();
   test.web_midi_input_no_sysex();

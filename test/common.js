@@ -255,7 +255,7 @@ describe('SMF events', function() {
     assert.equal(msg.getText(), '音樂');
     assert.equal(msg.getData(), '\xE9\x9F\xB3\xE6\xA8\x82');
     assert.equal(JZZ.MIDI.smf(1, 'smf').toString(), 'ff01 -- Text: smf');
-    assert.equal(JZZ.MIDI.smfText('\ttwo\nlines\x00').toString(), 'ff01 -- Text: \\ttwo\\nlines\\x00');
+    assert.equal(JZZ.MIDI.smfText('\ttwo\nlines\r\x00').toString(), 'ff01 -- Text: \\ttwo\\nlines\\r\\x00');
   });
   it('smf/Copyright', function() {
     assert.equal(JZZ.MIDI.smfCopyright('© ...').toString(), 'ff02 -- Copyright: © ...');
@@ -448,6 +448,7 @@ describe('Engine: none', function() {
   test.widget_midi_in();
   test.widget_midi_out();
   test.connect_watcher();
+  test.init_web_audio();
   test.web_midi_access_no_sysex();
   test.web_midi_access_sysex();
   test.web_midi_input_no_sysex();

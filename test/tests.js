@@ -122,7 +122,9 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
       it('Connection watcher', function() {
         var dummy = function() {};
         engine.refresh().onChange().connect(dummy);
+        engine.refresh().onChange().connect(dummy);
         engine.refresh().onChange().connect(function() {});
+        engine.refresh().onChange().disconnect(dummy);
         engine.refresh().onChange().disconnect(dummy);
         engine.refresh().onChange().disconnect();
         engine.refresh().onChange().connect(function() {});
@@ -192,7 +194,7 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
         port2 = engine.openMidiIn(name);
         assert.notEqual(port1, port2);
         var count = 3;
-        function onmidi(msg) {
+        function onmidi(/*msg*/) {
           count--;
           if (!count) {
             port2.close();
@@ -222,7 +224,7 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
         port2 = engine.openMidiOut(name);
         assert.notEqual(port1, port2);
         var count = 3;
-        dst.receive = function(msg) {
+        dst.receive = function(/*msg*/) {
           count--;
           if (!count) {
             port2.close();
@@ -302,6 +304,13 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
         engine.refresh().and(function() {
           dst.disconnect();
         });
+      });
+    },
+
+    init_web_audio: function() {
+      it('Init Web Audio', function() {
+        JZZ.lib.getAudioContext();
+        if (typeof window != 'undefined' && window.dispatchEvent) window.dispatchEvent({ name: 'keydown' });
       });
     },
 
@@ -434,28 +443,11 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
               assert.equal(p.connection, 'closed');
               myport = p;
               var now = JZZ.lib.now();
-              var bad = false;
-              try {
-                p.send([300]);
-                bad = true;
-              } catch(err) {}
-              try {
-                p.send([0xf7]);
-                bad = true;
-              } catch(err) {}
-              try {
-                p.send([0x90, 0x90, 0x00]);
-                bad = true;
-              } catch(err) {}
-              try {
-                p.send([0x20, 0x20, 0x20], now + 20);
-                bad = true;
-              } catch(err) {}
-              try {
-                p.send([0xf0, 0x7e, 0x7f, 0x06, 0x01, 0xf7], now + 30);
-                bad = true;
-              } catch(err) {}
-              assert.equal(bad, false);
+              assert.throws(function()  { p.send([300]); });
+              assert.throws(function()  { p.send([0xf7]); });
+              assert.throws(function()  { p.send([0x90, 0x90, 0x00]); });
+              assert.throws(function()  { p.send([0x20, 0x20, 0x20]); });
+              assert.throws(function()  { p.send([0xf0, 0x7e, 0x7f, 0x06, 0x01, 0xf7]); });
               p.send([0x90, 0x40, 0x7f], now + 40);
               p.send([0xf8]);
               p.send([0xc0, 0x10], now + 10);
@@ -604,6 +596,7 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
           dummy = inputs.keys();
           dummy = inputs.values();
           dummy = inputs.entries();
+          assert.notEqual(typeof dummy, 'undefined');
           assert.equal(inputs.get(port.id), undefined);
           inputs.forEach(function(p) {
             assert.notEqual(p.name, name);
@@ -719,7 +712,6 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
     web_midi_output_reconnect: function() {
       it('MIDIOutput reconnect', function(done) {
         var port;
-        var bad = false;
         var name = 'MIDIOutput reconnect';
         var dst = DRIVER.MidiDst(name);
         dst.connect();
@@ -735,12 +727,7 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
         function call1() {
           assert.equal(port.state, 'disconnected');
           assert.equal(port.connection, 'closed');
-          try {
-            port.send([0x90, 0x40, 0x7f]);
-            bad = true;
-          }
-          catch (e) {}
-          assert.equal(bad, false);
+          assert.throws(function()  { port.send([0x90, 0x40, 0x7f]); });
           assert.equal(port.connection, 'closed');
           port.open();
           setTimeout(call2, 10);
