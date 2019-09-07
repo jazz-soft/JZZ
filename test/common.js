@@ -362,6 +362,16 @@ describe('SMF events', function() {
 describe('SMPTE', function() {
   it('00:00:00:00', function() {
     assert.equal(JZZ.SMPTE().toString(), '00:00:00:00');
+    assert.equal(JZZ.SMPTE(24, 0, 0, 0, 0).toString(), '00:00:00:00');
+    assert.equal(JZZ.SMPTE(24, 0, 0, 0, 0).toString(), '00:00:00:00');
+    assert.equal(JZZ.SMPTE(29.97, 0, 0, 0, 0).toString(), '00:00:00:00');
+    assert.equal(JZZ.SMPTE(30, 0, 0, 0, 0).toString(), '00:00:00:00');
+    assert.throws(function() { JZZ.SMPTE(31, 0, 0, 0, 0); });
+    assert.throws(function() { JZZ.SMPTE(30, 24, 0, 0, 0); });
+    assert.throws(function() { JZZ.SMPTE(30, 0, 60, 0, 0); });
+    assert.throws(function() { JZZ.SMPTE(30, 0, 0, 60, 0); });
+    assert.throws(function() { JZZ.SMPTE(30, 0, 0, 0, 30); });
+    assert.throws(function() { JZZ.SMPTE(30, 0, 0, 0, 0, 8); });
   });
   it('23:59:59:23', function() {
     assert.equal(JZZ.SMPTE().decrQF().incrFrame().decrFrame().toString(), '23:59:59:23');
