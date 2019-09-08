@@ -1255,7 +1255,7 @@
     else if (x == 29.97) { this.type = 29.97; _fixDropFrame.apply(this); }
     else if (x == 30) this.type = 30;
     else throw RangeError('Bad SMPTE frame rate: ' + x);
-    if (this.frame >= this.type) this.frame = this.type == 29.97 ? 29 : this.type - 1;
+    if (this.frame >= this.type) this.frame = this.type - 1; // could not be more than 29
     return this;
   };
   SMPTE.prototype.setHour = function(x) {
@@ -1410,6 +1410,7 @@
       else if (t.type == 29.97) ret |= 4;
       else if (t.type == 30) ret |= 6;
     }
+    // restore original t
     if (!t.backwards && t.quarter >= 4) t.incrFrame();
     else if (t.backwards && t.quarter < 4) t.decrFrame();
     return ret | (t.quarter << 4);

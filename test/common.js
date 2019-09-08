@@ -156,7 +156,17 @@ describe('MIDI messages', function() {
     assert.equal(JZZ.MIDI.allNotesOff(0).toString(), 'b0 7b 00 -- All Notes Off');
   });
   it('mtc', function() {
-    assert.equal(JZZ.MIDI.mtc(0).toString(), 'f1 00 -- MIDI Time Code');
+    assert.equal(JZZ.MIDI.mtc(JZZ.SMPTE(24, 0, 0, 0, 0, 0)).toString(), 'f1 00 -- MIDI Time Code');
+    assert.equal(JZZ.MIDI.mtc(JZZ.SMPTE(24, 0, 0, 0, 0, 1)).toString(), 'f1 10 -- MIDI Time Code');
+    assert.equal(JZZ.MIDI.mtc(JZZ.SMPTE(24, 0, 0, 0, 0, 2)).toString(), 'f1 20 -- MIDI Time Code');
+    assert.equal(JZZ.MIDI.mtc(JZZ.SMPTE(24, 0, 0, 0, 0, 3)).toString(), 'f1 30 -- MIDI Time Code');
+    assert.equal(JZZ.MIDI.mtc(JZZ.SMPTE(24, 0, 0, 0, 1, 4)).toString(), 'f1 40 -- MIDI Time Code');
+    assert.equal(JZZ.MIDI.mtc(JZZ.SMPTE(24, 0, 0, 0, 1, 5)).toString(), 'f1 50 -- MIDI Time Code');
+    assert.equal(JZZ.MIDI.mtc(JZZ.SMPTE(24, 0, 0, 0, 1, 6)).toString(), 'f1 60 -- MIDI Time Code');
+    assert.equal(JZZ.MIDI.mtc(JZZ.SMPTE(24, 0, 0, 0, 1, 7)).toString(), 'f1 70 -- MIDI Time Code');
+    assert.equal(JZZ.MIDI.mtc(JZZ.SMPTE(25, 0, 0, 0, 1, 7)).toString(), 'f1 72 -- MIDI Time Code');
+    assert.equal(JZZ.MIDI.mtc(JZZ.SMPTE(29.97, 0, 0, 0, 1, 7)).toString(), 'f1 74 -- MIDI Time Code');
+    assert.equal(JZZ.MIDI.mtc(JZZ.SMPTE(30, 0, 0, 0, 1, 7)).toString(), 'f1 76 -- MIDI Time Code');
   });
   it('songPosition', function() {
     assert.equal(JZZ.MIDI.songPosition(300).toString(), 'f2 2c 02 -- Song Position');
@@ -203,6 +213,10 @@ describe('MIDI messages', function() {
   });
   it('sxFullFrame', function() {
     assert.equal(JZZ.MIDI.sxFullFrame(JZZ.SMPTE()).toString(), 'f0 7f 7f 01 01 00 00 00 00 f7');
+    assert.equal(JZZ.MIDI.sxFullFrame(JZZ.SMPTE(24, 0, 0, 0, 0)).toString(), 'f0 7f 7f 01 01 00 00 00 00 f7');
+    assert.equal(JZZ.MIDI.sxFullFrame(JZZ.SMPTE(25, 0, 0, 0, 0)).toString(), 'f0 7f 7f 01 01 20 00 00 00 f7');
+    assert.equal(JZZ.MIDI.sxFullFrame(JZZ.SMPTE(29.97, 0, 0, 0, 0)).toString(), 'f0 7f 7f 01 01 40 00 00 00 f7');
+    assert.equal(JZZ.MIDI.sxFullFrame(JZZ.SMPTE(30, 0, 0, 0, 0)).toString(), 'f0 7f 7f 01 01 60 00 00 00 f7');
   });
   it('reset', function() {
     assert.equal(JZZ.MIDI.reset().toString(), 'ff -- Reset');
@@ -363,9 +377,10 @@ describe('SMPTE', function() {
   it('00:00:00:00', function() {
     assert.equal(JZZ.SMPTE().toString(), '00:00:00:00');
     assert.equal(JZZ.SMPTE(24, 0, 0, 0, 0).toString(), '00:00:00:00');
-    assert.equal(JZZ.SMPTE(24, 0, 0, 0, 0).toString(), '00:00:00:00');
+    assert.equal(JZZ.SMPTE(25, 0, 0, 0, 0).toString(), '00:00:00:00');
     assert.equal(JZZ.SMPTE(29.97, 0, 0, 0, 0).toString(), '00:00:00:00');
     assert.equal(JZZ.SMPTE(30, 0, 0, 0, 0).toString(), '00:00:00:00');
+    assert.equal(JZZ.SMPTE(30, 0, 0, 0, 28).setType(25).toString(), '00:00:00:24');
     assert.throws(function() { JZZ.SMPTE(31, 0, 0, 0, 0); });
     assert.throws(function() { JZZ.SMPTE(30, 24, 0, 0, 0); });
     assert.throws(function() { JZZ.SMPTE(30, 0, 60, 0, 0); });
@@ -373,11 +388,39 @@ describe('SMPTE', function() {
     assert.throws(function() { JZZ.SMPTE(30, 0, 0, 0, 30); });
     assert.throws(function() { JZZ.SMPTE(30, 0, 0, 0, 0, 8); });
   });
-  it('23:59:59:23', function() {
-    assert.equal(JZZ.SMPTE().decrQF().incrFrame().decrFrame().toString(), '23:59:59:23');
+  it('00:01:00:02', function() {
+    assert.equal(JZZ.SMPTE(JZZ.SMPTE(29.97, 0, 10, 0, 0)).toString(), '00:10:00:00');
+    assert.equal(JZZ.SMPTE(JZZ.SMPTE(29.97, 0, 1, 0, 0)).toString(), '00:01:00:02');
+    assert.equal(JZZ.SMPTE(JZZ.SMPTE(29.97, 0, 1, 0, 1)).toString(), '00:01:00:02');
+    assert.equal(JZZ.SMPTE(JZZ.SMPTE(29.97, 0, 1, 0, 2)).toString(), '00:01:00:02');
+    assert.equal(JZZ.SMPTE(JZZ.SMPTE(29.97, 0, 1, 0, 3)).toString(), '00:01:00:03');
   });
-  it('23:59:59:29', function() {
-    assert.equal(JZZ.SMPTE(JZZ.SMPTE(30, 23, 59, 59, 29)).toString(), '23:59:59:29');
+  it('isFullFrame', function() {
+    assert.equal(JZZ.SMPTE(JZZ.SMPTE(24, 0, 0, 0, 0, 0)).isFullFrame(), true);
+    assert.equal(JZZ.SMPTE(JZZ.SMPTE(24, 0, 0, 0, 0, 1)).isFullFrame(), false);
+    assert.equal(JZZ.SMPTE(JZZ.SMPTE(24, 0, 0, 0, 0, 4)).isFullFrame(), true);
+    assert.equal(JZZ.SMPTE(JZZ.SMPTE(24, 0, 0, 0, 0, 5)).isFullFrame(), false);
+  });
+  it('increase quarter frame', function() {
+    assert.equal(JZZ.SMPTE(JZZ.SMPTE(29.97, 0, 0, 0, 0, 0)).incrQF().toString(), '00:00:00:00');
+    assert.equal(JZZ.SMPTE(JZZ.SMPTE(29.97, 0, 0, 0, 0, 3)).incrQF().toString(), '00:00:00:01');
+    assert.equal(JZZ.SMPTE(JZZ.SMPTE(29.97, 0, 0, 0, 0, 5)).incrQF().toString(), '00:00:00:00');
+    assert.equal(JZZ.SMPTE(JZZ.SMPTE(29.97, 0, 0, 0, 0, 7)).incrQF().toString(), '00:00:00:01');
+    assert.equal(JZZ.SMPTE(JZZ.SMPTE(29.97, 0, 0, 0, 29, 3)).incrQF().toString(), '00:00:01:00');
+    assert.equal(JZZ.SMPTE(JZZ.SMPTE(29.97, 0, 0, 59, 29, 3)).incrQF().toString(), '00:01:00:02');
+    assert.equal(JZZ.SMPTE(JZZ.SMPTE(29.97, 0, 59, 59, 29, 3)).incrQF().toString(), '01:00:00:00');
+    assert.equal(JZZ.SMPTE(JZZ.SMPTE(29.97, 23, 59, 59, 29, 3)).incrQF().toString(), '00:00:00:00');
+  });
+  it('decrease quarter frame', function() {
+    assert.equal(JZZ.SMPTE(JZZ.SMPTE(29.97, 0, 0, 0, 0, 0)).decrQF().toString(), '23:59:59:29');
+    assert.equal(JZZ.SMPTE(JZZ.SMPTE(29.97, 0, 0, 0, 0, 2)).decrQF().toString(), '00:00:00:00');
+    assert.equal(JZZ.SMPTE(JZZ.SMPTE(29.97, 0, 0, 0, 0, 4)).decrQF().toString(), '23:59:59:29');
+    assert.equal(JZZ.SMPTE(JZZ.SMPTE(29.97, 0, 0, 0, 0, 6)).decrQF().toString(), '00:00:00:00');
+    assert.equal(JZZ.SMPTE(JZZ.SMPTE(29.97, 1, 0, 0, 0)).decrQF().toString(), '00:59:59:29');
+    assert.equal(JZZ.SMPTE(JZZ.SMPTE(29.97, 0, 1, 0, 2)).decrQF().toString(), '00:00:59:29');
+    assert.equal(JZZ.SMPTE(JZZ.SMPTE(29.97, 0, 1, 0, 0)).decrQF().toString(), '00:00:59:29');
+    assert.equal(JZZ.SMPTE(JZZ.SMPTE(29.97, 0, 0, 1, 0)).decrQF().toString(), '00:00:00:29');
+    assert.equal(JZZ.SMPTE(JZZ.SMPTE(29.97, 0, 0, 0, 2)).decrQF().toString(), '00:00:00:01');
   });
   it('Full Frame SysEx', function() {
     var smpte = JZZ.SMPTE();
@@ -394,6 +437,15 @@ describe('SMPTE', function() {
     }
     assert.equal(slave.read([0x90, 0x40, 0x7f]), false);
     assert.equal(slave.toString(), '07:39:59:02');
+  });
+  it('master/slave backwards', function() {
+    var master = JZZ.SMPTE(24, 7, 39, 59);
+    var slave = JZZ.SMPTE();
+    for (var n = 0; n < 10; n++) {
+      slave.read(JZZ.MIDI.mtc(master));
+      master.decrQF();
+    }
+    assert.equal(slave.toString(), '07:39:58:21');
   });
 });
 
