@@ -64,12 +64,27 @@
     ret._queue = [];
     return ret;
   };
+  _R.prototype._thenable = function() {
+    var self = this;
+    var F = function() {}; F.prototype = self;
+    var ret = new F();
+    ret.then = function(good, bad) { self._push(_then, [good, bad]); return this; };      
+    return ret;
+  };
+  function _then(good, bad) {
+    if (this._bad) {
+      if (bad instanceof Function) bad.apply(this, [new Error(this._err.length ? this._err[this._err.length - 1] : 'JZZ error')]);
+    }
+    else {
+      if (good instanceof Function) good.apply(this, [this]);
+    }
+  }
   function _wait(obj, delay) { setTimeout(function() { obj._resume(); }, delay); }
   _R.prototype.wait = function(delay) {
     if (!delay) return this;
     var ret = this._image();
     this._push(_wait, [ret, delay]);
-    return ret;
+    return ret._thenable();
   };
   function _kick(obj) { obj._resume(); }
   function _rechain(self, obj, name) {
@@ -81,9 +96,9 @@
     };
   }
   function _and(q) { if (q instanceof Function) q.apply(this); else console.log(q); }
-  _R.prototype.and = function(func) { this._push(_and, [func]); return this; };
+  _R.prototype.and = function(func) { this._push(_and, [func]); return this._thenable(); };
   function _or(q) { if (q instanceof Function) q.apply(this); else console.log(q); }
-  _R.prototype.or = function(func) { this._push(_or, [func]); return this; };
+  _R.prototype.or = function(func) { this._push(_or, [func]); return this._thenable(); };
 
   _R.prototype._info = {};
   _R.prototype.info = function() {
@@ -102,7 +117,7 @@
     var ret = new _R();
     if (this._close) this._push(this._close, []);
     this._push(_close, [ret]);
-    return ret;
+    return ret._thenable();
   };
 
   function _tryAny(arr) {
@@ -241,7 +256,7 @@
   }
   _J.prototype.refresh = function() {
     this._push(_refresh, []);
-    return this;
+    return this._thenable();
   };
 
   function _filterList(q, arr) {
@@ -292,12 +307,12 @@
     var port = new _M();
     this._push(_refresh, []);
     this._push(_openMidiOut, [port, arg]);
-    return port;
+    return port._thenable();
   };
   _J.prototype._openMidiOutNR = function(arg) {
     var port = new _M();
     this._push(_openMidiOut, [port, arg]);
-    return port;
+    return port._thenable();
   };
 
   function _openMidiIn(port, arg) {
@@ -312,12 +327,12 @@
     var port = new _M();
     this._push(_refresh, []);
     this._push(_openMidiIn, [port, arg]);
-    return port;
+    return port._thenable();
   };
   _J.prototype._openMidiInNR = function(arg) {
     var port = new _M();
     this._push(_openMidiIn, [port, arg]);
-    return port;
+    return port._thenable();
   };
 
   function _onChange(watcher, arg) {
@@ -364,12 +379,12 @@
   function _receive(msg) { this._receive(msg); }
   _M.prototype.send = function() {
     this._push(_receive, [MIDI.apply(null, arguments)]);
-    return this;
+    return this._thenable();
   };
   _M.prototype.note = function(c, n, v, t) {
     this.noteOn(c, n, v);
     if (t > 0) this.wait(t).noteOff(c, n);
-    return this;
+    return this._thenable();
   };
   _M.prototype._emit = function(msg) {
     var i;
@@ -382,7 +397,7 @@
   function _emit(msg) { this._emit(msg); }
   _M.prototype.emit = function(msg) {
     this._push(_emit, [msg]);
-    return this;
+    return this._thenable();
   };
   function _connect(arg) {
     if (arg instanceof Function) _push(this._orig._handles, arg);
@@ -398,11 +413,11 @@
   }
   _M.prototype.connect = function(arg) {
     this._push(_connect, [arg]);
-    return this;
+    return this._thenable();
   };
   _M.prototype.disconnect = function(arg) {
     this._push(_disconnect, [arg]);
-    return this;
+    return this._thenable();
   };
   _M.prototype.connected = function() {
     return this._orig._handles.length + this._orig._outs.length;
@@ -412,7 +427,7 @@
     _validateChannel(n);
     var chan = new _C(this, n);
     this._push(_kick, [chan]);
-    return chan;
+    return chan._thenable();
   };
   function _mpe(m, n) {
     if (!this._orig._mpe) this._orig._mpe = new MPE();
@@ -424,7 +439,7 @@
     var chan = n ? new _E(this, m, n) : new _C(this, m);
     this._push(_mpe, [m, n]);
     this._push(_kick, [chan]);
-    return chan;
+    return chan._thenable();
   };
   function _validateChannel(c) {
     if (c != parseInt(c) || c < 0 || c > 15)
@@ -448,7 +463,7 @@
   _C.prototype.note = function(n, v, t) {
     this.noteOn(n, v);
     if (t) this.wait(t).noteOff(n);
-    return this;
+    return this._thenable();
   };
 
   // _E: MPE Channel object
@@ -469,7 +484,7 @@
   _E.prototype.note = function(n, v, t) {
     this.noteOn(n, v);
     if (t) this.wait(t).noteOff(n);
-    return this;
+    return this._thenable();
   };
 
   // _W: Watcher object ~ MIDIAccess.onstatechange
@@ -496,11 +511,11 @@
   }
   _W.prototype.connect = function(arg) {
     this._push(_connectW, [arg]);
-    return this;
+    return this._thenable();
   };
   _W.prototype.disconnect = function(arg) {
     this._push(_disconnectW, [arg]);
-    return this;
+    return this._thenable();
   };
   function _changed(x0, y0, x1, y1) {
     var i;
@@ -1203,7 +1218,7 @@
 
   var JZZ = function(opt) {
     if (!_jzz) _initJZZ(opt);
-    return _jzz;
+    return _jzz._thenable();
   };
   JZZ.JZZ = JZZ;
   JZZ.info = function() { return _J.prototype.info(); };
