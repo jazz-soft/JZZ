@@ -343,7 +343,7 @@
     if (!this._orig._watcher) this._orig._watcher = new _W();
     var watcher = this._orig._watcher._image();
     this._push(_onChange, [watcher, arg]);
-    return watcher;
+    return watcher._thenable();
   };
 
   _J.prototype._close = function() {
@@ -511,11 +511,11 @@
   }
   _W.prototype.connect = function(arg) {
     this._push(_connectW, [arg]);
-    return this;
+    return this._thenable();
   };
   _W.prototype.disconnect = function(arg) {
     this._push(_disconnectW, [arg]);
-    return this;
+    return this._thenable();
   };
   function _changed(x0, y0, x1, y1) {
     var i;
