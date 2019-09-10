@@ -511,11 +511,11 @@
   }
   _W.prototype.connect = function(arg) {
     this._push(_connectW, [arg]);
-    return this._thenable();
+    return this;
   };
   _W.prototype.disconnect = function(arg) {
     this._push(_disconnectW, [arg]);
-    return this._thenable();
+    return this;
   };
   function _changed(x0, y0, x1, y1) {
     var i;
