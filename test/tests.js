@@ -209,8 +209,8 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
           setTimeout(function() {
             port1.close();
             src.emit([0x80, 0x40, 0x7f]);
-          }, 100);
-        }, 100);
+          }, 10);
+        }, 10);
       });
     },
 
@@ -238,8 +238,8 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
           setTimeout(function() {
             port1.close();
             port2.send([0x80, 0x50, 0x7f]);
-          }, 100);
-        }, 100);
+          }, 10);
+        }, 10);
       });
     },
 
@@ -533,7 +533,7 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
             src.disconnect();
             done();
           };
-          setTimeout(function() { src.connect(); }, 100);
+          setTimeout(function() { src.connect(); }, 10);
         }
         function onFail(err) { console.log('requestMIDIAccess failed!', err); }
         JZZ.requestMIDIAccess().then(onSuccess, onFail);
@@ -559,7 +559,7 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
               };
             }
           });
-          setTimeout(function() { src.disconnect(); }, 100);
+          setTimeout(function() { src.disconnect(); }, 10);
         }
         function onFail(err) { console.log('requestMIDIAccess failed!', err); }
         setTimeout(function() { JZZ.requestMIDIAccess().then(onSuccess, onFail); }, 100);
@@ -580,13 +580,13 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
           assert.equal(port.connection, 'closed');
           src.disconnect();
           engine.refresh();
-          setTimeout(call1, 100);
+          setTimeout(call1, 10);
         }
         function call1() {
           assert.equal(port.state, 'disconnected');
           assert.equal(port.connection, 'closed');
           port.open();
-          setTimeout(call2, 100);
+          setTimeout(call2, 10);
         }
         function call2() {
           assert.equal(port.state, 'disconnected');
@@ -603,7 +603,7 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
           });
           src.connect();
           engine.refresh();
-          setTimeout(call3, 100);
+          setTimeout(call3, 10);
         }
         function call3() {
           assert.equal(port.state, 'connected');
@@ -631,7 +631,7 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
               };
             }
           });
-          setTimeout(call0, 100);
+          setTimeout(call0, 10);
         }
         function onFail(err) { console.log('requestMIDIAccess failed!', err); }
         setTimeout(function() { JZZ.requestMIDIAccess().then(onSuccess, onFail); }, 100);
@@ -677,7 +677,7 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
             dst.disconnect();
             done();
           };
-          setTimeout(function() { dst.connect(); }, 100);
+          setTimeout(function() { dst.connect(); }, 10);
         }
         function onFail(err) { console.log('requestMIDIAccess failed!', err); }
         JZZ.requestMIDIAccess().then(onSuccess, onFail);
@@ -702,7 +702,7 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
               };
             }
           });
-          setTimeout(function() { dst.disconnect(); }, 100);
+          setTimeout(function() { dst.disconnect(); }, 10);
         }
         function onFail(err) { console.log('requestMIDIAccess failed!', err); }
         setTimeout(function() { JZZ.requestMIDIAccess().then(onSuccess, onFail); }, 100);
@@ -722,7 +722,7 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
           assert.equal(port.connection, 'closed');
           dst.disconnect();
           engine.refresh();
-          setTimeout(call1, 100);
+          setTimeout(call1, 10);
         }
         function call1() {
           assert.equal(port.state, 'disconnected');
@@ -730,14 +730,14 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
           assert.throws(function()  { port.send([0x90, 0x40, 0x7f]); });
           assert.equal(port.connection, 'closed');
           port.open();
-          setTimeout(call2, 100);
+          setTimeout(call2, 10);
         }
         function call2() {
           assert.equal(port.state, 'disconnected');
           assert.equal(port.connection, 'pending');
           dst.connect();
           engine.refresh();
-          setTimeout(call3, 100);
+          setTimeout(call3, 10);
         }
         function call3() {
           assert.equal(port.state, 'connected');
@@ -764,7 +764,7 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
               };
             }
           });
-          setTimeout(call0, 100);
+          setTimeout(call0, 10);
         }
         function onFail(err) { console.log('requestMIDIAccess failed!', err); }
         setTimeout(function() { JZZ.requestMIDIAccess().then(onSuccess, onFail); }, 100);
