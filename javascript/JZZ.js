@@ -39,8 +39,10 @@
           this._orig._hope = false;
           x[0].apply(this, x[1]);
         }
+        else if (this._orig._hope && x[0] == _then) {
+          x[0].apply(this, x[1]);
+        }
         else {
-          this._queue = [];
           this._orig._hope = false;
         }
       }
