@@ -517,7 +517,7 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
           });
         }
         function onFail(err) { console.log('requestMIDIAccess failed!', err); }
-        setTimeout(function() { JZZ.requestMIDIAccess().then(onSuccess, onFail); }, 10);
+        setTimeout(function() { JZZ.requestMIDIAccess().then(onSuccess, onFail); }, 20);
       });
     },
 
@@ -536,7 +536,7 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
           setTimeout(function() { src.connect(); }, 10);
         }
         function onFail(err) { console.log('requestMIDIAccess failed!', err); }
-        setTimeout(function() { JZZ.requestMIDIAccess().then(onSuccess, onFail); }, 10);
+        setTimeout(function() { JZZ.requestMIDIAccess().then(onSuccess, onFail); }, 20);
       });
     },
 
@@ -562,7 +562,7 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
           setTimeout(function() { src.disconnect(); }, 10);
         }
         function onFail(err) { console.log('requestMIDIAccess failed!', err); }
-        setTimeout(function() { JZZ.requestMIDIAccess().then(onSuccess, onFail); }, 10);
+        setTimeout(function() { JZZ.requestMIDIAccess().then(onSuccess, onFail); }, 20);
       });
     },
 
@@ -634,7 +634,7 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
           setTimeout(call0, 10);
         }
         function onFail(err) { console.log('requestMIDIAccess failed!', err); }
-        setTimeout(function() { JZZ.requestMIDIAccess().then(onSuccess, onFail); }, 10);
+        setTimeout(function() { JZZ.requestMIDIAccess().then(onSuccess, onFail); }, 20);
       });
     },
 
@@ -661,7 +661,7 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
           });
         }
         function onFail(err) { console.log('requestMIDIAccess failed!', err); }
-        setTimeout(function() { JZZ.requestMIDIAccess().then(onSuccess, onFail); }, 10);
+        setTimeout(function() { JZZ.requestMIDIAccess().then(onSuccess, onFail); }, 20);
       });
     },
 
@@ -680,7 +680,7 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
           setTimeout(function() { dst.connect(); }, 10);
         }
         function onFail(err) { console.log('requestMIDIAccess failed!', err); }
-        setTimeout(function() { JZZ.requestMIDIAccess().then(onSuccess, onFail); }, 10);
+        setTimeout(function() { JZZ.requestMIDIAccess().then(onSuccess, onFail); }, 20);
       });
     },
 
@@ -705,7 +705,7 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
           setTimeout(function() { dst.disconnect(); }, 10);
         }
         function onFail(err) { console.log('requestMIDIAccess failed!', err); }
-        setTimeout(function() { JZZ.requestMIDIAccess().then(onSuccess, onFail); }, 10);
+        setTimeout(function() { JZZ.requestMIDIAccess().then(onSuccess, onFail); }, 20);
       });
     },
 
@@ -767,7 +767,7 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
           setTimeout(call0, 10);
         }
         function onFail(err) { console.log('requestMIDIAccess failed!', err); }
-        setTimeout(function() { JZZ.requestMIDIAccess().then(onSuccess, onFail); }, 10);
+        setTimeout(function() { JZZ.requestMIDIAccess().then(onSuccess, onFail); }, 20);
       });
     },
 

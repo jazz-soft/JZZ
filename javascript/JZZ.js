@@ -29,36 +29,23 @@
     this._orig = this;
     this._ready = false;
     this._queue = [];
-    this._err = [];
+    this._log = [];
   }
   _R.prototype._exec = function() {
     while (this._ready && this._queue.length) {
       var x = this._queue.shift();
-      if (this._orig._bad) {
-        if (this._orig._hope && x[0] == _or) {
-          this._orig._hope = false;
-          x[0].apply(this, x[1]);
-        }
-        else if (this._orig._hope && x[0] == _then) {
-          x[0].apply(this, x[1]);
-        }
-        else {
-          this._orig._hope = false;
-        }
-      }
-      else if (x[0] != _or) {
-        x[0].apply(this, x[1]);
-      }
+      x[0].apply(this, x[1]);
     }
   };
   _R.prototype._push = function(func, arg) { this._queue.push([func, arg]); _R.prototype._exec.apply(this); };
   _R.prototype._slip = function(func, arg) { this._queue.unshift([func, arg]); };
   _R.prototype._pause = function() { this._ready = false; };
   _R.prototype._resume = function() { this._ready = true; _R.prototype._exec.apply(this); };
-  _R.prototype._break = function(err) { this._orig._bad = true; this._orig._hope = true; if (err) this._orig._err.push(err); };
+  _R.prototype._break = function(err) { this._orig._bad = true; this._orig._log.push(err || 'Unknown JZZ error'); };
   _R.prototype._repair = function() { this._orig._bad = false; };
   _R.prototype._crash = function(err) { this._break(err); this._resume(); };
-  _R.prototype.err = function() { return _clone(this._err); };
+  _R.prototype._err = function() { return this._log[this._log.length - 1]; };
+  _R.prototype.log = function() { return _clone(this._log); };
   _R.prototype._image = function() {
     var F = function() {}; F.prototype = this._orig;
     var ret = new F();
@@ -75,13 +62,16 @@
   };
   function _then(good, bad) {
     if (this._bad) {
-      if (bad instanceof Function) bad.apply(this, [new Error(this._err.length ? this._err[this._err.length - 1] : 'JZZ error')]);
+      if (bad instanceof Function) bad.apply(this, [new Error(this._err())]);
     }
     else {
       if (good instanceof Function) good.apply(this, [this]);
     }
   }
-  function _wait(obj, delay) { setTimeout(function() { obj._resume(); }, delay); }
+  function _wait(obj, delay) {
+    if (this._bad) obj._crash(this._err());
+    else setTimeout(function() { obj._resume(); }, delay);
+  }
   _R.prototype.wait = function(delay) {
     if (!delay) return this;
     var ret = this._image();
@@ -97,9 +87,17 @@
       return ret[name].apply(ret, arg);
     };
   }
-  function _and(q) { if (q instanceof Function) q.apply(this); else console.log(q); }
+  function _and(q) {
+    if (!this._bad) {
+      if (q instanceof Function) q.apply(this); else console.log(q);
+    }
+  }
   _R.prototype.and = function(func) { this._push(_and, [func]); return this._thenable(); };
-  function _or(q) { if (q instanceof Function) q.apply(this); else console.log(q); }
+  function _or(q) {
+    if (this._bad) {
+      if (q instanceof Function) q.apply(this); else console.log(q);
+    }
+  }
   _R.prototype.or = function(func) { this._push(_or, [func]); return this._thenable(); };
 
   _R.prototype._info = {};
@@ -254,7 +252,7 @@
     _outsW = _jzz._info.outputs;
   }
   function _refresh() {
-    _engine._refresh(this);
+    if (!this._bad) _engine._refresh(this);
   }
   _J.prototype.refresh = function() {
     this._push(_refresh, []);
@@ -296,14 +294,16 @@
     else msg = 'Port "' + q + '" not found';
     port._crash(msg);
   }
-
   function _openMidiOut(port, arg) {
-    var arr = _filterList(arg, _outs);
-    if (!arr.length) { _notFound(port, arg); return; }
-    var pack = function(x) { return function() { x.engine._openOut(this, x.name); }; };
-    for (var i = 0; i < arr.length; i++) arr[i] = pack(arr[i]);
-    port._slip(_tryAny, [arr]);
-    port._resume();
+    if (this._bad) port._crash(this._err());
+    else {
+      var arr = _filterList(arg, _outs);
+      if (!arr.length) { _notFound(port, arg); return; }
+      var pack = function(x) { return function() { x.engine._openOut(this, x.name); }; };
+      for (var i = 0; i < arr.length; i++) arr[i] = pack(arr[i]);
+      port._slip(_tryAny, [arr]);
+      port._resume();
+    }
   }
   _J.prototype.openMidiOut = function(arg) {
     var port = new _M();
@@ -318,12 +318,15 @@
   };
 
   function _openMidiIn(port, arg) {
-    var arr = _filterList(arg, _ins);
-    if (!arr.length) { _notFound(port, arg); return; }
-    var pack = function(x) { return function() { x.engine._openIn(this, x.name); }; };
-    for (var i = 0; i < arr.length; i++) arr[i] = pack(arr[i]);
-    port._slip(_tryAny, [arr]);
-    port._resume();
+    if (this._bad) port._crash(this._err());
+    else {
+      var arr = _filterList(arg, _ins);
+      if (!arr.length) { _notFound(port, arg); return; }
+      var pack = function(x) { return function() { x.engine._openIn(this, x.name); }; };
+      for (var i = 0; i < arr.length; i++) arr[i] = pack(arr[i]);
+      port._slip(_tryAny, [arr]);
+      port._resume();
+    }
   }
   _J.prototype.openMidiIn = function(arg) {
     var port = new _M();
@@ -338,8 +341,11 @@
   };
 
   function _onChange(watcher, arg) {
-    watcher._slip(_connectW, [arg]);
-    watcher._resume();
+    if (this._bad) watcher._crash();
+    else {
+      watcher._slip(_connectW, [arg]);
+      watcher._resume();
+    }
   }
   _J.prototype.onChange = function(arg) {
     if (!this._orig._watcher) this._orig._watcher = new _W();
@@ -378,7 +384,7 @@
     return msg;
   };
   _M.prototype._receive = function(msg) { this._emit(this._filter(msg)); };
-  function _receive(msg) { this._receive(msg); }
+  function _receive(msg) { if (!this._bad) this._receive(msg); }
   _M.prototype.send = function() {
     this._push(_receive, [MIDI.apply(null, arguments)]);
     return this._thenable();
