@@ -78,7 +78,7 @@
     this._push(_wait, [ret, delay]);
     return ret._thenable();
   };
-  function _kick(obj) { obj._resume(); }
+  function _kick(obj) { if (this._bad) obj._break(this._err()); obj._resume(); }
   function _rechain(self, obj, name) {
     self[name] = function() {
       var arg = arguments;
@@ -110,8 +110,11 @@
   _R.prototype.name = function() { return this.info().name; };
 
   function _close(obj) {
-    this._break('closed');
-    obj._resume();
+    if (this._bad) obj._crash(this._err());
+    else {
+      this._break('Closed');
+      obj._resume();
+    }
   }
   _R.prototype.close = function() {
     var ret = new _R();

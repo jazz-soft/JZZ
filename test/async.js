@@ -197,4 +197,87 @@ describe('async calls', function() {
     assert.equal(msg, notfound);
   });
 
+  it('await JZZ().openMidiOut().ch()', async function() {
+    JZZ.lib.registerMidiOut(midi_out_name, midi_out_impl);
+    await JZZ().openMidiOut(midi_out_name).wait(1).ch(0);
+  });
+
+  it('await JZZ().openMidiOut().ch() / throw 1', async function() {
+    var msg;
+    try {
+      await JZZ().openMidiOut(notexisting).wait(1).ch(0);
+    }
+    catch (err) {
+      msg = err.message;
+    }
+    assert.equal(msg, notfound);
+  });
+
+
+  it('await JZZ().openMidiOut().ch() / throw 2', async function() {
+    var msg;
+    try {
+      await JZZ().openMidiOut(notexisting).wait(1).ch(0).noteOn('C5');
+    }
+    catch (err) {
+      msg = err.message;
+    }
+    assert.equal(msg, notfound);
+  });
+
+  it('await JZZ().openMidiOut().mpe()', async function() {
+    JZZ.lib.registerMidiOut(midi_out_name, midi_out_impl);
+    await JZZ().openMidiOut(midi_out_name).wait(1).mpe(0, 5);
+  });
+
+  it('await JZZ().openMidiOut().mpe() / throw 1', async function() {
+    var msg;
+    try {
+      await JZZ().openMidiOut(notexisting).wait(1).mpe(0, 5);
+    }
+    catch (err) {
+      msg = err.message;
+    }
+    assert.equal(msg, notfound);
+  });
+
+  it('await JZZ().openMidiOut().mpe() / throw 2', async function() {
+    var msg;
+    try {
+      await JZZ().openMidiOut(notexisting).wait(1).mpe(0, 5).wait(1).noteOn('C5');
+    }
+    catch (err) {
+      msg = err.message;
+    }
+    assert.equal(msg, notfound);
+  });
+
+  it('await JZZ().openMidiOut().close()', async function() {
+    JZZ.lib.registerMidiOut(midi_out_name, midi_out_impl);
+    await JZZ().openMidiOut(midi_out_name).wait(1).close().wait(1);
+  });
+
+  it('await JZZ().openMidiOut().close() / throw 1', async function() {
+    JZZ.lib.registerMidiOut(midi_out_name, midi_out_impl);
+    var msg;
+    try {
+      await JZZ().openMidiOut(midi_out_name).wait(1).close().wait(1).noteOn(0, 'C5', 127);
+    }
+    catch (err) {
+      msg = err.message;
+    }
+    assert.notEqual(msg, undefined);
+  });
+
+  it('await JZZ().openMidiOut().close() / throw 2', async function() {
+    var msg;
+    try {
+      await JZZ().openMidiOut(notexisting).wait(1).close();
+    }
+    catch (err) {
+      msg = err.message;
+    }
+    assert.equal(msg, notfound);
+  });
+
 });
