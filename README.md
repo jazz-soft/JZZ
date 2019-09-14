@@ -62,7 +62,7 @@ by running `npm remove midi-test --save-dev`.
 ##### CDN
 
     <script src="https://cdn.jsdelivr.net/npm/jzz"></script>       // the latest version, or
-    <script src="https://cdn.jsdelivr.net/npm/jzz@0.9.1"></script> // any particular version
+    <script src="https://cdn.jsdelivr.net/npm/jzz@0.9.2"></script> // any particular version
     //...
 
 ##### CommonJS (Browserify and Node.js command line applications)
@@ -118,6 +118,25 @@ by running `npm remove midi-test --save-dev`.
     port.note(0, 'C#5', 127, 500);                              // another shortcut
     port.ch(0).noteOn('C#5').wait(500).noteOff('C#5');          // using channels
     port.ch(0).note('C#5', 127, 500);                           // using channels
+
+##### Asynchronous calls
+
+    // in the environments that support async/await:
+    async function playNote() {
+      var midi = await JZZ();
+      var port = await midi.openMidiOut();
+      await port.noteOn(0, 'C5', 127);
+      await port.wait(500);
+      await port.noteOff(0, 'C5');
+      await port.close();
+      console.log('done!');
+    }
+    // or:
+    async function playAnotherNote() {
+      var port = await JZZ().openMidiOut();
+      await port.noteOn(0, 'C5', 127).wait(500).noteOff(0, 'C5').close();
+      console.log('done!');
+    }
 
 ## Additional modules
 - [**JZZ-midi-SMF**](https://github.com/jazz-soft/JZZ-midi-SMF) - Standard MIDI files: read / write / play
