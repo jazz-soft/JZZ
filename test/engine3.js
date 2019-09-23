@@ -4,11 +4,11 @@ global.window = global;
 var _startTime = Date.now();
 global.performance = { now: function() { return Date.now() - _startTime; } };
 
-var JZZ = require('..');
 var WMT = require('web-midi-test');
-
 WMT.sysex = false;
 global.navigator = WMT;
+
+var JZZ = require('..');
 
 global.document = {
   handle: {},
