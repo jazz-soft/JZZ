@@ -511,6 +511,7 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
               }, function() {
                 assert.equal(p.connection, 'closed');
                 src.disconnect();
+                engine.refresh();
                 done();
               });
             }
@@ -531,6 +532,7 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
             assert.equal(e.port.connection, 'closed');
             midi.onstatechange = null;
             src.disconnect();
+            engine.refresh();
             done();
           };
           setTimeout(function() { src.connect(); }, 10);
@@ -655,6 +657,7 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
               }, function() {
                 assert.equal(p.connection, 'closed');
                 dst.disconnect();
+                engine.refresh();
                 done();
               });
             }
@@ -675,6 +678,7 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
             assert.equal(e.port.connection, 'closed');
             midi.onstatechange = null;
             dst.disconnect();
+            engine.refresh();
             done();
           };
           setTimeout(function() { dst.connect(); }, 10);
