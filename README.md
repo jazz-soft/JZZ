@@ -76,6 +76,11 @@ by running `npm remove midi-test --save-dev`.
       //...
     });
 
+##### TypeScript
+
+    import JZZ = require('jzz');
+    //...
+
 ## Web MIDI API
 
 ##### (Node.js example)
