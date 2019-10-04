@@ -1,12 +1,24 @@
 import 'webmidi';
 
 declare namespace JZZ {
+  namespace SMPTE {
+    interface Constructor {
+      /** Create new SMPTE object */
+      new (...args: any[]): SMPTE;
+      /** Create new SMPTE object */
+      (...args: any[]): SMPTE;
+    }
+  }
+  interface SMPTE {
+    toString(): string;
+  }
+
   namespace MIDI {
     interface Constructor {
       /** Create new MIDI message */
-      new (arg: any): MIDI;
+      new (...args: any[]): MIDI;
       /** Create new MIDI message */
-      (arg: any): MIDI;
+      (...args: any[]): MIDI;
       // Channel-dependent
       /** Note On: `[9x nn vv]`; `x`: channel, `nn`: note, `vv`: velocity */
       noteOn(x: number, nn: number | string, vv?: number): MIDI;
@@ -91,12 +103,90 @@ declare namespace JZZ {
       reset(): MIDI;
       /** ID Request SysEx: `[F0 7E 7F 06 01 F7]` */
       sxIdRequest(): MIDI;
-      //mtc: function(t) { return [0xF1, _mtc(t)]; },
-      //sxFullFrame: function(t) { return [0xF0, 0x7F, 0x7F, 0x01, 0x01, _hrtype(t), t.getMinute(), t.getSecond(), t.getFrame(), 0xF7]; },
+      /** MIDI time code (SMPTE uarter frame): `[F1 xx]` */
+      mtc(t: SMPTE): MIDI;
+      /** SMPTE Full Frame SysEx: `[F0 7F 7F 01 01 xx xx xx xx F7]` */
+      sxFullFrame(t: SMPTE): MIDI;
+      // SMF
+      smf(...args: any): MIDI;
+      /** SMF Sequence number: [FF00 02 ssss] */
+      smfSeqNumber(ssss: number): MIDI;
+      /** SMF Text: [FF01 len text]; for use in Karaoke */
+      smfText(str: string): MIDI;
+      /** SMF Copyright: [FF02 len text] */
+      smfCopyright(str: string): MIDI;
+      /** SMF Sequence name: [FF03 len text] */
+      smfSeqName(str: string): MIDI;
+      /** SMF Instrument name: [FF04 len text] */
+      smfInstrName(str: string): MIDI;
+      /** SMF Lyrics: [FF05 len text] */
+      smfLyric(str: string): MIDI;
+      /** SMF Marker: [FF06 len text] */
+      smfMarker(str: string): MIDI;
+      /** SMF Cue point: [FF07 len text] */
+      smfCuePoint(str: string): MIDI;
+      /** SMF Program name: [FF08 len text] */
+      smfProgName(str: string): MIDI;
+      /** SMF Device name: [FF09 len text] */
+      smfDevName(str: string): MIDI;
+      /** SMF Channel prefix: [FF20 01 cc] */
+      smfChannelPrefix(cc: number): MIDI;
+      /** SMF MIDI port [FF21 01 pp] */
+      smfMidiPort(pp: number): MIDI;
+      /** SMF End of track: [FF2F 00] */
+      smfEndOfTrack(): MIDI;
+      /** SMF Tempo: [FF51 03 tttttt] */
+      smfTempo(tttttt: number): MIDI;
+      /** SMF Tempo, BMP: [FF51 03 tttttt] */
+      smfBPM(bpm: number): MIDI;
+      /** SMF SMPTE: [FF54 05 hh mm ss fr ff] */
+      smfSMPTE(smpte: SMPTE | number[]): MIDI;
+      /** SMF Time signature: [FF58 04 nn dd cc bb] */
+      smfTimeSignature(nn: number, dd: number, cc?: number, bb?: number): MIDI;
+      /** SMF Channel prefix: [FF20 01 cc] */
+      //smfKeySignature(key) - key signature; returns FF59 02 sf mi, where key is a key signature (e.g. 'Bb', 'F#m'), sf - a sharp/flat count (e.g. -7 for 7 flats, 7 for 7 sharps, 0 for C major / A minor), mi = 0/1 for major / minor.
+      /** SMF Sequencer-specific data: [FF7F len data] */
+      //smfSequencer(data: string): MIDI;
+      
+      // Other
+      /** Note MIDI value by name */
+      noteValue(note: number | string): number;
+      /** Program MIDI value by name */
+      programValue(prog: number | string): number;
+      /** Note frequency in HZ; `a5`: fraquency of `A5`, default: `440` */
+      freq(note: number | string, a5?: number): number;
     }
   }
   interface MIDI extends Array<number> {
     toString(): string;
+
+    isNoteOn(): boolean;
+    isNoteOff(): boolean;
+    isSysEx(): boolean;
+    isFullSysEx(): boolean;
+    isSMF(): boolean;
+    isTempo(): boolean;
+    isTimeSignature(): boolean;
+    isKeySignature(): boolean;
+    isEOT(): boolean;
+    
+    getChannel(): number;
+    setChannel(cc: number): MIDI;
+    getNote(): number;
+    setNote(note: number | string): MIDI;
+    getVelocity(): number;
+    setVelocity(vv: number): MIDI;
+    getSysExChannel(): number;
+    setSysExChannel(cc: number): MIDI;
+    
+    getData(): string;
+    setData(data: string): MIDI;
+    getText(): string;
+    setText(str: string): MIDI;
+    getTempo(): number;
+    getBPM(): number;
+    getTimeSignature(): number[];
+    getKeySignature(): any[];
   }
 
   namespace Stub {
