@@ -3,22 +3,110 @@ import 'webmidi';
 declare namespace JZZ {
   namespace SMPTE {
     interface Constructor {
-      /** Create new SMPTE object */
+      /** Create new SMPTE object
+       *
+       * https://jazz-soft.net/doc/JZZ/smpte.html#constructor */
       new (...args: any[]): SMPTE;
-      /** Create new SMPTE object */
+      /** Create new SMPTE object
+       *
+       * https://jazz-soft.net/doc/JZZ/smpte.html#constructor */
       (...args: any[]): SMPTE;
     }
   }
   interface SMPTE {
+    /** Convert SMPTE to human-readable string
+     *
+     * https://jazz-soft.net/doc/JZZ/smpte.html#tostring */
     toString(): string;
+    /** SMPTE event is Full Frame
+     *
+     * https://jazz-soft.net/doc/JZZ/smpte.html#isFullFrame */
+    isFullFrame(): boolean;
+    /** Get SMPTE type
+     *
+     * https://jazz-soft.net/doc/JZZ/smpte.html#getType */
+    getType(): number;
+    /** Get SMPTE hour
+     *
+     * https://jazz-soft.net/doc/JZZ/smpte.html#getHour */
+    getHour(): number;
+    /** Get SMPTE minute
+     *
+     * https://jazz-soft.net/doc/JZZ/smpte.html#getMinute */
+    getMinute(): number;
+    /** Get SMPTE second
+     *
+     * https://jazz-soft.net/doc/JZZ/smpte.html#getSecond */
+    getSecond(): number;
+    /** Get SMPTE frame
+     *
+     * https://jazz-soft.net/doc/JZZ/smpte.html#getFrame */
+    getFrame(): number;
+    /** Get SMPTE quarter frame
+     *
+     * https://jazz-soft.net/doc/JZZ/smpte.html#getQuarter */
+    getQuarter(): number;
+    /** Set SMPTE type
+     *
+     * https://jazz-soft.net/doc/JZZ/smpte.html#setType */
+    setType(n: number): SMPTE;
+    /** Set SMPTE hour
+     *
+     * https://jazz-soft.net/doc/JZZ/smpte.html#setHour */
+    setHour(n: number): SMPTE;
+    /** Set SMPTE minute
+     *
+     * https://jazz-soft.net/doc/JZZ/smpte.html#setMinute */
+    setMinute(n: number): SMPTE;
+    /** Set SMPTE second
+     *
+     * https://jazz-soft.net/doc/JZZ/smpte.html#setSecond */
+    setSecond(n: number): SMPTE;
+    /** Set SMPTE frame
+     *
+     * https://jazz-soft.net/doc/JZZ/smpte.html#setFrame */
+    setFrame(n: number): SMPTE;
+    /** Set SMPTE quarter frame
+     *
+     * https://jazz-soft.net/doc/JZZ/smpte.html#setQuarter */
+    setQuarter(n: number): SMPTE;
+    /** Increase SMPTE time by one frame
+     *
+     * https://jazz-soft.net/doc/JZZ/smpte.html#incrFrame */
+    incrFrame(): SMPTE;
+    /** Decrease SMPTE time by one frame
+     *
+     * https://jazz-soft.net/doc/JZZ/smpte.html#decrFrame */
+    decrFrame(): SMPTE;
+    /** Increase SMPTE time by quarter frame
+     *
+     * https://jazz-soft.net/doc/JZZ/smpte.html#incrQF */
+    incrQF(): SMPTE;
+    /** Decrease SMPTE time by quarter frame
+     *
+     * https://jazz-soft.net/doc/JZZ/smpte.html#decrQF */
+    decrQF(): SMPTE;
+    /** Read MIDI Time Code message
+     *
+     * https://jazz-soft.net/doc/JZZ/smpte.html#read */
+    read(...args: any[]): boolean;
+    /** Reset SMPTE object
+     *
+     * https://jazz-soft.net/doc/JZZ/smpte.html#reset */
+     reset(...args: any[]): SMPTE;
   }
 
   namespace MIDI {
     interface Constructor {
-      /** Create new MIDI message */
+      /** Create new MIDI message
+       *
+       * https://jazz-soft.net/doc/JZZ/jzzmidi.html#constructor */
       new (...args: any[]): MIDI;
-      /** Create new MIDI message */
+      /** Create new MIDI message
+       *
+       * https://jazz-soft.net/doc/JZZ/jzzmidi.html#constructor */
       (...args: any[]): MIDI;
+
       // Channel-dependent
       /** Note On: `[9x nn vv]`; `x`: channel, `nn`: note, `vv`: velocity
        *
@@ -144,6 +232,7 @@ declare namespace JZZ {
        *
        * https://jazz-soft.net/doc/JZZ/jzzmidi.html#allNotesOff */
       allNotesOff(x: number): MIDI;
+
       // Channel-independent
       /** Song position: `[F2 lsb msb]`; `msb`/`lsb`: most/least significant 7 bits
        *
@@ -193,6 +282,7 @@ declare namespace JZZ {
        *
        * https://jazz-soft.net/doc/JZZ/jzzmidi.html#sxFullFrame */
       sxFullFrame(t: SMPTE): MIDI;
+
       // SMF
       /** Standard MIDI File meta event: [FFxx len data]
        *
@@ -274,6 +364,7 @@ declare namespace JZZ {
        *
        * https://jazz-soft.net/doc/JZZ/jzzmidi.html#smfSequencer */
       smfSequencer(data: string): MIDI;
+
       // Other
       /** Note MIDI value by name
        *
@@ -290,6 +381,9 @@ declare namespace JZZ {
     }
   }
   interface MIDI extends Array<number> {
+    /** Convert MIDI to human-readable string
+     *
+     * https://jazz-soft.net/doc/JZZ/jzzmidi.html#tostring */
     toString(): string;
     /** The message is Note On
      *
@@ -398,15 +492,25 @@ declare namespace JZZ {
     interface Async extends Stub, PromiseLike<Stub> {}
   }
   interface Stub {
-    /** Print if OK */
+    /** Print if OK
+     *
+     * https://jazz-soft.net/doc/JZZ/common.html#and */
     and(text: string): Stub.Async;
-    /** Execute if OK */
+    /** Execute if OK
+     *
+     * https://jazz-soft.net/doc/JZZ/common.html#and */
     and(func: (self?: Stub) => void): Stub.Async;
-    /** Print if not OK */
+    /** Print if not OK
+     *
+     * https://jazz-soft.net/doc/JZZ/common.html#or */
     or(text: string): Stub.Async;
-    /** Execute if not OK */
+    /** Execute if not OK
+     *
+     * https://jazz-soft.net/doc/JZZ/common.html#or */
     or(func: (self?: Stub) => void): Stub.Async;
-    /** Wait `ms` milliseconds */
+    /** Wait `ms` milliseconds
+     *
+     * https://jazz-soft.net/doc/JZZ/common.html#wait */
     wait(ms: number): Stub.Async;
   }
 
@@ -415,23 +519,48 @@ declare namespace JZZ {
   }
   interface Engine {
     // Stub
-    /** Print if OK */
+    /** Print if OK
+     *
+     * https://jazz-soft.net/doc/JZZ/common.html#and */
     and(text: string): Engine.Async;
-    /** Execute if OK */
+    /** Execute if OK
+     *
+     * https://jazz-soft.net/doc/JZZ/common.html#and */
     and(func: (self?: Stub) => void): Engine.Async;
-    /** Print if not OK */
+    /** Print if not OK
+     *
+     * https://jazz-soft.net/doc/JZZ/common.html#or */
     or(text: string): Engine.Async;
-    /** Execute if not OK */
+    /** Execute if not OK
+     *
+     * https://jazz-soft.net/doc/JZZ/common.html#or */
     or(func: (self?: Stub) => void): Engine.Async;
-    /** Wait `ms` milliseconds */
+    /** Wait `ms` milliseconds
+     *
+     * https://jazz-soft.net/doc/JZZ/common.html#wait */
     wait(ms: number): Engine.Async;
+
     // Engine
-    /** Close MIDI engine */
-    close(): Stub.Async;
-    /** Open MIDI-In port */
+    /** Return an `info` object
+     *
+     * https://jazz-soft.net/doc/JZZ/jzz.html#info */
+    info(): any;
+    /** Refresh the list of available ports
+     *
+     * https://jazz-soft.net/doc/JZZ/jzz.html#refresh */
+    refresh(): Engine.Async;
+    /** Open MIDI-In port
+     *
+     * https://jazz-soft.net/doc/JZZ/midiin.html#open */
     openMidiIn(arg?: any): Port.Async;
-    /** Open MIDI-Out port */
+    /** Open MIDI-Out port
+     *
+     * https://jazz-soft.net/doc/JZZ/midiout.html#open */
     openMidiOut(arg?: any): Port.Async;
+    /** Close MIDI engine
+     *
+     * https://jazz-soft.net/doc/JZZ/jzz.html#close */
+    close(): Stub.Async;
   }
 
   namespace Port {
@@ -439,30 +568,55 @@ declare namespace JZZ {
   }
   interface Port {
     // Stub
-    /** Print if OK */
+    /** Print if OK
+     *
+     * https://jazz-soft.net/doc/JZZ/common.html#and */
     and(text: string): Port.Async;
-    /** Execute if OK */
+    /** Execute if OK
+     *
+     * https://jazz-soft.net/doc/JZZ/common.html#and */
     and(func: (self?: Stub) => void): Port.Async;
-    /** Print if not OK */
+    /** Print if not OK
+     *
+     * https://jazz-soft.net/doc/JZZ/common.html#or */
     or(text: string): Port.Async;
-    /** Execute if not OK */
+    /** Execute if not OK
+     *
+     * https://jazz-soft.net/doc/JZZ/common.html#or */
     or(func: (self?: Stub) => void): Port.Async;
-    /** Wait `ms` milliseconds */
+    /** Wait `ms` milliseconds
+     *
+     * https://jazz-soft.net/doc/JZZ/common.html#wait */
     wait(ms: number): Port.Async;
+
     // Port
-    /** Close MIDI port */
+    /** Close MIDI port
+     *
+     * https://jazz-soft.net/doc/JZZ/midiin.html#close */
     close(): Stub.Async;
   }
 }
 
 interface JZZ {
-  /** Start MIDI engine */
+  /** Start MIDI engine
+   *
+   * https://jazz-soft.net/doc/JZZ/jzz.html#jzz */
   (arg?: any): JZZ.Engine.Async;
-  /** MIDI message */
+  /** Return an `info` object
+   *
+   * https://jazz-soft.net/doc/JZZ/jzz.html#info */
+  readonly info: () => any;
+  /** MIDI message
+   *
+   * https://jazz-soft.net/doc/JZZ/jzzmidi.html */
   readonly MIDI: JZZ.MIDI.Constructor;
-  /** SMPTE message */
-  readonly SMPTE: any;
-  /** Invoke Web MIDI API */
+  /** SMPTE message
+   *
+   * https://jazz-soft.net/doc/JZZ/smpte.html */
+  readonly SMPTE: JZZ.SMPTE.Constructor;
+  /** Invoke Web MIDI API
+   *
+   * https://jazz-soft.net/doc/JZZ/webmidi.html */
   readonly requestMIDIAccess: (options?: WebMidi.MIDIOptions) => Promise<WebMidi.MIDIAccess>;
 }
 declare const jzz: JZZ;
