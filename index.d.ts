@@ -590,14 +590,87 @@ declare namespace JZZ {
     wait(ms: number): Port.Async;
 
     // Port
+    /** Return an `info` object
+     *
+     * https://jazz-soft.net/doc/JZZ/midiin.html#info */
+    info(): any;
+    /** Return the port name
+     *
+     * https://jazz-soft.net/doc/JZZ/midiin.html#name */
+    name(): string;
+    /** Connect MIDI port
+     *
+     * https://jazz-soft.net/doc/JZZ/midiin.html#connect */
+    connect(arg: any): Port.Async;
+    /** Disonnect MIDI port
+     *
+     * https://jazz-soft.net/doc/JZZ/midiin.html#disconnect */
+    disconnect(arg?: any): Port.Async;
+    /** Send MIDI message
+     *
+     * https://jazz-soft.net/doc/JZZ/midiout.html#send */
+    send(...args: any[]): Port.Async;
+    /** Emit MIDI message
+     *
+     * https://jazz-soft.net/doc/JZZ/midithru.html#emit */
+    emit(...args: any[]): Port.Async;
+    /** Emit MIDI message
+     *
+     * https://jazz-soft.net/doc/JZZ/midithru.html#emit */
+    _emit(...args: any[]): void;
     /** Close MIDI port
      *
      * https://jazz-soft.net/doc/JZZ/midiin.html#close */
     close(): Stub.Async;
+
+    /** Play note
+     *
+     * https://jazz-soft.net/doc/JZZ/midiout.html#note */
+    note(x: number, nn: number | string, vv?: number, tt?: number): Port.Async;
+  }
+
+  interface lib {
+    /** Open virtual MIDI-In port
+     *
+     * https://jazz-soft.net/doc/JZZ/lib.html#openMidiIn */
+    openMidiIn(...args: any[]): boolean;
+    /** Open virtual MIDI-Out port
+     *
+     * https://jazz-soft.net/doc/JZZ/lib.html#openMidiOut */
+    openMidiOut(...args: any[]): boolean;
+    /** Register virtual MIDI-In port
+     *
+     * https://jazz-soft.net/doc/JZZ/lib.html#registerMidiIn */
+    registerMidiIn(...args: any[]): boolean;
+    /** Register virtual MIDI-Out port
+     *
+     * https://jazz-soft.net/doc/JZZ/lib.html#registerMidiOut */
+    registerMidiOut(...args: any[]): boolean;
+    /** Activate and return window.AudioContext
+     *
+     * https://jazz-soft.net/doc/JZZ/lib.html#getAudioContext */
+    getAudioContext(): any;
+    /** Encode string to Base64
+     *
+     * https://jazz-soft.net/doc/JZZ/lib.html#toBase64 */
+    toBase64(txt: string): string;
+    /** Decode string from Base64
+     *
+     * https://jazz-soft.net/doc/JZZ/lib.html#fromBase64 */
+    fromBase64(txt: string): string;
+    /** Encode string to UTF8
+     *
+     * https://jazz-soft.net/doc/JZZ/lib.html#toUTF8 */
+    toUTF8(txt: string): string;
+    /** Decode string from UTF8
+     *
+     * https://jazz-soft.net/doc/JZZ/lib.html#fromUTF8 */
+    fromUTF8(txt: string): string;
   }
 }
 
 interface JZZ {
+  readonly lib: JZZ.lib;
   /** Start MIDI engine
    *
    * https://jazz-soft.net/doc/JZZ/jzz.html#jzz */
@@ -606,6 +679,10 @@ interface JZZ {
    *
    * https://jazz-soft.net/doc/JZZ/jzz.html#info */
   readonly info: () => any;
+  /** Create virtual MIDI port
+   *
+   * https://jazz-soft.net/doc/JZZ/midithru.html#Widget */
+  readonly Widget: (...args: any[]) => JZZ.Port;
   /** MIDI message
    *
    * https://jazz-soft.net/doc/JZZ/jzzmidi.html */
