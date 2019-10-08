@@ -348,9 +348,9 @@ declare namespace JZZ {
        *
        * https://jazz-soft.net/doc/JZZ/jzzmidi.html#smfBPM */
       smfBPM(bpm: number): MIDI;
-      /** SMF SMPTE: [FF54 05 hh mm ss fr ff]
+      /** SMF SMPTE offset: [FF54 05 hh mm ss fr ff]
        * 
-       */
+       * https://jazz-soft.net/doc/JZZ/jzzmidi.html#smfSMPTE */
       smfSMPTE(smpte: SMPTE | number[]): MIDI;
       /** SMF Time Signature: [FF58 04 nn dd cc bb]
        *
@@ -557,6 +557,10 @@ declare namespace JZZ {
      *
      * https://jazz-soft.net/doc/JZZ/midiout.html#open */
     openMidiOut(arg?: any): Port.Async;
+    /** Watch MIDI connection changes
+     *
+     * https://jazz-soft.net/doc/JZZ/jzz.html#onChange */
+    onChange(arg?: any): Watcher.Async;
     /** Close MIDI engine
      *
      * https://jazz-soft.net/doc/JZZ/jzz.html#close */
@@ -627,6 +631,290 @@ declare namespace JZZ {
      *
      * https://jazz-soft.net/doc/JZZ/midiout.html#note */
     note(x: number, nn: number | string, vv?: number, tt?: number): Port.Async;
+
+    // Channel-dependent
+    /** Note On: `[9x nn vv]`; `x`: channel, `nn`: note, `vv`: velocity
+     *
+     * https://jazz-soft.net/doc/JZZ/jzzmidi.html#noteOn */
+    noteOn(x: number, nn: number | string, vv?: number): Port.Async;
+    /** Note Off: `[8x nn vv]`; `x`: channel, `nn`: note, `vv`: velocity
+     *
+     * https://jazz-soft.net/doc/JZZ/jzzmidi.html#noteOff */
+    noteOff(x: number, nn: number | string, vv?: number): Port.Async;
+    /** Polyphonic aftetouch: `[Ax nn vv]`; `x`: channel, `nn`: note, `vv`: value
+     *
+     * https://jazz-soft.net/doc/JZZ/jzzmidi.html#aftertouch */
+    aftertouch(x: number, nn: number | string, vv: number): Port.Async;
+    /** MIDI control: `[Bx nn vv]`; `x`: channel, `nn`: function, `vv`: value
+     *
+     * https://jazz-soft.net/doc/JZZ/jzzmidi.html#control */
+    control(x: number, nn: number, vv: number): Port.Async;
+    /** Program change: `[Cx nn]`; `x`: channel, `nn`: program
+     *
+     * https://jazz-soft.net/doc/JZZ/jzzmidi.html#program */
+    program(x: number, nn: number | string): Port.Async;
+    /** Pressure: `[Dx nn]`; `x`: channel, `nn`: pressure
+     *
+     * https://jazz-soft.net/doc/JZZ/jzzmidi.html#pressure */
+    pressure(x: number, nn: number): Port.Async;
+    /** Pitch bend: `[Ex lsb msb]`; `x`: channel, `msb`/`lsb`: most/least significant 7 bits
+     *
+     * https://jazz-soft.net/doc/JZZ/jzzmidi.html#pitchBend */
+    pitchBend(x: number, nn: number): Port.Async;
+    /** Bank select MSB: `[Bx 00 nn]`; `x`: channel, `nn`: most significant 7 bits
+     *
+     * https://jazz-soft.net/doc/JZZ/jzzmidi.html#bankMSB */
+    bankMSB(x: number, nn: number): Port.Async;
+    /** Bank select LSB: `[Bx 20 nn]`; `x`: channel, `nn`: least significant 7 bits
+     *
+     * https://jazz-soft.net/doc/JZZ/jzzmidi.html#bankLSB */
+    bankLSB(x: number, nn: number): Port.Async;
+    /** Modulation MSB: `[Bx 01 nn]`; `x`: channel, `nn`: most significant 7 bits
+     *
+     * https://jazz-soft.net/doc/JZZ/jzzmidi.html#modMSB */
+    modMSB(x: number, nn: number): Port.Async;
+    /** Modulation LSB: `[Bx 21 nn]`; `x`: channel, `nn`: least significant 7 bits
+     *
+     * https://jazz-soft.net/doc/JZZ/jzzmidi.html#modLSB */
+    modLSB(x: number, nn: number): Port.Async;
+    /** Breath controller MSB: `[Bx 02 nn]`; `x`: channel, `nn`: most significant 7 bits
+     *
+     * https://jazz-soft.net/doc/JZZ/jzzmidi.html#breathMSB */
+    breathMSB(x: number, nn: number): Port.Async;
+    /** Breath controller LSB: `[Bx 22 nn]`; `x`: channel, `nn`: least significant 7 bits
+     *
+     * https://jazz-soft.net/doc/JZZ/jzzmidi.html#breathLSB */
+    breathLSB(x: number, nn: number): Port.Async;
+    /** Foot controller MSB: `[Bx 04 nn]`; `x`: channel, `nn`: most significant 7 bits
+     *
+     * https://jazz-soft.net/doc/JZZ/jzzmidi.html#footMSB */
+    footMSB(x: number, nn: number): Port.Async;
+    /** Foot controller LSB: `[Bx 24 nn]`; `x`: channel, `nn`: least significant 7 bits
+     *
+     * https://jazz-soft.net/doc/JZZ/jzzmidi.html#footLSB */
+    footLSB(x: number, nn: number): Port.Async;
+    /** Portamento MSB: `[Bx 05 nn]`; `x`: channel, `nn`: most significant 7 bits
+     *
+     * https://jazz-soft.net/doc/JZZ/jzzmidi.html#portamentoMSB */
+    portamentoMSB(x: number, nn: number): Port.Async;
+    /** Portamento LSB: `[Bx 25 nn]`; `x`: channel, `nn`: least significant 7 bits
+     *
+     * https://jazz-soft.net/doc/JZZ/jzzmidi.html#portamentoLSB */
+    portamentoLSB(x: number, nn: number): Port.Async;
+    /** Volume MSB: `[Bx 07 nn]`; `x`: channel, `nn`: most significant 7 bits
+     *
+     * https://jazz-soft.net/doc/JZZ/jzzmidi.html#volumeMSB */
+    volumeMSB(x: number, nn: number): Port.Async;
+    /** Volume LSB: `[Bx 27 nn]`; `x`: channel, `nn`: least significant 7 bits
+     *
+     * https://jazz-soft.net/doc/JZZ/jzzmidi.html#volumeLSB */
+    volumeLSB(x: number, nn: number): Port.Async;
+    /** Balance MSB: `[Bx 08 nn]`; `x`: channel, `nn`: most significant 7 bits
+     *
+     * https://jazz-soft.net/doc/JZZ/jzzmidi.html#balanceMSB */
+    balanceMSB(x: number, nn: number): Port.Async;
+    /** Balance LSB: `[Bx 28 nn]`; `x`: channel, `nn`: least significant 7 bits
+     *
+     * https://jazz-soft.net/doc/JZZ/jzzmidi.html#balanceLSB */
+    balanceLSB(x: number, nn: number): Port.Async;
+    /** Pan MSB: `[Bx 0A nn]`; `x`: channel, `nn`: most significant 7 bits
+     *
+     * https://jazz-soft.net/doc/JZZ/jzzmidi.html#panMSB */
+    panMSB(x: number, nn: number): Port.Async;
+    /** Pan LSB: `[Bx 2A nn]`; `x`: channel, `nn`: least significant 7 bits
+     *
+     * https://jazz-soft.net/doc/JZZ/jzzmidi.html#panLSB */
+    panLSB(x: number, nn: number): Port.Async;
+    /** Expression MSB: `[Bx 0B nn]`; `x`: channel, `nn`: most significant 7 bits
+     *
+     * https://jazz-soft.net/doc/JZZ/jzzmidi.html#expressionMSB */
+    expressionMSB(x: number, nn: number): Port.Async;
+    /** Expression LSB: `[Bx 2B nn]`; `x`: channel, `nn`: least significant 7 bits
+     *
+     * https://jazz-soft.net/doc/JZZ/jzzmidi.html#expressionLSB */
+    expressionLSB(x: number, nn: number): Port.Async;
+    /** Damper on/off: `[Bx 40 nn]`; `x`: channel, `nn`: `bb ? 7f : 00`
+     *
+     * https://jazz-soft.net/doc/JZZ/jzzmidi.html#damper */
+    damper(x: number, bb: boolean): Port.Async;
+    /** Portamento on/off: `[Bx 41 nn]`; `x`: channel, `nn`: `bb ? 7f : 00`
+     *
+     * https://jazz-soft.net/doc/JZZ/jzzmidi.html#portamento */
+    portamento(x: number, bb: boolean): Port.Async;
+    /** Sostenuto on/off: `[Bx 42 nn]`; `x`: channel, `nn`: `bb ? 7f : 00`
+     *
+     * https://jazz-soft.net/doc/JZZ/jzzmidi.html#sostenuto */
+    sostenuto(x: number, bb: boolean): Port.Async;
+    /** Soft on/off: `[Bx 43 nn]`; `x`: channel, `nn`: `bb ? 7f : 00`
+     *
+     * https://jazz-soft.net/doc/JZZ/jzzmidi.html#soft */
+    soft(x: number, bb: boolean): Port.Async;
+    /** All sound off: `[Bx 78 00]`; `x`: channel
+     *
+     * https://jazz-soft.net/doc/JZZ/jzzmidi.html#allSoundOff */
+    allSoundOff(x: number): Port.Async;
+    /** All notes off: `[Bx 7B 00]`; `x`: channel
+     *
+     * https://jazz-soft.net/doc/JZZ/jzzmidi.html#allNotesOff */
+    allNotesOff(x: number): Port.Async;
+
+    // Channel-independent
+    /** Song position: `[F2 lsb msb]`; `msb`/`lsb`: most/least significant 7 bits
+     *
+     * https://jazz-soft.net/doc/JZZ/jzzmidi.html#songPosition */
+    songPosition(nn: number): Port.Async;
+    /** Song select: `[F3 nn]`; `nn`: song number
+     *
+     * https://jazz-soft.net/doc/JZZ/jzzmidi.html#songSelect */
+    songSelect(nn: number): Port.Async;
+    /** Tune: `[F6]`
+     *
+     * https://jazz-soft.net/doc/JZZ/jzzmidi.html#tune */
+    tune(): Port.Async;
+    /** Clock: `[F8]`
+     *
+     * https://jazz-soft.net/doc/JZZ/jzzmidi.html#clock */
+    clock(): Port.Async;
+    /** Start: `[FA]`
+     *
+     * https://jazz-soft.net/doc/JZZ/jzzmidi.html#start */
+    start(): Port.Async;
+    /** Continue: `[FB]`
+     *
+     * https://jazz-soft.net/doc/JZZ/jzzmidi.html#continue */
+    continue(): Port.Async;
+    /** Stop: `[FC]`
+     *
+     * https://jazz-soft.net/doc/JZZ/jzzmidi.html#stop */
+    stop(): Port.Async;
+    /** Active sense signal: `[FE]`
+     *
+     * https://jazz-soft.net/doc/JZZ/jzzmidi.html#active */
+    active(): Port.Async;
+    /** Reset: `[FF]`
+     *
+     * https://jazz-soft.net/doc/JZZ/jzzmidi.html#reset */
+    reset(): Port.Async;
+    /** ID Request SysEx: `[F0 7E 7F 06 01 F7]`
+     *
+     * https://jazz-soft.net/doc/JZZ/jzzmidi.html#sxIdRequest */
+    sxIdRequest(): Port.Async;
+    /** MIDI time code (SMPTE quarter frame): `[F1 xx]`
+     *
+     * https://jazz-soft.net/doc/JZZ/jzzmidi.html#mtc */
+    mtc(t: SMPTE): Port.Async;
+    /** SMPTE Full Frame SysEx: `[F0 7F 7F 01 01 xx xx xx xx F7]`
+     *
+     * https://jazz-soft.net/doc/JZZ/jzzmidi.html#sxFullFrame */
+    sxFullFrame(t: SMPTE): Port.Async;
+
+    // SMF
+    /** Standard MIDI File meta event: [FFxx len data]
+     *
+     * https://jazz-soft.net/doc/JZZ/jzzmidi.html#smf */
+    smf(...args: any): Port.Async;
+    /** SMF Sequence Number: [FF00 02 ssss]
+     *
+     * https://jazz-soft.net/doc/JZZ/jzzmidi.html#smfSeqNumber */
+    smfSeqNumber(ssss: number): Port.Async;
+    /** SMF Text: [FF01 len text]; used in Karaoke files
+     *
+     * https://jazz-soft.net/doc/JZZ/jzzmidi.html#smfText */
+    smfText(str: string): Port.Async;
+    /** SMF Copyright: [FF02 len text]
+     *
+     * https://jazz-soft.net/doc/JZZ/jzzmidi.html#smfCopyright */
+    smfCopyright(str: string): Port.Async;
+    /** SMF Sequence Name: [FF03 len text]
+     *
+     * https://jazz-soft.net/doc/JZZ/jzzmidi.html#smfSeqName */
+    smfSeqName(str: string): Port.Async;
+    /** SMF Instrument Name: [FF04 len text]
+     *
+     * https://jazz-soft.net/doc/JZZ/jzzmidi.html#smfInstrName */
+    smfInstrName(str: string): Port.Async;
+    /** SMF Lyric: [FF05 len text]
+     *
+     * https://jazz-soft.net/doc/JZZ/jzzmidi.html#smfLyric */
+    smfLyric(str: string): Port.Async;
+    /** SMF Marker: [FF06 len text]
+     *
+     * https://jazz-soft.net/doc/JZZ/jzzmidi.html#smfMarker */
+    smfMarker(str: string): Port.Async;
+    /** SMF Cue Point: [FF07 len text]
+     *
+     * https://jazz-soft.net/doc/JZZ/jzzmidi.html#smfCuePoint */
+    smfCuePoint(str: string): Port.Async;
+    /** SMF Program Name: [FF08 len text]
+     *
+     * https://jazz-soft.net/doc/JZZ/jzzmidi.html#smfProgName */
+    smfProgName(str: string): Port.Async;
+    /** SMF Device Name: [FF09 len text]
+     *
+     * https://jazz-soft.net/doc/JZZ/jzzmidi.html#smfDevName */
+    smfDevName(str: string): Port.Async;
+    /** SMF Channel Prefix: [FF20 01 cc]
+     *
+     * https://jazz-soft.net/doc/JZZ/jzzmidi.html#smfChannelPrefix */
+    smfChannelPrefix(cc: number): Port.Async;
+    /** SMF MIDI Port [FF21 01 pp]
+     *
+     * https://jazz-soft.net/doc/JZZ/jzzmidi.html#smfMidiPort */
+    smfMidiPort(pp: number): Port.Async;
+    /** SMF End of Track: [FF2F 00]
+     *
+     * https://jazz-soft.net/doc/JZZ/jzzmidi.html#smfEndOfTrack */
+    smfEndOfTrack(): Port.Async;
+    /** SMF Tempo: [FF51 03 tttttt]
+     *
+     * https://jazz-soft.net/doc/JZZ/jzzmidi.html#smfTempo */
+    smfTempo(tttttt: number): Port.Async;
+    /** SMF Tempo, BMP: [FF51 03 tttttt]
+     *
+     * https://jazz-soft.net/doc/JZZ/jzzmidi.html#smfBPM */
+    smfBPM(bpm: number): Port.Async;
+    /** SMF SMPTE offset: [FF54 05 hh mm ss fr ff]
+     * 
+     * https://jazz-soft.net/doc/JZZ/jzzmidi.html#smfSMPTE */
+    smfSMPTE(smpte: SMPTE | number[]): Port.Async;
+    /** SMF Time Signature: [FF58 04 nn dd cc bb]
+     *
+     * https://jazz-soft.net/doc/JZZ/jzzmidi.html#smfTimeSignature */
+    smfTimeSignature(nn: number, dd: number, cc?: number, bb?: number): Port.Async;
+    /** SMF Key Signature: [FF59 02 sf mi]
+     *
+     * https://jazz-soft.net/doc/JZZ/jzzmidi.html#smfKeySignature */
+    smfKeySignature(key: string): Port.Async;
+    /** SMF Sequencer-specific Data: [FF7F len data]
+     *
+     * https://jazz-soft.net/doc/JZZ/jzzmidi.html#smfSequencer */
+    smfSequencer(data: string): Port.Async;
+  }
+
+  namespace Channel {
+    interface Async extends Channel, PromiseLike<Channel> {}
+  }
+  interface Channel {
+  }
+
+  namespace MPE {
+    interface Async extends MPE, PromiseLike<MPE> {}
+  }
+  interface MPE {
+  }
+
+  namespace Watcher {
+    interface Async extends Watcher, PromiseLike<Watcher> {}
+  }
+  interface Watcher extends Engine {
+    /** Add the Watcher handle
+     *
+     * https://jazz-soft.net/doc/JZZ/jzz.html#connect */
+    connect(...args: any[]): Watcher.Async;
+    /** Remove the Watcher handle
+     *
+     * https://jazz-soft.net/doc/JZZ/jzz.html#disconnect */
+    disconnect(...args: any[]): Watcher.Async;
   }
 
   interface lib {
