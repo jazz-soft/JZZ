@@ -505,7 +505,7 @@ describe('JZZ.Widget', function() {
     ]);
     var port = JZZ.Widget();
     port.connect(function(msg) { sample.compare(msg); });
-    port.mpe(0, 4).program(25).noteOn('C5').noteOn('D5').aftertouch('D5', 127).noteOff('C5').note('E5', 127, 1).note(0, 1);
+    port.mpe(0, 4).program(25).noteOn('C5').noteOn('D5').aftertouch('D5', 127).noteOff('C5').note('E5', 127, 1).note(0, 1).mpe();
   });
 });
 
