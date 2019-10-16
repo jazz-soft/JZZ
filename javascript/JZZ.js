@@ -610,7 +610,7 @@
         self._crash(msg);
       };
       var opt = {};
-      _requestMIDIAccess(opt).then(onGood, onBad);
+      navigator.requestMIDIAccess(opt).then(onGood, onBad);
       this._pause();
       return;
     }
@@ -627,7 +627,7 @@
         self._crash(msg);
       };
       var opt = {sysex:true};
-      _requestMIDIAccess(opt).then(onGood, onBad);
+      navigator.requestMIDIAccess(opt).then(onGood, onBad);
       this._pause();
       return;
     }
