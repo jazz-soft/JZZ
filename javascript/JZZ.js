@@ -593,7 +593,7 @@
   // Web MIDI API
   var _requestMIDIAccess;
   if (typeof navigator !== 'undefined' && navigator.requestMIDIAccess) {
-    _requestMIDIAccess = navigator.requestMIDIAccess;
+    _requestMIDIAccess = navigator.requestMIDIAccess.bind(navigator);
     try {
       if (_requestMIDIAccess.toString().indexOf('JZZ(') != -1) _requestMIDIAccess = undefined;
     }
