@@ -591,9 +591,11 @@
   }
 
   // Web MIDI API
+  var _navigator;
   var _requestMIDIAccess;
   if (typeof navigator !== 'undefined' && navigator.requestMIDIAccess) {
-    _requestMIDIAccess = navigator.requestMIDIAccess.bind(navigator);
+    _navigator = navigator;
+    _requestMIDIAccess = navigator.requestMIDIAccess;
     try {
       if (_requestMIDIAccess.toString().indexOf('JZZ(') != -1) _requestMIDIAccess = undefined;
     }
@@ -610,7 +612,7 @@
         self._crash(msg);
       };
       var opt = {};
-      _requestMIDIAccess(opt).then(onGood, onBad);
+      _requestMIDIAccess.call(_navigator, opt).then(onGood, onBad);
       this._pause();
       return;
     }
@@ -627,7 +629,7 @@
         self._crash(msg);
       };
       var opt = {sysex:true};
-      _requestMIDIAccess(opt).then(onGood, onBad);
+      _requestMIDIAccess.call(_navigator, opt).then(onGood, onBad);
       this._pause();
       return;
     }
