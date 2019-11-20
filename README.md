@@ -14,7 +14,7 @@
 [![npm](https://img.shields.io/npm/v/jzz.svg)](https://www.npmjs.com/package/jzz)
 [![npm](https://img.shields.io/npm/dt/jzz.svg)](https://www.npmjs.com/package/jzz)
 [![jsDelivr](https://data.jsdelivr.com/v1/package/npm/jzz/badge)](https://www.jsdelivr.com/package/npm/jzz)
-[![Build Status](https://travis-ci.com/jazz-soft/JZZ.svg?branch=master)](https://travis-ci.com/jazz-soft/JZZ)
+[![Build Status](https://travis-ci.org/jazz-soft/JZZ.svg?branch=master)](https://travis-ci.org/jazz-soft/JZZ)
 [![Coverage](https://coveralls.io/repos/github/jazz-soft/JZZ/badge.svg?branch=master)](https://coveralls.io/github/jazz-soft/JZZ?branch=master)
 
 **JZZ.js** allows sending, receiving and playing MIDI messages
