@@ -13,7 +13,7 @@
 })(this, function() {
 
   var _scope = typeof window === 'undefined' ? global : window;
-  var _version = '0.9.7';
+  var _version = '0.9.8';
   var i, j, k, m, n;
 
   var _time = Date.now || function () { return new Date().getTime(); };
@@ -2218,11 +2218,13 @@
             osc.start(0.1); osc.stop(0.11);
           }
           else {
+            document.removeEventListener('touchstart', _activateAudioContext);
             document.removeEventListener('touchend', _activateAudioContext);
             document.removeEventListener('mousedown', _activateAudioContext);
             document.removeEventListener('keydown', _activateAudioContext);
           }
         };
+        document.addEventListener('touchstart', _activateAudioContext);
         document.addEventListener('touchend', _activateAudioContext);
         document.addEventListener('mousedown', _activateAudioContext);
         document.addEventListener('keydown', _activateAudioContext);
