@@ -718,6 +718,7 @@
 
   function _initNONE() {
     _engine._type = 'none';
+    _engine._version = _version;
     _engine._sysex = true;
     _engine._outs = [];
     _engine._ins = [];
