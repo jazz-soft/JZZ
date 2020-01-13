@@ -5,6 +5,7 @@
 ![opera](https://jazz-soft.github.io/img/opera.jpg)
 ![safari](https://jazz-soft.github.io/img/safari.jpg)
 ![msie](https://jazz-soft.github.io/img/msie.jpg)
+![edge](https://jazz-soft.github.io/img/edgc.jpg)
 ![windows](https://jazz-soft.github.io/img/windows.jpg)
 ![macos](https://jazz-soft.github.io/img/macos.jpg)
 ![linux](https://jazz-soft.github.io/img/linux.jpg)
