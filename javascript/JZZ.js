@@ -13,7 +13,7 @@
 })(this, function() {
 
   var _scope = typeof window === 'undefined' ? global : window;
-  var _version = '0.9.9';
+  var _version = '1.0.0';
   var i, j, k, m, n;
 
   var _time = Date.now || function () { return new Date().getTime(); };
@@ -2538,7 +2538,7 @@
           }).and(function() {
             self.proxy = this;
             self.proxy.connect(self.onmidi);
-            for (i = 0; i < self.pending; i++) self.pending[i][0]();
+            for (i = 0; i < self.pending.length; i++) self.pending[i][0]();
             self.pending = [];
           });
         }
