@@ -838,7 +838,7 @@
     _engine._closeOut = function(port) {
       var impl = port._impl;
       _pop(impl.clients, port._orig);
-      if (!impl.clients.length) {
+      if (!impl.clients.length && impl.open) {
         impl.open = false;
         impl.plugin.MidiOutClose();
       }
@@ -846,7 +846,7 @@
     _engine._closeIn = function(port) {
       var impl = port._impl;
       _pop(impl.clients, port._orig);
-      if (!impl.clients.length) {
+      if (!impl.clients.length && impl.open) {
         impl.open = false;
         impl.plugin.MidiInClose();
       }
@@ -1142,7 +1142,7 @@
     _engine._closeOut = function(port) {
       var impl = port._impl;
       _pop(impl.clients, port._orig);
-      if (!impl.clients.length) {
+      if (!impl.clients.length && impl.open) {
         impl.open = false;
         document.dispatchEvent(new CustomEvent('jazz-midi', { detail: ['closeout', impl.plugin.id] }));
       }
@@ -1150,7 +1150,7 @@
     _engine._closeIn = function(port) {
       var impl = port._impl;
       _pop(impl.clients, port._orig);
-      if (!impl.clients.length) {
+      if (!impl.clients.length && impl.open) {
         impl.open = false;
         document.dispatchEvent(new CustomEvent('jazz-midi', { detail: ['closein', impl.plugin.id] }));
       }
