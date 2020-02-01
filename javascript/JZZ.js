@@ -13,7 +13,7 @@
 })(this, function() {
 
   var _scope = typeof window === 'undefined' ? global : window;
-  var _version = '1.0.1';
+  var _version = '1.0.2';
   var i, j, k, m, n;
 
   var _time = Date.now || function () { return new Date().getTime(); };
@@ -2414,8 +2414,10 @@
   }
 
   function _statechange(p, a) {
-    if (p.onstatechange) p.onstatechange(new MIDIConnectionEvent(p, p));
-    if (a.onstatechange) a.onstatechange(new MIDIConnectionEvent(p, a));
+    if (p) {
+      if (p.onstatechange) p.onstatechange(new MIDIConnectionEvent(p, p));
+      if (a.onstatechange) a.onstatechange(new MIDIConnectionEvent(p, a));
+    }
   }
 
   function MIDIInput(a, p) {
