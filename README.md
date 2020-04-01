@@ -63,7 +63,7 @@ by running `npm remove midi-test --save-dev`.
 ##### CDN
 
     <script src="https://cdn.jsdelivr.net/npm/jzz"></script>       // the latest version, or
-    <script src="https://cdn.jsdelivr.net/npm/jzz@1.0.2"></script> // any particular version
+    <script src="https://cdn.jsdelivr.net/npm/jzz@1.0.3"></script> // any particular version
     //...
 
 ##### CommonJS (Browserify and Node.js command line applications)
