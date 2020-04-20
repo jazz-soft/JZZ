@@ -30,7 +30,10 @@ and provides additional functionality to make developer's life easier.
 For the best user experience, it's *highly RECOMMENDED (though not required)*
 to install the latest version of [**Jazz-Plugin**](https://jazz-soft.net)
 and browser extensions from [**Chrome Web Store**](https://chrome.google.com/webstore/detail/jazz-midi/jhdoobfdaejmldnpihidjemjcbpfmbkm)
-or [**Mozilla Add-ons**](https://addons.mozilla.org/en-US/firefox/addon/jazz-midi).
+or [**Mozilla Add-ons**](https://addons.mozilla.org/en-US/firefox/addon/jazz-midi)
+or [**Apple App Store**](https://apps.apple.com/us/app/jazz-midi/id1506447231).
+
+https://apps.apple.com/us/app/jazz-midi/id1506447231
 
 ## Features
 - MIDI In/Out
