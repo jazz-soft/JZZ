@@ -33,8 +33,6 @@ and browser extensions from [**Chrome Web Store**](https://chrome.google.com/web
 or [**Mozilla Add-ons**](https://addons.mozilla.org/en-US/firefox/addon/jazz-midi)
 or [**Apple App Store**](https://apps.apple.com/us/app/jazz-midi/id1506447231).
 
-https://apps.apple.com/us/app/jazz-midi/id1506447231
-
 ## Features
 - MIDI In/Out
 - User-defined MIDI nodes
