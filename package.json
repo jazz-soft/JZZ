@@ -27,7 +27,7 @@
     "grunt-contrib-jshint": "^2.1.0",
     "grunt-contrib-uglify": "^4.0.1",
     "midi-test": "^1.1.1",
-    "mocha": "^7.1.1",
+    "mocha": "^7.1.2",
     "nyc": "^15.0.1",
     "web-midi-test": "^1.0.7"
   },

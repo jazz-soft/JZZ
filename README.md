@@ -150,8 +150,9 @@ by running `npm remove midi-test --save-dev`.
 - [**JZZ-midi-GM**](https://github.com/jazz-soft/JZZ-midi-GM) - General MIDI instrument names: MIDI to string / string to MIDI
 - [**JZZ-midi-Gear**](https://github.com/jazz-soft/JZZ-midi-Gear) - Retrieve your MIDI device model and manufacturer
 - [**JZZ-input-Kbd**](https://github.com/jazz-soft/JZZ-input-Kbd) - Virtual piano controls for your MIDI projects
-- [**JZZ-synth-OSC**](https://github.com/jazz-soft/JZZ-synth-OSC) - A simple Web Audio synth to use when MIDI is not available
 - [**JZZ-synth-Tiny**](https://github.com/jazz-soft/JZZ-synth-Tiny) - A tiny General MIDI synth implemented with the Web Audio API
+- [**JZZ-gui-Player**](https://github.com/jazz-soft/JZZ-gui-Player) - MIDI Player - ready for your page
+- [**JZZ-gui-Karaoke**](https://github.com/jazz-soft/JZZ-gui-Karaoke) - Karaoke :)
 - [**etc...**](https://github.com/jazz-soft/JZZ-modules) - Import third-party solutions into the JZZ framework
 
 *Check the [**Getting Started**](https://jazz-soft.net/doc/JZZ) page
