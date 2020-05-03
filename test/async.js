@@ -2,6 +2,7 @@
 var JZZ = require('..');
 
 describe('async calls', function() {
+  this.timeout(5000);
   var broke = 'We broke it!';
   var notexisting = 'Not existing port';
   var notfound = 'Port "Not existing port" not found';
