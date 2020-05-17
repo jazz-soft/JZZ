@@ -28,15 +28,14 @@ module.exports = function(grunt) {
       var match = rdme[i].match(/@(\d+\.\d+\.\d+)/);
       if (match) {
         ver = match[1];
-        break;
+        if (ver == pkg.version) {
+           grunt.log.ok('README Version:', ver);
+        }
+        else {
+          grunt.log.error('README Version:', ver, '!=', pkg.version);
+          return false;
+        }
       }
-    }
-    if (ver == pkg.version) {
-       grunt.log.ok('README Version:', ver);
-    }
-    else {
-      grunt.log.error('README Version:', ver, '!=', pkg.version);
-      return false;
     }
   });
   grunt.loadNpmTasks('grunt-contrib-uglify');
