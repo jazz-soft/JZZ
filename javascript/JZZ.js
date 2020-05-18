@@ -13,7 +13,7 @@
 })(this, function() {
 
   var _scope = typeof window === 'undefined' ? global : window;
-  var _version = '1.0.5';
+  var _version = '1.0.6';
   var i, j, k, m, n;
 
   var _time = Date.now || function () { return new Date().getTime(); };
@@ -1237,6 +1237,7 @@
     return _jzz._thenable();
   };
   JZZ.JZZ = JZZ;
+  JZZ.version = _version;
   JZZ.info = function() { return _J.prototype.info(); };
   JZZ.Widget = function(arg) {
     var obj = new _M();
