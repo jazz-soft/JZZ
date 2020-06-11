@@ -64,13 +64,13 @@ by running `npm remove midi-test --save-dev`.
 ##### CDN (jsdelivr)
 
     <script src="https://cdn.jsdelivr.net/npm/jzz"></script>       // the latest version, or
-    <script src="https://cdn.jsdelivr.net/npm/jzz@1.0.7"></script> // any particular version
+    <script src="https://cdn.jsdelivr.net/npm/jzz@1.0.8"></script> // any particular version
     //...
 
 ##### CDN (unpkg)
 
     <script src="https://unpkg.com/jzz"></script>       // the latest version, or
-    <script src="https://unpkg.com/jzz@1.0.7"></script> // any particular version
+    <script src="https://unpkg.com/jzz@1.0.8"></script> // any particular version
     //...
 
 ##### CommonJS (Browserify and Node.js command line applications)

@@ -13,7 +13,7 @@
 })(this, function() {
 
   var _scope = typeof window === 'undefined' ? global : window;
-  var _version = '1.0.7';
+  var _version = '1.0.8';
   var i, j, k, m, n;
 
   var _time = Date.now || function () { return new Date().getTime(); };
@@ -561,8 +561,8 @@
   }
 
   var _jzz;
-  var _engine = {};
-  var _virtual = { _outs: [], _ins: []};
+  var _engine = { _outs: [], _ins: [] };
+  var _virtual = { _outs: [], _ins: [] };
 
   // Node.js
   function _tryNODE() {
