@@ -58,98 +58,120 @@ by running `npm remove midi-test --save-dev`.
 
 ##### Plain HTML
 
-    <script src="JZZ.js"></script>
-    //...
+```html
+<script src="JZZ.js"></script>
+//...
+```
 
 ##### CDN (jsdelivr)
 
-    <script src="https://cdn.jsdelivr.net/npm/jzz"></script>       // the latest version, or
-    <script src="https://cdn.jsdelivr.net/npm/jzz@1.0.8"></script> // any particular version
-    //...
+```html
+<script src="https://cdn.jsdelivr.net/npm/jzz"></script>       // the latest version, or
+<script src="https://cdn.jsdelivr.net/npm/jzz@1.0.8"></script> // any particular version
+//...
+```
 
 ##### CDN (unpkg)
 
-    <script src="https://unpkg.com/jzz"></script>       // the latest version, or
-    <script src="https://unpkg.com/jzz@1.0.8"></script> // any particular version
-    //...
+```html
+<script src="https://unpkg.com/jzz"></script>       // the latest version, or
+<script src="https://unpkg.com/jzz@1.0.8"></script> // any particular version
+//...
+```
 
 ##### CommonJS (Browserify and Node.js command line applications)
 
-    var JZZ = require('jzz');
-    //...
+```js
+var JZZ = require('jzz');
+//...
+```
 
 ##### AMD
 
-    require(['JZZ'], function(JZZ) {
-      //...
-    });
+```js
+require(['JZZ'], function(JZZ) {
+  //...
+});
+```
 
 ##### TypeScript
 
-    import * as JZZ from 'jzz';
-    //...
+```ts
+import * as JZZ from 'jzz';
+//...
+```
 
 ## Web MIDI API
 
 ##### (Node.js example)
 
-    var navigator = require('jzz');
-    navigator.requestMIDIAccess().then(onSuccess, onFail);
-    // ...
-    navigator.close(); // This will close MIDI inputs,
-                       // otherwise Node.js will wait for MIDI input forever.
-    // In browsers the funcion is neither defined nor required.
+```js
+var navigator = require('jzz');
+navigator.requestMIDIAccess().then(onSuccess, onFail);
+// ...
+navigator.close(); // This will close MIDI inputs,
+                   // otherwise Node.js will wait for MIDI input forever.
+// In browsers the funcion is neither defined nor required.
+```
 
 ## JZZ API
 
 ##### MIDI Output/Input
 
-    JZZ().or('Cannot start MIDI engine!')
-         .openMidiOut().or('Cannot open MIDI Out port!')
-         .wait(500).send([0x90,60,127]) // note on
-         .wait(500).send([0x80,60,0]);  // note off
-    JZZ().openMidiIn().or('Cannot open MIDI In port!')
-         .and(function() { console.log('MIDI-In: ', this.name()); })
-         .connect(function(msg) { console.log(msg.toString()); })
-         .wait(10000).close();
+```js
+JZZ().or('Cannot start MIDI engine!')
+     .openMidiOut().or('Cannot open MIDI Out port!')
+     .wait(500).send([0x90,60,127]) // note on
+     .wait(500).send([0x80,60,0]);  // note off
+JZZ().openMidiIn().or('Cannot open MIDI In port!')
+     .and(function() { console.log('MIDI-In: ', this.name()); })
+     .connect(function(msg) { console.log(msg.toString()); })
+     .wait(10000).close();
+```
 
 ##### Connecting MIDI nodes
 
-    var input = JZZ().openMidiIn();
-    var output = JZZ().openMidiOut();
-    var delay = JZZ.Widget({ _receive: function(msg) { this.wait(500).emit(msg); }});
-    input.connect(delay);
-    delay.connect(output);
+```js
+var input = JZZ().openMidiIn();
+var output = JZZ().openMidiOut();
+var delay = JZZ.Widget({ _receive: function(msg) { this.wait(500).emit(msg); }});
+input.connect(delay);
+delay.connect(output);
+```
 
 ##### Helpers and shortcuts
 
-    // All calls below will do the same job:
-    port.send([0x90, 61, 127]).wait(500).send([0x80, 61, 0]);   // arrays
-    port.send(0x90, 61, 127).wait(500).send(0x80, 61, 0);       // comma-separated
-    port.send(0x90, 'C#5', 127).wait(500).send(0x80, 'Db5', 0); // note names
-    port.noteOn(0, 'C#5', 127).wait(500).noteOff(0, 'B##4');    // helper functions
-    port.note(0, 'C#5', 127, 500);                              // another shortcut
-    port.ch(0).noteOn('C#5').wait(500).noteOff('C#5');          // using channels
-    port.ch(0).note('C#5', 127, 500);                           // using channels
+```js
+// All calls below will do the same job:
+port.send([0x90, 61, 127]).wait(500).send([0x80, 61, 0]);   // arrays
+port.send(0x90, 61, 127).wait(500).send(0x80, 61, 0);       // comma-separated
+port.send(0x90, 'C#5', 127).wait(500).send(0x80, 'Db5', 0); // note names
+port.noteOn(0, 'C#5', 127).wait(500).noteOff(0, 'B##4');    // helper functions
+port.note(0, 'C#5', 127, 500);                              // another shortcut
+port.ch(0).noteOn('C#5').wait(500).noteOff('C#5');          // using channels
+port.ch(0).note('C#5', 127, 500);                           // using channels
+```
 
 ##### Asynchronous calls
 
-    // in the environments that support async/await:
-    async function playNote() {
-      var midi = await JZZ();
-      var port = await midi.openMidiOut();
-      await port.noteOn(0, 'C5', 127);
-      await port.wait(500);
-      await port.noteOff(0, 'C5');
-      await port.close();
-      console.log('done!');
-    }
-    // or:
-    async function playAnotherNote() {
-      var port = await JZZ().openMidiOut();
-      await port.noteOn(0, 'C5', 127).wait(500).noteOff(0, 'C5').close();
-      console.log('done!');
-    }
+```js
+// in the environments that support async/await:
+async function playNote() {
+  var midi = await JZZ();
+  var port = await midi.openMidiOut();
+  await port.noteOn(0, 'C5', 127);
+  await port.wait(500);
+  await port.noteOff(0, 'C5');
+  await port.close();
+  console.log('done!');
+}
+// or:
+async function playAnotherNote() {
+  var port = await JZZ().openMidiOut();
+  await port.noteOn(0, 'C5', 127).wait(500).noteOff(0, 'C5').close();
+  console.log('done!');
+}
+```
 
 ## Additional modules
 - [**JZZ-midi-SMF**](https://github.com/jazz-soft/JZZ-midi-SMF) - Standard MIDI files: read / write / play
