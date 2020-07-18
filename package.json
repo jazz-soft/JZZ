@@ -1,6 +1,6 @@
 {
   "name": "jzz",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "MIDI library for Node.js and web-browsers",
   "main": "javascript/JZZ.js",
   "scripts": {
@@ -22,14 +22,14 @@
   },
   "devDependencies": {
     "coveralls": "^3.1.0",
-    "eslint": "^7.2.0",
-    "grunt": "^1.1.0",
+    "eslint": "^7.5.0",
+    "grunt": "^1.2.1",
     "grunt-contrib-jshint": "^2.1.0",
-    "grunt-contrib-uglify": "^4.0.1",
+    "grunt-contrib-uglify": "^5.0.0",
     "midi-test": "^1.1.4",
     "mocha": "^8.0.1",
     "nyc": "^15.1.0",
-    "web-midi-test": "^1.0.8"
+    "web-midi-test": "^1.0.9"
   },
   "repository": {
     "type": "git",
