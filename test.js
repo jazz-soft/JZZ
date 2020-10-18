@@ -52,6 +52,7 @@ function wait() {
 }
 
 var steps = [tryMidiOut, tryMidiIn, wait, tryMidiOut, tryMidiIn];
+JZZ.addMidiOut('Console Log', JZZ.Widget({ _receive: function(msg) { console.log(msg.toString()); }}));
 
 JZZ().or('Cannot start MIDI engine!').and(function(){
   outs = this.info().outputs;

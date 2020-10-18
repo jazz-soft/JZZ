@@ -13,7 +13,7 @@
 })(this, function() {
 
   var _scope = typeof window === 'undefined' ? global : window;
-  var _version = '1.0.9';
+  var _version = '1.1.0';
   var i, j, k, m, n;
 
   var _time = Date.now || function () { return new Date().getTime(); };
@@ -1246,6 +1246,40 @@
     return obj;
   };
   _J.prototype.Widget = JZZ.Widget;
+  JZZ.addMidiIn = function(name, widget) {
+    var info = _clone(widget._info || {});
+    info.name = name;
+    info.type = info.type || 'javascript';
+    info.manufacturer = info.manufacturer || 'virtual';
+    info.version = info.version || '0.0';
+    var engine = {
+      _info: function() { return info; },
+      _openOut: function(port, name) {
+        widget.connect(port);
+        port._info = this._info(name);
+        port._close = function() { widget.disconnect(port); };
+        port._resume();
+      }
+    };
+    return JZZ.lib.registerMidiIn(name, engine);
+  };
+  JZZ.addMidiOut = function(name, widget) {
+    var info = _clone(widget._info || {});
+    info.name = name;
+    info.type = info.type || 'javascript';
+    info.manufacturer = info.manufacturer || 'virtual';
+    info.version = info.version || '0.0';
+    var engine = {
+      _info: function() { return info; },
+      _openOut: function(port, name) {
+        port.connect(widget);
+        port._info = this._info(name);
+        port._close = function() { port.disconnect(); };
+        port._resume();
+      }
+    };
+    return JZZ.lib.registerMidiOut(name, engine);
+  };
 
   // JZZ.SMPTE
 
