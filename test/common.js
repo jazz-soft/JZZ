@@ -516,6 +516,8 @@ describe('Engine: none', function() {
   test.non_existent_midi_out();
   test.dummy_midi_in();
   test.dummy_midi_out();
+  test.widget_midi_in();
+  test.widget_midi_out();
   test.connect_watcher();
   test.init_web_audio();
   test.web_midi_access_no_sysex();

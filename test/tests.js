@@ -118,6 +118,46 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
       });
     },
 
+    widget_midi_in: function() {
+      it('Widget MIDI-In', function(done) {
+        var port1, port2;
+        var widget1 = JZZ.Widget({ _info: { type: 'widget', manufacturer: 'jazz-soft', version: '1.0' } });
+        var widget2 = JZZ.Widget();
+        JZZ.addMidiIn('Widget MIDI-In 1', widget1);
+        JZZ.addMidiIn('Widget MIDI-In 1', widget2);
+        JZZ.addMidiIn('Widget MIDI-In 2', widget2);
+        port1 = engine.openMidiIn('Widget MIDI-In 1');
+        port2 = engine.openMidiIn('Widget MIDI-In 2');
+        port1.connect(function() {
+          port1.disconnect().close();
+          port2.disconnect(port1).close();
+          done();
+        });
+        port2.connect(widget1);
+        widget2.send([0x90, 0x40, 0x7f]);
+      });
+    },
+
+    widget_midi_out: function() {
+      it('Widget MIDI-Out', function(done) {
+        var port1, port2;
+        var widget1 = JZZ.Widget({ _info: { type: 'widget', manufacturer: 'jazz-soft', version: '1.0' } });
+        var widget2 = JZZ.Widget();
+        JZZ.addMidiOut('Widget MIDI-Out 1', widget1);
+        JZZ.addMidiOut('Widget MIDI-Out 1', widget2);
+        JZZ.addMidiOut('Widget MIDI-Out 2', widget2);
+        port1 = engine.openMidiOut('Widget MIDI-Out 1');
+        port2 = engine.openMidiOut('Widget MIDI-Out 2');
+        widget1._receive = function(msg) {
+          port1.disconnect().close();
+          port2.disconnect(port1).close();
+          done();
+        };
+        widget2.connect(port1);
+        port2.send([0x90, 0x40, 0x7f]);
+      });
+    },
+
     connect_watcher: function() {
       it('Connection watcher', function() {
         var dummy = function() {};

@@ -13,7 +13,7 @@
 })(this, function() {
 
   var _scope = typeof window === 'undefined' ? global : window;
-  var _version = '1.1.0';
+  var _version = '1.1.1';
   var i, j, k, m, n;
 
   var _time = Date.now || function () { return new Date().getTime(); };
@@ -1254,7 +1254,7 @@
     info.version = info.version || '0.0';
     var engine = {
       _info: function() { return info; },
-      _openOut: function(port, name) {
+      _openIn: function(port, name) {
         widget.connect(port);
         port._info = this._info(name);
         port._close = function() { widget.disconnect(port); };
