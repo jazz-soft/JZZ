@@ -21,8 +21,8 @@ describe('Engine: node', function() {
   test.native_midi_out();
   test.non_existent_midi_in();
   test.non_existent_midi_out();
-  test.widget_midi_in();
-  test.widget_midi_out();
+  test.dummy_midi_in();
+  test.dummy_midi_out();
   test.connect_watcher();
   if (MT) {
     test.virtual_midi_in();

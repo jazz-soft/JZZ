@@ -63,8 +63,8 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
       });
     },
 
-    widget_midi_in: function() {
-      it('Widget MIDI-In', function(done) {
+    dummy_midi_in: function() {
+      it('Dummy MIDI-In', function(done) {
         var port1, port2;
         var widget = {
           _info: function(name) { return { name: name }; },
@@ -73,10 +73,10 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
             port._resume();
           }
         };
-        port1 = JZZ.lib.openMidiIn('Widget MIDI-In', widget);
-        JZZ.lib.registerMidiIn('Widget MIDI-In', widget);
-        JZZ.lib.registerMidiIn('Widget MIDI-In', widget);
-        port2 = engine.openMidiIn('Widget MIDI-In');
+        port1 = JZZ.lib.openMidiIn('Dummy MIDI-In', widget);
+        JZZ.lib.registerMidiIn('Dummy MIDI-In', widget);
+        JZZ.lib.registerMidiIn('Dummy MIDI-In', widget);
+        port2 = engine.openMidiIn('Dummy MIDI-In');
         port1.connect(function() {
           port1.disconnect().close();
           port2.disconnect(port1).close();
@@ -87,8 +87,8 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
       });
     },
 
-    widget_midi_out: function() {
-      it('Widget MIDI-Out', function(done) {
+    dummy_midi_out: function() {
+      it('Dummy MIDI-Out', function(done) {
         var port1, port2;
         var widget1 = {
           _info: function(name) { return { name: name }; },
@@ -109,10 +109,10 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
             port._resume();
           }
         };
-        port1 = JZZ.lib.openMidiOut('Widget MIDI-Out', widget1);
-        JZZ.lib.registerMidiOut('Widget MIDI-Out', widget2);
-        JZZ.lib.registerMidiOut('Widget MIDI-Out', widget2); // should ignore second call
-        port2 = engine.openMidiOut('Widget MIDI-Out');
+        port1 = JZZ.lib.openMidiOut('Dummy MIDI-Out', widget1);
+        JZZ.lib.registerMidiOut('Dummy MIDI-Out', widget2);
+        JZZ.lib.registerMidiOut('Dummy MIDI-Out', widget2); // should ignore second call
+        port2 = engine.openMidiOut('Dummy MIDI-Out');
         port2.connect(port1);
         port2.and(function() { assert.equal(this.connected(), 1); this.send([]); this.noteOn(0, 60); });
       });

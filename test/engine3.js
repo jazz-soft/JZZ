@@ -30,8 +30,8 @@ describe('Engine: webmidi', function() {
   test.engine_name('webmidi', false);
   test.non_existent_midi_in();
   test.non_existent_midi_out();
-  test.widget_midi_in();
-  test.widget_midi_out();
+  test.dummy_midi_in();
+  test.dummy_midi_out();
   test.connect_watcher();
   test.virtual_midi_in();
   test.virtual_midi_out();
