@@ -1,6 +1,6 @@
 ﻿//// testing the minified script
 
-var JZZ = require('../minified/jzz.js');
+var JZZ = require('../minified/JZZ.js');
 global.navigator = { requestMIDIAccess: JZZ.requestMIDIAccess };
 
 describe('Minified script', function() {
