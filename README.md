@@ -67,7 +67,7 @@ by running `npm remove midi-test --save-dev`.
 
 ```html
 <script src="https://cdn.jsdelivr.net/npm/jzz"></script>       // the latest version, or
-<script src="https://cdn.jsdelivr.net/npm/jzz@1.1.1"></script> // any particular version
+<script src="https://cdn.jsdelivr.net/npm/jzz@1.1.2"></script> // any particular version
 //...
 ```
 
@@ -75,7 +75,7 @@ by running `npm remove midi-test --save-dev`.
 
 ```html
 <script src="https://unpkg.com/jzz"></script>       // the latest version, or
-<script src="https://unpkg.com/jzz@1.1.1"></script> // any particular version
+<script src="https://unpkg.com/jzz@1.1.2"></script> // any particular version
 //...
 ```
 
@@ -139,6 +139,21 @@ input.connect(delay);
 delay.connect(output);
 ```
 
+##### Virtual MIDI ports
+
+```js
+var logger = JZZ.Widget({ _receive: function(msg) { console.log(msg.toString()); }});
+JZZ.addMidiOut('Console Logger', logger);
+
+// now it can be used as a port:
+var port = JZZ().openMidiOut('Console Logger');
+// ...
+
+// substitute the native MIDIAccess
+// to make virtual ports visible to the Web MIDI API code:
+navigator.requestMIDIAccess = JZZ.requestMIDIAccess;
+```
+
 ##### Helpers and shortcuts
 
 ```js
@@ -179,6 +194,7 @@ async function playAnotherNote() {
 - [**JZZ-midi-Gear**](https://github.com/jazz-soft/JZZ-midi-Gear) - Retrieve your MIDI device model and manufacturer
 - [**JZZ-input-Kbd**](https://github.com/jazz-soft/JZZ-input-Kbd) - Virtual piano controls for your MIDI projects
 - [**JZZ-synth-Tiny**](https://github.com/jazz-soft/JZZ-synth-Tiny) - A tiny General MIDI synth implemented with the Web Audio API
+- [**JZZ-gui-Select**](https://github.com/jazz-soft/JZZ-gui-Select) - MIDI Input/Output pickers
 - [**JZZ-gui-Player**](https://github.com/jazz-soft/JZZ-gui-Player) - MIDI Player - ready for your page
 - [**JZZ-gui-Karaoke**](https://github.com/jazz-soft/JZZ-gui-Karaoke) - Karaoke :)
 - [**etc...**](https://github.com/jazz-soft/JZZ-modules) - Import third-party solutions into the JZZ framework

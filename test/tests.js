@@ -148,7 +148,7 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
         JZZ.addMidiOut('Widget MIDI-Out 2', widget2);
         port1 = engine.openMidiOut('Widget MIDI-Out 1');
         port2 = engine.openMidiOut('Widget MIDI-Out 2');
-        widget1._receive = function(msg) {
+        widget1._receive = function(/*msg*/) {
           port1.disconnect().close();
           port2.disconnect(port1).close();
           done();
