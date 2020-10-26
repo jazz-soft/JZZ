@@ -139,21 +139,6 @@ input.connect(delay);
 delay.connect(output);
 ```
 
-##### Virtual MIDI ports
-
-```js
-var logger = JZZ.Widget({ _receive: function(msg) { console.log(msg.toString()); }});
-JZZ.addMidiOut('Console Logger', logger);
-
-// now it can be used as a port:
-var port = JZZ().openMidiOut('Console Logger');
-// ...
-
-// substitute the native MIDIAccess
-// to make virtual ports visible to the Web MIDI API code:
-navigator.requestMIDIAccess = JZZ.requestMIDIAccess;
-```
-
 ##### Helpers and shortcuts
 
 ```js
@@ -186,6 +171,21 @@ async function playAnotherNote() {
   await port.noteOn(0, 'C5', 127).wait(500).noteOff(0, 'C5').close();
   console.log('done!');
 }
+```
+
+##### Virtual MIDI ports
+
+```js
+var logger = JZZ.Widget({ _receive: function(msg) { console.log(msg.toString()); }});
+JZZ.addMidiOut('Console Logger', logger);
+
+// now it can be used as a port:
+var port = JZZ().openMidiOut('Console Logger');
+// ...
+
+// substitute the native MIDIAccess
+// to make virtual ports visible to the Web MIDI API code:
+navigator.requestMIDIAccess = JZZ.requestMIDIAccess;
 ```
 
 ## Additional modules
