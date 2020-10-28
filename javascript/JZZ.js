@@ -13,7 +13,7 @@
 })(this, function() {
 
   var _scope = typeof window === 'undefined' ? global : window;
-  var _version = '1.1.2';
+  var _version = '1.1.3';
   var i, j, k, m, n;
 
   var _time = Date.now || function () { return new Date().getTime(); };
@@ -1255,8 +1255,9 @@
     var engine = {
       _info: function() { return info; },
       _openIn: function(port, name) {
+        port._pause();
         widget.connect(port);
-        port._info = this._info(name);
+        port._info = _clone(info);
         port._close = function() { widget.disconnect(port); };
         port._resume();
       }
@@ -1272,8 +1273,9 @@
     var engine = {
       _info: function() { return info; },
       _openOut: function(port, name) {
+        port._pause();
         port.connect(widget);
-        port._info = this._info(name);
+        port._info = _clone(info);
         port._close = function() { port.disconnect(); };
         port._resume();
       }
