@@ -1256,9 +1256,9 @@
       _info: function() { return info; },
       _openIn: function(port, name) {
         port._pause();
-        widget.connect(port);
         port._info = _clone(info);
         port._close = function() { widget.disconnect(port); };
+        widget.connect(port);
         port._resume();
       }
     };
@@ -1274,9 +1274,9 @@
       _info: function() { return info; },
       _openOut: function(port, name) {
         port._pause();
-        port.connect(widget);
         port._info = _clone(info);
         port._close = function() { port.disconnect(); };
+        _connect.apply(port, [widget]);
         port._resume();
       }
     };
