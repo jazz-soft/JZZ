@@ -13,7 +13,7 @@
 })(this, function() {
 
   var _scope = typeof window === 'undefined' ? global : window;
-  var _version = '1.1.3';
+  var _version = '1.1.4';
   var i, j, k, m, n;
 
   var _time = Date.now || function () { return new Date().getTime(); };
@@ -1254,7 +1254,7 @@
     info.version = info.version || '0.0';
     var engine = {
       _info: function() { return info; },
-      _openIn: function(port, name) {
+      _openIn: function(port) {
         port._pause();
         port._info = _clone(info);
         port._close = function() { widget.disconnect(port); };
@@ -1272,7 +1272,7 @@
     info.version = info.version || '0.0';
     var engine = {
       _info: function() { return info; },
-      _openOut: function(port, name) {
+      _openOut: function(port) {
         port._pause();
         port._info = _clone(info);
         port._close = function() { port.disconnect(); };
@@ -2476,7 +2476,7 @@
       set: function(value) {
         if (value instanceof Function) {
           _onmsg = value;
-          if (!_open) self.open();
+          if (!_open) try { self.open(); } catch(e) {/**/}
         }
         else _onmsg = null;
       },
