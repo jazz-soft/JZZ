@@ -149,6 +149,33 @@ describe('MIDI messages', function() {
     assert.equal(JZZ.MIDI.soft(0, true).toString(), 'b0 43 7f -- Soft Pedal On/Off');
     assert.equal(JZZ.MIDI.soft(0, false).toString(), 'b0 43 00 -- Soft Pedal On/Off');
   });
+  it('dataMSB', function() {
+    assert.equal(JZZ.MIDI.dataMSB(0, 1).toString(), 'b0 06 01 -- Data Entry MSB');
+  });
+  it('dataLSB', function() {
+    assert.equal(JZZ.MIDI.dataLSB(0, 1).toString(), 'b0 26 01 -- Data Entry LSB');
+  });
+  it('dataIncr', function() {
+    assert.equal(JZZ.MIDI.dataIncr(0).toString(), 'b0 60 00 -- Data Increment');
+  });
+  it('dataDecr', function() {
+    assert.equal(JZZ.MIDI.dataDecr(0).toString(), 'b0 61 00 -- Data Decrement');
+  });
+  it('nrpnMSB', function() {
+    assert.equal(JZZ.MIDI.nrpnMSB(0, 0).toString(), 'b0 63 00 -- Non-Registered Parameter Number MSB');
+  });
+  it('nrpnLSB', function() {
+    assert.equal(JZZ.MIDI.nrpnLSB(0, 1).toString(), 'b0 62 01 -- Non-Registered Parameter Number LSB');
+  });
+  it('rpnMSB', function() {
+    assert.equal(JZZ.MIDI.rpnMSB(0, 0).toString(), 'b0 65 00 -- Registered Parameter Number MSB');
+  });
+  it('rpnLSB', function() {
+    assert.equal(JZZ.MIDI.rpnLSB(0, 1).toString(), 'b0 64 01 -- Registered Parameter Number LSB');
+  });
+  it('undefined', function() {
+    assert.equal(JZZ.MIDI(0xb0, 0x66, 0x7f).toString(), 'b0 66 7f -- Undefined');
+  });
   it('allSoundOff', function() {
     assert.equal(JZZ.MIDI.allSoundOff(0).toString(), 'b0 78 00 -- All Sound Off');
   });
