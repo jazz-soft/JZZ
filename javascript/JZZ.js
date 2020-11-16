@@ -1740,11 +1740,11 @@
   };
 
   function _copyPortHelper(M, name, func) {
-    M.prototype[name] = function() { this.send(func.apply(0, arguments)); return this; };
+    M.prototype[name] = function() { return this.send(func.apply(0, arguments)); };
   }
   function _copyChannelHelper(C, name, func) {
     C.prototype[name] = function() {
-      this.send(func.apply(0, [this._chan].concat(Array.prototype.slice.call(arguments)))); return this;
+      return this.send(func.apply(0, [this._chan].concat(Array.prototype.slice.call(arguments))));
     };
   }
   function _copyHelperNC(name, func) {
