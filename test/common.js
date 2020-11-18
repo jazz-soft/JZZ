@@ -78,11 +78,19 @@ describe('MIDI messages', function() {
     assert.equal(JZZ.MIDI.pitchBend('0', '300').toString(), 'e0 2c 02 -- Pitch Wheel');
     assert.throws(function() { JZZ.MIDI.pitchBend(0, 0xffff); });
   });
+  it('bank', function() {
+    assert.equal(JZZ.MIDI.bank(0, 15, 15)[0].toString(), 'b0 00 0f -- Bank Select MSB');
+    assert.equal(JZZ.MIDI.bank(0, 15, 15)[1].toString(), 'b0 20 0f -- Bank Select LSB');
+  });
   it('bankMSB', function() {
     assert.equal(JZZ.MIDI.bankMSB(0, 15).toString(), 'b0 00 0f -- Bank Select MSB');
   });
   it('bankLSB', function() {
     assert.equal(JZZ.MIDI.bankLSB(0, 15).toString(), 'b0 20 0f -- Bank Select LSB');
+  });
+  it('mod', function() {
+    assert.equal(JZZ.MIDI.mod(0, 15, 15)[0].toString(), 'b0 01 0f -- Modulation Wheel MSB');
+    assert.equal(JZZ.MIDI.mod(0, 15, 15)[1].toString(), 'b0 21 0f -- Modulation Wheel LSB');
   });
   it('modMSB', function() {
     assert.equal(JZZ.MIDI.modMSB(0, 15).toString(), 'b0 01 0f -- Modulation Wheel MSB');
@@ -90,11 +98,19 @@ describe('MIDI messages', function() {
   it('modLSB', function() {
     assert.equal(JZZ.MIDI.modLSB(0, 15).toString(), 'b0 21 0f -- Modulation Wheel LSB');
   });
+  it('breath', function() {
+    assert.equal(JZZ.MIDI.breath(0, 15, 15)[0].toString(), 'b0 02 0f -- Breath Controller MSB');
+    assert.equal(JZZ.MIDI.breath(0, 15, 15)[1].toString(), 'b0 22 0f -- Breath Controller LSB');
+  });
   it('breathMSB', function() {
     assert.equal(JZZ.MIDI.breathMSB(0, 15).toString(), 'b0 02 0f -- Breath Controller MSB');
   });
   it('breathLSB', function() {
     assert.equal(JZZ.MIDI.breathLSB(0, 15).toString(), 'b0 22 0f -- Breath Controller LSB');
+  });
+  it('foot', function() {
+    assert.equal(JZZ.MIDI.foot(0, 15, 15)[0].toString(), 'b0 04 0f -- Foot Controller MSB');
+    assert.equal(JZZ.MIDI.foot(0, 15, 15)[1].toString(), 'b0 24 0f -- Foot Controller LSB');
   });
   it('footMSB', function() {
     assert.equal(JZZ.MIDI.footMSB(0, 15).toString(), 'b0 04 0f -- Foot Controller MSB');
@@ -103,11 +119,19 @@ describe('MIDI messages', function() {
   it('footLSB', function() {
     assert.equal(JZZ.MIDI.footLSB(0, 15).toString(), 'b0 24 0f -- Foot Controller LSB');
   });
+  it('portamentoTime', function() {
+    assert.equal(JZZ.MIDI.portamentoTime(0, 15, 15)[0].toString(), 'b0 05 0f -- Portamento Time MSB');
+    assert.equal(JZZ.MIDI.portamentoTime(0, 15, 15)[1].toString(), 'b0 25 0f -- Portamento Time LSB');
+  });
   it('portamentoMSB', function() {
     assert.equal(JZZ.MIDI.portamentoMSB(0, 15).toString(), 'b0 05 0f -- Portamento Time MSB');
   });
   it('portamentoLSB', function() {
     assert.equal(JZZ.MIDI.portamentoLSB(0, 15).toString(), 'b0 25 0f -- Portamento Time LSB');
+  });
+  it('volume', function() {
+    assert.equal(JZZ.MIDI.volume(0, 15, 15)[0].toString(), 'b0 07 0f -- Channel Volume MSB');
+    assert.equal(JZZ.MIDI.volume(0, 15, 15)[1].toString(), 'b0 27 0f -- Channel Volume LSB');
   });
   it('volumeMSB', function() {
     assert.equal(JZZ.MIDI.volumeMSB(0, 15).toString(), 'b0 07 0f -- Channel Volume MSB');
@@ -115,17 +139,29 @@ describe('MIDI messages', function() {
   it('volumeLSB', function() {
     assert.equal(JZZ.MIDI.volumeLSB(0, 15).toString(), 'b0 27 0f -- Channel Volume LSB');
   });
+  it('balance', function() {
+    assert.equal(JZZ.MIDI.balance(0, 15, 15)[0].toString(), 'b0 08 0f -- Balance MSB');
+    assert.equal(JZZ.MIDI.balance(0, 15, 15)[1].toString(), 'b0 28 0f -- Balance LSB');
+  });
   it('balanceMSB', function() {
     assert.equal(JZZ.MIDI.balanceMSB(0, 15).toString(), 'b0 08 0f -- Balance MSB');
   });
   it('balanceLSB', function() {
     assert.equal(JZZ.MIDI.balanceLSB(0, 15).toString(), 'b0 28 0f -- Balance LSB');
   });
+  it('pan', function() {
+    assert.equal(JZZ.MIDI.pan(0, 15, 15)[0].toString(), 'b0 0a 0f -- Pan MSB');
+    assert.equal(JZZ.MIDI.pan(0, 15, 15)[1].toString(), 'b0 2a 0f -- Pan LSB');
+  });
   it('panMSB', function() {
     assert.equal(JZZ.MIDI.panMSB(0, 15).toString(), 'b0 0a 0f -- Pan MSB');
   });
   it('panLSB', function() {
     assert.equal(JZZ.MIDI.panLSB(0, 15).toString(), 'b0 2a 0f -- Pan LSB');
+  });
+  it('expression', function() {
+    assert.equal(JZZ.MIDI.expression(0, 15, 15)[0].toString(), 'b0 0b 0f -- Expression Controller MSB');
+    assert.equal(JZZ.MIDI.expression(0, 15, 15)[1].toString(), 'b0 2b 0f -- Expression Controller LSB');
   });
   it('expressionMSB', function() {
     assert.equal(JZZ.MIDI.expressionMSB(0, 15).toString(), 'b0 0b 0f -- Expression Controller MSB');
@@ -149,6 +185,10 @@ describe('MIDI messages', function() {
     assert.equal(JZZ.MIDI.soft(0, true).toString(), 'b0 43 7f -- Soft Pedal On/Off');
     assert.equal(JZZ.MIDI.soft(0, false).toString(), 'b0 43 00 -- Soft Pedal On/Off');
   });
+  it('data', function() {
+    assert.equal(JZZ.MIDI.data(0, 1, 1)[0].toString(), 'b0 06 01 -- Data Entry MSB');
+    assert.equal(JZZ.MIDI.data(0, 1, 1)[1].toString(), 'b0 26 01 -- Data Entry LSB');
+  });
   it('dataMSB', function() {
     assert.equal(JZZ.MIDI.dataMSB(0, 1).toString(), 'b0 06 01 -- Data Entry MSB');
   });
@@ -161,11 +201,19 @@ describe('MIDI messages', function() {
   it('dataDecr', function() {
     assert.equal(JZZ.MIDI.dataDecr(0).toString(), 'b0 61 00 -- Data Decrement');
   });
+  it('nrpn', function() {
+    assert.equal(JZZ.MIDI.nrpn(0, 0, 1)[0].toString(), 'b0 63 00 -- Non-Registered Parameter Number MSB');
+    assert.equal(JZZ.MIDI.nrpn(0, 0, 1)[1].toString(), 'b0 62 01 -- Non-Registered Parameter Number LSB');
+  });
   it('nrpnMSB', function() {
     assert.equal(JZZ.MIDI.nrpnMSB(0, 0).toString(), 'b0 63 00 -- Non-Registered Parameter Number MSB');
   });
   it('nrpnLSB', function() {
     assert.equal(JZZ.MIDI.nrpnLSB(0, 1).toString(), 'b0 62 01 -- Non-Registered Parameter Number LSB');
+  });
+  it('rpn', function() {
+    assert.equal(JZZ.MIDI.rpn(0, 0, 1)[0].toString(), 'b0 65 00 -- Registered Parameter Number MSB');
+    assert.equal(JZZ.MIDI.rpn(0, 0, 1)[1].toString(), 'b0 64 01 -- Registered Parameter Number LSB');
   });
   it('rpnMSB', function() {
     assert.equal(JZZ.MIDI.rpnMSB(0, 0).toString(), 'b0 65 00 -- Registered Parameter Number MSB');

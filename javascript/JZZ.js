@@ -13,7 +13,7 @@
 })(this, function() {
 
   var _scope = typeof window === 'undefined' ? global : window;
-  var _version = '1.1.4';
+  var _version = '1.1.5';
   var i, j, k, m, n;
 
   var _time = Date.now || function () { return new Date().getTime(); };
@@ -1606,6 +1606,20 @@
     sxFullFrame: function(t) { return [0xF0, 0x7F, 0x7F, 0x01, 0x01, _hrtype(t), t.getMinute(), t.getSecond(), t.getFrame(), 0xF7]; },
     reset: function() { return [0xFF]; },
   };
+  var _helperG = { // compound messages
+    bank: function(c, m, l) { return [_helperCH.bankMSB(c, m), _helperCH.bankLSB(c, l)]; },
+    mod: function(c, m, l) { return [_helperCH.modMSB(c, m), _helperCH.modLSB(c, l)]; },
+    breath: function(c, m, l) { return [_helperCH.breathMSB(c, m), _helperCH.breathLSB(c, l)]; },
+    foot: function(c, m, l) { return [_helperCH.footMSB(c, m), _helperCH.footLSB(c, l)]; },
+    portamentoTime: function(c, m, l) { return [_helperCH.portamentoMSB(c, m), _helperCH.portamentoLSB(c, l)]; },
+    data: function(c, m, l) { return [_helperCH.dataMSB(c, m), _helperCH.dataLSB(c, l)]; },
+    volume: function(c, m, l) { return [_helperCH.volumeMSB(c, m), _helperCH.volumeLSB(c, l)]; },
+    balance: function(c, m, l) { return [_helperCH.balanceMSB(c, m), _helperCH.balanceLSB(c, l)]; },
+    pan: function(c, m, l) { return [_helperCH.panMSB(c, m), _helperCH.panLSB(c, l)]; },
+    expression: function(c, m, l) { return [_helperCH.expressionMSB(c, m), _helperCH.expressionLSB(c, l)]; },
+    nrpn: function(c, m, l) { return [_helperCH.nrpnMSB(c, m), _helperCH.nrpnLSB(c, l)]; },
+    rpn: function(c, m, l) { return [_helperCH.rpnMSB(c, m), _helperCH.rpnLSB(c, l)]; },
+  };
   function _smf(ff, dd) {
     var midi = new MIDI();
     midi.ff = _8b(ff);
@@ -1742,9 +1756,25 @@
   function _copyPortHelper(M, name, func) {
     M.prototype[name] = function() { return this.send(func.apply(0, arguments)); };
   }
+  function _copyPortHelperG(M, name, func) {
+    M.prototype[name] = function() {
+      var a = func.apply(0, arguments);
+      var g = this;
+      for (var i = 0; i < a.length; i++) g = g.send(a[i]);
+      return g;
+    };
+  }
   function _copyChannelHelper(C, name, func) {
     C.prototype[name] = function() {
       return this.send(func.apply(0, [this._chan].concat(Array.prototype.slice.call(arguments))));
+    };
+  }
+  function _copyChannelHelperG(C, name, func) {
+    C.prototype[name] = function() {
+      var a = func.apply(0, [this._chan].concat(Array.prototype.slice.call(arguments)));
+      var g = this;
+      for (var i = 0; i < a.length; i++) g = g.send(a[i]);
+      return g;
     };
   }
   function _copyHelperNC(name, func) {
@@ -1752,6 +1782,15 @@
   }
   function _copyHelperSMF(name, func) {
     MIDI[name] = function() { return func.apply(0, arguments); };
+  }
+  function _copyHelperG(name, func) {
+    MIDI[name] = function() {
+      var i;
+      var g = [];
+      var a = func.apply(0, arguments);
+      for (i = 0; i < a.length; i++) g.push(new MIDI(a[i]));
+      return g;
+    };
   }
   function _copyHelperCH(name, func) {
     _copyHelperNC(name, func);
@@ -1772,11 +1811,16 @@
   for (k in _helperNC) if (_helperNC.hasOwnProperty(k)) _copyHelperNC(k, _helperNC[k]);
   for (k in _helperSMF) if (_helperSMF.hasOwnProperty(k)) _copyHelperSMF(k, _helperSMF[k]);
   for (k in _helperCH) if (_helperCH.hasOwnProperty(k)) _copyHelperCH(k, _helperCH[k]);
+  for (k in _helperG) if (_helperG.hasOwnProperty(k)) _copyHelperG(k, _helperG[k]);
   function _copyMidiHelpers(M, C) {
     for (k in _helperNC) if (_helperNC.hasOwnProperty(k)) _copyPortHelper(M, k, _helperNC[k]);
     for (k in _helperSMF) if (_helperSMF.hasOwnProperty(k)) _copyPortHelper(M, k, _helperSMF[k]);
     for (k in _helperCH) if (_helperCH.hasOwnProperty(k)) _copyPortHelper(M, k, _helperCH[k]);
-    if (C) for (k in _helperCH) if (_helperCH.hasOwnProperty(k)) _copyChannelHelper(C, k, _helperCH[k]);
+    for (k in _helperG) if (_helperG.hasOwnProperty(k)) _copyPortHelperG(M, k, _helperG[k]);
+    if (C) {
+      for (k in _helperCH) if (_helperCH.hasOwnProperty(k)) _copyChannelHelper(C, k, _helperCH[k]);
+      for (k in _helperG) if (_helperG.hasOwnProperty(k)) _copyChannelHelperG(C, k, _helperG[k]);
+    }
   }
   _copyMidiHelpers(_M, _C);
 
