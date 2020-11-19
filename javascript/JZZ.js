@@ -1558,7 +1558,7 @@
     control: function(c, n, v) { return [0xB0 + _ch(c), _7b(n), _7b(v)]; },
     program: function(c, n) { return [0xC0 + _ch(c), _7b(MIDI.programValue(n), n)]; },
     pressure: function(c, n) { return [0xD0 + _ch(c), _7b(n)]; },
-    pitchBend: function(c, n) { return [0xE0 + _ch(c), _lsb(n), _msb(n)]; },
+    pitchBend: function(c, n, l) { return typeof l == 'undefined' ? [0xE0 + _ch(c), _lsb(n), _msb(n)] : [0xE0 + _ch(c), _7b(l), _7b(n)]; },
     bankMSB: function(c, n) { return [0xB0 + _ch(c), 0x00, _7b(n)]; },
     bankLSB: function(c, n) { return [0xB0 + _ch(c), 0x20, _7b(n)]; },
     modMSB: function(c, n) { return [0xB0 + _ch(c), 0x01, _7b(n)]; },
@@ -1594,7 +1594,7 @@
   };
   var _helperNC = { // no channel
     mtc: function(t) { return [0xF1, _mtc(t)]; },
-    songPosition: function(n) { return [0xF2, _lsb(n), _msb(n)]; },
+    songPosition: function(n, l) { return typeof l == 'undefined' ? [0xF2, _lsb(n), _msb(n)] : [0xF2, _7b(l), _7b(n)]; },
     songSelect: function(n) { return [0xF3, _7b(n)]; },
     tune: function() { return [0xF6]; },
     clock: function() { return [0xF8]; },
@@ -1607,18 +1607,30 @@
     reset: function() { return [0xFF]; },
   };
   var _helperG = { // compound messages
-    bank: function(c, m, l) { return [_helperCH.bankMSB(c, m), _helperCH.bankLSB(c, l)]; },
-    mod: function(c, m, l) { return [_helperCH.modMSB(c, m), _helperCH.modLSB(c, l)]; },
-    breath: function(c, m, l) { return [_helperCH.breathMSB(c, m), _helperCH.breathLSB(c, l)]; },
-    foot: function(c, m, l) { return [_helperCH.footMSB(c, m), _helperCH.footLSB(c, l)]; },
-    portamentoTime: function(c, m, l) { return [_helperCH.portamentoMSB(c, m), _helperCH.portamentoLSB(c, l)]; },
-    data: function(c, m, l) { return [_helperCH.dataMSB(c, m), _helperCH.dataLSB(c, l)]; },
-    volume: function(c, m, l) { return [_helperCH.volumeMSB(c, m), _helperCH.volumeLSB(c, l)]; },
-    balance: function(c, m, l) { return [_helperCH.balanceMSB(c, m), _helperCH.balanceLSB(c, l)]; },
-    pan: function(c, m, l) { return [_helperCH.panMSB(c, m), _helperCH.panLSB(c, l)]; },
-    expression: function(c, m, l) { return [_helperCH.expressionMSB(c, m), _helperCH.expressionLSB(c, l)]; },
-    nrpn: function(c, m, l) { return [_helperCH.nrpnMSB(c, m), _helperCH.nrpnLSB(c, l)]; },
-    rpn: function(c, m, l) { return [_helperCH.rpnMSB(c, m), _helperCH.rpnLSB(c, l)]; },
+    bank: function(c, m, l) { return typeof l == 'undefined' ?
+      [_helperCH.bankMSB(c, _msb(m)), _helperCH.bankLSB(c, _lsb(m))] : [_helperCH.bankMSB(c, m), _helperCH.bankLSB(c, l)]; },
+    mod: function(c, m, l) { return typeof l == 'undefined' ?
+      [_helperCH.modMSB(c, _msb(m)), _helperCH.modLSB(c, _lsb(m))] : [_helperCH.modMSB(c, m), _helperCH.modLSB(c, l)]; },
+    breath: function(c, m, l) { return typeof l == 'undefined' ?
+      [_helperCH.breathMSB(c, _msb(m)), _helperCH.breathLSB(c, _lsb(m))] : [_helperCH.breathMSB(c, m), _helperCH.breathLSB(c, l)]; },
+    foot: function(c, m, l) { return typeof l == 'undefined' ?
+      [_helperCH.footMSB(c, _msb(m)), _helperCH.footLSB(c, _lsb(m))] : [_helperCH.footMSB(c, m), _helperCH.footLSB(c, l)]; },
+    portamentoTime: function(c, m, l) { return typeof l == 'undefined' ?
+      [_helperCH.portamentoMSB(c, _msb(m)), _helperCH.portamentoLSB(c, _lsb(m))] : [_helperCH.portamentoMSB(c, m), _helperCH.portamentoLSB(c, l)]; },
+    data: function(c, m, l) { return typeof l == 'undefined' ?
+      [_helperCH.dataMSB(c, _msb(m)), _helperCH.dataLSB(c, _lsb(m))] : [_helperCH.dataMSB(c, m), _helperCH.dataLSB(c, l)]; },
+    volume: function(c, m, l) { return typeof l == 'undefined' ?
+      [_helperCH.volumeMSB(c, _msb(m)), _helperCH.volumeLSB(c, _lsb(m))] : [_helperCH.volumeMSB(c, m), _helperCH.volumeLSB(c, l)]; },
+    balance: function(c, m, l) { return typeof l == 'undefined' ?
+      [_helperCH.balanceMSB(c, _msb(m)), _helperCH.balanceLSB(c, _lsb(m))] : [_helperCH.balanceMSB(c, m), _helperCH.balanceLSB(c, l)]; },
+    pan: function(c, m, l) { return typeof l == 'undefined' ?
+      [_helperCH.panMSB(c, _msb(m)), _helperCH.panLSB(c, _lsb(m))] : [_helperCH.panMSB(c, m), _helperCH.panLSB(c, l)]; },
+    expression: function(c, m, l) { return typeof l == 'undefined' ?
+      [_helperCH.expressionMSB(c, _msb(m)), _helperCH.expressionLSB(c, _lsb(m))] : [_helperCH.expressionMSB(c, m), _helperCH.expressionLSB(c, l)]; },
+    nrpn: function(c, m, l) { return typeof l == 'undefined' ?
+      [_helperCH.nrpnMSB(c, _msb(m)), _helperCH.nrpnLSB(c, _lsb(m))] : [_helperCH.nrpnMSB(c, m), _helperCH.nrpnLSB(c, l)]; },
+    rpn: function(c, m, l) { return typeof l == 'undefined' ?
+      [_helperCH.rpnMSB(c, _msb(m)), _helperCH.rpnLSB(c, _lsb(m))] : [_helperCH.rpnMSB(c, m), _helperCH.rpnLSB(c, l)]; },
   };
   function _smf(ff, dd) {
     var midi = new MIDI();
