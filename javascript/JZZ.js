@@ -1531,6 +1531,7 @@
     if (typeof a == 'undefined') a = 440.0;
     return (a * Math.pow(2, (_7b(MIDI.noteValue(n), n) - 69.0) / 12.0));
   };
+  MIDI.to14b = function(x) { return x <= 0 ? 0 : x >= 1 ? 0x3fff : Math.floor(x * 0x4000); };
 
   var _noteMap = { c:0, d:2, e:4, f:5, g:7, a:9, b:11, h:11 };
   for (k in _noteMap) {
@@ -1559,6 +1560,7 @@
     program: function(c, n) { return [0xC0 + _ch(c), _7b(MIDI.programValue(n), n)]; },
     pressure: function(c, n) { return [0xD0 + _ch(c), _7b(n)]; },
     pitchBend: function(c, n, l) { return typeof l == 'undefined' ? [0xE0 + _ch(c), _lsb(n), _msb(n)] : [0xE0 + _ch(c), _7b(l), _7b(n)]; },
+    pitchBendF: function(c, x) { return _helperCH.pitchBend(c, MIDI.to14b((x + 1) / 2)); },
     bankMSB: function(c, n) { return [0xB0 + _ch(c), 0x00, _7b(n)]; },
     bankLSB: function(c, n) { return [0xB0 + _ch(c), 0x20, _7b(n)]; },
     modMSB: function(c, n) { return [0xB0 + _ch(c), 0x01, _7b(n)]; },
@@ -1609,22 +1611,31 @@
   var _helperG = { // compound messages
     bank: function(c, m, l) { return typeof l == 'undefined' ?
       [_helperCH.bankMSB(c, _msb(m)), _helperCH.bankLSB(c, _lsb(m))] : [_helperCH.bankMSB(c, m), _helperCH.bankLSB(c, l)]; },
+    modF: function(c, x) { return _helperG.mod(c, MIDI.to14b(x)); },
     mod: function(c, m, l) { return typeof l == 'undefined' ?
       [_helperCH.modMSB(c, _msb(m)), _helperCH.modLSB(c, _lsb(m))] : [_helperCH.modMSB(c, m), _helperCH.modLSB(c, l)]; },
+    breathF: function(c, x) { return _helperG.breath(c, MIDI.to14b(x)); },
     breath: function(c, m, l) { return typeof l == 'undefined' ?
       [_helperCH.breathMSB(c, _msb(m)), _helperCH.breathLSB(c, _lsb(m))] : [_helperCH.breathMSB(c, m), _helperCH.breathLSB(c, l)]; },
+    footF: function(c, x) { return _helperG.foot(c, MIDI.to14b(x)); },
     foot: function(c, m, l) { return typeof l == 'undefined' ?
       [_helperCH.footMSB(c, _msb(m)), _helperCH.footLSB(c, _lsb(m))] : [_helperCH.footMSB(c, m), _helperCH.footLSB(c, l)]; },
+    portamentoTimeF: function(c, x) { return _helperG.portamentoTime(c, MIDI.to14b(x)); },
     portamentoTime: function(c, m, l) { return typeof l == 'undefined' ?
       [_helperCH.portamentoMSB(c, _msb(m)), _helperCH.portamentoLSB(c, _lsb(m))] : [_helperCH.portamentoMSB(c, m), _helperCH.portamentoLSB(c, l)]; },
+    dataF: function(c, x) { return _helperG.data(c, MIDI.to14b(x)); },
     data: function(c, m, l) { return typeof l == 'undefined' ?
       [_helperCH.dataMSB(c, _msb(m)), _helperCH.dataLSB(c, _lsb(m))] : [_helperCH.dataMSB(c, m), _helperCH.dataLSB(c, l)]; },
+    volumeF: function(c, x) { return _helperG.volume(c, MIDI.to14b(x)); },
     volume: function(c, m, l) { return typeof l == 'undefined' ?
       [_helperCH.volumeMSB(c, _msb(m)), _helperCH.volumeLSB(c, _lsb(m))] : [_helperCH.volumeMSB(c, m), _helperCH.volumeLSB(c, l)]; },
+    balanceF: function(c, x) { return _helperG.balance(c, MIDI.to14b((x + 1) / 2)); },
     balance: function(c, m, l) { return typeof l == 'undefined' ?
       [_helperCH.balanceMSB(c, _msb(m)), _helperCH.balanceLSB(c, _lsb(m))] : [_helperCH.balanceMSB(c, m), _helperCH.balanceLSB(c, l)]; },
+    panF: function(c, x) { return _helperG.pan(c, MIDI.to14b((x + 1) / 2)); },
     pan: function(c, m, l) { return typeof l == 'undefined' ?
       [_helperCH.panMSB(c, _msb(m)), _helperCH.panLSB(c, _lsb(m))] : [_helperCH.panMSB(c, m), _helperCH.panLSB(c, l)]; },
+    expressionF: function(c, x) { return _helperG.expression(c, MIDI.to14b(x)); },
     expression: function(c, m, l) { return typeof l == 'undefined' ?
       [_helperCH.expressionMSB(c, _msb(m)), _helperCH.expressionLSB(c, _lsb(m))] : [_helperCH.expressionMSB(c, m), _helperCH.expressionLSB(c, l)]; },
     nrpn: function(c, m, l) { return typeof l == 'undefined' ?

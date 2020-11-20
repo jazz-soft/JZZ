@@ -79,6 +79,13 @@ describe('MIDI messages', function() {
     assert.equal(JZZ.MIDI.pitchBend(0, 2, 44).toString(), 'e0 2c 02 -- Pitch Wheel');
     assert.throws(function() { JZZ.MIDI.pitchBend(0, 0xffff); });
   });
+  it('pitchBendF', function() {
+    assert.equal(JZZ.MIDI.pitchBendF(0, -1).toString(), 'e0 00 00 -- Pitch Wheel');
+    assert.equal(JZZ.MIDI.pitchBendF(0, -.5).toString(), 'e0 00 20 -- Pitch Wheel');
+    assert.equal(JZZ.MIDI.pitchBendF(0, 0).toString(), 'e0 00 40 -- Pitch Wheel');
+    assert.equal(JZZ.MIDI.pitchBendF(0, .5).toString(), 'e0 00 60 -- Pitch Wheel');
+    assert.equal(JZZ.MIDI.pitchBendF(0, 1).toString(), 'e0 7f 7f -- Pitch Wheel');
+  });
   it('bank', function() {
     assert.equal(JZZ.MIDI.bank(0, 1, 2)[0].toString(), 'b0 00 01 -- Bank Select MSB');
     assert.equal(JZZ.MIDI.bank(0, 1, 2)[1].toString(), 'b0 20 02 -- Bank Select LSB');
@@ -97,6 +104,10 @@ describe('MIDI messages', function() {
     assert.equal(JZZ.MIDI.mod(0, 0x82)[0].toString(), 'b0 01 01 -- Modulation Wheel MSB');
     assert.equal(JZZ.MIDI.mod(0, 0x82)[1].toString(), 'b0 21 02 -- Modulation Wheel LSB');
   });
+  it('modF', function() {
+    assert.equal(JZZ.MIDI.modF(0, .5)[0].toString(), 'b0 01 40 -- Modulation Wheel MSB');
+    assert.equal(JZZ.MIDI.modF(0, .5)[1].toString(), 'b0 21 00 -- Modulation Wheel LSB');
+  });
   it('modMSB', function() {
     assert.equal(JZZ.MIDI.modMSB(0, 15).toString(), 'b0 01 0f -- Modulation Wheel MSB');
   });
@@ -109,6 +120,10 @@ describe('MIDI messages', function() {
     assert.equal(JZZ.MIDI.breath(0, 0x82)[0].toString(), 'b0 02 01 -- Breath Controller MSB');
     assert.equal(JZZ.MIDI.breath(0, 0x82)[1].toString(), 'b0 22 02 -- Breath Controller LSB');
   });
+  it('breathF', function() {
+    assert.equal(JZZ.MIDI.breathF(0, .5)[0].toString(), 'b0 02 40 -- Breath Controller MSB');
+    assert.equal(JZZ.MIDI.breathF(0, .5)[1].toString(), 'b0 22 00 -- Breath Controller LSB');
+  });
   it('breathMSB', function() {
     assert.equal(JZZ.MIDI.breathMSB(0, 15).toString(), 'b0 02 0f -- Breath Controller MSB');
   });
@@ -120,6 +135,10 @@ describe('MIDI messages', function() {
     assert.equal(JZZ.MIDI.foot(0, 1, 2)[1].toString(), 'b0 24 02 -- Foot Controller LSB');
     assert.equal(JZZ.MIDI.foot(0, 0x82)[0].toString(), 'b0 04 01 -- Foot Controller MSB');
     assert.equal(JZZ.MIDI.foot(0, 0x82)[1].toString(), 'b0 24 02 -- Foot Controller LSB');
+  });
+  it('footF', function() {
+    assert.equal(JZZ.MIDI.footF(0, .5)[0].toString(), 'b0 04 40 -- Foot Controller MSB');
+    assert.equal(JZZ.MIDI.footF(0, .5)[1].toString(), 'b0 24 00 -- Foot Controller LSB');
   });
   it('footMSB', function() {
     assert.equal(JZZ.MIDI.footMSB(0, 15).toString(), 'b0 04 0f -- Foot Controller MSB');
@@ -134,6 +153,10 @@ describe('MIDI messages', function() {
     assert.equal(JZZ.MIDI.portamentoTime(0, 0x82)[0].toString(), 'b0 05 01 -- Portamento Time MSB');
     assert.equal(JZZ.MIDI.portamentoTime(0, 0x82)[1].toString(), 'b0 25 02 -- Portamento Time LSB');
   });
+  it('portamentoTimeF', function() {
+    assert.equal(JZZ.MIDI.portamentoTimeF(0, .5)[0].toString(), 'b0 05 40 -- Portamento Time MSB');
+    assert.equal(JZZ.MIDI.portamentoTimeF(0, .5)[1].toString(), 'b0 25 00 -- Portamento Time LSB');
+  });
   it('portamentoMSB', function() {
     assert.equal(JZZ.MIDI.portamentoMSB(0, 15).toString(), 'b0 05 0f -- Portamento Time MSB');
   });
@@ -145,6 +168,10 @@ describe('MIDI messages', function() {
     assert.equal(JZZ.MIDI.volume(0, 1, 2)[1].toString(), 'b0 27 02 -- Channel Volume LSB');
     assert.equal(JZZ.MIDI.volume(0, 0x82)[0].toString(), 'b0 07 01 -- Channel Volume MSB');
     assert.equal(JZZ.MIDI.volume(0, 0x82)[1].toString(), 'b0 27 02 -- Channel Volume LSB');
+  });
+  it('volumeF', function() {
+    assert.equal(JZZ.MIDI.volumeF(0, .5)[0].toString(), 'b0 07 40 -- Channel Volume MSB');
+    assert.equal(JZZ.MIDI.volumeF(0, .5)[1].toString(), 'b0 27 00 -- Channel Volume LSB');
   });
   it('volumeMSB', function() {
     assert.equal(JZZ.MIDI.volumeMSB(0, 15).toString(), 'b0 07 0f -- Channel Volume MSB');
@@ -158,6 +185,10 @@ describe('MIDI messages', function() {
     assert.equal(JZZ.MIDI.balance(0, 0x82)[0].toString(), 'b0 08 01 -- Balance MSB');
     assert.equal(JZZ.MIDI.balance(0, 0x82)[1].toString(), 'b0 28 02 -- Balance LSB');
   });
+  it('balanceF', function() {
+    assert.equal(JZZ.MIDI.balanceF(0, 0)[0].toString(), 'b0 08 40 -- Balance MSB');
+    assert.equal(JZZ.MIDI.balanceF(0, 0)[1].toString(), 'b0 28 00 -- Balance LSB');
+  });
   it('balanceMSB', function() {
     assert.equal(JZZ.MIDI.balanceMSB(0, 15).toString(), 'b0 08 0f -- Balance MSB');
   });
@@ -170,6 +201,10 @@ describe('MIDI messages', function() {
     assert.equal(JZZ.MIDI.pan(0, 0x82)[0].toString(), 'b0 0a 01 -- Pan MSB');
     assert.equal(JZZ.MIDI.pan(0, 0x82)[1].toString(), 'b0 2a 02 -- Pan LSB');
   });
+  it('panF', function() {
+    assert.equal(JZZ.MIDI.panF(0, 0)[0].toString(), 'b0 0a 40 -- Pan MSB');
+    assert.equal(JZZ.MIDI.panF(0, 0)[1].toString(), 'b0 2a 00 -- Pan LSB');
+  });
   it('panMSB', function() {
     assert.equal(JZZ.MIDI.panMSB(0, 15).toString(), 'b0 0a 0f -- Pan MSB');
   });
@@ -181,6 +216,10 @@ describe('MIDI messages', function() {
     assert.equal(JZZ.MIDI.expression(0, 1, 2)[1].toString(), 'b0 2b 02 -- Expression Controller LSB');
     assert.equal(JZZ.MIDI.expression(0, 0x82)[0].toString(), 'b0 0b 01 -- Expression Controller MSB');
     assert.equal(JZZ.MIDI.expression(0, 0x82)[1].toString(), 'b0 2b 02 -- Expression Controller LSB');
+  });
+  it('expressionF', function() {
+    assert.equal(JZZ.MIDI.expressionF(0, .5)[0].toString(), 'b0 0b 40 -- Expression Controller MSB');
+    assert.equal(JZZ.MIDI.expressionF(0, .5)[1].toString(), 'b0 2b 00 -- Expression Controller LSB');
   });
   it('expressionMSB', function() {
     assert.equal(JZZ.MIDI.expressionMSB(0, 15).toString(), 'b0 0b 0f -- Expression Controller MSB');
@@ -209,6 +248,10 @@ describe('MIDI messages', function() {
     assert.equal(JZZ.MIDI.data(0, 1, 2)[1].toString(), 'b0 26 02 -- Data Entry LSB');
     assert.equal(JZZ.MIDI.data(0, 0x82)[0].toString(), 'b0 06 01 -- Data Entry MSB');
     assert.equal(JZZ.MIDI.data(0, 0x82)[1].toString(), 'b0 26 02 -- Data Entry LSB');
+  });
+  it('dataF', function() {
+    assert.equal(JZZ.MIDI.dataF(0, .5)[0].toString(), 'b0 06 40 -- Data Entry MSB');
+    assert.equal(JZZ.MIDI.dataF(0, .5)[1].toString(), 'b0 26 00 -- Data Entry LSB');
   });
   it('dataMSB', function() {
     assert.equal(JZZ.MIDI.dataMSB(0, 1).toString(), 'b0 06 01 -- Data Entry MSB');
@@ -325,6 +368,17 @@ describe('MIDI messages', function() {
   it('freq', function() {
     assert.equal(JZZ.MIDI.freq('A6'), 880);
     assert.equal(JZZ.MIDI.freq('A5', 880), 880);
+  });
+  it('to14b', function() {
+    assert.equal(JZZ.MIDI.to14b(-.01), 0);
+    assert.equal(JZZ.MIDI.to14b(0), 0);
+    assert.equal(JZZ.MIDI.to14b(.00007), 1);
+    assert.equal(JZZ.MIDI.to14b(.25), 0x1000);
+    assert.equal(JZZ.MIDI.to14b(.5), 0x2000);
+    assert.equal(JZZ.MIDI.to14b(.75), 0x3000);
+    assert.equal(JZZ.MIDI.to14b(.99994), 0x3fff);
+    assert.equal(JZZ.MIDI.to14b(1), 0x3fff);
+    assert.equal(JZZ.MIDI.to14b(1.01), 0x3fff);
   });
 });
 
