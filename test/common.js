@@ -282,6 +282,7 @@ describe('MIDI messages', function() {
     assert.equal(JZZ.MIDI.rpn(0, 1, 2)[1].toString(), 'b0 64 02 -- Registered Parameter Number LSB');
     assert.equal(JZZ.MIDI.rpn(0, 0x82)[0].toString(), 'b0 65 01 -- Registered Parameter Number MSB');
     assert.equal(JZZ.MIDI.rpn(0, 0x82)[1].toString(), 'b0 64 02 -- Registered Parameter Number LSB');
+    assert.throws(function() { JZZ.MIDI.rpn(0, 0x8000); });
   });
   it('rpnMSB', function() {
     assert.equal(JZZ.MIDI.rpnMSB(0, 0).toString(), 'b0 65 00 -- Registered Parameter Number MSB');

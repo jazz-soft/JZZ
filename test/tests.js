@@ -114,7 +114,7 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
         JZZ.lib.registerMidiOut('Dummy MIDI-Out', widget2); // should ignore second call
         port2 = engine.openMidiOut('Dummy MIDI-Out');
         port2.connect(port1);
-        port2.and(function() { assert.equal(this.connected(), 1); this.send([]); this.noteOn(0, 60); });
+        port2.and(function() { assert.equal(this.connected(), 1); this.send([]); this.rpn(0, 0).ch(1).rpn(0); this.noteOn(0, 60); });
       });
     },
 
