@@ -1531,6 +1531,10 @@
     if (typeof a == 'undefined') a = 440.0;
     return (a * Math.pow(2, (_7b(MIDI.noteValue(n), n) - 69.0) / 12.0));
   };
+  MIDI.shift = function(f, f0) {
+    if (typeof f0 == 'undefined') f0 = 440;
+    return Math.log2(f / f0) * 12;
+  };
   MIDI.to14b = function(x) { return x <= 0 ? 0 : x >= 1 ? 0x3fff : Math.floor(x * 0x4000); };
 
   var _noteMap = { c:0, d:2, e:4, f:5, g:7, a:9, b:11, h:11 };

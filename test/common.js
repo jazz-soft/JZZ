@@ -370,6 +370,10 @@ describe('MIDI messages', function() {
     assert.equal(JZZ.MIDI.freq('A6'), 880);
     assert.equal(JZZ.MIDI.freq('A5', 880), 880);
   });
+  it('shift', function() {
+    assert.equal(JZZ.MIDI.shift(432), Math.log2(432/440) * 12);
+    assert.equal(JZZ.MIDI.shift(880, 440), 12);
+  });
   it('to14b', function() {
     assert.equal(JZZ.MIDI.to14b(-.01), 0);
     assert.equal(JZZ.MIDI.to14b(0), 0);
