@@ -1646,6 +1646,11 @@
       [_helperCH.nrpnMSB(c, _msb(m)), _helperCH.nrpnLSB(c, _lsb(m))] : [_helperCH.nrpnMSB(c, m), _helperCH.nrpnLSB(c, l)]; },
     rpn: function(c, m, l) { return typeof l == 'undefined' ?
       [_helperCH.rpnMSB(c, _msb(m)), _helperCH.rpnLSB(c, _lsb(m))] : [_helperCH.rpnMSB(c, m), _helperCH.rpnLSB(c, l)]; },
+
+    rpnFineTuning: function(c, x) { return _helperG.rpn(c, 0, 1).concat(_helperG.dataF(c, (x % 1 + 1) / 2)); },
+    rpnCoarseTuning: function(c, x) { return _helperG.rpn(c, 0, 2).concat([_helperCH.dataMSB(c, 0x40 + x - x % 1)]); },
+    rpnTuning: function(c, x) { return _helperG.rpnCoarseTuning(c, x).concat(_helperG.rpnFineTuning(c, x)); },
+    rpnTuningA: function(c, a) { return _helperG.rpnTuning(c, MIDI.shift(a)); },
   };
   function _smf(ff, dd) {
     var midi = new MIDI();
