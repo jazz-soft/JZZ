@@ -13,7 +13,7 @@
 })(this, function() {
 
   var _scope = typeof window === 'undefined' ? global : window;
-  var _version = '1.1.6';
+  var _version = '1.1.7';
   var i, j, k, m, n;
 
   var _time = Date.now || function () { return new Date().getTime(); };
@@ -1610,6 +1610,9 @@
     active: function() { return [0xFE]; },
     sxIdRequest: function() { return [0xF0, 0x7E, 0x7F, 0x06, 0x01, 0xF7]; },
     sxFullFrame: function(t) { return [0xF0, 0x7F, 0x7F, 0x01, 0x01, _hrtype(t), t.getMinute(), t.getSecond(), t.getFrame(), 0xF7]; },
+    sxMasterVolume: function(x) { x = MIDI.to14b(x); return [0xF0, 0x7F, 0x7F, 0x04, 0x01, _lsb(x), _msb(x), 0xF7]; },
+    sxMasterFineTuning: function(x) { x = MIDI.to14b((x % 1 + 1) / 2); return [0xF0, 0x7F, 0x7F, 0x04, 0x03, _lsb(x), _msb(x), 0xF7]; },
+    sxMasterCoarseTuning: function(x) { return [0xF0, 0x7F, 0x7F, 0x04, 0x04, 0x00, 0x40 + x - x % 1, 0xF7]; },
     reset: function() { return [0xFF]; },
   };
   var _helperG = { // compound messages
@@ -1646,11 +1649,15 @@
       [_helperCH.nrpnMSB(c, _msb(m)), _helperCH.nrpnLSB(c, _lsb(m))] : [_helperCH.nrpnMSB(c, m), _helperCH.nrpnLSB(c, l)]; },
     rpn: function(c, m, l) { return typeof l == 'undefined' ?
       [_helperCH.rpnMSB(c, _msb(m)), _helperCH.rpnLSB(c, _lsb(m))] : [_helperCH.rpnMSB(c, m), _helperCH.rpnLSB(c, l)]; },
-
+    rpnPitchBendRange: function(c, x) { return _helperG.rpn(c, 0, 0).concat(_helperG.data(c, _7b(x - x % 1), Math.floor((x % 1) * 128))); },
     rpnFineTuning: function(c, x) { return _helperG.rpn(c, 0, 1).concat(_helperG.dataF(c, (x % 1 + 1) / 2)); },
     rpnCoarseTuning: function(c, x) { return _helperG.rpn(c, 0, 2).concat([_helperCH.dataMSB(c, 0x40 + x - x % 1)]); },
     rpnTuning: function(c, x) { return _helperG.rpnCoarseTuning(c, x).concat(_helperG.rpnFineTuning(c, x)); },
     rpnTuningA: function(c, a) { return _helperG.rpnTuning(c, MIDI.shift(a)); },
+  };
+  var _helperGNC = { // compound messages no channel
+    sxMasterTuning: function(x) { return [_helperNC.sxMasterCoarseTuning(x), _helperNC.sxMasterFineTuning(x)]; },
+    sxMasterTuningA: function(a) { return _helperGNC.sxMasterTuning(MIDI.shift(a)); },
   };
   function _smf(ff, dd) {
     var midi = new MIDI();
@@ -1844,11 +1851,13 @@
   for (k in _helperSMF) if (_helperSMF.hasOwnProperty(k)) _copyHelperSMF(k, _helperSMF[k]);
   for (k in _helperCH) if (_helperCH.hasOwnProperty(k)) _copyHelperCH(k, _helperCH[k]);
   for (k in _helperG) if (_helperG.hasOwnProperty(k)) _copyHelperG(k, _helperG[k]);
+  for (k in _helperGNC) if (_helperGNC.hasOwnProperty(k)) _copyHelperG(k, _helperGNC[k]);
   function _copyMidiHelpers(M, C) {
     for (k in _helperNC) if (_helperNC.hasOwnProperty(k)) _copyPortHelper(M, k, _helperNC[k]);
     for (k in _helperSMF) if (_helperSMF.hasOwnProperty(k)) _copyPortHelper(M, k, _helperSMF[k]);
     for (k in _helperCH) if (_helperCH.hasOwnProperty(k)) _copyPortHelper(M, k, _helperCH[k]);
     for (k in _helperG) if (_helperG.hasOwnProperty(k)) _copyPortHelperG(M, k, _helperG[k]);
+    for (k in _helperGNC) if (_helperGNC.hasOwnProperty(k)) _copyPortHelperG(M, k, _helperGNC[k]);
     if (C) {
       for (k in _helperCH) if (_helperCH.hasOwnProperty(k)) _copyChannelHelper(C, k, _helperCH[k]);
       for (k in _helperG) if (_helperG.hasOwnProperty(k)) _copyChannelHelperG(C, k, _helperG[k]);
