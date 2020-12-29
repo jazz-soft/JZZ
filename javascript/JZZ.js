@@ -54,6 +54,7 @@
     return ret;
   };
   _R.prototype._thenable = function() {
+    if (this.then) return this;
     var self = this;
     var F = function() {}; F.prototype = self;
     var ret = new F();
@@ -434,7 +435,7 @@
     return this._orig._handles.length + this._orig._outs.length;
   };
   _M.prototype.ch = function(n) {
-    if (typeof n == 'undefined') return this;
+    if (typeof n == 'undefined') return this._thenable();
     _validateChannel(n);
     var chan = new _C(this, n);
     this._push(_kick, [chan]);
@@ -445,7 +446,7 @@
     this._orig._mpe.setup(m, n);
   }
   _M.prototype.mpe = function(m, n) {
-    if (typeof m == 'undefined' && typeof n == 'undefined') return this;
+    if (typeof m == 'undefined' && typeof n == 'undefined') return this._thenable();
     MPE.validate(m, n);
     var chan = n ? new _E(this, m, n) : new _C(this, m);
     this._push(_mpe, [m, n]);

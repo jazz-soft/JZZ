@@ -3,6 +3,7 @@ var JZZ = require('..');
 
 describe('async calls', function() {
   this.timeout(5000);
+  function nop() {}
   var broke = 'We broke it!';
   var notexisting = 'Not existing port';
   var notfound = 'Port "Not existing port" not found';
@@ -72,14 +73,14 @@ describe('async calls', function() {
   });
 
   it('await JZZ().then()', async function() {
-    await JZZ().then(function() {});
-    await JZZ().then(undefined, function() {});
+    await JZZ().then(nop);
+    await JZZ().then(undefined, nop);
   });
 
   it('await JZZ().then() / throw', async function() {
     var msg;
     try {
-      await JZZ().and(function() { this._break(broke); }).then(function() {});
+      await JZZ().and(function() { this._break(broke); }).then(nop);
     }
     catch (err) {
       msg = err.message;
@@ -87,7 +88,7 @@ describe('async calls', function() {
     assert.equal(msg, broke);
     msg = undefined;
     try {
-      await JZZ().then(undefined, function() {});
+      await JZZ().then(undefined, nop);
     }
     catch (err) {
       msg = err.message;
@@ -141,6 +142,11 @@ describe('async calls', function() {
     JZZ()._repair();
   });
 
+  it('await JZZ().openMidiIn().then()', async function() {
+    JZZ.lib.registerMidiIn(midi_in_name, midi_in_impl);
+    await JZZ().openMidiIn(midi_in_name).then(nop);
+  });
+
   it('await JZZ().openMidiOut()', async function() {
     JZZ.lib.registerMidiOut(midi_out_name, midi_out_impl);
     await JZZ().openMidiOut(midi_out_name);
@@ -168,6 +174,11 @@ describe('async calls', function() {
     }
     assert.equal(msg, broke);
     JZZ()._repair();
+  });
+
+  it('await JZZ().openMidiOut().then()', async function() {
+    JZZ.lib.registerMidiOut(midi_out_name, midi_out_impl);
+    await JZZ().openMidiOut(midi_out_name).then(nop);
   });
 
   it('await JZZ().openMidiOut().noteOn()', async function() {
@@ -198,6 +209,34 @@ describe('async calls', function() {
     assert.equal(msg, notfound);
   });
 
+  it('await JZZ().openMidiOut().noteOn().then()', async function() {
+    JZZ.lib.registerMidiOut(midi_out_name, midi_out_impl);
+    await JZZ().openMidiOut(midi_out_name).noteOn(0, 0x40, 0x7f).then(nop);
+  });
+
+  it('await JZZ().openMidiOut().note().then()', async function() {
+    JZZ.lib.registerMidiOut(midi_out_name, midi_out_impl);
+    await JZZ().openMidiOut(midi_out_name).note(0, 0x40, 0x7f, 1).then(nop);
+  });
+
+  it('await JZZ().openMidiOut().data().then()', async function() {
+    JZZ.lib.registerMidiOut(midi_out_name, midi_out_impl);
+    await JZZ().openMidiOut(midi_out_name).data(0, 1);
+    await JZZ().openMidiOut(midi_out_name).data(0, 1).then(nop);
+  });
+
+  it('await JZZ().openMidiOut().sxMasterVolume().then()', async function() {
+    JZZ.lib.registerMidiOut(midi_out_name, midi_out_impl);
+    await JZZ().openMidiOut(midi_out_name).sxMasterVolume(0);
+    await JZZ().openMidiOut(midi_out_name).sxMasterVolume(0).then(nop);
+  });
+
+  it('await JZZ().openMidiOut().sxMasterTuning().then()', async function() {
+    JZZ.lib.registerMidiOut(midi_out_name, midi_out_impl);
+    await JZZ().openMidiOut(midi_out_name).sxMasterTuning(0);
+    await JZZ().openMidiOut(midi_out_name).sxMasterTuning(0).then(nop);
+  });
+
   it('await JZZ().openMidiOut().ch()', async function() {
     JZZ.lib.registerMidiOut(midi_out_name, midi_out_impl);
     await JZZ().openMidiOut(midi_out_name).wait(1).ch(0);
@@ -224,6 +263,13 @@ describe('async calls', function() {
       msg = err.message;
     }
     assert.equal(msg, notfound);
+  });
+
+  it('await JZZ().openMidiOut().ch().then()', async function() {
+    JZZ.lib.registerMidiOut(midi_out_name, midi_out_impl);
+    await JZZ().openMidiOut(midi_out_name).ch().then(nop);
+    await JZZ().openMidiOut(midi_out_name).ch(0).then();
+    await JZZ().openMidiOut(midi_out_name).ch(0).ch().then();
   });
 
   it('await JZZ().openMidiOut().mpe()', async function() {
@@ -253,6 +299,13 @@ describe('async calls', function() {
     assert.equal(msg, notfound);
   });
 
+  it('await JZZ().openMidiOut().mpe().then()', async function() {
+    JZZ.lib.registerMidiOut(midi_out_name, midi_out_impl);
+    await JZZ().openMidiOut(midi_out_name).mpe().then(nop);
+    await JZZ().openMidiOut(midi_out_name).mpe(0, 5).then(nop);
+    await JZZ().openMidiOut(midi_out_name).mpe(0, 5).mpe().then(nop);
+  });
+
   it('await JZZ().openMidiOut().close()', async function() {
     JZZ.lib.registerMidiOut(midi_out_name, midi_out_impl);
     await JZZ().openMidiOut(midi_out_name).wait(1).close().wait(1);
@@ -279,6 +332,11 @@ describe('async calls', function() {
       msg = err.message;
     }
     assert.equal(msg, notfound);
+  });
+
+  it('await JZZ().openMidiOut().close().then()', async function() {
+    JZZ.lib.registerMidiOut(midi_out_name, midi_out_impl);
+    await JZZ().openMidiOut(midi_out_name).close().then(nop);
   });
 
 });
