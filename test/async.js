@@ -231,7 +231,7 @@ describe('async calls', function() {
     await JZZ().openMidiOut(midi_out_name).sxMasterVolume(0).then(nop);
   });
 
-  it('await JZZ().openMidiOut().sxMasterTuning().then()', async function() {
+  it.skip('await JZZ().openMidiOut().sxMasterTuning().then()', async function() {
     JZZ.lib.registerMidiOut(midi_out_name, midi_out_impl);
     await JZZ().openMidiOut(midi_out_name).sxMasterTuning(0);
     await JZZ().openMidiOut(midi_out_name).sxMasterTuning(0).then(nop);

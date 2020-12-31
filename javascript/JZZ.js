@@ -367,6 +367,7 @@
     _R.apply(this);
     this._handles = [];
     this._outs = [];
+    this._sxid = 0xf;
   }
   _M.prototype = new _R();
   _M.prototype._filter = function(msg) {
@@ -1538,6 +1539,17 @@
   };
   MIDI.to14b = function(x) { return x <= 0 ? 0 : x >= 1 ? 0x3fff : Math.floor(x * 0x4000); };
 
+  function _MIDI() {};
+  _MIDI.prototype = MIDI;
+  MIDI._sxid = 0x7f;
+  MIDI.sxId = function(id) {
+    if (typeof id == 'undefined') id = MIDI._sxid;
+    if (id == this._sxid) return this;
+    var ret = new _MIDI();
+    ret._sxid = id;
+    return ret;
+  }
+
   var _noteMap = { c:0, d:2, e:4, f:5, g:7, a:9, b:11, h:11 };
   for (k in _noteMap) {
     if (!_noteMap.hasOwnProperty(k)) continue;
@@ -1609,11 +1621,11 @@
     continue: function() { return [0xFB]; },
     stop: function() { return [0xFC]; },
     active: function() { return [0xFE]; },
-    sxIdRequest: function() { return [0xF0, 0x7E, 0x7F, 0x06, 0x01, 0xF7]; },
-    sxFullFrame: function(t) { return [0xF0, 0x7F, 0x7F, 0x01, 0x01, _hrtype(t), t.getMinute(), t.getSecond(), t.getFrame(), 0xF7]; },
-    sxMasterVolume: function(x) { x = MIDI.to14b(x); return [0xF0, 0x7F, 0x7F, 0x04, 0x01, _lsb(x), _msb(x), 0xF7]; },
-    sxMasterFineTuning: function(x) { x = MIDI.to14b((x % 1 + 1) / 2); return [0xF0, 0x7F, 0x7F, 0x04, 0x03, _lsb(x), _msb(x), 0xF7]; },
-    sxMasterCoarseTuning: function(x) { return [0xF0, 0x7F, 0x7F, 0x04, 0x04, 0x00, 0x40 + x - x % 1, 0xF7]; },
+    sxIdRequest: function() { return [0xF0, 0x7E, this._sxid, 0x06, 0x01, 0xF7]; },
+    sxFullFrame: function(t) { return [0xF0, 0x7F, this._sxid, 0x01, 0x01, _hrtype(t), t.getMinute(), t.getSecond(), t.getFrame(), 0xF7]; },
+    sxMasterVolume: function(x) { x = MIDI.to14b(x); return [0xF0, 0x7F, this._sxid, 0x04, 0x01, _lsb(x), _msb(x), 0xF7]; },
+    sxMasterFineTuning: function(x) { x = MIDI.to14b((x % 1 + 1) / 2); return [0xF0, 0x7F, this._sxid, 0x04, 0x03, _lsb(x), _msb(x), 0xF7]; },
+    sxMasterCoarseTuning: function(x) { return [0xF0, 0x7F, this._sxid, 0x04, 0x04, 0x00, 0x40 + x - x % 1, 0xF7]; },
     reset: function() { return [0xFF]; },
   };
   var _helperG = { // compound messages
@@ -1657,8 +1669,8 @@
     rpnTuningA: function(c, a) { return _helperG.rpnTuning(c, MIDI.shift(a)); },
   };
   var _helperGNC = { // compound messages no channel
-    sxMasterTuning: function(x) { return [_helperNC.sxMasterCoarseTuning(x), _helperNC.sxMasterFineTuning(x)]; },
-    sxMasterTuningA: function(a) { return _helperGNC.sxMasterTuning(MIDI.shift(a)); },
+    sxMasterTuning: function(x) { return [this.sxMasterCoarseTuning(x), this.sxMasterFineTuning(x)]; },
+    sxMasterTuningA: function(a) { return this.sxMasterTuning(MIDI.shift(a)); },
   };
   function _smf(ff, dd) {
     var midi = new MIDI();
@@ -1794,11 +1806,11 @@
   };
 
   function _copyPortHelper(M, name, func) {
-    M.prototype[name] = function() { return this.send(func.apply(0, arguments)); };
+    M.prototype[name] = function() { return this.send(func.apply(this, arguments)); };
   }
   function _copyPortHelperG(M, name, func) {
     M.prototype[name] = function() {
-      var a = func.apply(0, arguments);
+      var a = func.apply(this, arguments);
       var g = this;
       for (var i = 0; i < a.length; i++) g = g.send(a[i]);
       return g;
@@ -1806,28 +1818,28 @@
   }
   function _copyChannelHelper(C, name, func) {
     C.prototype[name] = function() {
-      return this.send(func.apply(0, [this._chan].concat(Array.prototype.slice.call(arguments))));
+      return this.send(func.apply(this, [this._chan].concat(Array.prototype.slice.call(arguments))));
     };
   }
   function _copyChannelHelperG(C, name, func) {
     C.prototype[name] = function() {
-      var a = func.apply(0, [this._chan].concat(Array.prototype.slice.call(arguments)));
+      var a = func.apply(this, [this._chan].concat(Array.prototype.slice.call(arguments)));
       var g = this;
       for (var i = 0; i < a.length; i++) g = g.send(a[i]);
       return g;
     };
   }
   function _copyHelperNC(name, func) {
-    MIDI[name] = function() { return new MIDI(func.apply(0, arguments)); };
+    MIDI[name] = function() { return new MIDI(func.apply(this, arguments)); };
   }
   function _copyHelperSMF(name, func) {
-    MIDI[name] = function() { return func.apply(0, arguments); };
+    MIDI[name] = function() { return func.apply(this, arguments); };
   }
   function _copyHelperG(name, func) {
     MIDI[name] = function() {
       var i;
       var g = [];
-      var a = func.apply(0, arguments);
+      var a = func.apply(this, arguments);
       for (i = 0; i < a.length; i++) g.push(new MIDI(a[i]));
       return g;
     };
@@ -1842,7 +1854,7 @@
         chan = _7b(MIDI.noteValue(args[0], args[0]));
         args[0] = this._master;
       }
-      var msg = func.apply(0, args);
+      var msg = func.apply(this, args);
       msg.mpe = chan;
       this.send(msg);
       return this;

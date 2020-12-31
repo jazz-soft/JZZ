@@ -384,12 +384,15 @@ describe('MIDI messages', function() {
   });
   it('sxMasterVolume', function() {
     assert.equal(JZZ.MIDI.sxMasterVolume(.5).toString(), 'f0 7f 7f 04 01 00 40 f7');
+    assert.equal(JZZ.MIDI.sxId(127).sxMasterVolume(0).toString(), 'f0 7f 7f 04 01 00 00 f7');
+    assert.equal(JZZ.MIDI.sxId(17).sxMasterVolume(0).toString(), 'f0 7f 11 04 01 00 00 f7');
+    assert.equal(JZZ.MIDI.sxId(17).sxId(127).sxMasterVolume(0).toString(), 'f0 7f 7f 04 01 00 00 f7');
   });
   it('sxMasterTuning', function() {
-    var a = JZZ.MIDI.sxMasterTuningA(216); // 432/2
+    var a = JZZ.MIDI.sxId(17).sxMasterTuningA(216); // 432/2
     assert.equal(a.length, 2);
-    assert.equal(a[0].toString(), 'f0 7f 7f 04 04 00 34 f7');
-    assert.equal(a[1].toString(), 'f0 7f 7f 04 03 55 2b f7');
+    assert.equal(a[0].toString(), 'f0 7f 11 04 04 00 34 f7');
+    assert.equal(a[1].toString(), 'f0 7f 11 04 03 55 2b f7');
   });
   it('reset', function() {
     assert.equal(JZZ.MIDI.reset().toString(), 'ff -- Reset');
