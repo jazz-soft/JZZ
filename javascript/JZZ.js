@@ -1669,8 +1669,8 @@
     rpnTuningA: function(c, a) { return _helperG.rpnTuning(c, MIDI.shift(a)); },
   };
   var _helperGNC = { // compound messages no channel
-    sxMasterTuning: function(x) { return [this.sxMasterCoarseTuning(x), this.sxMasterFineTuning(x)]; },
-    sxMasterTuningA: function(a) { return this.sxMasterTuning(MIDI.shift(a)); },
+    sxMasterTuning: function(x) { return [_helperNC.sxMasterCoarseTuning.call(this, x), _helperNC.sxMasterFineTuning.call(this, x)]; },
+    sxMasterTuningA: function(a) { return _helperGNC.sxMasterTuning.call(this, MIDI.shift(a)); },
   };
   function _smf(ff, dd) {
     var midi = new MIDI();
