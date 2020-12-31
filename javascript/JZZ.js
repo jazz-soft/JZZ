@@ -46,13 +46,15 @@
   _R.prototype._crash = function(err) { this._break(err); this._resume(); };
   _R.prototype._err = function() { return this._log[this._log.length - 1]; };
   _R.prototype.log = function() { return _clone(this._log); };
-  _R.prototype._image = function() {
-    var F = function() {}; F.prototype = this._orig;
+  _R.prototype._dup = function() {
+    var F = function() {};
+    F.prototype = this._orig;
     var ret = new F();
     ret._ready = false;
     ret._queue = [];
     return ret;
   };
+  _R.prototype._image = function() { return this._dup(); };
   _R.prototype._thenable = function() {
     if (this.then) return this;
     var self = this;
@@ -367,7 +369,6 @@
     _R.apply(this);
     this._handles = [];
     this._outs = [];
-    this._sxid = 0xf;
   }
   _M.prototype = new _R();
   _M.prototype._filter = function(msg) {
@@ -435,6 +436,22 @@
   _M.prototype.connected = function() {
     return this._orig._handles.length + this._orig._outs.length;
   };
+  _M.prototype._image = function() {
+    var dup = this._dup();
+    dup._sxid = this._sxid;
+    return dup;
+  };
+  _M.prototype._sxid = 0x7f;
+  _M.prototype.sxId = function(id) {
+    if (typeof id == 'undefined') id = _M.prototype._sxid;
+    if (id == this._sxid) return this._thenable();
+    id = _7b(id);
+    var ret = this._image();
+    ret._sxid = id;
+    this._push(_kick, [ret]);
+    return ret._thenable();
+  };
+
   _M.prototype.ch = function(n) {
     if (typeof n == 'undefined') return this._thenable();
     _validateChannel(n);
@@ -1545,6 +1562,7 @@
   MIDI.sxId = function(id) {
     if (typeof id == 'undefined') id = MIDI._sxid;
     if (id == this._sxid) return this;
+    id = _7b(id);
     var ret = new _MIDI();
     ret._sxid = id;
     return ret;

@@ -386,7 +386,7 @@ describe('MIDI messages', function() {
     assert.equal(JZZ.MIDI.sxMasterVolume(.5).toString(), 'f0 7f 7f 04 01 00 40 f7');
     assert.equal(JZZ.MIDI.sxId(127).sxMasterVolume(0).toString(), 'f0 7f 7f 04 01 00 00 f7');
     assert.equal(JZZ.MIDI.sxId(17).sxMasterVolume(0).toString(), 'f0 7f 11 04 01 00 00 f7');
-    assert.equal(JZZ.MIDI.sxId(17).sxId(127).sxMasterVolume(0).toString(), 'f0 7f 7f 04 01 00 00 f7');
+    assert.equal(JZZ.MIDI.sxId(17).sxId().sxMasterVolume(0).toString(), 'f0 7f 7f 04 01 00 00 f7');
   });
   it('sxMasterTuning', function() {
     var a = JZZ.MIDI.sxId(17).sxMasterTuningA(216); // 432/2
@@ -688,6 +688,14 @@ describe('JZZ.Widget', function() {
     port.ch(1).noteOn('C5').ch(2).noteOff('C5', 127).ch(3).reset();
     port.ch(4).mtc(JZZ.SMPTE(30, 1, 2, 3, 4)).ch().mtc(JZZ.SMPTE(30, 1, 2, 3, 4));
     port.note(0, 'B#4', 127, 1).note(9, 0, 1).ch(5).wait(10).note('Dbb5', 127, 1).wait(10).note(0, 1).disconnect().close();
+  });
+  it('sxId', function(done) {
+    var sample = new test.Sample(done, [
+      [0xf0, 0x7f, 0x11, 0x04, 0x04, 0x00, 0x40, 0xf7], [0xf0, 0x7f, 0x11, 0x04, 0x03, 0x00, 0x40, 0xf7],
+      [0xf0, 0x7f, 0x7f, 0x04, 0x04, 0x00, 0x40, 0xf7], [0xf0, 0x7f, 0x7f, 0x04, 0x03, 0x00, 0x40, 0xf7]
+    ]);
+    var port = JZZ.Widget({ _receive: function(msg) { sample.compare(msg); }});
+    port.sxId(17).wait(1).sxMasterTuningA(440).sxId().sxId(127).sxMasterTuningA(440).disconnect().close();
   });
   it('mpe', function(done) {
     var sample = new test.Sample(done, [
