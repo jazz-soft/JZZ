@@ -711,7 +711,7 @@ describe('JZZ.Widget', function() {
     var port = JZZ.Widget({ _receive: function(msg) { sample.compare(msg); }});
     port.sxId(17).wait(1).sxMasterTuningA(440).sxId().sxId(127).sxMasterTuningA(440).disconnect().close();
   });
-  it.skip('mpe', function(done) {
+  it('mpe', function(done) {
     var sample = new test.Sample(done, [
       [0xc0, 0x19], [0x91, 0x3c, 0x7f], [0x92, 0x3e, 0x7f], [0xa2, 0x3e, 0x7f], [0x81, 0x3c, 0x40],
       [0x91, 0x40, 0x7f], [0x93, 0, 1], [0x81, 0x40, 0x40]
