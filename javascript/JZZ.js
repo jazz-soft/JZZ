@@ -1,4 +1,5 @@
 (function(global, factory) {
+  /* istanbul ignore next */
   if (typeof exports === 'object' && typeof module !== 'undefined') {
     module.exports = factory();
   }
@@ -580,6 +581,7 @@
     obj.classid = 'CLSID:1ACE1618-1C7D-4561-AEE1-34842AA85E90';
     obj.type = 'audio/x-jazz';
     document.body.appendChild(obj);
+    /* istanbul ignore next */
     if (obj.isJazz) {
       _initJazzPlugin(obj);
       return;
@@ -659,6 +661,7 @@
     _schedule(function() { if (!inst) self._crash(); });
   }
 
+  /* istanbul ignore next */
   function _zeroBreak() {
     this._pause();
     var self = this;
@@ -868,6 +871,7 @@
     _engine._newPlugin = function() { return new obj.MIDI(); };
     _initEngineJP();
   }
+  /* istanbul ignore next */
   function _initJazzPlugin(obj) {
     _engine._type = 'plugin';
     _engine._main = obj;
@@ -1863,7 +1867,7 @@
           args[0] = this._master;
         }
         var msg = new MIDI(func.apply(this, args));
-        msg.mpe = chan;
+        msg._mpe = chan;
         return this.send(msg);
       }
       return this.send(func.apply(this, typeof this._ch == 'undefined' ? arguments : [this._ch].concat(Array.prototype.slice.call(arguments))));
@@ -1878,9 +1882,29 @@
       return g;
     };
     _helpers[name] = function() {
-      var a = func.apply(this, typeof this._ch == 'undefined' ? arguments : [this._ch].concat(Array.prototype.slice.call(arguments)));
-      var g = this;
-      for (var i = 0; i < a.length; i++) g = g.send(a[i]);
+      var i;
+      var a;
+      var g;
+      if (typeof this._master != 'undefined') {
+        var chan;
+        var args = Array.prototype.slice.call(arguments);
+        if (args.length < func.length) args = [this._master].concat(args);
+        else {
+          chan = _7b(MIDI.noteValue(args[0], args[0]));
+          args[0] = this._master;
+        }
+        a = func.apply(this, args);
+        g = this;
+        for (i = 0; i < a.length; i++) {
+          var msg = MIDI(a[i]);
+          msg._mpe = chan;
+          g = g.send(msg);
+        }
+        return g;
+      }
+      a = func.apply(this, typeof this._ch == 'undefined' ? arguments : [this._ch].concat(Array.prototype.slice.call(arguments)));
+      g = this;
+      for (i = 0; i < a.length; i++) g = g.send(a[i]);
       return g;
     };
   }
@@ -2487,6 +2511,7 @@
         out += String.fromCharCode(0x80 + ((n >> 6) & 0x3f));
         out += String.fromCharCode(0x80 + (n & 0x3f));
       }
+      /* istanbul ignore next */
       else {
         out += String.fromCharCode(0xf0 + (n >> 18));
         out += String.fromCharCode(0x80 + ((n >> 12) & 0x3f));
@@ -2503,6 +2528,7 @@
   var _inputMap = {};
 
   var Promise = _scope.Promise;
+  /* istanbul ignore next */
   if (typeof Promise !== 'function') {
     Promise = function(executor) {
       this.executor = executor;

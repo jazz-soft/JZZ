@@ -70,6 +70,7 @@ describe('MIDI messages', function() {
   });
   it('program', function() {
     assert.equal(JZZ.MIDI.program(0, 0).toString(), 'c0 00 -- Program Change');
+    assert.equal(JZZ.MIDI.ch(1).program(0).toString(), 'c1 00 -- Program Change');
   });
   it('pressure', function() {
     assert.equal(JZZ.MIDI.pressure(0, 127).toString(), 'd0 7f -- Channel Aftertouch');
@@ -682,24 +683,25 @@ describe('JZZ.Widget', function() {
   });
   it('port', function(done) {
     var sample = new test.Sample(done, [
-      [0xff], [],
+      [0xff], [0xc0, 1], [],
       [0xf0, 0x7f, 0x7f, 4, 4, 0, 0x40, 0xf7],
       [0xf0, 0x7f, 0x7f, 4, 3, 0, 0x40, 0xf7],
       [0x90, 0x3c, 0x7f], [0x80, 0x3c, 0x7f],
       [0xb0, 0, 0], [0xb0, 0x20, 1]
     ]);
     var port = JZZ.Widget({ _receive: function(msg) { sample.compare(msg); }});
-    port.reset().smfEndOfTrack().sxMasterTuningA(440).noteOn(0, 'C5').noteOff(0, 'C5', 127).bank(0, 1);
+    port.reset().program(0, 1).smfEndOfTrack().sxMasterTuningA(440).noteOn(0, 'C5').noteOff(0, 'C5', 127).bank(0, 1);
   });
   it('ch', function(done) {
     var sample = new test.Sample(done, [
-      [0x91, 0x3c, 0x7f], [0x82, 0x3c, 0x7f], [0xff],
+      [0xc1, 1], [0x91, 0x3c, 0x7f], [0x82, 0x3c, 0x7f], [0xff],
+      [0xb3, 0, 0], [0xb3, 0x20, 1],
       [0xf1, 0x04], [0xf1, 0x04],
       [0x90, 0x3c, 0x7f], [0x99, 0, 1], [0x80, 0x3c, 0x40],
       [0x95, 0x3c, 0x7f], [0x85, 0x3c, 0x40], [0x95, 0, 1]
     ]);
     var port = JZZ.Widget({ _receive: function(msg) { sample.compare(msg); }});
-    port.ch(1).noteOn('C5').ch(2).noteOff('C5', 127).ch(3).reset();
+    port.ch(1).program(1).noteOn('C5').ch(2).noteOff('C5', 127).ch(3).reset().bank(1);
     port.ch(4).mtc(JZZ.SMPTE(30, 1, 2, 3, 4)).ch().mtc(JZZ.SMPTE(30, 1, 2, 3, 4));
     port.note(0, 'B#4', 127, 1).note(9, 0, 1).ch(5).wait(10).note('Dbb5', 127, 1).wait(10).note(0, 1).disconnect().close();
   });
@@ -708,17 +710,22 @@ describe('JZZ.Widget', function() {
       [0xf0, 0x7f, 0x11, 0x04, 0x04, 0x00, 0x40, 0xf7], [0xf0, 0x7f, 0x11, 0x04, 0x03, 0x00, 0x40, 0xf7],
       [0xf0, 0x7f, 0x7f, 0x04, 0x04, 0x00, 0x40, 0xf7], [0xf0, 0x7f, 0x7f, 0x04, 0x03, 0x00, 0x40, 0xf7]
     ]);
+    var dummy = function() {};
     var port = JZZ.Widget({ _receive: function(msg) { sample.compare(msg); }});
-    port.sxId(17).wait(1).sxMasterTuningA(440).sxId().sxId(127).sxMasterTuningA(440).disconnect().close();
+    port.sxId(17).wait(1).sxMasterTuningA(440).sxId().sxId(127).sxMasterTuningA(440).disconnect().disconnect(dummy).close();
   });
   it('mpe', function(done) {
     var sample = new test.Sample(done, [
-      [0xc0, 0x19], [0x91, 0x3c, 0x7f], [0x92, 0x3e, 0x7f], [0xa2, 0x3e, 0x7f], [0x81, 0x3c, 0x40],
+      [0xc0, 0x19], [0xb0, 0, 0], [0xb0, 0x20, 0x4f], [0x91, 0x3c, 0x7f],
+      [0xc1, 0x19], [0xb1, 0, 0], [0xb1, 0x20, 0x4f],
+      [0x92, 0x3e, 0x7f], [0xa2, 0x3e, 0x7f], [0x81, 0x3c, 0x40],
       [0x91, 0x40, 0x7f], [0x93, 0, 1], [0x81, 0x40, 0x40]
     ]);
     var port = JZZ.Widget();
     port.connect(function(msg) { sample.compare(msg); });
-    port.mpe(0, 4).program(25).noteOn('C5').noteOn('D5').aftertouch('D5', 127).noteOff('C5').note('E5', 127, 1).note(0, 1).mpe();
+    port.mpe(0, 4).program(25).bank(79).noteOn('C5').program('C5', 25).bank('C5', 79, undefined)
+      .noteOn('D5').aftertouch('D5', 127).noteOff('C5').note('E5', 127, 1).note(0, 1)
+      .mpe(0, 4).mpe(0, 4).mpe(0, 3).mpe(0, 0).mpe();
   });
 });
 

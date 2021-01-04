@@ -169,6 +169,7 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
         engine.refresh().onChange().disconnect();
         engine.refresh().onChange().connect(function() {});
         engine.refresh().onChange().disconnect();
+        engine.refresh().onChange().refresh();
       });
     },
 
