@@ -14,7 +14,7 @@
 })(this, function() {
 
   var _scope = typeof window === 'undefined' ? global : window;
-  var _version = '1.1.7';
+  var _version = '1.1.8';
   var i, j, k, m, n;
 
   var _time = Date.now || function () { return new Date().getTime(); };
@@ -1538,7 +1538,7 @@
   };
   MIDI.to14b = function(x) { return x <= 0 ? 0 : x >= 1 ? 0x3fff : Math.floor(x * 0x4000); };
 
-  function _MIDI() {};
+  function _MIDI() {}
   _MIDI.prototype = MIDI;
   MIDI._sxid = 0x7f;
   MIDI.sxId = function(id) {
@@ -1549,7 +1549,7 @@
     ret._ch = this._ch;
     ret._sxid = id;
     return ret;
-  }
+  };
   MIDI.ch = function(c) {
     if (c == this._ch || typeof c == 'undefined' && typeof this._ch == 'undefined') return this;
     var ret = new _MIDI();
@@ -1557,7 +1557,7 @@
     ret._ch = c;
     ret._sxid = this._sxid;
     return ret;
-  }
+  };
 
   var _noteMap = { c:0, d:2, e:4, f:5, g:7, a:9, b:11, h:11 };
   for (k in _noteMap) {
@@ -1963,10 +1963,10 @@
     if (x >= 0 && x < 128) this[2] = x;
     return this;
   };
-  MIDI.prototype.getSysExChannel = function() {
+  MIDI.prototype.getSysExId = function() {
     if (this[0] == 0xf0) return this[2];
   };
-  MIDI.prototype.setSysExChannel = function(x) {
+  MIDI.prototype.setSysExId = function(x) {
     if (this[0] == 0xf0 && this.length > 2) {
       x = parseInt(x);
       if (x >= 0 && x < 128) this[2] = x;

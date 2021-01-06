@@ -33,8 +33,8 @@ describe('MIDI messages', function() {
     assert.equal(msg.isNoteOn(), false);
     assert.equal(msg.isNoteOff(), true);
     assert.equal(msg.toString(), '90 48 00 -- Note Off');
-    msg.setSysExChannel(20);
-    assert.equal(msg.getSysExChannel(), undefined);
+    msg.setSysExId(20);
+    assert.equal(msg.getSysExId(), undefined);
     assert.equal(msg.isSMF(), false);
     assert.equal(msg.isEOT(), false);
     assert.equal(msg.isTempo(), false);
@@ -365,8 +365,8 @@ describe('MIDI messages', function() {
     var msg = JZZ.MIDI.sxIdRequest();
     assert.equal(msg.isSysEx(), true);
     assert.equal(msg.isFullSysEx(), true);
-    msg.setSysExChannel(20).setSysExChannel(128);
-    assert.equal(msg.getSysExChannel(), 20);
+    msg.setSysExId(20).setSysExId(128);
+    assert.equal(msg.getSysExId(), 20);
     assert.equal(msg.toString(), 'f0 7e 14 06 01 f7');
     msg.setChannel(10);
     msg.setNote(60);
