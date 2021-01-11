@@ -231,20 +231,29 @@ describe('MIDI messages', function() {
     assert.equal(JZZ.MIDI.expressionLSB(0, 15).toString(), 'b0 2b 0f -- Expression Controller LSB');
   });
   it('damper', function() {
+    assert.equal(JZZ.MIDI.damper(0).toString(), 'b0 40 7f -- Damper Pedal On/Off');
     assert.equal(JZZ.MIDI.damper(0, true).toString(), 'b0 40 7f -- Damper Pedal On/Off');
     assert.equal(JZZ.MIDI.damper(0, false).toString(), 'b0 40 00 -- Damper Pedal On/Off');
   });
   it('portamento', function() {
+    assert.equal(JZZ.MIDI.portamento(0).toString(), 'b0 41 7f -- Portamento On/Off');
     assert.equal(JZZ.MIDI.portamento(0, true).toString(), 'b0 41 7f -- Portamento On/Off');
     assert.equal(JZZ.MIDI.portamento(0, false).toString(), 'b0 41 00 -- Portamento On/Off');
   });
   it('sostenuto', function() {
+    assert.equal(JZZ.MIDI.sostenuto(0).toString(), 'b0 42 7f -- Sostenuto On/Off');
     assert.equal(JZZ.MIDI.sostenuto(0, true).toString(), 'b0 42 7f -- Sostenuto On/Off');
     assert.equal(JZZ.MIDI.sostenuto(0, false).toString(), 'b0 42 00 -- Sostenuto On/Off');
   });
   it('soft', function() {
+    assert.equal(JZZ.MIDI.soft(0).toString(), 'b0 43 7f -- Soft Pedal On/Off');
     assert.equal(JZZ.MIDI.soft(0, true).toString(), 'b0 43 7f -- Soft Pedal On/Off');
     assert.equal(JZZ.MIDI.soft(0, false).toString(), 'b0 43 00 -- Soft Pedal On/Off');
+  });
+  it('legato', function() {
+    assert.equal(JZZ.MIDI.legato(0).toString(), 'b0 44 7f -- Legato On/Off');
+    assert.equal(JZZ.MIDI.legato(0, true).toString(), 'b0 44 7f -- Legato On/Off');
+    assert.equal(JZZ.MIDI.legato(0, false).toString(), 'b0 44 00 -- Legato On/Off');
   });
   it('data', function() {
     assert.equal(JZZ.MIDI.data(0, 1, 2)[0].toString(), 'b0 06 01 -- Data Entry MSB');
@@ -318,8 +327,27 @@ describe('MIDI messages', function() {
   it('allSoundOff', function() {
     assert.equal(JZZ.MIDI.allSoundOff(0).toString(), 'b0 78 00 -- All Sound Off');
   });
+  it('resetAllControllers', function() {
+    assert.equal(JZZ.MIDI.resetAllControllers(0).toString(), 'b0 79 00 -- Reset All Controllers');
+  });
+  it('localControl', function() {
+    assert.equal(JZZ.MIDI.localControl(0, true).toString(), 'b0 7a 7f -- Local Control On/Off');
+    assert.equal(JZZ.MIDI.localControl(0, false).toString(), 'b0 7a 00 -- Local Control On/Off');
+  });
   it('allNotesOff', function() {
     assert.equal(JZZ.MIDI.allNotesOff(0).toString(), 'b0 7b 00 -- All Notes Off');
+  });
+  it('omni', function() {
+    assert.equal(JZZ.MIDI.omni(0).toString(), 'b0 7d 00 -- Omni Mode On');
+    assert.equal(JZZ.MIDI.omni(0, true).toString(), 'b0 7d 00 -- Omni Mode On');
+    assert.equal(JZZ.MIDI.omni(0, false).toString(), 'b0 7c 00 -- Omni Mode Off');
+  });
+  it('mono', function() {
+    assert.equal(JZZ.MIDI.mono(0).toString(), 'b0 7e 00 -- Mono Mode On');
+    assert.equal(JZZ.MIDI.mono(0, 1).toString(), 'b0 7e 01 -- Mono Mode On');
+  });
+  it('poly', function() {
+    assert.equal(JZZ.MIDI.poly(0).toString(), 'b0 7f 00 -- Poly Mode On');
   });
   it('mtc', function() {
     assert.equal(JZZ.MIDI.mtc(JZZ.SMPTE(24, 0, 0, 0, 0, 0)).toString(), 'f1 00 -- MIDI Time Code');

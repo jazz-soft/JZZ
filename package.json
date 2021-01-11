@@ -29,7 +29,7 @@
     "midi-test": "^1.1.4",
     "mocha": "^8.2.1",
     "nyc": "^15.1.0",
-    "web-midi-test": "^1.1.0"
+    "web-midi-test": "^1.1.1"
   },
   "repository": {
     "type": "git",
