@@ -14,7 +14,7 @@
 })(this, function() {
 
   var _scope = typeof window === 'undefined' ? global : window;
-  var _version = '1.1.8';
+  var _version = '1.1.9';
   var i, j, k, m, n;
 
   var _time = Date.now || function () { return new Date().getTime(); };
@@ -1614,6 +1614,7 @@
     sostenuto: function(c, b) { if (typeof b == 'undefined') b = true; return [0xB0 + _ch(c), 0x42, b ? 127 : 0]; },
     soft: function(c, b) { if (typeof b == 'undefined') b = true; return [0xB0 + _ch(c), 0x43, b ? 127 : 0]; },
     legato: function(c, b) { if (typeof b == 'undefined') b = true; return [0xB0 + _ch(c), 0x44, b ? 127 : 0]; },
+    ptc: function(c, n) { return [0xB0 + _ch(c), 0x54, _7b(MIDI.noteValue(n), n)]; },
     dataIncr: function(c) { return [0xB0 + _ch(c), 0x60, 0]; },
     dataDecr: function(c) { return [0xB0 + _ch(c), 0x61, 0]; },
     nrpnLSB: function(c, n) { return [0xB0 + _ch(c), 0x62, _7b(n)]; },
@@ -1625,7 +1626,7 @@
     localControl: function(c, b) { return [0xB0 + _ch(c), 0x7a, b ? 127 : 0]; },
     allNotesOff: function(c) { return [0xB0 + _ch(c), 0x7b, 0]; },
     omni: function(c, b) { if (typeof b == 'undefined') b = true; return [0xB0 + _ch(c), b ? 0x7d : 0x7c, 0]; },
-    mono: function(c, n) { if (!n) n = 0; return [0xB0 + _ch(c), 0x7e, _7b(n)]; },
+    mono: function(c, n) { if (typeof n == 'undefined') n = 1; return [0xB0 + _ch(c), 0x7e, _7b(n)]; },
     poly: function(c) { return [0xB0 + _ch(c), 0x7f, 0]; },
   };
   var _helperNC = { // no channel

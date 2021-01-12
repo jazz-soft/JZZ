@@ -255,6 +255,9 @@ describe('MIDI messages', function() {
     assert.equal(JZZ.MIDI.legato(0, true).toString(), 'b0 44 7f -- Legato On/Off');
     assert.equal(JZZ.MIDI.legato(0, false).toString(), 'b0 44 00 -- Legato On/Off');
   });
+  it('ptc', function() {
+    assert.equal(JZZ.MIDI.ptc(0, 'C5').toString(), 'b0 54 3c -- Portamento Control');
+  });
   it('data', function() {
     assert.equal(JZZ.MIDI.data(0, 1, 2)[0].toString(), 'b0 06 01 -- Data Entry MSB');
     assert.equal(JZZ.MIDI.data(0, 1, 2)[1].toString(), 'b0 26 02 -- Data Entry LSB');
@@ -343,8 +346,8 @@ describe('MIDI messages', function() {
     assert.equal(JZZ.MIDI.omni(0, false).toString(), 'b0 7c 00 -- Omni Mode Off');
   });
   it('mono', function() {
-    assert.equal(JZZ.MIDI.mono(0).toString(), 'b0 7e 00 -- Mono Mode On');
-    assert.equal(JZZ.MIDI.mono(0, 1).toString(), 'b0 7e 01 -- Mono Mode On');
+    assert.equal(JZZ.MIDI.mono(0).toString(), 'b0 7e 01 -- Mono Mode On');
+    assert.equal(JZZ.MIDI.mono(0, 0).toString(), 'b0 7e 00 -- Mono Mode On');
   });
   it('poly', function() {
     assert.equal(JZZ.MIDI.poly(0).toString(), 'b0 7f 00 -- Poly Mode On');
