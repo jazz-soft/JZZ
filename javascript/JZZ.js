@@ -1623,7 +1623,7 @@
     rpnMSB: function(c, n) { return [0xB0 + _ch(c), 0x65, _7b(n)]; },
     allSoundOff: function(c) { return [0xB0 + _ch(c), 0x78, 0]; },
     resetAllControllers: function(c) { return [0xB0 + _ch(c), 0x79, 0]; },
-    localControl: function(c, b) { return [0xB0 + _ch(c), 0x7a, b ? 127 : 0]; },
+    localControl: function(c, b) { if (typeof b == 'undefined') b = true; return [0xB0 + _ch(c), 0x7a, b ? 127 : 0]; },
     allNotesOff: function(c) { return [0xB0 + _ch(c), 0x7b, 0]; },
     omni: function(c, b) { if (typeof b == 'undefined') b = true; return [0xB0 + _ch(c), b ? 0x7d : 0x7c, 0]; },
     mono: function(c, n) { if (typeof n == 'undefined') n = 1; return [0xB0 + _ch(c), 0x7e, _7b(n)]; },

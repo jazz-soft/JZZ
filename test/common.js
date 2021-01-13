@@ -334,6 +334,7 @@ describe('MIDI messages', function() {
     assert.equal(JZZ.MIDI.resetAllControllers(0).toString(), 'b0 79 00 -- Reset All Controllers');
   });
   it('localControl', function() {
+    assert.equal(JZZ.MIDI.localControl(0).toString(), 'b0 7a 7f -- Local Control On/Off');
     assert.equal(JZZ.MIDI.localControl(0, true).toString(), 'b0 7a 7f -- Local Control On/Off');
     assert.equal(JZZ.MIDI.localControl(0, false).toString(), 'b0 7a 00 -- Local Control On/Off');
   });
