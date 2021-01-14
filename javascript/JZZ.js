@@ -1614,6 +1614,7 @@
     sostenuto: function(c, b) { if (typeof b == 'undefined') b = true; return [0xB0 + _ch(c), 0x42, b ? 127 : 0]; },
     soft: function(c, b) { if (typeof b == 'undefined') b = true; return [0xB0 + _ch(c), 0x43, b ? 127 : 0]; },
     legato: function(c, b) { if (typeof b == 'undefined') b = true; return [0xB0 + _ch(c), 0x44, b ? 127 : 0]; },
+    hold2: function(c, b) { if (typeof b == 'undefined') b = true; return [0xB0 + _ch(c), 0x45, b ? 127 : 0]; },
     ptc: function(c, n) { return [0xB0 + _ch(c), 0x54, _7b(MIDI.noteValue(n), n)]; },
     dataIncr: function(c) { return [0xB0 + _ch(c), 0x60, 0]; },
     dataDecr: function(c) { return [0xB0 + _ch(c), 0x61, 0]; },
@@ -1640,6 +1641,8 @@
     stop: function() { return [0xFC]; },
     active: function() { return [0xFE]; },
     sxIdRequest: function() { return [0xF0, 0x7E, this._sxid, 0x06, 0x01, 0xF7]; },
+    sxTuningDumpRequest: function(n, k) { return typeof k == 'undefined' ?
+      [0xF0, 0x7E, this._sxid, 0x08, 0x00, _7b(n), 0xF7] : [0xF0, 0x7E, this._sxid, 0x08, 0x03, _7b(n), _7b(k), 0xF7]; },
     sxFullFrame: function(t) { return [0xF0, 0x7F, this._sxid, 0x01, 0x01, _hrtype(t), t.getMinute(), t.getSecond(), t.getFrame(), 0xF7]; },
     sxMasterVolume: function(x) { x = MIDI.to14b(x); return [0xF0, 0x7F, this._sxid, 0x04, 0x01, _lsb(x), _msb(x), 0xF7]; },
     sxMasterFineTuning: function(x) { x = MIDI.to14b((x % 1 + 1) / 2); return [0xF0, 0x7F, this._sxid, 0x04, 0x03, _lsb(x), _msb(x), 0xF7]; },
@@ -1685,6 +1688,10 @@
     rpnCoarseTuning: function(c, x) { return _helperGCH.rpn(c, 0, 2).concat([_helperCH.dataMSB(c, 0x40 + x - x % 1)]); },
     rpnTuning: function(c, x) { return _helperGCH.rpnCoarseTuning(c, x).concat(_helperGCH.rpnFineTuning(c, x)); },
     rpnTuningA: function(c, a) { return _helperGCH.rpnTuning(c, MIDI.shift(a)); },
+    rpnSelectTuningProgram: function(c, n) { return _helperGCH.rpn(c, 0, 3).concat([_helperCH.dataMSB(c, n)]); },
+    rpnSelectTuningBank: function(c, n) { return _helperGCH.rpn(c, 0, 4).concat([_helperCH.dataMSB(c, n)]); },
+    rpnSelectTuning: function(c, n, k) { return typeof k == 'undefined' ?
+      _helperGCH.rpnSelectTuningProgram(c, n) : _helperGCH.rpnSelectTuningBank(c, n).concat(_helperGCH.rpnSelectTuningProgram(c, k)); },
   };
   var _helperGNC = { // compound messages no channel
     sxMasterTuning: function(x) { return [_helperNC.sxMasterCoarseTuning.call(this, x), _helperNC.sxMasterFineTuning.call(this, x)]; },

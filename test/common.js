@@ -255,6 +255,11 @@ describe('MIDI messages', function() {
     assert.equal(JZZ.MIDI.legato(0, true).toString(), 'b0 44 7f -- Legato On/Off');
     assert.equal(JZZ.MIDI.legato(0, false).toString(), 'b0 44 00 -- Legato On/Off');
   });
+  it('hold2', function() {
+    assert.equal(JZZ.MIDI.hold2(0).toString(), 'b0 45 7f -- Hold 2');
+    assert.equal(JZZ.MIDI.hold2(0, true).toString(), 'b0 45 7f -- Hold 2');
+    assert.equal(JZZ.MIDI.hold2(0, false).toString(), 'b0 45 00 -- Hold 2');
+  });
   it('ptc', function() {
     assert.equal(JZZ.MIDI.ptc(0, 'C5').toString(), 'b0 54 3c -- Portamento Control');
   });
@@ -323,6 +328,21 @@ describe('MIDI messages', function() {
     assert.equal(a[4].toString(), 'b0 64 01 -- Registered Parameter Number LSB');
     assert.equal(a[5].toString(), 'b0 06 2b -- Data Entry MSB');
     assert.equal(a[6].toString(), 'b0 26 55 -- Data Entry LSB');
+  });
+  it('rpnSelectTuning', function() {
+    var a = JZZ.MIDI.rpnSelectTuning(0, 8);
+    assert.equal(a.length, 3);
+    assert.equal(a[0].toString(), 'b0 65 00 -- Registered Parameter Number MSB');
+    assert.equal(a[1].toString(), 'b0 64 03 -- Registered Parameter Number LSB');
+    assert.equal(a[2].toString(), 'b0 06 08 -- Data Entry MSB');
+    a = JZZ.MIDI.rpnSelectTuning(1, 7, 8);
+    assert.equal(a.length, 6);
+    assert.equal(a[0].toString(), 'b1 65 00 -- Registered Parameter Number MSB');
+    assert.equal(a[1].toString(), 'b1 64 04 -- Registered Parameter Number LSB');
+    assert.equal(a[2].toString(), 'b1 06 07 -- Data Entry MSB');
+    assert.equal(a[3].toString(), 'b1 65 00 -- Registered Parameter Number MSB');
+    assert.equal(a[4].toString(), 'b1 64 03 -- Registered Parameter Number LSB');
+    assert.equal(a[5].toString(), 'b1 06 08 -- Data Entry MSB');
   });
   it('undefined', function() {
     assert.equal(JZZ.MIDI(0xb0, 0x66, 0x7f).toString(), 'b0 66 7f -- Undefined');
@@ -409,6 +429,11 @@ describe('MIDI messages', function() {
     assert.equal(msg.getData(), undefined);
     assert.equal(msg.isNoteOn(), false);
     assert.equal(msg.isNoteOff(), false);
+  });
+  it('sxTuningDumpRequest', function() {
+    assert.equal(JZZ.MIDI.sxTuningDumpRequest(5).toString(), 'f0 7e 7f 08 00 05 f7');
+    assert.equal(JZZ.MIDI.sxId(3).sxTuningDumpRequest(5).toString(), 'f0 7e 03 08 00 05 f7');
+    assert.equal(JZZ.MIDI.sxTuningDumpRequest(5, 8).toString(), 'f0 7e 7f 08 03 05 08 f7');
   });
   it('sxFullFrame', function() {
     assert.equal(JZZ.MIDI.sxFullFrame(JZZ.SMPTE()).toString(), 'f0 7f 7f 01 01 00 00 00 00 f7');
