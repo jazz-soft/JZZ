@@ -2203,11 +2203,11 @@
       49: 'General Purpose Controller 2 LSB',
       50: 'General Purpose Controller 3 LSB',
       51: 'General Purpose Controller 4 LSB',
-      64: 'Damper Pedal On/Off',
-      65: 'Portamento On/Off',
-      66: 'Sostenuto On/Off',
-      67: 'Soft Pedal On/Off',
-      68: 'Legato On/Off',
+      64: 'Damper Pedal',
+      65: 'Portamento',
+      66: 'Sostenuto',
+      67: 'Soft Pedal',
+      68: 'Legato',
       69: 'Hold 2',
       70: 'Sound Controller 1',
       71: 'Sound Controller 2',
@@ -2245,6 +2245,7 @@
       126: 'Mono Mode On',
       127: 'Poly Mode On'
     }[this[1]];
+    if (this[1] >= 64 && this[1] <= 69) ss += this[2] < 64 ? ' Off' : ' On';
     if (!ss) ss = 'Undefined';
     return s + ' -- ' + ss;
   };

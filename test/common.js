@@ -231,34 +231,34 @@ describe('MIDI messages', function() {
     assert.equal(JZZ.MIDI.expressionLSB(0, 15).toString(), 'b0 2b 0f -- Expression Controller LSB');
   });
   it('damper', function() {
-    assert.equal(JZZ.MIDI.damper(0).toString(), 'b0 40 7f -- Damper Pedal On/Off');
-    assert.equal(JZZ.MIDI.damper(0, true).toString(), 'b0 40 7f -- Damper Pedal On/Off');
-    assert.equal(JZZ.MIDI.damper(0, false).toString(), 'b0 40 00 -- Damper Pedal On/Off');
+    assert.equal(JZZ.MIDI.damper(0).toString(), 'b0 40 7f -- Damper Pedal On');
+    assert.equal(JZZ.MIDI.damper(0, true).toString(), 'b0 40 7f -- Damper Pedal On');
+    assert.equal(JZZ.MIDI.damper(0, false).toString(), 'b0 40 00 -- Damper Pedal Off');
   });
   it('portamento', function() {
-    assert.equal(JZZ.MIDI.portamento(0).toString(), 'b0 41 7f -- Portamento On/Off');
-    assert.equal(JZZ.MIDI.portamento(0, true).toString(), 'b0 41 7f -- Portamento On/Off');
-    assert.equal(JZZ.MIDI.portamento(0, false).toString(), 'b0 41 00 -- Portamento On/Off');
+    assert.equal(JZZ.MIDI.portamento(0).toString(), 'b0 41 7f -- Portamento On');
+    assert.equal(JZZ.MIDI.portamento(0, true).toString(), 'b0 41 7f -- Portamento On');
+    assert.equal(JZZ.MIDI.portamento(0, false).toString(), 'b0 41 00 -- Portamento Off');
   });
   it('sostenuto', function() {
-    assert.equal(JZZ.MIDI.sostenuto(0).toString(), 'b0 42 7f -- Sostenuto On/Off');
-    assert.equal(JZZ.MIDI.sostenuto(0, true).toString(), 'b0 42 7f -- Sostenuto On/Off');
-    assert.equal(JZZ.MIDI.sostenuto(0, false).toString(), 'b0 42 00 -- Sostenuto On/Off');
+    assert.equal(JZZ.MIDI.sostenuto(0).toString(), 'b0 42 7f -- Sostenuto On');
+    assert.equal(JZZ.MIDI.sostenuto(0, true).toString(), 'b0 42 7f -- Sostenuto On');
+    assert.equal(JZZ.MIDI.sostenuto(0, false).toString(), 'b0 42 00 -- Sostenuto Off');
   });
   it('soft', function() {
-    assert.equal(JZZ.MIDI.soft(0).toString(), 'b0 43 7f -- Soft Pedal On/Off');
-    assert.equal(JZZ.MIDI.soft(0, true).toString(), 'b0 43 7f -- Soft Pedal On/Off');
-    assert.equal(JZZ.MIDI.soft(0, false).toString(), 'b0 43 00 -- Soft Pedal On/Off');
+    assert.equal(JZZ.MIDI.soft(0).toString(), 'b0 43 7f -- Soft Pedal On');
+    assert.equal(JZZ.MIDI.soft(0, true).toString(), 'b0 43 7f -- Soft Pedal On');
+    assert.equal(JZZ.MIDI.soft(0, false).toString(), 'b0 43 00 -- Soft Pedal Off');
   });
   it('legato', function() {
-    assert.equal(JZZ.MIDI.legato(0).toString(), 'b0 44 7f -- Legato On/Off');
-    assert.equal(JZZ.MIDI.legato(0, true).toString(), 'b0 44 7f -- Legato On/Off');
-    assert.equal(JZZ.MIDI.legato(0, false).toString(), 'b0 44 00 -- Legato On/Off');
+    assert.equal(JZZ.MIDI.legato(0).toString(), 'b0 44 7f -- Legato On');
+    assert.equal(JZZ.MIDI.legato(0, true).toString(), 'b0 44 7f -- Legato On');
+    assert.equal(JZZ.MIDI.legato(0, false).toString(), 'b0 44 00 -- Legato Off');
   });
   it('hold2', function() {
-    assert.equal(JZZ.MIDI.hold2(0).toString(), 'b0 45 7f -- Hold 2');
-    assert.equal(JZZ.MIDI.hold2(0, true).toString(), 'b0 45 7f -- Hold 2');
-    assert.equal(JZZ.MIDI.hold2(0, false).toString(), 'b0 45 00 -- Hold 2');
+    assert.equal(JZZ.MIDI.hold2(0).toString(), 'b0 45 7f -- Hold 2 On');
+    assert.equal(JZZ.MIDI.hold2(0, true).toString(), 'b0 45 7f -- Hold 2 On');
+    assert.equal(JZZ.MIDI.hold2(0, false).toString(), 'b0 45 00 -- Hold 2 Off');
   });
   it('ptc', function() {
     assert.equal(JZZ.MIDI.ptc(0, 'C5').toString(), 'b0 54 3c -- Portamento Control');
