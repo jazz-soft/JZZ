@@ -1530,14 +1530,20 @@
   MIDI.programValue = function(x) { return x; };
   MIDI.freq = function(n, a) {
     if (typeof a == 'undefined') a = 440.0;
-    return (a * Math.pow(2, (_7b(MIDI.noteValue(n), n) - 69.0) / 12.0));
+    if (n != Number.parseFloat(n)) n = _7b(MIDI.noteValue(n), n);
+    return (a * Math.pow(2, (n - 69.0) / 12.0));
   };
   MIDI.shift = function(f, f0) {
     if (typeof f0 == 'undefined') f0 = 440;
     return Math.log2(f / f0) * 12;
   };
   MIDI.to14b = function(x) { return x <= 0 ? 0 : x >= 1 ? 0x3fff : Math.floor(x * 0x4000); };
-
+  MIDI.to21b = function(x) {
+    if (typeof x == 'undefined') return 0x1fffff;
+    if (x <= 0) return 0;
+    x = (Math.floor(x) << 14) + MIDI.to14b(x - Math.floor(x));
+    return x < 0x1fffff ? x : 0x1ffffe;
+  };
   function _MIDI() {}
   _MIDI.prototype = MIDI;
   MIDI._sxid = 0x7f;

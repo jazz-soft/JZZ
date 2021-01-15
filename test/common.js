@@ -458,6 +458,8 @@ describe('MIDI messages', function() {
     assert.equal(JZZ.MIDI.reset().toString(), 'ff -- Reset');
   });
   it('freq', function() {
+    assert.equal(JZZ.MIDI.freq('-3'), 6.875);
+    assert.equal(JZZ.MIDI.freq(57), 220);
     assert.equal(JZZ.MIDI.freq('A6'), 880);
     assert.equal(JZZ.MIDI.freq('A5', 880), 880);
   });
@@ -475,6 +477,18 @@ describe('MIDI messages', function() {
     assert.equal(JZZ.MIDI.to14b(.99994), 0x3fff);
     assert.equal(JZZ.MIDI.to14b(1), 0x3fff);
     assert.equal(JZZ.MIDI.to14b(1.01), 0x3fff);
+  });
+  it('to21b', function() {
+    assert.equal(JZZ.MIDI.to21b(), 0x1fffff);
+    assert.equal(JZZ.MIDI.to21b(-.01), 0);
+    assert.equal(JZZ.MIDI.to21b(0), 0);
+    assert.equal(JZZ.MIDI.to21b(.25), 0x1000);
+    assert.equal(JZZ.MIDI.to21b(.5), 0x2000);
+    assert.equal(JZZ.MIDI.to21b(1), 0x4000);
+    assert.equal(JZZ.MIDI.to21b(1.75), 0x7000);
+    assert.equal(JZZ.MIDI.to21b(2.25), 0x9000);
+    assert.equal(JZZ.MIDI.to21b(127.75), 0x1ff000);
+    assert.equal(JZZ.MIDI.to21b(128), 0x1ffffe);
   });
 });
 
