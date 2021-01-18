@@ -14,7 +14,7 @@
 })(this, function() {
 
   var _scope = typeof window === 'undefined' ? global : window;
-  var _version = '1.1.9';
+  var _version = '1.2.0';
   var i, j, k, m, n;
 
   var _time = Date.now || function () { return new Date().getTime(); };
@@ -1530,16 +1530,21 @@
   MIDI.programValue = function(x) { return x; };
   MIDI.freq = function(n, a) {
     if (typeof a == 'undefined') a = 440.0;
-    if (n != Number.parseFloat(n)) n = _7b(MIDI.noteValue(n), n);
+    if (n != parseFloat(n)) n = _7b(MIDI.noteValue(n), n);
     return (a * Math.pow(2, (n - 69.0) / 12.0));
   };
   MIDI.shift = function(f, f0) {
     if (typeof f0 == 'undefined') f0 = 440;
     return Math.log2(f / f0) * 12;
   };
-  MIDI.to14b = function(x) { return x <= 0 ? 0 : x >= 1 ? 0x3fff : Math.floor(x * 0x4000); };
+  MIDI.midi = function(f, f0) { return MIDI.shift(f, f0) + 69; };
+  MIDI.to14b = function(x) {
+    if (x != parseFloat(x)) throw TypeError('Not a number: ' + x);
+    return x <= 0 ? 0 : x >= 1 ? 0x3fff : Math.floor(x * 0x4000);
+  };
   MIDI.to21b = function(x) {
     if (typeof x == 'undefined') return 0x1fffff;
+    if (x != parseFloat(x)) throw TypeError('Not a number: ' + x);
     if (x <= 0) return 0;
     x = (Math.floor(x) << 14) + MIDI.to14b(x - Math.floor(x));
     return x < 0x1fffff ? x : 0x1ffffe;
@@ -1584,6 +1589,26 @@
   function _lsb(n) { if (n != parseInt(n) || n < 0 || n > 0x3fff) _throw(n); return parseInt(n) & 0x7f; }
   function _msb(n) { if (n != parseInt(n) || n < 0 || n > 0x3fff) _throw(n); return parseInt(n) >> 7; }
   function _8bs(s) { s = '' + s; for (var i = 0; i < s.length; i++) if (s.charCodeAt(i) > 255) _throw(s[i]); return s; }
+  function _tunings(x) {
+    var k;
+    var kkk = [];
+    var vvv = {};
+    for (k in x) if (x.hasOwnProperty(k)) {
+      k = _7b(MIDI.noteValue(k), k);
+      if (k in vvv) throw RangeError('Duplicate MIDI value: ' + k);
+      kkk.push(k);
+      vvv[k] = MIDI.to21b(x[k]);
+    }
+    kkk.sort();
+    var out = [kkk.length];
+    for (k = 0; k < kkk.length; k++) {
+      out.push(kkk[k]);
+      out.push(vvv[kkk[k]] >> 14);
+      out.push((vvv[kkk[k]] >> 7) & 0x7f);
+      out.push(vvv[kkk[k]] & 0x7f);
+    }
+    return out;
+  }
   var _helperMPE = {
     noteOff: function(c, n, v) { if (typeof v == 'undefined') v = 64; return [0x80 + _ch(c), _7b(MIDI.noteValue(n), n), _7b(v)]; },
     noteOn: function(c, n, v) { if (typeof v == 'undefined') v = 127; return [0x90 + _ch(c), _7b(MIDI.noteValue(n), n), _7b(v)]; },
@@ -1653,6 +1678,10 @@
     sxMasterVolume: function(x) { x = MIDI.to14b(x); return [0xF0, 0x7F, this._sxid, 0x04, 0x01, _lsb(x), _msb(x), 0xF7]; },
     sxMasterFineTuning: function(x) { x = MIDI.to14b((x % 1 + 1) / 2); return [0xF0, 0x7F, this._sxid, 0x04, 0x03, _lsb(x), _msb(x), 0xF7]; },
     sxMasterCoarseTuning: function(x) { return [0xF0, 0x7F, this._sxid, 0x04, 0x04, 0x00, 0x40 + x - x % 1, 0xF7]; },
+    sxNoteTuning: function(a, b, c, d) { return b == parseInt(b) ?
+      [0xF0, typeof d != 'undefined' && !d ? 0x7E : 0x7F, this._sxid, 0x08, 0x07, _7b(a), _7b(b)].concat(_tunings(c)).concat([0xF7]) :
+      [0xF0, 0x7F, this._sxid, 0x08, 0x02, _7b(a)].concat(_tunings(b)).concat([0xF7]);
+    },
     reset: function() { return [0xFF]; },
   };
   var _helperGCH = { // compound messages

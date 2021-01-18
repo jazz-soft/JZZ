@@ -435,6 +435,15 @@ describe('MIDI messages', function() {
     assert.equal(JZZ.MIDI.sxId(3).sxTuningDumpRequest(5).toString(), 'f0 7e 03 08 00 05 f7');
     assert.equal(JZZ.MIDI.sxTuningDumpRequest(5, 8).toString(), 'f0 7e 7f 08 03 05 08 f7');
   });
+  it('sxNoteTuning', function() {
+    var a = []; a[69] = 69.5; a[70] = 70.25;
+    assert.equal(JZZ.MIDI.sxNoteTuning(5, a).toString(), 'f0 7f 7f 08 02 05 02 45 45 40 00 46 46 20 00 f7');
+    assert.equal(JZZ.MIDI.sxNoteTuning(6, 7, a).toString(), 'f0 7f 7f 08 07 06 07 02 45 45 40 00 46 46 20 00 f7');
+    assert.equal(JZZ.MIDI.sxNoteTuning(8, 9, a, false).toString(), 'f0 7e 7f 08 07 08 09 02 45 45 40 00 46 46 20 00 f7');
+    assert.throws(function() { JZZ.MIDI.sxNoteTuning(0, { a5: 0, 69: 0 }); });
+    assert.throws(function() { JZZ.MIDI.sxNoteTuning(0, { 200: 0 }); });
+    assert.throws(function() { JZZ.MIDI.sxNoteTuning(0, { 0: 'dummy' }); });
+  });
   it('sxFullFrame', function() {
     assert.equal(JZZ.MIDI.sxFullFrame(JZZ.SMPTE()).toString(), 'f0 7f 7f 01 01 00 00 00 00 f7');
     assert.equal(JZZ.MIDI.sxFullFrame(JZZ.SMPTE(24, 0, 0, 0, 0)).toString(), 'f0 7f 7f 01 01 00 00 00 00 f7');
@@ -467,6 +476,9 @@ describe('MIDI messages', function() {
     assert.equal(JZZ.MIDI.shift(432), Math.log2(432/440) * 12);
     assert.equal(JZZ.MIDI.shift(880, 440), 12);
   });
+  it('midi', function() {
+    assert.equal(JZZ.MIDI.midi(50) - JZZ.MIDI.shift(50), 69);
+  });
   it('to14b', function() {
     assert.equal(JZZ.MIDI.to14b(-.01), 0);
     assert.equal(JZZ.MIDI.to14b(0), 0);
@@ -477,6 +489,7 @@ describe('MIDI messages', function() {
     assert.equal(JZZ.MIDI.to14b(.99994), 0x3fff);
     assert.equal(JZZ.MIDI.to14b(1), 0x3fff);
     assert.equal(JZZ.MIDI.to14b(1.01), 0x3fff);
+    assert.throws(function() { JZZ.MIDI.to14b('dummy'); });
   });
   it('to21b', function() {
     assert.equal(JZZ.MIDI.to21b(), 0x1fffff);
@@ -489,6 +502,7 @@ describe('MIDI messages', function() {
     assert.equal(JZZ.MIDI.to21b(2.25), 0x9000);
     assert.equal(JZZ.MIDI.to21b(127.75), 0x1ff000);
     assert.equal(JZZ.MIDI.to21b(128), 0x1ffffe);
+    assert.throws(function() { JZZ.MIDI.to21b('dummy'); });
   });
 });
 
