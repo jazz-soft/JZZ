@@ -188,6 +188,17 @@ var port = JZZ().openMidiOut('Console Logger');
 navigator.requestMIDIAccess = JZZ.requestMIDIAccess;
 ```
 
+##### Frequency / MIDI conversion
+
+```js
+JZZ.MIDI.freq('A5'); // => 440
+JZZ.MIDI.freq(69);   // => 440
+JZZ.MIDI.freq(69.5); // => 452.8929841231365
+
+JZZ.MIDI.midi(440);  // => 69
+JZZ.MIDI.midi(450);  // => 69.38905773230853
+```
+
 ## Additional modules
 - [**JZZ-midi-SMF**](https://github.com/jazz-soft/JZZ-midi-SMF) - Standard MIDI files: read / write / play
 - [**JZZ-midi-GM**](https://github.com/jazz-soft/JZZ-midi-GM) - General MIDI instrument names: MIDI to string / string to MIDI
