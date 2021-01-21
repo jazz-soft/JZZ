@@ -1591,11 +1591,14 @@
   function _7b(n, m) { if (n != parseInt(n) || n < 0 || n > 0x7f) _throw(typeof m == 'undefined' ? n : m); return parseInt(n); }
   function _8b(n) { if (n != parseInt(n) || n < 0 || n > 0xff) _throw(n); return parseInt(n); }
   function _14b(n) { if (n != parseInt(n) || n < 0 || n > 0x3fff) _throw(n); return parseInt(n); }
+  function _16b(n) { if (n != parseInt(n) || n < 0 || n > 0xffff) throw RangeError('Expected a 16-bit value: ' + n); return parseInt(n); }
   function _21b(n) { if (n != parseInt(n) || n < 0 || n > 0x1fffff) _throw(n); return parseInt(n); }
   function _7bn(n) { return _7b(MIDI.noteValue(n), n); }
   function _lsb(n) { return _14b(n) & 0x7f; }
   function _msb(n) { return _14b(n) >> 7; }
   function _8bs(s) { s = '' + s; for (var i = 0; i < s.length; i++) if (s.charCodeAt(i) > 255) _throw(s[i]); return s; }
+  function _to777(n) { return [n >> 14, (n >> 7) & 0x7f, n & 0x7f]; }
+  function _rt(b) { return typeof b != 'undefined' && !b ? 0x7E : 0x7F; }
   function _ntu(x) {
     var k, m;
     var kkk = [];
@@ -1609,12 +1612,7 @@
     }
     kkk.sort();
     var out = [kkk.length];
-    for (k = 0; k < kkk.length; k++) {
-      out.push(kkk[k]);
-      out.push(vvv[kkk[k]] >> 14);
-      out.push((vvv[kkk[k]] >> 7) & 0x7f);
-      out.push(vvv[kkk[k]] & 0x7f);
-    }
+    for (k = 0; k < kkk.length; k++) out = out.concat([kkk[k]], _to777(vvv[kkk[k]]));
     return out;
   }
   function _f2ntu(x) {
@@ -1625,6 +1623,21 @@
   function _hz2ntu(x) {
     var out = {};
     for (var k in x) if (x.hasOwnProperty(k)) out[k] = MIDI.to21b(MIDI.midi(x[k]));
+    return out;
+  }
+  function _12x7(a) {
+    var out = [];
+    if (!(a instanceof Array) || a.length != 12) throw TypeError('Expected an array of size 12');
+    for (var i = 0; i < 12; i++) out.push(_7b(a[i]));
+    return out;
+  }
+  function _12x14(a) {
+    var out = [];
+    if (!(a instanceof Array) || a.length != 12) throw TypeError('Expected an array of size 12');
+    for (var i = 0; i < 12; i++) {
+      out.push(_msb(a[i]));
+      out.push(_lsb(a[i]));
+    }
     return out;
   }
   var _helperMPE = {
@@ -1697,14 +1710,23 @@
     sxMasterFineTuning: function(x) { x = MIDI.to14b((x % 1 + 1) / 2); return [0xF0, 0x7F, this._sxid, 0x04, 0x03, _lsb(x), _msb(x), 0xF7]; },
     sxMasterCoarseTuning: function(x) { return [0xF0, 0x7F, this._sxid, 0x04, 0x04, 0x00, 0x40 + x - x % 1, 0xF7]; },
     sxNoteTuning: function(a, b, c, d) { return b == parseInt(b) ?
-      [0xF0, typeof d != 'undefined' && !d ? 0x7E : 0x7F, this._sxid, 0x08, 0x07, _7b(a), _7b(b)].concat(_ntu(c)).concat([0xF7]) :
-      [0xF0, 0x7F, this._sxid, 0x08, 0x02, _7b(a)].concat(_ntu(b)).concat([0xF7]); },
+      [0xF0, _rt(d), this._sxid, 0x08, 0x07, _7b(a), _7b(b)].concat(_ntu(c), [0xF7]) :
+      [0xF0, 0x7F, this._sxid, 0x08, 0x02, _7b(a)].concat(_ntu(b), [0xF7]); },
     sxNoteTuningF: function(a, b, c, d) { return b == parseInt(b) ?
-      _helperNC.sxNoteTuning.call(this,a, b, _f2ntu(c), d) : _helperNC.sxNoteTuning.call(this,a, _f2ntu(b)); },
+      _helperNC.sxNoteTuning.call(this, a, b, _f2ntu(c), d) : _helperNC.sxNoteTuning.call(this, a, _f2ntu(b)); },
     sxNoteTuningHZ: function(a, b, c, d) { return b == parseInt(b) ?
-      _helperNC.sxNoteTuning.call(this,a, b, _hz2ntu(c), d) : _helperNC.sxNoteTuning.call(this,a, _hz2ntu(b)); },
+      _helperNC.sxNoteTuning.call(this, a, b, _hz2ntu(c), d) : _helperNC.sxNoteTuning.call(this, a, _hz2ntu(b)); },
+    sxScaleTuning1: function(a, b, c) { return a == parseInt(a) ?
+      [0xF0, _rt(c), this._sxid, 0x08, 0x08].concat(_to777(_16b(a)), _12x7(b), [0xF7]) :
+      _helperNC.sxScaleTuning1.call(this, 0xffff, a, b);
+    },
+    sxScaleTuning2: function(a, b, c) { return a == parseInt(a) ?
+      [0xF0, _rt(c), this._sxid, 0x08, 0x09].concat(_to777(_16b(a)), _12x14(b), [0xF7]) :
+      _helperNC.sxScaleTuning2.call(this, 0xffff, a, b);
+    },
     reset: function() { return [0xFF]; },
   };
+  _helperNC.sxScaleTuning = _helperNC.sxScaleTuning2;
   var _helperGCH = { // compound messages
     bank: function(c, m, l) { return typeof l == 'undefined' ?
       [_helperCH.bankMSB(c, _msb(m)), _helperCH.bankLSB(c, _lsb(m))] : [_helperCH.bankMSB(c, m), _helperCH.bankLSB(c, l)]; },

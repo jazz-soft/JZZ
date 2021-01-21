@@ -450,6 +450,28 @@ describe('MIDI messages', function() {
     assert.throws(function() { JZZ.MIDI.sxNoteTuningF(0, { 0: 'dummy' }); });
     assert.throws(function() { JZZ.MIDI.sxNoteTuningHZ(0, { 0: 'dummy' }); });
   });
+  it('sxScaleTuning1', function() {
+    var a = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+    var b = [0x10000, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+    assert.equal(JZZ.MIDI.sxScaleTuning1(a).toString(), 'f0 7f 7f 08 08 03 7f 7f 01 02 03 04 05 06 07 08 09 0a 0b 0c f7');
+    assert.equal(JZZ.MIDI.sxScaleTuning1(a, false).toString(), 'f0 7e 7f 08 08 03 7f 7f 01 02 03 04 05 06 07 08 09 0a 0b 0c f7');
+    assert.throws(function() { JZZ.MIDI.sxScaleTuning1([]); });
+    assert.throws(function() { JZZ.MIDI.sxScaleTuning1(b); });
+    assert.throws(function() { JZZ.MIDI.sxScaleTuning1(0x10000, a); });
+  });
+  it('sxScaleTuning2', function() {
+    var a = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+    var b = [0x10000, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+    assert.equal(JZZ.MIDI.sxScaleTuning(a).toString(),
+      'f0 7f 7f 08 09 03 7f 7f 00 01 00 02 00 03 00 04 00 05 00 06 00 07 00 08 00 09 00 0a 00 0b 00 0c f7');
+    assert.equal(JZZ.MIDI.sxScaleTuning2(a).toString(),
+      'f0 7f 7f 08 09 03 7f 7f 00 01 00 02 00 03 00 04 00 05 00 06 00 07 00 08 00 09 00 0a 00 0b 00 0c f7');
+    assert.equal(JZZ.MIDI.sxScaleTuning2(a, false).toString(),
+      'f0 7e 7f 08 09 03 7f 7f 00 01 00 02 00 03 00 04 00 05 00 06 00 07 00 08 00 09 00 0a 00 0b 00 0c f7');
+    assert.throws(function() { JZZ.MIDI.sxScaleTuning2([]); });
+    assert.throws(function() { JZZ.MIDI.sxScaleTuning2(b); });
+    assert.throws(function() { JZZ.MIDI.sxScaleTuning2(0x10000, a); });
+  });
   it('sxFullFrame', function() {
     assert.equal(JZZ.MIDI.sxFullFrame(JZZ.SMPTE()).toString(), 'f0 7f 7f 01 01 00 00 00 00 f7');
     assert.equal(JZZ.MIDI.sxFullFrame(JZZ.SMPTE(24, 0, 0, 0, 0)).toString(), 'f0 7f 7f 01 01 00 00 00 00 f7');
