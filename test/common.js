@@ -480,7 +480,7 @@ describe('MIDI messages', function() {
     assert.throws(function() { JZZ.MIDI.sxScaleTuning2([]); });
     assert.throws(function() { JZZ.MIDI.sxScaleTuning2(b); });
     assert.throws(function() { JZZ.MIDI.sxScaleTuning2(0x10000, a); });
-    assert.throws(function() { JZZ.MIDI.sxScaleTuning2F([2]); });
+    assert.throws(function() { JZZ.MIDI.sxScaleTuning2F([2, 0]); });
   });
   it('sxFullFrame', function() {
     assert.equal(JZZ.MIDI.sxFullFrame(JZZ.SMPTE()).toString(), 'f0 7f 7f 01 01 00 00 00 00 f7');
