@@ -1587,6 +1587,8 @@
   }
   for (n = 0; n < 128; n++) _noteNum[n] = n;
   function _throw(x) { throw RangeError('Bad MIDI value: ' + x); }
+  function _bad(x) { throw TypeError('Invalid value: ' + x); }
+  function _oor(x) { throw RangeError('Out of range: ' + x); }
   function _ch(c) { _validateChannel(c); return parseInt(c); }
   function _7b(n, m) { if (n != parseInt(n) || n < 0 || n > 0x7f) _throw(typeof m == 'undefined' ? n : m); return parseInt(n); }
   function _8b(n) { if (n != parseInt(n) || n < 0 || n > 0xff) _throw(n); return parseInt(n); }
@@ -1598,6 +1600,11 @@
   function _msb(n) { return _14b(n) >> 7; }
   function _8bs(s) { s = '' + s; for (var i = 0; i < s.length; i++) if (s.charCodeAt(i) > 255) _throw(s[i]); return s; }
   function _to777(n) { return [n >> 14, (n >> 7) & 0x7f, n & 0x7f]; }
+  function _01(x, y) {
+    if (x != parseFloat(x)) _bad(typeof y == 'undefined' ? x : y);
+    if (x < 0 || x > 1) _oor(typeof y == 'undefined' ? x : y);
+    return parseFloat(x);
+ }
   function _rt(b) { return typeof b != 'undefined' && !b ? 0x7E : 0x7F; }
   function _ntu(x) {
     var k, m;
@@ -1706,9 +1713,14 @@
     sxTuningDumpRequest: function(n, k) { return typeof k == 'undefined' ?
       [0xF0, 0x7E, this._sxid, 0x08, 0x00, _7b(n), 0xF7] : [0xF0, 0x7E, this._sxid, 0x08, 0x03, _7b(n), _7b(k), 0xF7]; },
     sxFullFrame: function(t) { return [0xF0, 0x7F, this._sxid, 0x01, 0x01, _hrtype(t), t.getMinute(), t.getSecond(), t.getFrame(), 0xF7]; },
-    sxMasterVolume: function(x) { x = MIDI.to14b(x); return [0xF0, 0x7F, this._sxid, 0x04, 0x01, _lsb(x), _msb(x), 0xF7]; },
-    sxMasterFineTuning: function(x) { x = MIDI.to14b((x % 1 + 1) / 2); return [0xF0, 0x7F, this._sxid, 0x04, 0x03, _lsb(x), _msb(x), 0xF7]; },
-    sxMasterCoarseTuning: function(x) { return [0xF0, 0x7F, this._sxid, 0x04, 0x04, 0x00, 0x40 + x - x % 1, 0xF7]; },
+    sxMasterVolume: function(n, l) { return typeof l == 'undefined' ?
+      [0xF0, 0x7F, this._sxid, 0x04, 0x01, _lsb(n), _msb(n), 0xF7] : [0xF0, 0x7F, this._sxid, 0x04, 0x01, _7b(l), _7b(n), 0xF7]; },
+    sxMasterVolumeF: function(x) { return _helperNC.sxMasterVolume.call(this, MIDI.to14b(_01(x))); },
+    sxMasterFineTuning: function(n, l) { return typeof l == 'undefined' ?
+      [0xF0, 0x7F, this._sxid, 0x04, 0x03, _lsb(n), _msb(n), 0xF7] : [0xF0, 0x7F, this._sxid, 0x04, 0x03, _7b(l), _7b(n), 0xF7]; },
+    sxMasterFineTuningF: function(x) { return _helperNC.sxMasterFineTuning.call(this, MIDI.to14b(_01((x % 1 + 1) / 2))); },
+    sxMasterCoarseTuning: function(n) { return [0xF0, 0x7F, this._sxid, 0x04, 0x04, 0x00, _7b(n), 0xF7]; },
+    sxMasterCoarseTuningF: function(x) { return _helperNC.sxMasterCoarseTuning.call(this, 0x40 + x - x % 1); },
     sxNoteTuning: function(a, b, c, d) { return b == parseInt(b) ?
       [0xF0, _rt(d), this._sxid, 0x08, 0x07, _7b(a), _7b(b)].concat(_ntu(c), [0xF7]) :
       [0xF0, 0x7F, this._sxid, 0x08, 0x02, _7b(a)].concat(_ntu(b), [0xF7]); },
@@ -1788,8 +1800,9 @@
       _helperGCH.rpnSelectTuningProgram(c, n) : _helperGCH.rpnSelectTuningBank(c, n).concat(_helperGCH.rpnSelectTuningProgram(c, k)); },
   };
   var _helperGNC = { // compound messages no channel
-    sxMasterTuning: function(x) { return [_helperNC.sxMasterCoarseTuning.call(this, x), _helperNC.sxMasterFineTuning.call(this, x)]; },
-    sxMasterTuningA: function(a) { return _helperGNC.sxMasterTuning.call(this, MIDI.shift(a)); },
+    sxMasterTuning: function(n, m, l) { return [_helperNC.sxMasterCoarseTuning.call(this, n), _helperNC.sxMasterFineTuning.call(this, m, l)]; },
+    sxMasterTuningF: function(x) { return [_helperNC.sxMasterCoarseTuningF.call(this, x), _helperNC.sxMasterFineTuningF.call(this, x)]; },
+    sxMasterTuningA: function(a) { return _helperGNC.sxMasterTuningF.call(this, MIDI.shift(a)); },
   };
   function _smf(ff, dd) {
     var midi = new MIDI();
