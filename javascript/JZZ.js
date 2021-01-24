@@ -163,6 +163,9 @@
   }
   _J.prototype = new _R();
 
+  function _for(x, f) {
+    for(var k in x) if (x.hasOwnProperty(k)) f.call(this, k);
+  }
   function _clone(obj, key, val) {
     if (typeof key == 'undefined') return _clone(obj, [], []);
     if (obj instanceof Object) {
@@ -170,7 +173,7 @@
       var ret;
       if (obj instanceof Array) ret = []; else ret = {};
       key.push(obj); val.push(ret);
-      for(var k in obj) if (obj.hasOwnProperty(k)) ret[k] = _clone(obj[k], key, val);
+      _for(obj, function(k) { ret[k] = _clone(obj[k], key, val); });
       return ret;
     }
     return obj;
@@ -1242,7 +1245,7 @@
   JZZ.info = function() { return _J.prototype.info(); };
   JZZ.Widget = function(arg) {
     var obj = new _M();
-    if (arg instanceof Object) for (var k in arg) if (arg.hasOwnProperty(k)) obj[k] = arg[k];
+    if (arg instanceof Object) _for(arg, function(k) { obj[k] = arg[k]; });
     obj._resume();
     return obj;
   };
@@ -1506,7 +1509,7 @@
     var i;
     if (arg instanceof MIDI) {
       self._from = arg._from.slice();
-      for (i in arg) if (arg.hasOwnProperty(i) && i != '_from') self[i] = arg[i];
+      _for(arg, function(i) { if (i != '_from') self[i] = arg[i]; });
       return self;
     }
     else self._from = [];
@@ -1575,8 +1578,7 @@
   };
 
   var _noteMap = { c:0, d:2, e:4, f:5, g:7, a:9, b:11, h:11 };
-  for (k in _noteMap) {
-    if (!_noteMap.hasOwnProperty(k)) continue;
+  _for(_noteMap, function(k) {
     for (n = 0; n < 12; n++) {
       m = _noteMap[k] + n * 12;
       if (m > 127) break;
@@ -1584,7 +1586,7 @@
       if (m > 0) { _noteNum[k + 'b' + n] = m - 1; _noteNum[k + 'bb' + n] = m - 2; }
       if (m < 127) { _noteNum[k + '#' + n] = m + 1; _noteNum[k + '##' + n] = m + 2; }
     }
-  }
+  });
   for (n = 0; n < 128; n++) _noteNum[n] = n;
   function _throw(x) { throw RangeError('Bad MIDI value: ' + x); }
   function _bad(x) { throw TypeError('Invalid value: ' + x); }
@@ -1610,13 +1612,13 @@
     var k, m;
     var kkk = [];
     var vvv = {};
-    for (k in x) if (x.hasOwnProperty(k)) {
+    _for(x, function(k) {
       m = _21b(x[k]);
       k = _7bn(k);
       if (k in vvv) throw RangeError('Duplicate MIDI value: ' + k);
       kkk.push(k);
       vvv[k] = m;
-    }
+    });
     kkk.sort();
     var out = [kkk.length];
     for (k = 0; k < kkk.length; k++) out = out.concat([kkk[k]], _to777(vvv[kkk[k]]));
@@ -1624,12 +1626,12 @@
   }
   function _f2ntu(x) {
     var out = {};
-    for (var k in x) if (x.hasOwnProperty(k)) out[k] = MIDI.to21b(x[k] == parseFloat(x[k]) ? x[k] : _7bn(x[k]));
+    _for (x, function(k) { out[k] = MIDI.to21b(x[k] == parseFloat(x[k]) ? x[k] : _7bn(x[k])); });
     return out;
   }
   function _hz2ntu(x) {
     var out = {};
-    for (var k in x) if (x.hasOwnProperty(k)) out[k] = MIDI.to21b(MIDI.midi(x[k]));
+    _for (x, function(k) { out[k] = MIDI.to21b(MIDI.midi(x[k])); });
     return out;
   }
   function _12x7(a) {
@@ -1718,7 +1720,7 @@
     sxMasterVolumeF: function(x) { return _helperNC.sxMasterVolume.call(this, MIDI.to14b(_01(x))); },
     sxMasterFineTuning: function(n, l) { return typeof l == 'undefined' ?
       [0xF0, 0x7F, this._sxid, 0x04, 0x03, _lsb(n), _msb(n), 0xF7] : [0xF0, 0x7F, this._sxid, 0x04, 0x03, _7b(l), _7b(n), 0xF7]; },
-    sxMasterFineTuningF: function(x) { return _helperNC.sxMasterFineTuning.call(this, MIDI.to14b(_01((x % 1 + 1) / 2))); },
+    sxMasterFineTuningF: function(x) { return _helperNC.sxMasterFineTuning.call(this, MIDI.to14b(_01((x % 1 + 1) / 2, x))); },
     sxMasterCoarseTuning: function(n) { return [0xF0, 0x7F, this._sxid, 0x04, 0x04, 0x00, _7b(n), 0xF7]; },
     sxMasterCoarseTuningF: function(x) { return _helperNC.sxMasterCoarseTuning.call(this, 0x40 + x - x % 1); },
     sxNoteTuning: function(a, b, c, d) { return b == parseInt(b) ?
@@ -2030,15 +2032,15 @@
     };
   }
 
-  for (n in _helperNC) if (_helperNC.hasOwnProperty(n)) _copyHelperNC(n, _helperNC[n]);
-  for (n in _helperSMF) if (_helperSMF.hasOwnProperty(n)) _copyHelperSMF(n, _helperSMF[n]);
-  for (n in _helperGNC) if (_helperGNC.hasOwnProperty(n)) _copyHelperGNC(n, _helperGNC[n]);
-  for (n in _helperMPE) if (_helperMPE.hasOwnProperty(n)) _copyHelperMPE(n, _helperMPE[n]);
-  for (n in _helperCH) if (_helperCH.hasOwnProperty(n)) _copyHelperCH(n, _helperCH[n]);
-  for (n in _helperGCH) if (_helperGCH.hasOwnProperty(n)) _copyHelperGCH(n, _helperGCH[n]);
+  _for(_helperNC, function(n) { _copyHelperNC(n, _helperNC[n]); });
+  _for(_helperSMF, function(n) { _copyHelperSMF(n, _helperSMF[n]); });
+  _for(_helperGNC, function(n) { _copyHelperGNC(n, _helperGNC[n]); });
+  _for(_helperMPE, function(n) { _copyHelperMPE(n, _helperMPE[n]); });
+  _for(_helperCH, function(n) { _copyHelperCH(n, _helperCH[n]); });
+  _for(_helperGCH, function(n) { _copyHelperGCH(n, _helperGCH[n]); });
 
   function _copyMidiHelpers(M) {
-    for (n in _helpers) if (_helpers.hasOwnProperty(n)) M.prototype[n] = _helpers[n];
+    _for(_helpers, function(n) { M.prototype[n] = _helpers[n]; });
   }
   _copyMidiHelpers(_M);
 

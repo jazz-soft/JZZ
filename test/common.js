@@ -514,6 +514,8 @@ describe('MIDI messages', function() {
     assert.equal(b.length, 2);
     assert.equal(b[0].toString(), 'f0 7f 11 04 04 00 02 f7');
     assert.equal(b[1].toString(), 'f0 7f 11 04 03 05 00 f7');
+    assert.throws(function() { JZZ.MIDI.sxMasterCoarseTuningF(255); });
+    assert.throws(function() { JZZ.MIDI.sxMasterFineTuningF('dummy'); });
   });
   it('reset', function() {
     assert.equal(JZZ.MIDI.reset().toString(), 'ff -- Reset');
