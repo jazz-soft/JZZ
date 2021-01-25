@@ -1800,6 +1800,7 @@
     rpnSelectTuningBank: function(c, n) { return _helperGCH.rpn(c, 0, 4).concat([_helperCH.dataMSB(c, n)]); },
     rpnSelectTuning: function(c, n, k) { return typeof k == 'undefined' ?
       _helperGCH.rpnSelectTuningProgram(c, n) : _helperGCH.rpnSelectTuningBank(c, n).concat(_helperGCH.rpnSelectTuningProgram(c, k)); },
+    rpnNull: function(c) { return _helperGCH.rpn(c, 0x7f, 0x7f); },
   };
   var _helperGNC = { // compound messages no channel
     sxMasterTuning: function(n, m, l) { return [_helperNC.sxMasterCoarseTuning.call(this, n), _helperNC.sxMasterFineTuning.call(this, m, l)]; },

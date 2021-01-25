@@ -344,6 +344,12 @@ describe('MIDI messages', function() {
     assert.equal(a[4].toString(), 'b1 64 03 -- Registered Parameter Number LSB');
     assert.equal(a[5].toString(), 'b1 06 08 -- Data Entry MSB');
   });
+  it('rpnNull', function() {
+    var a = JZZ.MIDI.rpnNull(0);
+    assert.equal(a.length, 2);
+    assert.equal(a[0].toString(), 'b0 65 7f -- Registered Parameter Number MSB');
+    assert.equal(a[1].toString(), 'b0 64 7f -- Registered Parameter Number LSB');
+  });
   it('undefined', function() {
     assert.equal(JZZ.MIDI(0xb0, 0x66, 0x7f).toString(), 'b0 66 7f -- Undefined');
   });
