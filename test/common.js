@@ -311,15 +311,22 @@ describe('MIDI messages', function() {
     assert.equal(JZZ.MIDI.rpnLSB(0, 1).toString(), 'b0 64 01 -- Registered Parameter Number LSB');
   });
   it('rpnPitchBendRange', function() {
-    var a = JZZ.MIDI.rpnPitchBendRange(0, 1.5);
+    var a = JZZ.MIDI.rpnPitchBendRange(0, 1, 0x55);
+    var b = JZZ.MIDI.rpnPitchBendRangeF(0, 2.5);
     assert.equal(a.length, 4);
     assert.equal(a[0].toString(), 'b0 65 00 -- Registered Parameter Number MSB');
     assert.equal(a[1].toString(), 'b0 64 00 -- Registered Parameter Number LSB');
     assert.equal(a[2].toString(), 'b0 06 01 -- Data Entry MSB');
-    assert.equal(a[3].toString(), 'b0 26 40 -- Data Entry LSB');
+    assert.equal(a[3].toString(), 'b0 26 55 -- Data Entry LSB');
+    assert.equal(b.length, 4);
+    assert.equal(b[0].toString(), 'b0 65 00 -- Registered Parameter Number MSB');
+    assert.equal(b[1].toString(), 'b0 64 00 -- Registered Parameter Number LSB');
+    assert.equal(b[2].toString(), 'b0 06 02 -- Data Entry MSB');
+    assert.equal(b[3].toString(), 'b0 26 32 -- Data Entry LSB');
   });
   it('rpnTuning', function() {
     var a = JZZ.MIDI.rpnTuningA(0, 216); // 432/2
+    var b = JZZ.MIDI.rpnTuning(0, 5, 6, 7);
     assert.equal(a.length, 7);
     assert.equal(a[0].toString(), 'b0 65 00 -- Registered Parameter Number MSB');
     assert.equal(a[1].toString(), 'b0 64 02 -- Registered Parameter Number LSB');
@@ -328,6 +335,14 @@ describe('MIDI messages', function() {
     assert.equal(a[4].toString(), 'b0 64 01 -- Registered Parameter Number LSB');
     assert.equal(a[5].toString(), 'b0 06 2b -- Data Entry MSB');
     assert.equal(a[6].toString(), 'b0 26 55 -- Data Entry LSB');
+    assert.equal(b.length, 7);
+    assert.equal(b[0].toString(), 'b0 65 00 -- Registered Parameter Number MSB');
+    assert.equal(b[1].toString(), 'b0 64 02 -- Registered Parameter Number LSB');
+    assert.equal(b[2].toString(), 'b0 06 05 -- Data Entry MSB');
+    assert.equal(b[3].toString(), 'b0 65 00 -- Registered Parameter Number MSB');
+    assert.equal(b[4].toString(), 'b0 64 01 -- Registered Parameter Number LSB');
+    assert.equal(b[5].toString(), 'b0 06 06 -- Data Entry MSB');
+    assert.equal(b[6].toString(), 'b0 26 07 -- Data Entry LSB');
   });
   it('rpnSelectTuning', function() {
     var a = JZZ.MIDI.rpnSelectTuning(0, 8);

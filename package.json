@@ -18,7 +18,7 @@
   "author": "jazz-soft (https://jazz-soft.net/)",
   "dependencies": {
     "@types/webmidi": "^2.0.4",
-    "jazz-midi": "^1.7.3"
+    "jazz-midi": "^1.7.4"
   },
   "devDependencies": {
     "coveralls": "^3.1.0",
