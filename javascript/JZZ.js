@@ -14,7 +14,7 @@
 })(this, function() {
 
   var _scope = typeof window === 'undefined' ? global : window;
-  var _version = '1.2.0';
+  var _version = '1.2.1';
   var i, j, k, m, n;
 
   var _time = Date.now || function () { return new Date().getTime(); };
