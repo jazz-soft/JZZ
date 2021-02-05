@@ -538,6 +538,13 @@ describe('MIDI messages', function() {
     assert.throws(function() { JZZ.MIDI.sxMasterCoarseTuningF(255); });
     assert.throws(function() { JZZ.MIDI.sxMasterFineTuningF('dummy'); });
   });
+  it('sxGM', function() {
+    assert.equal(JZZ.MIDI.sxGM(0).toString(), 'f0 7e 7f 09 02 f7');
+    assert.equal(JZZ.MIDI.sxGM(false).toString(), 'f0 7e 7f 09 02 f7');
+    assert.equal(JZZ.MIDI.sxGM(1).toString(), 'f0 7e 7f 09 01 f7');
+    assert.equal(JZZ.MIDI.sxGM(true).toString(), 'f0 7e 7f 09 01 f7');
+    assert.equal(JZZ.MIDI.sxGM(2).toString(), 'f0 7e 7f 09 03 f7');
+  });
   it('reset', function() {
     assert.equal(JZZ.MIDI.reset().toString(), 'ff -- Reset');
   });

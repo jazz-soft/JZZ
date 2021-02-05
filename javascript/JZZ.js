@@ -1732,27 +1732,22 @@
       _helperNC.sxNoteTuning.call(this, a, b, _hz2ntu(c), d) : _helperNC.sxNoteTuning.call(this, a, _hz2ntu(b)); },
     sxScaleTuning1: function(a, b, c) { return a == parseInt(a) ?
       [0xF0, _rt(c), this._sxid, 0x08, 0x08].concat(_to777(_16b(a)), _12x7(b), [0xF7]) :
-      _helperNC.sxScaleTuning1.call(this, 0xffff, a, b);
-    },
+      _helperNC.sxScaleTuning1.call(this, 0xffff, a, b); },
     sxScaleTuning1F: function(a, b, c) { if (a != parseInt(a)) return _helperNC.sxScaleTuning1F.call(this, 0xffff, a, b);
       var v = []; for (var i = 0; i < b.length; i++) {
         if (b[i] < -0.64 || b[i] > 0.63) throw RangeError('Out of range: ' + b[i]);
-        v.push(Math.floor(b[i] * 100 + 64));
-      }
-      return _helperNC.sxScaleTuning1.call(this, a, v, c);
-    },
+        v.push(Math.floor(b[i] * 100 + 64)); }
+      return _helperNC.sxScaleTuning1.call(this, a, v, c); },
     sxScaleTuning2: function(a, b, c) { return a == parseInt(a) ?
       [0xF0, _rt(c), this._sxid, 0x08, 0x09].concat(_to777(_16b(a)), _12x14(b), [0xF7]) :
-      _helperNC.sxScaleTuning2.call(this, 0xffff, a, b);
-    },
+      _helperNC.sxScaleTuning2.call(this, 0xffff, a, b); },
     sxScaleTuning2F: function(a, b, c) { if (a != parseInt(a)) return _helperNC.sxScaleTuning2F.call(this, 0xffff, a, b);
       var v = []; for (var i = 0; i < b.length; i++) {
         var x = (b[i] + 1) / 2;
         if (x < -1 || x > 1) throw RangeError('Out of range: ' + b[i]);
-        v.push(MIDI.to14b((b[i] + 1) / 2));
-      }
-      return _helperNC.sxScaleTuning2.call(this, a, v, c);
-    },
+        v.push(MIDI.to14b((b[i] + 1) / 2)); }
+      return _helperNC.sxScaleTuning2.call(this, a, v, c); },
+    sxGM: function(gm) { return [0xF0, 0x7E, this._sxid, 0x09, gm ? gm == 2 ? 3 : 1 : 2, 0xF7]; },
     reset: function() { return [0xFF]; },
   };
   _helperNC.sxScaleTuning = _helperNC.sxScaleTuning2;
