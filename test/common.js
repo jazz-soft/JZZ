@@ -260,6 +260,33 @@ describe('MIDI messages', function() {
     assert.equal(JZZ.MIDI.hold2(0, true).toString(), 'b0 45 7f -- Hold 2 On');
     assert.equal(JZZ.MIDI.hold2(0, false).toString(), 'b0 45 00 -- Hold 2 Off');
   });
+  it('soundVariation', function() {
+    assert.equal(JZZ.MIDI.soundVariation(0, 64).toString(), 'b0 46 40 -- Sound Variation');
+  });
+  it('filterResonance', function() {
+    assert.equal(JZZ.MIDI.filterResonance(0, 64).toString(), 'b0 47 40 -- Filter Resonance');
+  });
+  it('releaseTime', function() {
+    assert.equal(JZZ.MIDI.releaseTime(0, 64).toString(), 'b0 48 40 -- Release Time');
+  });
+  it('attackTime', function() {
+    assert.equal(JZZ.MIDI.attackTime(0, 64).toString(), 'b0 49 40 -- Attack Time');
+  });
+  it('brightness', function() {
+    assert.equal(JZZ.MIDI.brightness(0, 64).toString(), 'b0 4a 40 -- Brightness');
+  });
+  it('decayTime', function() {
+    assert.equal(JZZ.MIDI.decayTime(0, 64).toString(), 'b0 4b 40 -- Decay Time');
+  });
+  it('vibratoRate', function() {
+    assert.equal(JZZ.MIDI.vibratoRate(0, 64).toString(), 'b0 4c 40 -- Vibrato Rate');
+  });
+  it('vibratoDepth', function() {
+    assert.equal(JZZ.MIDI.vibratoDepth(0, 64).toString(), 'b0 4d 40 -- Vibrato Depth');
+  });
+  it('vibratoDelay', function() {
+    assert.equal(JZZ.MIDI.vibratoDelay(0, 64).toString(), 'b0 4e 40 -- Vibrato Delay');
+  });
   it('ptc', function() {
     assert.equal(JZZ.MIDI.ptc(0, 'C5').toString(), 'b0 54 3c -- Portamento Control');
   });
