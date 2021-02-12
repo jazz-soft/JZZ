@@ -1,6 +1,6 @@
 {
   "name": "jzz",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "MIDI library for Node.js and web-browsers",
   "main": "javascript/JZZ.js",
   "scripts": {

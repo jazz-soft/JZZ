@@ -14,7 +14,7 @@
 })(this, function() {
 
   var _scope = typeof window === 'undefined' ? global : window;
-  var _version = '1.2.1';
+  var _version = '1.2.2';
   var i, j, k, m, n;
 
   var _time = Date.now || function () { return new Date().getTime(); };
@@ -1808,6 +1808,8 @@
     rpnSelectTuningBank: function(c, n) { return _helperGCH.rpn(c, 0, 4).concat([_helperCH.dataMSB(c, n)]); },
     rpnSelectTuning: function(c, n, k) { return typeof k == 'undefined' ?
       _helperGCH.rpnSelectTuningProgram(c, n) : _helperGCH.rpnSelectTuningBank(c, n).concat(_helperGCH.rpnSelectTuningProgram(c, k)); },
+    rpnModulationDepthRange: function(c, m, l) { return _helperGCH.rpn(c, 0, 5).concat(_helperGCH.data(c, m, l)); },
+    rpnModulationDepthRangeF: function(c, x) { return _helperGCH.rpnModulationDepthRange(c, _7b(x - x % 1), Math.floor((x % 1) * 128)); },
     rpnNull: function(c) { return _helperGCH.rpn(c, 0x7f, 0x7f); },
   };
   var _helperGNC = { // compound messages no channel
