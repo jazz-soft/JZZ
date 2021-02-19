@@ -429,6 +429,24 @@ describe('MIDI messages', function() {
   it('poly', function() {
     assert.equal(JZZ.MIDI.poly(0).toString(), 'b0 7f 00 -- Poly Mode On');
   });
+  it('mode1234', function() {
+    var m1 = JZZ.MIDI.ch(0).mode1();
+    assert.equal(m1.length, 2);
+    assert.equal(m1[0].toString(), 'b0 7d 00 -- Omni Mode On');
+    assert.equal(m1[1].toString(), 'b0 7f 00 -- Poly Mode On');
+    var m2 = JZZ.MIDI.ch(0).mode2();
+    assert.equal(m2.length, 2);
+    assert.equal(m2[0].toString(), 'b0 7d 00 -- Omni Mode On');
+    assert.equal(m2[1].toString(), 'b0 7e 01 -- Mono Mode On');
+    var m3 = JZZ.MIDI.ch(0).mode3();
+    assert.equal(m3.length, 2);
+    assert.equal(m3[0].toString(), 'b0 7c 00 -- Omni Mode Off');
+    assert.equal(m3[1].toString(), 'b0 7f 00 -- Poly Mode On');
+    var m4 = JZZ.MIDI.ch(0).mode4();
+    assert.equal(m4.length, 2);
+    assert.equal(m4[0].toString(), 'b0 7c 00 -- Omni Mode Off');
+    assert.equal(m4[1].toString(), 'b0 7e 01 -- Mono Mode On');
+  });
   it('mtc', function() {
     assert.equal(JZZ.MIDI.mtc(JZZ.SMPTE(24, 0, 0, 0, 0, 0)).toString(), 'f1 00 -- MIDI Time Code');
     assert.equal(JZZ.MIDI.mtc(JZZ.SMPTE(24, 0, 0, 0, 0, 1)).toString(), 'f1 10 -- MIDI Time Code');

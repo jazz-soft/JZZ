@@ -14,7 +14,7 @@
 })(this, function() {
 
   var _scope = typeof window === 'undefined' ? global : window;
-  var _version = '1.2.2';
+  var _version = '1.2.3';
   var i, j, k, m, n;
 
   var _time = Date.now || function () { return new Date().getTime(); };
@@ -1811,6 +1811,10 @@
     rpnModulationDepthRange: function(c, m, l) { return _helperGCH.rpn(c, 0, 5).concat(_helperGCH.data(c, m, l)); },
     rpnModulationDepthRangeF: function(c, x) { return _helperGCH.rpnModulationDepthRange(c, _7b(x - x % 1), Math.floor((x % 1) * 128)); },
     rpnNull: function(c) { return _helperGCH.rpn(c, 0x7f, 0x7f); },
+    mode1: function(c) { return [ _helperCH.omni(c, true), _helperCH.poly(c) ]; },
+    mode2: function(c) { return [ _helperCH.omni(c, true), _helperCH.mono(c) ]; },
+    mode3: function(c) { return [ _helperCH.omni(c, false), _helperCH.poly(c) ]; },
+    mode4: function(c) { return [ _helperCH.omni(c, false), _helperCH.mono(c) ]; },
   };
   var _helperGNC = { // compound messages no channel
     sxMasterTuning: function(n, m, l) { return [_helperNC.sxMasterCoarseTuning.call(this, n), _helperNC.sxMasterFineTuning.call(this, m, l)]; },
