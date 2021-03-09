@@ -14,7 +14,7 @@
 })(this, function() {
 
   var _scope = typeof window === 'undefined' ? global : window;
-  var _version = '1.2.3';
+  var _version = '1.2.4';
   var i, j, k, m, n;
 
   var _time = Date.now || function () { return new Date().getTime(); };
@@ -1731,7 +1731,7 @@
       [0xF0, 0x7F, this._sxid, 0x04, 0x03, _lsb(n), _msb(n), 0xF7] : [0xF0, 0x7F, this._sxid, 0x04, 0x03, _7b(l), _7b(n), 0xF7]; },
     sxMasterFineTuningF: function(x) { return _helperNC.sxMasterFineTuning.call(this, MIDI.to14b(_01((x % 1 + 1) / 2, x))); },
     sxMasterCoarseTuning: function(n) { return [0xF0, 0x7F, this._sxid, 0x04, 0x04, 0x00, _7b(n), 0xF7]; },
-    sxMasterCoarseTuningF: function(x) { return _helperNC.sxMasterCoarseTuning.call(this, 0x40 + x - x % 1); },
+    sxMasterCoarseTuningF: function(x) { return _helperNC.sxMasterCoarseTuning.call(this, 0x40 + (x - x % 1)); },
     sxNoteTuning: function(a, b, c, d) { return b == parseInt(b) ?
       [0xF0, _rt(d), this._sxid, 0x08, 0x07, _7b(a), _7b(b)].concat(_ntu(c), [0xF7]) :
       [0xF0, 0x7F, this._sxid, 0x08, 0x02, _7b(a)].concat(_ntu(b), [0xF7]); },
@@ -1800,7 +1800,7 @@
     rpnFineTuning: function(c, m, l) { return _helperGCH.rpn(c, 0, 1).concat(_helperGCH.data(c, m, l)); },
     rpnFineTuningF: function(c, x) { return _helperGCH.rpn(c, 0, 1).concat(_helperGCH.dataF(c, (x % 1 + 1) / 2)); },
     rpnCoarseTuning: function(c, m) { return _helperGCH.rpn(c, 0, 2).concat([_helperCH.dataMSB(c, m)]); },
-    rpnCoarseTuningF: function(c, x) { return _helperGCH.rpn(c, 0, 2).concat([_helperCH.dataMSB(c, 0x40 + x - x % 1)]); },
+    rpnCoarseTuningF: function(c, x) { return _helperGCH.rpn(c, 0, 2).concat([_helperCH.dataMSB(c, 0x40 + (x - x % 1))]); },
     rpnTuning: function(c, n, m, l) { return _helperGCH.rpnCoarseTuning(c, n).concat(_helperGCH.rpnFineTuning(c, m, l)); },
     rpnTuningF: function(c, x) { return _helperGCH.rpnCoarseTuningF(c, x).concat(_helperGCH.rpnFineTuningF(c, x)); },
     rpnTuningA: function(c, a) { return _helperGCH.rpnTuningF(c, MIDI.shift(a)); },
