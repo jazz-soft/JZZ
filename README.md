@@ -17,6 +17,7 @@
 [![jsDelivr](https://data.jsdelivr.com/v1/package/npm/jzz/badge)](https://www.jsdelivr.com/package/npm/jzz)
 [![Build Status](https://travis-ci.com/jazz-soft/JZZ.svg?branch=master)](https://travis-ci.com/jazz-soft/JZZ)
 [![Coverage](https://coveralls.io/repos/github/jazz-soft/JZZ/badge.svg?branch=master)](https://coveralls.io/github/jazz-soft/JZZ?branch=master)
+[![Try jzz on RunKit](https://badge.runkitcdn.com/jzz.svg)](https://npm.runkit.com/jzz)
 
 **JZZ.js** allows sending, receiving and playing MIDI messages
 in **Node.js** and **all major browsers**
