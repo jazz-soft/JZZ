@@ -775,7 +775,7 @@ describe('SMF events', function() {
     assert.equal(err(1, 0), 'Wrong time signature: 1/0');
     assert.equal(err(3, 5), 'Wrong time signature: 3/5');
     assert.equal(err('3/5'), 'Wrong time signature: 3/5');
-    assert.equal(err(128, 4), 'Wrong time signature: 128/4');
+    assert.equal(err(256, 4), 'Wrong time signature: 256/4');
     assert.equal(err(-3, -4), 'Wrong time signature: -3/-4');
     assert.equal(err('МИДИ'), 'Bad MIDI value: М');
     assert.equal(err(), 'Wrong time signature: undefined');

@@ -1911,7 +1911,7 @@
       if (m) {
         nn = parseInt(m[1]);
         dd = parseInt(m[2]);
-        if (nn > 0 && nn < 0x80 && dd > 0 && !(dd & (dd - 1))) {
+        if (nn > 0 && nn < 0x100 && dd > 0 && !(dd & (dd - 1))) {
           cc = dd; dd = 0;
           for (cc >>= 1; cc; cc >>= 1) dd++;
           cc = b == parseInt(b) ? b : 24;
@@ -1921,7 +1921,7 @@
         else if (('' + a ).length == 4) return _smf(88, a);
       }
       else if (a == parseInt(a) && b == parseInt(b)) {
-        if (a > 0 && a < 0x80 && b > 0 && !(b & (b - 1))) {
+        if (a > 0 && a < 0x100 && b > 0 && !(b & (b - 1))) {
           nn = a;
           dd = 0;
           cc = b;
