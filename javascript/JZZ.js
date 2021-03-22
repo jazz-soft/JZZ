@@ -14,7 +14,7 @@
 })(this, function() {
 
   var _scope = typeof window === 'undefined' ? global : window;
-  var _version = '1.2.5';
+  var _version = '1.2.6';
   var i, j, k, m, n;
 
   var _time = Date.now || function () { return new Date().getTime(); };
@@ -1846,7 +1846,7 @@
         dd = '' + dd;
         if (dd.length == 0) dd = '\x00\x00';
         else if (dd.length == 1) dd = '\x00' + dd;
-        else if (dd.length > 2) throw RangeError('Sequence number out of range: ' + _smftxt(dd));
+        else if (dd.length > 2) throw RangeError('Sequence number out of range' + _smftxt(dd));
       }
       return _smf(0, dd);
     },
@@ -1867,7 +1867,7 @@
       else {
         dd = '' + dd;
         if (dd.length == 0) dd = '\x00';
-        else if (dd.length > 1 || dd.charCodeAt(0) > 15) throw RangeError('Channel number out of range: ' + _smftxt(dd));
+        else if (dd.length > 1 || dd.charCodeAt(0) > 15) throw RangeError('Channel number out of range' + _smftxt(dd));
       }
       return _smf(32, dd);
     },
@@ -1879,12 +1879,12 @@
       else {
         dd = '' + dd;
         if (dd.length == 0) dd = '\x00';
-        else if (dd.length > 1 || dd.charCodeAt(0) > 127) throw RangeError('Port number out of range: ' + _smftxt(dd));
+        else if (dd.length > 1 || dd.charCodeAt(0) > 127) throw RangeError('Port number out of range' + _smftxt(dd));
       }
       return _smf(33, dd);
     },
     smfEndOfTrack: function(dd) {
-      if (_2s(dd) != '') throw RangeError('Unexpected data: ' + _smftxt(_2s(dd)));
+      if (_2s(dd) != '') throw RangeError('Unexpected data' + _smftxt(_2s(dd)));
       return _smf(47);
     },
     smfTempo: function(dd) { // microseconds per quarter note
@@ -1892,7 +1892,7 @@
       if (dd == parseInt(dd) && dd > 0 && dd <= 0xffffff) {
         return _smf(81, String.fromCharCode(dd >> 16) + String.fromCharCode((dd >> 8) & 0xff) + String.fromCharCode(dd & 0xff));
       }
-      throw RangeError('Out of range: ' + _smftxt(_2s(dd)));
+      throw RangeError('Out of range' + _smftxt(_2s(dd)));
     },
     smfBPM: function(bpm) { return _helperSMF.smfTempo(Math.round(60000000.0 / bpm)); },
     smfSMPTE: function(dd) {
@@ -1911,7 +1911,7 @@
       if (m) {
         nn = parseInt(m[1]);
         dd = parseInt(m[2]);
-        if (nn > 0 && nn <= 0xff && dd && !(dd & (dd - 1))) {
+        if (nn > 0 && nn < 0x80 && dd > 0 && !(dd & (dd - 1))) {
           cc = dd; dd = 0;
           for (cc >>= 1; cc; cc >>= 1) dd++;
           cc = b == parseInt(b) ? b : 24;
@@ -1920,17 +1920,21 @@
         }
         else if (('' + a ).length == 4) return _smf(88, a);
       }
-      else if (a == parseInt(a) && b == parseInt(b) && b && !(b & (b - 1))) {
-        nn = a;
-        dd = 0;
-        cc = b;
-        for (cc >>= 1; cc; cc >>= 1) dd++;
-        cc = c == parseInt(c) ? c : 24;
-        bb = d == parseInt(d) ? d : 8;
-        return _smf(88, String.fromCharCode(nn) + String.fromCharCode(dd) + String.fromCharCode(cc) + String.fromCharCode(bb));
+      else if (a == parseInt(a) && b == parseInt(b)) {
+        if (a > 0 && a < 0x80 && b > 0 && !(b & (b - 1))) {
+          nn = a;
+          dd = 0;
+          cc = b;
+          for (cc >>= 1; cc; cc >>= 1) dd++;
+          cc = c == parseInt(c) ? c : 24;
+          bb = d == parseInt(d) ? d : 8;
+          return _smf(88, String.fromCharCode(nn) + String.fromCharCode(dd) + String.fromCharCode(cc) + String.fromCharCode(bb));
+        }
+        else if (('' + a ).length == 4) return _smf(88, a);
+        a = a + '/' + b;
       }
       else if (('' + a ).length == 4) return _smf(88, a);
-      throw RangeError('Wrong time signature: ' + _smftxt(_2s(a)));
+      throw RangeError('Wrong time signature' + _smftxt(_2s('' + a)));
     },
     smfKeySignature: function(dd) {
       dd = '' + dd;
@@ -1949,7 +1953,7 @@
         }
       }
       if (dd.length == 2 && dd.charCodeAt(1) <= 1 && (dd.charCodeAt(0) <= 7 || dd.charCodeAt(0) <= 255 && dd.charCodeAt(0) >= 249)) return _smf(89, dd);
-      throw RangeError('Incorrect key signature: ' + _smftxt(dd));
+      throw RangeError('Incorrect key signature' + _smftxt(dd));
     },
     smfSequencer: function(dd) { return _smf(127, _2s(dd)); }
   };

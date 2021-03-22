@@ -759,11 +759,26 @@ describe('SMF events', function() {
     assert.equal(JZZ.MIDI.smfTimeSignature('7/8', 24, 8).toString(), 'ff58 -- Time Signature: 7/8 24 8');
     assert.equal(JZZ.MIDI.smfTimeSignature(7, 8).toString(), 'ff58 -- Time Signature: 7/8 24 8');
     assert.equal(JZZ.MIDI.smfTimeSignature(7, 8, 24, 8).toString(), 'ff58 -- Time Signature: 7/8 24 8');
-    assert.throws(function() { JZZ.MIDI.smfTimeSignature('1/0'); });
     assert.equal(JZZ.MIDI.smfTimeSignature('0/10').toString(), 'ff58 -- Time Signature: 48/32768 49 48');
-    assert.throws(function() { JZZ.MIDI.smfTimeSignature('0/100'); });
-    assert.throws(function() { JZZ.MIDI.smfTimeSignature('МИДИ'); });
-    assert.throws(function() { JZZ.MIDI.smfTimeSignature(); });
+    assert.equal(JZZ.MIDI.smfTimeSignature(1000, 0).toString(), 'ff58 -- Time Signature: 49/65536 48 48');
+    function err(a, b, c, d) {
+      try {
+        JZZ.MIDI.smfTimeSignature(a, b, c, d);
+      }
+      catch (e) {
+        return e.message;
+      }
+    }
+    assert.equal(err('0/4'), 'Wrong time signature: 0/4');
+    assert.equal(err(0, 4), 'Wrong time signature: 0/4');
+    assert.equal(err('1/0'), 'Wrong time signature: 1/0');
+    assert.equal(err(1, 0), 'Wrong time signature: 1/0');
+    assert.equal(err(3, 5), 'Wrong time signature: 3/5');
+    assert.equal(err('3/5'), 'Wrong time signature: 3/5');
+    assert.equal(err(128, 4), 'Wrong time signature: 128/4');
+    assert.equal(err(-3, -4), 'Wrong time signature: -3/-4');
+    assert.equal(err('МИДИ'), 'Bad MIDI value: М');
+    assert.equal(err(), 'Wrong time signature: undefined');
   });
   it('smf/KeySignature', function() {
     var msg = JZZ.MIDI.smf(0x59, '\xfb\x01');
