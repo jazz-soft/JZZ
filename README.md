@@ -214,6 +214,3 @@ JZZ.MIDI.midi(450);  // => 69.38905773230853
 *Check the [**Getting Started**](https://jazz-soft.net/doc/JZZ) page
 and the [**API reference**](https://jazz-soft.net/doc/JZZ/reference.html)
 for more information.  
-Your questions and comments are welcome [**here**](https://jazz-soft.org).*
-
-We would really appreciate your [**support**](https://jazz-soft.net/donate)!
