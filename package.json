@@ -1,6 +1,6 @@
 {
   "name": "jzz",
-  "version": "1.2.6",
+  "version": "1.2.7",
   "description": "MIDI library for Node.js and web-browsers",
   "main": "javascript/JZZ.js",
   "scripts": {
@@ -37,6 +37,6 @@
     "url": "https://github.com/jazz-soft/JZZ.git"
   },
   "homepage": "https://jazz-soft.net",
-  "bugs": "https://jazz-soft.org",
+  "bugs": "https://github.com/jazz-soft/JZZ/issues",
   "license": "MIT"
 }
