@@ -15,7 +15,7 @@
 [![npm](https://img.shields.io/npm/v/jzz.svg)](https://www.npmjs.com/package/jzz)
 [![npm](https://img.shields.io/npm/dt/jzz.svg)](https://www.npmjs.com/package/jzz)
 [![jsDelivr](https://data.jsdelivr.com/v1/package/npm/jzz/badge)](https://www.jsdelivr.com/package/npm/jzz)
-[![Build Status](https://travis-ci.com/jazz-soft/JZZ.svg?branch=master)](https://travis-ci.com/jazz-soft/JZZ)
+[![build](https://github.com/jazz-soft/JZZ/actions/workflows/build.yml/badge.svg)](https://github.com/jazz-soft/JZZ/actions)
 [![Coverage](https://coveralls.io/repos/github/jazz-soft/JZZ/badge.svg?branch=master)](https://coveralls.io/github/jazz-soft/JZZ?branch=master)
 [![Try jzz on RunKit](https://badge.runkitcdn.com/jzz.svg)](https://npm.runkit.com/jzz)
 
@@ -68,7 +68,7 @@ by running `npm remove midi-test --save-dev`.
 
 ```html
 <script src="https://cdn.jsdelivr.net/npm/jzz"></script>       // the latest version, or
-<script src="https://cdn.jsdelivr.net/npm/jzz@1.2.7"></script> // any particular version
+<script src="https://cdn.jsdelivr.net/npm/jzz@1.2.8"></script> // any particular version
 //...
 ```
 
@@ -76,7 +76,7 @@ by running `npm remove midi-test --save-dev`.
 
 ```html
 <script src="https://unpkg.com/jzz"></script>       // the latest version, or
-<script src="https://unpkg.com/jzz@1.2.7"></script> // any particular version
+<script src="https://unpkg.com/jzz@1.2.8"></script> // any particular version
 //...
 ```
 
