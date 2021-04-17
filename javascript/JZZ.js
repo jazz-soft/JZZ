@@ -14,7 +14,7 @@
 })(this, function() {
 
   var _scope = typeof window === 'undefined' ? global : window;
-  var _version = '1.2.8';
+  var _version = '1.2.9';
   var i, j, k, m, n;
 
   var _time = Date.now || function () { return new Date().getTime(); };
@@ -595,48 +595,31 @@
   // Web MIDI API
   var _navigator;
   var _requestMIDIAccess;
-  if (typeof navigator !== 'undefined' && navigator.requestMIDIAccess) {
-    _navigator = navigator;
-    _requestMIDIAccess = navigator.requestMIDIAccess;
-    try {
-      if (_requestMIDIAccess.toString().indexOf('JZZ(') != -1) _requestMIDIAccess = undefined;
+  function _tryWebMIDI(sx) {
+    if (typeof navigator !== 'undefined' && navigator.requestMIDIAccess) {
+      _navigator = navigator;
+      _requestMIDIAccess = navigator.requestMIDIAccess;
+      try {
+        if (_requestMIDIAccess.toString().indexOf('JZZ(') != -1) _requestMIDIAccess = undefined;
+      }
+      catch (err) {}
     }
-    catch (err) {}
-  }
-  function _tryWebMIDI() {
     if (_requestMIDIAccess) {
       var self = this;
       var onGood = function(midi) {
-        _initWebMIDI(midi);
+        _initWebMIDI(midi, sx);
         self._resume();
       };
       var onBad = function(msg) {
         self._crash(msg);
       };
-      var opt = {};
-      _requestMIDIAccess.call(_navigator, opt).then(onGood, onBad);
+      _requestMIDIAccess.call(_navigator, { sysex: !!sx }).then(onGood, onBad);
       this._pause();
       return;
     }
     this._break();
   }
-  function _tryWebMIDIsysex() {
-    if (_requestMIDIAccess) {
-      var self = this;
-      var onGood = function(midi) {
-        _initWebMIDI(midi, true);
-        self._resume();
-      };
-      var onBad = function(msg) {
-        self._crash(msg);
-      };
-      var opt = {sysex:true};
-      _requestMIDIAccess.call(_navigator, opt).then(onGood, onBad);
-      this._pause();
-      return;
-    }
-    this._break();
-  }
+  function _tryWebMIDIsysex() { _tryWebMIDI(true); }
   // Web-extension
   function _tryCRX() {
     var self = this;
