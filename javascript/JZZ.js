@@ -694,7 +694,6 @@
   }
 
   function _initJZZ(opt) {
-    _initAudioContext();
     _jzz = new _J();
     _jzz._options = opt;
     _jzz._push(_tryAny, [_filterEngines(opt)]);
