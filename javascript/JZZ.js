@@ -14,7 +14,7 @@
 })(this, function() {
 
   var _scope = typeof window === 'undefined' ? global : window;
-  var _version = '1.2.9';
+  var _version = '1.3.0';
   var i, j, k, m, n;
 
   var _time = Date.now || function () { return new Date().getTime(); };
@@ -595,7 +595,7 @@
   // Web MIDI API
   var _navigator;
   var _requestMIDIAccess;
-  function _tryWebMIDI(sx) {
+  function _findMidiAccess() {
     if (typeof navigator !== 'undefined' && navigator.requestMIDIAccess) {
       _navigator = navigator;
       _requestMIDIAccess = navigator.requestMIDIAccess;
@@ -604,22 +604,44 @@
       }
       catch (err) {}
     }
+  }
+  function _tryWebMIDI() {
+    _findMidiAccess();
     if (_requestMIDIAccess) {
       var self = this;
       var onGood = function(midi) {
-        _initWebMIDI(midi, sx);
+        _initWebMIDI(midi);
         self._resume();
       };
       var onBad = function(msg) {
         self._crash(msg);
       };
-      _requestMIDIAccess.call(_navigator, { sysex: !!sx }).then(onGood, onBad);
+      var opt = {};
+      _requestMIDIAccess.call(_navigator, opt).then(onGood, onBad);
       this._pause();
       return;
     }
     this._break();
   }
-  function _tryWebMIDIsysex() { _tryWebMIDI(true); }
+  function _tryWebMIDIsysex() {
+    _findMidiAccess();
+    if (_requestMIDIAccess) {
+      var self = this;
+      var onGood = function(midi) {
+        _initWebMIDI(midi, true);
+        self._resume();
+      };
+      var onBad = function(msg) {
+        self._crash(msg);
+      };
+      var opt = { sysex:true };
+      _requestMIDIAccess.call(_navigator, opt).then(onGood, onBad);
+      this._pause();
+      return;
+    }
+    this._break();
+  }
+
   // Web-extension
   function _tryCRX() {
     var self = this;
