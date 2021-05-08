@@ -14,7 +14,7 @@
 })(this, function() {
 
   var _scope = typeof window === 'undefined' ? global : window;
-  var _version = '1.3.0';
+  var _version = '1.3.1';
   var i, j, k, m, n;
 
   var _time = Date.now || function () { return new Date().getTime(); };
@@ -24,6 +24,7 @@
   var _schedule = function(f) {
     setTimeout(f, 0);
   };
+  function _func(f) { return typeof f == 'function'; }
 
   // _R: common root for all async objects
   function _R() {
@@ -66,10 +67,10 @@
   };
   function _then(good, bad) {
     if (this._bad) {
-      if (bad instanceof Function) bad.apply(this, [new Error(this._err())]);
+      if (_func(bad)) bad.apply(this, [new Error(this._err())]);
     }
     else {
-      if (good instanceof Function) good.apply(this, [this]);
+      if (_func(good)) good.apply(this, [this]);
     }
   }
   function _wait(obj, delay) {
@@ -93,13 +94,13 @@
   }
   function _and(q) {
     if (!this._bad) {
-      if (q instanceof Function) q.apply(this); else console.log(q);
+      if (_func(q)) q.apply(this); else console.log(q);
     }
   }
   _R.prototype.and = function(func) { this._push(_and, [func]); return this._thenable(); };
   function _or(q) {
     if (this._bad) {
-      if (q instanceof Function) q.apply(this); else console.log(q);
+      if (_func(q)) q.apply(this); else console.log(q);
     }
   }
   _R.prototype.or = function(func) { this._push(_or, [func]); return this._thenable(); };
@@ -271,7 +272,7 @@
 
   function _filterList(q, arr) {
     var i, n;
-    if (q instanceof Function) q = q(arr);
+    if (_func(q)) q = q(arr);
     if (!(q instanceof Array)) q = [q];
     var before = [];
     var after = [];
@@ -423,7 +424,7 @@
     return this._thenable();
   };
   function _connect(arg) {
-    if (arg instanceof Function) _push(this._orig._handles, arg);
+    if (_func(arg)) _push(this._orig._handles, arg);
     else _push(this._orig._outs, arg);
   }
   function _disconnect(arg) {
@@ -431,7 +432,7 @@
       this._orig._handles = [];
       this._orig._outs = [];
     }
-    else if (arg instanceof Function) _pop(this._orig._handles, arg);
+    else if (_func(arg)) _pop(this._orig._handles, arg);
     else _pop(this._orig._outs, arg);
   }
   _M.prototype.connect = function(arg) {
@@ -511,7 +512,7 @@
   }
   _W.prototype = new _R();
   function _connectW(arg) {
-    if (arg instanceof Function) {
+    if (_func(arg)) {
       if (!this._orig._handles.length) _engine._watch();
       _push(this._orig._handles, arg);
     }
@@ -2753,7 +2754,7 @@
     Object.defineProperty(this, 'onmidimessage', {
       get: function() { return _onmsg; },
       set: function(value) {
-        if (value instanceof Function) {
+        if (_func(value)) {
           _onmsg = value;
           if (!_open) try { self.open(); } catch(e) {/**/}
         }
@@ -2764,7 +2765,7 @@
     Object.defineProperty(this, 'onstatechange', {
       get: function() { return _ochng; },
       set: function(value) {
-        if (value instanceof Function) _ochng = value;
+        if (_func(value)) _ochng = value;
         else _ochng = null;
       },
       enumerable: true
@@ -2962,7 +2963,7 @@
     Object.defineProperty(this, 'onstatechange', {
       get: function() { return _ochng; },
       set: function(value) {
-        if (value instanceof Function) _ochng = value;
+        if (_func(value)) _ochng = value;
         else _ochng = null;
       },
       enumerable: true
@@ -3186,7 +3187,7 @@
     this.outputs = new MIDIOutputMap(self, _outputs);
     Object.defineProperty(this, 'onstatechange', {
       get: function() { return _onstatechange; },
-      set: function(f) { _onstatechange = f instanceof Function ? f : null; },
+      set: function(f) { _onstatechange = _func(f) ? f : null; },
       enumerable: true
     });
     Object.freeze(this);
