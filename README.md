@@ -68,7 +68,7 @@ by running `npm remove midi-test --save-dev`.
 
 ```html
 <script src="https://cdn.jsdelivr.net/npm/jzz"></script>       // the latest version, or
-<script src="https://cdn.jsdelivr.net/npm/jzz@1.3.1"></script> // any particular version
+<script src="https://cdn.jsdelivr.net/npm/jzz@1.3.2"></script> // any particular version
 //...
 ```
 
@@ -76,7 +76,7 @@ by running `npm remove midi-test --save-dev`.
 
 ```html
 <script src="https://unpkg.com/jzz"></script>       // the latest version, or
-<script src="https://unpkg.com/jzz@1.3.1"></script> // any particular version
+<script src="https://unpkg.com/jzz@1.3.2"></script> // any particular version
 //...
 ```
 
@@ -210,6 +210,12 @@ JZZ.MIDI.midi(450);  // => 69.38905773230853
 - [**JZZ-gui-Player**](https://github.com/jazz-soft/JZZ-gui-Player) - MIDI Player - ready for your page
 - [**JZZ-gui-Karaoke**](https://github.com/jazz-soft/JZZ-gui-Karaoke) - Karaoke :)
 - [**etc...**](https://github.com/jazz-soft/JZZ-modules) - Import third-party solutions into the JZZ framework
+
+## Testing your MIDI applications
+- [**midi-test**](https://github.com/jazz-soft/midi-test) - Virtual MIDI ports for testing MIDI applications
+- [**web-midi-test**](https://github.com/jazz-soft/web-midi-test) - Fake Web MIDI API for testing Web MIDI applications
+- [**jazz-midi-headless**](https://github.com/jazz-soft/jazz-midi-headless) - MIDI for headless testing
+- [**test-midi-files**](https://github.com/jazz-soft/jazz-midi-headless) - A framework for producing test MIDI files
 
 *Check the [**Getting Started**](https://jazz-soft.net/doc/JZZ) page
 and the [**API reference**](https://jazz-soft.net/doc/JZZ/reference.html)
