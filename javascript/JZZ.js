@@ -14,7 +14,7 @@
 })(this, function() {
 
   var _scope = typeof window === 'undefined' ? global : window;
-  var _version = '1.3.2';
+  var _version = '1.3.3';
   var i, j, k, m, n;
 
   var _time = Date.now || function () { return new Date().getTime(); };
@@ -24,6 +24,7 @@
   var _schedule = function(f) {
     setTimeout(f, 0);
   };
+  function _nop() {}
   function _func(f) { return typeof f == 'function'; }
 
   // _R: common root for all async objects
@@ -731,9 +732,9 @@
     _engine._outs = [];
     _engine._ins = [];
     _engine._refresh = function() { _postRefresh(); };
-    _engine._watch = function() {};
-    _engine._unwatch = function() {};
-    _engine._close = function() {};
+    _engine._watch = _nop;
+    _engine._unwatch = _nop;
+    _engine._close = _nop;
   }
   // common initialization for Jazz-Plugin and jazz-midi
   function _initEngineJP() {
@@ -2683,10 +2684,10 @@
     };
     Promise.prototype.then = function(resolve, reject) {
       if (typeof resolve !== 'function') {
-        resolve = function() {};
+        resolve = _nop;
       }
       if (typeof reject !== 'function') {
-        reject = function() {};
+        reject = _nop;
       }
       this.executor(resolve, reject);
     };
@@ -2756,7 +2757,7 @@
       set: function(value) {
         if (_func(value)) {
           _onmsg = value;
-          if (!_open) try { self.open(); } catch(e) {/**/}
+          if (!_open) self.open().then(_nop, _nop);
         }
         else _onmsg = null;
       },
@@ -3005,8 +3006,7 @@
         if (timestamp > now) setTimeout(function() { p.proxy.send(data); }, timestamp - now);
         else p.proxy.send(data);
       }
-      else this.open().then(function() { self.send(data, timestamp); });
-
+      else this.open().then(function() { self.send(data, timestamp); }, _nop);
     };
     Object.freeze(this);
   }
