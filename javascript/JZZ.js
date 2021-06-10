@@ -14,7 +14,7 @@
 })(this, function() {
 
   var _scope = typeof window === 'undefined' ? global : window;
-  var _version = '1.3.3';
+  var _version = '1.3.4';
   var i, j, k, m, n;
 
   var _time = Date.now || function () { return new Date().getTime(); };
@@ -1502,7 +1502,7 @@
   function _dec(x) { return x < 10 ? '0' + x : x; }
   function _smptetxt(x) {
     var arr = [];
-    for (var i = 0; i < x.length; i++) arr[i] = _dec(x[i]);
+    for (var i = 0; i < x.length; i++) arr[i] = _dec(i ? x[i] : x[i] & 0x1f);
     return arr.join(':');
   }
   SMPTE.prototype.toString = function() { return _smptetxt([this.hour, this.minute, this.second, this.frame]); };
