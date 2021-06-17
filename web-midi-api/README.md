@@ -4,7 +4,9 @@
 ![windows](https://jazz-soft.github.io/img/windows.jpg)
 ![macos](https://jazz-soft.github.io/img/macos.jpg)
 ![linux](https://jazz-soft.github.io/img/linux.jpg)
-![raspberry pi](https://jazz-soft.github.io/img/rpi.jpg)
+![raspberry pi](https://jazz-soft.github.io/img/rpi.jpg)  
+[![npm](https://img.shields.io/npm/v/web-midi-api.svg)](https://www.npmjs.com/package/web-midi-api)
+[![npm](https://img.shields.io/npm/dt/web-midi-api.svg)](https://www.npmjs.com/package/web-midi-api)
 
 This package is deprecated and kept here for the old projects compatibility.
 It redirects to [**jzz**](https://www.npmjs.com/package/jzz):
