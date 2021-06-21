@@ -2130,6 +2130,11 @@
   };
   MIDI.prototype.getText = function() {
     if (typeof this.dd != 'undefined') return JZZ.lib.fromUTF8(this.dd);
+    if (this.isMidiSoft()) {
+      var s = [];
+      for (var i = 6; i < this.length - 1; i++) s.push(String.fromCharCode(this[i]));
+      return s.join('');
+    }
   };
   MIDI.prototype.setText = function(dd) {
     this.dd = JZZ.lib.toUTF8(dd);
@@ -2179,6 +2184,9 @@
   };
   MIDI.prototype.isFullSysEx = function() {
     return this[0] == 0xf0 && this[this.length - 1] == 0xf7;
+  };
+  MIDI.prototype.isMidiSoft = function() {
+    return this.isFullSysEx() && this[1] == 0 && this[2] == 0x20 && this[3] == 0x24 && this[4] == 0;
   };
   MIDI.prototype.isSMF = function() {
     return this.ff >= 0 && this.ff <= 0x7f;
@@ -2299,6 +2307,7 @@
       255: 'Reset'
     }[this[0]];
     if (ss) return s + ' -- ' + ss;
+    if (this.isMidiSoft()) return s + ' -- [' + __hex(this[5]) + '] ' + _toLine(this.getText());
     var c = this[0] >> 4;
     ss = {8: 'Note Off', 10: 'Aftertouch', 12: 'Program Change', 13: 'Channel Aftertouch', 14: 'Pitch Wheel'}[c];
     if (ss) return s + ' -- ' + ss;

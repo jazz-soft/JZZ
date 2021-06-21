@@ -598,6 +598,10 @@ describe('MIDI messages', function() {
     assert.equal(JZZ.MIDI.sxGM(true).toString(), 'f0 7e 7f 09 01 f7');
     assert.equal(JZZ.MIDI.sxGM(2).toString(), 'f0 7e 7f 09 03 f7');
   });
+  it('sxMidiSoft', function() {
+    var msg = JZZ.MIDI([0xf0, 0x00, 0x20, 0x24, 0x00, 0x04, 0x22, 0x41, 0x4c, 0x42, 0x41, 0x43, 0x48, 0x49, 0x41, 0x52, 0x41, 0x22, 0x0a, 0xf7]);
+    assert.equal(msg.toString(), 'f0 00 20 24 00 04 22 41 4c 42 41 43 48 49 41 52 41 22 0a f7 -- [04] "ALBACHIARA"\\n');
+  });
   it('reset', function() {
     assert.equal(JZZ.MIDI.reset().toString(), 'ff -- Reset');
   });
