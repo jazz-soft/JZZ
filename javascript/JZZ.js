@@ -14,7 +14,7 @@
 })(this, function() {
 
   var _scope = typeof window === 'undefined' ? global : window;
-  var _version = '1.3.4';
+  var _version = '1.3.5';
   var i, j, k, m, n;
 
   var _time = Date.now || function () { return new Date().getTime(); };
@@ -1763,6 +1763,11 @@
         v.push(MIDI.to14b((b[i] + 1) / 2)); }
       return _helperNC.sxScaleTuning2.call(this, a, v, c); },
     sxGM: function(gm) { return [0xF0, 0x7E, this._sxid, 0x09, gm ? gm == 2 ? 3 : 1 : 2, 0xF7]; },
+    sxMidiSoft: function(n, s) {
+      var a = [0xf0, 0x00, 0x20, 0x24, 0x00, _7b(n || 0)];
+      s = typeof s == 'undefined' ? '' : '' + s;
+      for (var i = 0; i < s.length; i++) a.push(_7b(s.charCodeAt(i)));
+      a.push(0xf7); return a; },
     reset: function() { return [0xFF]; },
   };
   _helperNC.sxScaleTuning = _helperNC.sxScaleTuning2;
@@ -2307,7 +2312,11 @@
       255: 'Reset'
     }[this[0]];
     if (ss) return s + ' -- ' + ss;
-    if (this.isMidiSoft()) return s + ' -- [' + __hex(this[5]) + '] ' + _toLine(this.getText());
+    if (this.isMidiSoft()) {
+      ss = _toLine(this.getText());
+      if (ss) ss = ' ' + ss;
+      return s + ' -- [' + __hex(this[5]) + ']' + ss;
+    }
     var c = this[0] >> 4;
     ss = {8: 'Note Off', 10: 'Aftertouch', 12: 'Program Change', 13: 'Channel Aftertouch', 14: 'Pitch Wheel'}[c];
     if (ss) return s + ' -- ' + ss;
@@ -2330,6 +2339,7 @@
       17: 'General Purpose Controller 2 MSB',
       18: 'General Purpose Controller 3 MSB',
       19: 'General Purpose Controller 4 MSB',
+      31: 'Karaoke',
       32: 'Bank Select LSB',
       33: 'Modulation Wheel LSB',
       34: 'Breath Controller LSB',
