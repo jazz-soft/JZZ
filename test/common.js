@@ -598,6 +598,11 @@ describe('MIDI messages', function() {
     assert.equal(JZZ.MIDI.sxGM(true).toString(), 'f0 7e 7f 09 01 f7');
     assert.equal(JZZ.MIDI.sxGM(2).toString(), 'f0 7e 7f 09 03 f7');
   });
+  it('sxGS', function() {
+    assert.equal(JZZ.MIDI.sxId(0x10).sxGS().toString(), 'f0 41 10 42 12 40 00 7f 00 41 f7');
+    assert.equal(JZZ.MIDI.sxId(0x10).sxGS(0x40, 0x01, 0x33, 0x0c).toString(), 'f0 41 10 42 12 40 01 33 0c 00 f7');
+    assert.equal(JZZ.MIDI.sxGS([0x40, 0x01, 0x33, 0x0c]).toString(), 'f0 41 7f 42 12 40 01 33 0c 00 f7');
+  });
   it('sxMidiSoft', function() {
     assert.equal(JZZ.MIDI.sxMidiSoft(0).toString(), 'f0 00 20 24 00 00 f7 -- [00]');
     assert.equal(JZZ.MIDI.sxMidiSoft(4, 'MidiSoft').toString(), 'f0 00 20 24 00 04 4d 69 64 69 53 6f 66 74 f7 -- [04] MidiSoft');
