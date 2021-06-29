@@ -2138,8 +2138,27 @@
     this.dd = _2s(dd);
     return this;
   };
+  function _is_yamaha_smf(ff, dd) { return ff == 0x7f && typeof dd != 'undefined' && dd.charCodeAt(0) == 0x43 && dd.charCodeAt(1) == 0x7b; }
+  function _is_yamaha_chord(ff, dd) { return _is_yamaha_smf(ff, dd) && dd.charCodeAt(2) == 1; }
+  function _yamaha_chord(a, b) {
+    if (a >= 0 && a <= 0x7f && b >= 0 && b <= 0x7f) {
+      var c = a & 0xff;
+      var d = a >> 4;
+      if (c > 0 && c < 8 && d < 7) c = ['C', 'D', 'E', 'F', 'G', 'A', 'B'][c - 1] + ['bbb', 'bb', 'b', '', '#', '##', '###'][d];
+      else return '-';
+      if (b > 34) c + '?';
+      else return c + [
+        'Maj', 'Maj6', 'Maj7', 'Maj7(#11)', 'Maj(9)', 'Maj7(9)', 'Maj6(9)', 'aug', 'min', 'min6', 'min7', 'min7b5',
+        'min(9)', 'min7(9)', 'min7(11)', 'minMaj7', 'minMaj7(9)', 'dim', 'dim7', '7th', '7sus4', '7b5', '7(9)',
+        '7(#11)', '7(13)', '7(b9)', '7(b13)', '7(#9)', 'Maj7aug', '7aug', '1+8', '1+5', 'sus4', '1+2+5', 'cc'][b];
+    }
+    return '-';
+  }
   MIDI.prototype.getText = function() {
-    if (typeof this.dd != 'undefined') return JZZ.lib.fromUTF8(this.dd);
+    if (typeof this.dd != 'undefined') {
+      if (_is_yamaha_chord(this.ff, this.dd)) return _yamaha_chord(this.dd.charCodeAt(3), this.dd.charCodeAt(4));
+      else return JZZ.lib.fromUTF8(this.dd);
+    }
     if (this.isMidiSoft()) {
       var s = [];
       for (var i = 6; i < this.length - 1; i++) s.push(String.fromCharCode(this[i]));
