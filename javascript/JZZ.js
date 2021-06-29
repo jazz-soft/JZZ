@@ -1507,6 +1507,7 @@
   }
   SMPTE.prototype.toString = function() { return _smptetxt([this.hour, this.minute, this.second, this.frame]); };
   JZZ.SMPTE = SMPTE;
+  _J.prototype.SMPTE = SMPTE;
 
   // JZZ.MIDI
 
@@ -2423,6 +2424,22 @@
   };
 
   JZZ.MIDI = MIDI;
+  _J.prototype.MIDI = MIDI;
+
+  Context = function() {
+    var self = this instanceof Context ? this : self = new Context();
+    if (this == self) self._resume();
+    return self;
+  };
+  Context.prototype = new _M();
+  Context.prototype.constructor = Context;
+  Context.prototype._receive = function(msg) { this._emit(this._read(msg)); };
+  Context.prototype._read = function(msg) {
+    if (!msg.length || msg[0] < 0x80) return msg;
+    return msg;
+  };
+  JZZ.Context = Context;
+  _J.prototype.Context = Context;
 
   function MPE() {
     var self = this instanceof MPE ? this : self = new MPE();

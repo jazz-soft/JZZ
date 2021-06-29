@@ -974,6 +974,13 @@ describe('JZZ.Widget', function() {
   });
 });
 
+describe('JZZ.Context', function() {
+  it.only('reset', function() {
+    var ctxt = JZZ.Context();
+    ctxt.reset();
+  });
+});
+
 describe('Engine: none', function() {
   it('and/or', function() { JZZ().and('').openMidiIn('Non-existing port').or(''); });
   test.engine_name('none', true);
