@@ -2315,7 +2315,10 @@
           if (this.dd.charCodeAt(0) == 0x43) {
             if (this.dd.charCodeAt(1) == 0x7b) {
               s += '[XF:' + __hex(this.dd.charCodeAt(2)) + ']';
-              if (this.dd.charCodeAt(1) == 0x7b) {
+              if (this.dd.charCodeAt(2) == 0) {
+                s += ' Version: ' + this.dd.substr(3, 4) + ' ' + _hex(_s2a(this.dd.substr(7)));
+              }
+              if (this.dd.charCodeAt(2) == 1) {
                 s += ' Chord: ' + this.getText();
               }
               return s;
