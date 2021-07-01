@@ -810,6 +810,13 @@ describe('SMF events', function() {
     assert.equal(JZZ.MIDI.smfSequencer('\x0a\x0b\x0c').toString(), 'ff7f -- Sequencer Specific: 0a 0b 0c');
     assert.equal(JZZ.MIDI.smfSequencer([0xa, 0xb, 0xc]).toString(), 'ff7f -- Sequencer Specific: 0a 0b 0c');
   });
+  it('smf/XF Chord', function() {
+    assert.equal(JZZ.MIDI.smf(0x7f, '\x43\x7b\x01\x33\x0a\x33\x0a').toString(), 'ff7f -- [XF:01] Chord: Em7');
+    assert.equal(JZZ.MIDI.smf(0x7f, '\x43\x7b\x01\x27\x13\x27\x13').toString(), 'ff7f -- [XF:01] Chord: Bb7');
+    assert.equal(JZZ.MIDI.smf(0x7f, '\x43\x7b\x01\x26\x00\x27\x13').toString(), 'ff7f -- [XF:01] Chord: Ab');
+    assert.equal(JZZ.MIDI.smf(0x7f, '\x43\x7b\x01\x44\x23\x44\x23').toString(), 'ff7f -- [XF:01] Chord: F#?');
+    assert.equal(JZZ.MIDI.smf(0x7f, '\x43\x7b\x01\x00\x00\x00\x00').toString(), 'ff7f -- [XF:01] Chord: -');
+  });
 });
 
 describe('SMPTE', function() {
