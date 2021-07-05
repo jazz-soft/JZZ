@@ -17,11 +17,11 @@
   ],
   "author": "jazz-soft (https://jazz-soft.net/)",
   "dependencies": {
-    "@types/webmidi": "^2.0.4",
+    "@types/webmidi": "^2.0.5",
     "jazz-midi": "^1.7.5"
   },
   "devDependencies": {
-    "eslint": "^7.29.0",
+    "eslint": "^7.30.0",
     "grunt": "^1.4.1",
     "grunt-contrib-jshint": "^3.0.0",
     "grunt-contrib-uglify": "^5.0.1",

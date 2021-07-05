@@ -2353,7 +2353,7 @@
     if (this.isMidiSoft()) {
       ss = _toLine(this.getText());
       if (ss) ss = ' ' + ss;
-      return s + ' -- [' + __hex(this[5]) + ']' + ss;
+      return s + ' -- [K:' + __hex(this[5]) + ']' + ss;
     }
     var c = this[0] >> 4;
     ss = {8: 'Note Off', 10: 'Aftertouch', 12: 'Program Change', 13: 'Channel Aftertouch', 14: 'Pitch Wheel'}[c];
