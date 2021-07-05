@@ -820,6 +820,12 @@ describe('SMF events', function() {
     assert.equal(JZZ.MIDI.smf(0x7f, '\x43\x7b\x01\x44\x23\x44\x23').toString(), 'ff7f -- [XF:01] Chord: F#?');
     assert.equal(JZZ.MIDI.smf(0x7f, '\x43\x7b\x01\x00\x00\x00\x00').toString(), 'ff7f -- [XF:01] Chord: -');
   });
+  it('smf/XF Song Data Number', function() {
+    assert.equal(JZZ.MIDI.smf(0x7f, '\x43\x7b\x7f\x01\x02\x03\x04\x05\x06\x07\x08\x01\x02').toString(), 'ff7f -- [XF:7f] XG Song Data Number: 01 02 03 04 05 06 07 08 01 02');
+  });
+  it('smf/XF Unknown', function() {
+    assert.equal(JZZ.MIDI.smf(0x7f, '\x43\x7b\x7e\x01\x02\x03').toString(), 'ff7f -- [XF:7e]: 01 02 03');
+  });
 });
 
 describe('SMPTE', function() {

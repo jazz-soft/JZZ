@@ -2315,13 +2315,18 @@
           if (this.dd.charCodeAt(0) == 0x43) {
             if (this.dd.charCodeAt(1) == 0x7b) {
               s += '[XF:' + __hex(this.dd.charCodeAt(2)) + ']';
+              ss = { 0: 'Version', 1: 'Chord', 2: 'Rehearsal Mark', 3: 'Phrase Mark', 4: 'Max Phrase Mark',
+                5: 'Fingering Number', 12: 'Guide Track Flag', 16: 'Guitar Info', 18: 'Chord Voicing',
+                127: 'XG Song Data Number' }[this.dd.charCodeAt(2)];
+              s += ss ? ' ' + ss : '';
+              s += ': ';
               if (this.dd.charCodeAt(2) == 0) {
-                s += ' Version: ' + this.dd.substr(3, 4) + ' ' + _hex(_s2a(this.dd.substr(7)));
+                return s + this.dd.substr(3, 4) + ' ' + _hex(_s2a(this.dd.substr(7)));
               }
               if (this.dd.charCodeAt(2) == 1) {
-                s += ' Chord: ' + this.getText();
+                return s + this.getText();
               }
-              return s;
+              return s + _hex(_s2a(this.dd.substr(3)));
             }
           }
           s += 'Sequencer Specific' + _smfhex(this.dd);
