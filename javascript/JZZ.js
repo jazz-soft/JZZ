@@ -2281,7 +2281,14 @@
   function _smftxt(dd) {
     return dd.length ? ': ' + _toLine(JZZ.lib.fromUTF8(dd)) : '';
   }
+  MIDI.prototype.label = function(s) {
+    this.lbl = this.lbl ? this.lbl + ', ' + s : s;
+    return this;
+  };
   MIDI.prototype.toString = function() {
+    return this.lbl ? this._str() + ' (' + this.lbl + ')' : this._str();
+  };
+  MIDI.prototype._str = function() {
     var s;
     var ss;
     if (!this.length) {

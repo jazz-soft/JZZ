@@ -20,6 +20,9 @@ describe('MIDI messages', function() {
     msg._unstamp();
     assert.equal(msg.toString(), 'empty');
   });
+  it('label', function() {
+    assert.equal(JZZ.MIDI(0x90, 'C#5', 0x7f).label('C#').label('Db').toString(), '90 3d 7f -- Note On (C#, Db)');
+  });
   it('noteOn', function() {
     var msg = JZZ.MIDI.noteOn(1, 'C5', 20);
     assert.equal(msg.getChannel(), 1);
