@@ -2473,7 +2473,10 @@
 
   Context = function() {
     var self = this instanceof Context ? this : self = new Context();
-    if (this == self) self._resume();
+    if (this == self) {
+      self._clear();
+      self._resume();
+    }
     return self;
   };
   Context.prototype = new _M();
@@ -2481,7 +2484,13 @@
   Context.prototype._receive = function(msg) { this._emit(this._read(msg)); };
   Context.prototype._read = function(msg) {
     if (!msg.length || msg[0] < 0x80) return msg;
+    if (msg[0] == 0xff) { this._clear(); return msg; }
     return msg;
+  };
+  Context.prototype._clear = function() {
+    var i;
+    this._cc = [];
+    for (i = 0; i < 16; i++) this._cc[i] = {};
   };
   JZZ.Context = Context;
   _J.prototype.Context = Context;

@@ -996,7 +996,7 @@ describe('JZZ.Widget', function() {
 describe('JZZ.Context', function() {
   it('reset', function() {
     var ctxt = JZZ.Context();
-    ctxt.reset();
+    ctxt.noteOn(0, 0, 0).reset();
   });
 });
 
