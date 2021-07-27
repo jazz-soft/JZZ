@@ -2484,11 +2484,9 @@
     var ch = msg[0] & 15;
     var st = msg[0] >> 4;
     if (st == 12) {
-      if (JZZ.MIDI.programName) {
-        msg._bm = this._cc[ch].bm;
-        msg._bl = this._cc[ch].bl;
-        msg.label(JZZ.MIDI.programName(msg[1], msg._bm, msg._bl));
-      }
+      msg._bm = this._cc[ch].bm;
+      msg._bl = this._cc[ch].bl;
+      if (JZZ.MIDI.programName) msg.label(JZZ.MIDI.programName(msg[1], msg._bm, msg._bl));
     }
     if (st == 11) {
       switch (msg[1]) {
