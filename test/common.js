@@ -998,6 +998,36 @@ describe('JZZ.Context', function() {
     var ctxt = JZZ.Context();
     ctxt.noteOn(0, 0, 0).reset();
   });
+  it('progName 0', function(done) {
+    var ctxt = JZZ.Context();
+    ctxt.connect(function(msg) {
+      assert.equal(msg.toString(), 'c0 00 -- Program Change');
+      done();
+    });
+    ctxt.program(0, 0);
+  });
+  it('progName 1', function(done) {
+    var ctxt = JZZ.Context();
+    JZZ.MIDI.programName = function(a, b, c) { return a + ' ' + b  + ' ' + c; };
+    ctxt.connect(function(msg) {
+      assert.equal(msg.toString(), 'c1 01 -- Program Change (1 undefined undefined)');
+      JZZ.MIDI.programName = undefined;
+      done();
+    });
+    ctxt.program(1, 1);
+  });
+  it('progName 2', function(done) {
+    var ctxt = JZZ.Context();
+    JZZ.MIDI.programName = function(a, b, c) { return a + ' ' + b  + ' ' + c; };
+    ctxt.rpn(1, 2, 3);
+    ctxt.bank(1, 2, 3);
+    ctxt.connect(function(msg) {
+      assert.equal(msg.toString(), 'c1 01 -- Program Change (1 2 3)');
+      JZZ.MIDI.programName = undefined;
+      done();
+    });
+    ctxt.program(1, 1);
+  });
 });
 
 describe('Engine: none', function() {

@@ -1249,12 +1249,14 @@
   JZZ.JZZ = JZZ;
   JZZ.version = _version;
   JZZ.info = function() { return _J.prototype.info(); };
-  JZZ.Widget = function(arg) {
-    var obj = new _M();
-    if (arg instanceof Object) _for(arg, function(k) { obj[k] = arg[k]; });
-    obj._resume();
-    return obj;
-  };
+
+  function Widget(arg) {
+    var self = new _M();
+    if (arg instanceof Object) _for(arg, function(k) { self[k] = arg[k]; });
+    self._resume();
+    return self;
+  }
+  JZZ.Widget = Widget;
   _J.prototype.Widget = JZZ.Widget;
   JZZ.addMidiIn = function(name, widget) {
     var info = _clone(widget._info || {});
@@ -2471,34 +2473,40 @@
   JZZ.MIDI = MIDI;
   _J.prototype.MIDI = MIDI;
 
-  function Context() {
-    var self = this instanceof Context ? this : self = new Context();
-    if (this == self) {
-      self._clear();
-      self._resume();
-    }
-    return self;
+  function _clear_ctxt() {
+    var i;
+    this._cc = [];
+    for (i = 0; i < 16; i++) this._cc[i] = {};
   }
-  Context.prototype = new _M();
-  Context.prototype.constructor = Context;
-  Context.prototype._receive = function(msg) { this._emit(this._read(msg)); };
-  Context.prototype._read = function(msg) {
+  function _read_ctxt(msg) {
     if (!msg.length || msg[0] < 0x80) return msg;
     if (msg[0] == 0xff) { this._clear(); return msg; }
     var ch = msg[0] & 15;
     var st = msg[0] >> 4;
     if (st == 12) {
       if (JZZ.MIDI.programName) {
-        msg.label(JZZ.MIDI.programName(msg[1]));
+        msg._bm = this._cc[ch].bm;
+        msg._bl = this._cc[ch].bl;
+        msg.label(JZZ.MIDI.programName(msg[1], msg._bm, msg._bl));
+      }
+    }
+    if (st == 11) {
+      switch (msg[1]) {
+        case 0: this._cc[ch].bm = msg[2]; break;
+        case 32: this._cc[ch].bl = msg[2]; break;
       }
     }
     return msg;
-  };
-  Context.prototype._clear = function() {
-    var i;
-    this._cc = [];
-    for (i = 0; i < 16; i++) this._cc[i] = {};
-  };
+  }
+  function Context() {
+    var self = new _M();
+    self._clear = _clear_ctxt;
+    self._read = _read_ctxt;
+    self._receive = function(msg) { this._emit(this._read(msg)); };
+    self._clear();
+    self._resume();
+    return self;
+  }
   JZZ.Context = Context;
   _J.prototype.Context = Context;
 
