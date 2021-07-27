@@ -2471,20 +2471,27 @@
   JZZ.MIDI = MIDI;
   _J.prototype.MIDI = MIDI;
 
-  Context = function() {
+  function Context() {
     var self = this instanceof Context ? this : self = new Context();
     if (this == self) {
       self._clear();
       self._resume();
     }
     return self;
-  };
+  }
   Context.prototype = new _M();
   Context.prototype.constructor = Context;
   Context.prototype._receive = function(msg) { this._emit(this._read(msg)); };
   Context.prototype._read = function(msg) {
     if (!msg.length || msg[0] < 0x80) return msg;
     if (msg[0] == 0xff) { this._clear(); return msg; }
+    var ch = msg[0] & 15;
+    var st = msg[0] >> 4;
+    if (st == 12) {
+      if (JZZ.MIDI.programName) {
+        msg.label(JZZ.MIDI.programName(msg[1]));
+      }
+    }
     return msg;
   };
   Context.prototype._clear = function() {
