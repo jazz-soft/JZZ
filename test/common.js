@@ -1028,6 +1028,77 @@ describe('JZZ.Context', function() {
     });
     ctxt.program(1, 1);
   });
+  it('rpn 0', function(done) {
+    var ctxt = JZZ.Context();
+    ctxt.connect(function(msg) {
+      assert.equal(msg.toString(), 'b0 61 00 -- Data Decrement');
+      done();
+    });
+    ctxt.dataDecr(0);
+  });
+  it('rpn 1', function(done) {
+    var ctxt = JZZ.Context();
+    ctxt.rpnMSB(0, 0);
+    ctxt.connect(function(msg) {
+      assert.equal(msg.toString(), 'b0 61 00 -- Data Decrement (RPN 00 ??)');
+      done();
+    });
+    ctxt.dataDecr(0);
+  });
+  it('rpn 2', function(done) {
+    var ctxt = JZZ.Context();
+    ctxt.rpnLSB(0, 0);
+    ctxt.connect(function(msg) {
+      assert.equal(msg.toString(), 'b0 61 00 -- Data Decrement (RPN ?? 00)');
+      done();
+    });
+    ctxt.dataDecr(0);
+  });
+  it('rpn 3', function(done) {
+    var ctxt = JZZ.Context();
+    ctxt.rpn(0, 0, 1);
+    ctxt.connect(function(msg) {
+      assert.equal(msg.toString(), 'b0 26 00 -- Data Entry LSB (RPN 00 01: Channel Fine Tune)');
+      done();
+    });
+    ctxt.dataLSB(0, 0);
+  });
+  it('rpn 4', function(done) {
+    var ctxt = JZZ.Context();
+    ctxt.rpnNull(0);
+    ctxt.connect(function(msg) {
+      assert.equal(msg.toString(), 'b0 06 00 -- Data Entry MSB (RPN 7f 7f: NONE)');
+      done();
+    });
+    ctxt.dataMSB(0, 0);
+  });
+  it('nrpn 1', function(done) {
+    var ctxt = JZZ.Context();
+    ctxt.nrpnMSB(0, 0);
+    ctxt.connect(function(msg) {
+      assert.equal(msg.toString(), 'b0 61 00 -- Data Decrement (NRPN 00 ??)');
+      done();
+    });
+    ctxt.dataDecr(0);
+  });
+  it('nrpn 2', function(done) {
+    var ctxt = JZZ.Context();
+    ctxt.nrpnLSB(0, 0);
+    ctxt.connect(function(msg) {
+      assert.equal(msg.toString(), 'b0 61 00 -- Data Decrement (NRPN ?? 00)');
+      done();
+    });
+    ctxt.dataDecr(0);
+  });
+  it('nrpn 3', function(done) {
+    var ctxt = JZZ.Context();
+    ctxt.nrpn(0, 0, 1);
+    ctxt.connect(function(msg) {
+      assert.equal(msg.toString(), 'b0 26 00 -- Data Entry LSB (NRPN 00 01)');
+      done();
+    });
+    ctxt.dataLSB(0, 0);
+  });
 });
 
 describe('Engine: none', function() {

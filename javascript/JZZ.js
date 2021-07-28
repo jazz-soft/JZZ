@@ -2478,6 +2478,25 @@
     this._cc = [];
     for (i = 0; i < 16; i++) this._cc[i] = {};
   }
+  function _rpn_txt(msb, lsb) {
+    var a = typeof msb == 'undefined' ? '??' : __hex(msb);
+    var b = typeof lsb == 'undefined' ? '??' : __hex(lsb);
+    var c = {
+      '0000': 'Pitch Bend Sensitivity',
+      '0001': 'Channel Fine Tune',
+      '0002': 'Channel Coarse Tune',
+      '0003': 'Select Tuning Program',
+      '0004': 'Select Tuning Bank',
+      '0005': 'Vibrato Depth Range',
+      '7f7f': 'NONE'
+    }[a + '' + b];
+    return 'RPN ' + a + ' ' + b + (c ? ': ' + c : '');
+  }
+  function _nrpn_txt(msb, lsb) {
+    var a = typeof msb == 'undefined' ? '??' : __hex(msb);
+    var b = typeof lsb == 'undefined' ? '??' : __hex(lsb);
+    return 'NRPN ' + a + ' ' + b;
+  }
   function _read_ctxt(msg) {
     if (!msg.length || msg[0] < 0x80) return msg;
     if (msg[0] == 0xff) { this._clear(); return msg; }
@@ -2492,6 +2511,23 @@
       switch (msg[1]) {
         case 0: this._cc[ch].bm = msg[2]; break;
         case 32: this._cc[ch].bl = msg[2]; break;
+        case 98: this._cc[ch].nl = msg[2]; this._cc[ch].rn = 'n'; break;
+        case 99: this._cc[ch].nm = msg[2]; this._cc[ch].rn = 'n'; break;
+        case 100: this._cc[ch].rl = msg[2]; this._cc[ch].rn = 'r'; break;
+        case 101: this._cc[ch].rm = msg[2]; this._cc[ch].rn = 'r'; break;
+        case 6: case 38: case 96: case 97:
+          if (this._cc[ch].rn == 'r') {
+            msg._rm = this._cc[ch].rm;
+            msg._rl = this._cc[ch].rl;
+            msg.label(_rpn_txt(this._cc[ch].rm, this._cc[ch].rl));
+          }
+          if (this._cc[ch].rn == 'n') {
+            msg._nm = this._cc[ch].rm;
+            msg._nl = this._cc[ch].nl; 
+            msg.label(_nrpn_txt(this._cc[ch].nm, this._cc[ch].nl));
+          }
+          this._cc[ch].rm = msg[2];
+          break;
       }
     }
     return msg;
