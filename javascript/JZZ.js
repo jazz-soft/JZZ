@@ -14,7 +14,7 @@
 })(this, function() {
 
   var _scope = typeof window === 'undefined' ? global : window;
-  var _version = '1.3.7';
+  var _version = '1.3.8';
   var i, j, k, m, n;
 
   var _time = Date.now || function () { return new Date().getTime(); };
@@ -2507,7 +2507,7 @@
       msg._bl = this._cc[ch].bl;
       if (JZZ.MIDI.programName) msg.label(JZZ.MIDI.programName(msg[1], msg._bm, msg._bl));
     }
-    if (st == 11) {
+    else if (st == 11) {
       switch (msg[1]) {
         case 0: this._cc[ch].bm = msg[2]; break;
         case 32: this._cc[ch].bl = msg[2]; break;
@@ -2526,8 +2526,38 @@
             msg._nl = this._cc[ch].nl; 
             msg.label(_nrpn_txt(this._cc[ch].nm, this._cc[ch].nl));
           }
-          this._cc[ch].rm = msg[2];
           break;
+      }
+    }
+    else if (msg.isFullSysEx()) {
+      if (msg[1] == 0x7f) {
+        if (msg[3] == 4) {
+          if (msg[4] == 1) msg.label('Master Volume');
+          else if (msg[4] == 2) msg.label('Master Balance');
+        }
+      }
+      else if (msg[1] == 0x7e) {
+        if (msg[3] == 6) {
+          if (msg[4] == 1) msg.label('Device ID Request');
+          else if (msg[4] == 2) {
+            msg.label('Device ID Response');
+          }
+        }
+        else if (msg[3] == 9) {
+          if (msg[4] == 1) { msg.label('GM1 System On'); this._clear(); this._gm = '1'; }
+          else if (msg[4] == 2) { msg.label('GM System Off'); this._clear(); this._gm = '0'; }
+          else if (msg[4] == 3) { msg.label('GM2 System On'); this._clear(); this._gm = '2'; }
+        }
+      }
+      else if (msg[1] == 0x43) {
+        if ((msg[2] & 0xf0) == 0x10 && msg[3] == 0x4c && msg[4] == 0 && msg[5] == 0 && msg[6] == 0x7e && msg[7] == 0) {
+          msg.label('XG System On'); this._clear(); this._gm = 'Y';
+        }
+      }
+      else if (msg[1] == 0x41) {
+        if (msg[3] == 0x42 && msg[4] == 0x12 && msg[5] == 0x40 && msg[6] == 0 && msg[7] == 0x7f && msg[8] == 0 && msg[9] == 0x41) {
+          msg.label('GS Reset'); this._clear(); this._gm = 'R';
+        }
       }
     }
     return msg;

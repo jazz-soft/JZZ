@@ -1099,6 +1099,36 @@ describe('JZZ.Context', function() {
     });
     ctxt.dataLSB(0, 0);
   });
+  it('GM1', function() {
+    var ctxt = JZZ.Context();
+    var msg = JZZ.MIDI.sxGM(1);
+    ctxt._receive(msg);
+    assert.equal(msg.toString(), 'f0 7e 7f 09 01 f7 (GM1 System On)');
+  });
+  it('GM2', function() {
+    var ctxt = JZZ.Context();
+    var msg = JZZ.MIDI.sxGM(2);
+    ctxt._receive(msg);
+    assert.equal(msg.toString(), 'f0 7e 7f 09 03 f7 (GM2 System On)');
+  });
+  it('GM off', function() {
+    var ctxt = JZZ.Context();
+    var msg = JZZ.MIDI.sxGM(0);
+    ctxt._receive(msg);
+    assert.equal(msg.toString(), 'f0 7e 7f 09 02 f7 (GM System Off)');
+  });
+  it('GS', function() {
+    var ctxt = JZZ.Context();
+    var msg = JZZ.MIDI.sxGS();
+    ctxt._receive(msg);
+    assert.equal(msg.toString(), 'f0 41 7f 42 12 40 00 7f 00 41 f7 (GS Reset)');
+  });
+  it('XG', function() {
+    var ctxt = JZZ.Context();
+    var msg = JZZ.MIDI([0xf0, 0x43, 0x10, 0x4c, 0, 0, 0x7e, 0, 0xf7]);
+    ctxt._receive(msg);
+    assert.equal(msg.toString(), 'f0 43 10 4c 00 00 7e 00 f7 (XG System On)');
+  });
 });
 
 describe('Engine: none', function() {
