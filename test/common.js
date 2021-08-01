@@ -597,6 +597,7 @@ describe('MIDI messages', function() {
   it('sxGM', function() {
     assert.equal(JZZ.MIDI.sxGM(0).toString(), 'f0 7e 7f 09 02 f7');
     assert.equal(JZZ.MIDI.sxGM(false).toString(), 'f0 7e 7f 09 02 f7');
+    assert.equal(JZZ.MIDI.sxGM().toString(), 'f0 7e 7f 09 01 f7');
     assert.equal(JZZ.MIDI.sxGM(1).toString(), 'f0 7e 7f 09 01 f7');
     assert.equal(JZZ.MIDI.sxGM(true).toString(), 'f0 7e 7f 09 01 f7');
     assert.equal(JZZ.MIDI.sxGM(2).toString(), 'f0 7e 7f 09 03 f7');
@@ -996,7 +997,7 @@ describe('JZZ.Widget', function() {
 describe('JZZ.Context', function() {
   it('reset', function() {
     var ctxt = JZZ.Context();
-    ctxt.noteOn(0, 0, 0).reset();
+    ctxt.noteOn(0, 0, 0).smfText('dummy').reset();
   });
   it('progName 0', function(done) {
     var ctxt = JZZ.Context();
@@ -1104,30 +1105,91 @@ describe('JZZ.Context', function() {
     var msg = JZZ.MIDI.sxGM(1);
     ctxt._receive(msg);
     assert.equal(msg.toString(), 'f0 7e 7f 09 01 f7 (GM1 System On)');
+    assert.equal(ctxt._gm, '1');
   });
   it('GM2', function() {
     var ctxt = JZZ.Context();
     var msg = JZZ.MIDI.sxGM(2);
     ctxt._receive(msg);
     assert.equal(msg.toString(), 'f0 7e 7f 09 03 f7 (GM2 System On)');
+    assert.equal(ctxt._gm, '2');
   });
   it('GM off', function() {
     var ctxt = JZZ.Context();
     var msg = JZZ.MIDI.sxGM(0);
     ctxt._receive(msg);
     assert.equal(msg.toString(), 'f0 7e 7f 09 02 f7 (GM System Off)');
+    assert.equal(ctxt._gm, '0');
   });
   it('GS', function() {
     var ctxt = JZZ.Context();
     var msg = JZZ.MIDI.sxGS();
     ctxt._receive(msg);
     assert.equal(msg.toString(), 'f0 41 7f 42 12 40 00 7f 00 41 f7 (GS Reset)');
+    assert.equal(ctxt._gm, 'R');
   });
   it('XG', function() {
     var ctxt = JZZ.Context();
     var msg = JZZ.MIDI([0xf0, 0x43, 0x10, 0x4c, 0, 0, 0x7e, 0, 0xf7]);
     ctxt._receive(msg);
     assert.equal(msg.toString(), 'f0 43 10 4c 00 00 7e 00 f7 (XG System On)');
+    assert.equal(ctxt._gm, 'Y');
+  });
+  it('device id request', function() {
+    var ctxt = JZZ.Context();
+    var msg = JZZ.MIDI.sxIdRequest();
+    ctxt._receive(msg);
+    assert.equal(msg.toString(), 'f0 7e 7f 06 01 f7 (Device ID Request)');
+  });
+  it('device id response', function() {
+    var ctxt = JZZ.Context();
+    var msg = JZZ.MIDI([0xf0, 0x7e, 0x10, 0x06, 0x02, 0x41, 0x2b, 0x02, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0xf7]);
+    ctxt._receive(msg);
+    assert.equal(msg.toString(), 'f0 7e 10 06 02 41 2b 02 00 00 00 01 00 00 f7 (Device ID Response)');
+  });
+  it('master volume', function() {
+    var ctxt = JZZ.Context();
+    var msg = JZZ.MIDI.sxMasterVolumeF(1);
+    ctxt._receive(msg);
+    assert.equal(msg.toString(), 'f0 7f 7f 04 01 7f 7f f7 (Master Volume)');
+  });
+  it('master balance', function() {
+    var ctxt = JZZ.Context();
+    var msg = JZZ.MIDI([0xf0, 0x7f, 0x7f, 0x04, 0x02, 0x7f, 0x7f, 0xf7]);
+    ctxt._receive(msg);
+    assert.equal(msg.toString(), 'f0 7f 7f 04 02 7f 7f f7 (Master Balance)');
+  });
+  it('etc', function() {
+    var msg;
+    var ctxt = JZZ.Context();
+    msg = JZZ.MIDI([0xf0, 0xf7]);
+    ctxt._receive(msg);
+    assert.equal(msg.toString(), 'f0 f7');
+
+    msg = JZZ.MIDI([0xf0, 0x41, 0xf7]);
+    ctxt._receive(msg);
+    assert.equal(msg.toString(), 'f0 41 f7');
+
+    msg = JZZ.MIDI([0xf0, 0x43, 0xf7]);
+    ctxt._receive(msg);
+    assert.equal(msg.toString(), 'f0 43 f7');
+
+    msg = JZZ.MIDI([0xf0, 0x7e, 0xf7]);
+    ctxt._receive(msg);
+    assert.equal(msg.toString(), 'f0 7e f7');
+    msg = JZZ.MIDI([0xf0, 0x7e, 0x00, 0x06, 0xf7]);
+    ctxt._receive(msg);
+    assert.equal(msg.toString(), 'f0 7e 00 06 f7');
+    msg = JZZ.MIDI([0xf0, 0x7e, 0x00, 0x09, 0xf7]);
+    ctxt._receive(msg);
+    assert.equal(msg.toString(), 'f0 7e 00 09 f7');
+
+    msg = JZZ.MIDI([0xf0, 0x7f, 0xf7]);
+    ctxt._receive(msg);
+    assert.equal(msg.toString(), 'f0 7f f7');
+    msg = JZZ.MIDI([0xf0, 0x7f, 0x00, 0x04, 0xf7]);
+    ctxt._receive(msg);
+    assert.equal(msg.toString(), 'f0 7f 00 04 f7');
   });
 });
 
