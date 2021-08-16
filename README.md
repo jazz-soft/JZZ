@@ -215,7 +215,7 @@ JZZ.MIDI.midi(450);  // => 69.38905773230853
 - [**midi-test**](https://github.com/jazz-soft/midi-test) - Virtual MIDI ports for testing MIDI applications
 - [**web-midi-test**](https://github.com/jazz-soft/web-midi-test) - Fake Web MIDI API for testing Web MIDI applications
 - [**jazz-midi-headless**](https://github.com/jazz-soft/jazz-midi-headless) - MIDI for headless testing
-- [**test-midi-files**](https://github.com/jazz-soft/jazz-midi-headless) - A framework for producing test MIDI files
+- [**test-midi-files**](https://github.com/jazz-soft/test-midi-files) - A framework for producing test MIDI files
 
 *Check the [**Getting Started**](https://jazz-soft.net/doc/JZZ) page
 and the [**API reference**](https://jazz-soft.net/doc/JZZ/reference.html)
