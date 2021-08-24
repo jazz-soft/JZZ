@@ -20,6 +20,15 @@ describe('MIDI messages', function() {
     msg._unstamp();
     assert.equal(msg.toString(), 'empty');
   });
+  it('match', function() {
+    var msg = JZZ.MIDI(0x91, 'C5', 0x7f);
+    assert.equal(msg.match(msg), true);
+    assert.equal(msg.match([0x91, 0x3c, 0x7f]), true);
+    assert.equal(msg.match([0x91]), true);
+    assert.equal(msg.match([0x90, 0x3c, 0x7f]), false);
+    assert.equal(msg.match([[0x94, 0x70], 0x3c, 0x7f]), true);
+    assert.equal(msg.match([[0x94, 0x7f], 0x3c, 0x7f]), false);
+  });
   it('label', function() {
     assert.equal(JZZ.MIDI(0x90, 'C#5', 0x7f).label('C#').label('Db').toString(), '90 3d 7f -- Note On (C#, Db)');
   });
@@ -601,11 +610,23 @@ describe('MIDI messages', function() {
     assert.equal(JZZ.MIDI.sxGM(1).toString(), 'f0 7e 7f 09 01 f7');
     assert.equal(JZZ.MIDI.sxGM(true).toString(), 'f0 7e 7f 09 01 f7');
     assert.equal(JZZ.MIDI.sxGM(2).toString(), 'f0 7e 7f 09 03 f7');
+    assert.equal(JZZ.MIDI.sxGM().isGmReset(), true);
+    assert.equal(JZZ.MIDI.sxGM().isGsReset(), false);
+    assert.equal(JZZ.MIDI.sxGM().isXgReset(), false);
   });
   it('sxGS', function() {
     assert.equal(JZZ.MIDI.sxId(0x10).sxGS().toString(), 'f0 41 10 42 12 40 00 7f 00 41 f7');
     assert.equal(JZZ.MIDI.sxId(0x10).sxGS(0x40, 0x01, 0x33, 0x0c).toString(), 'f0 41 10 42 12 40 01 33 0c 00 f7');
     assert.equal(JZZ.MIDI.sxGS([0x40, 0x01, 0x33, 0x0c]).toString(), 'f0 41 7f 42 12 40 01 33 0c 00 f7');
+    assert.equal(JZZ.MIDI.sxGS().isGmReset(), false);
+    assert.equal(JZZ.MIDI.sxGS().isGsReset(), true);
+    assert.equal(JZZ.MIDI.sxGS().isXgReset(), false);
+  });
+  it('sxXG', function() {
+    var msg = JZZ.MIDI([0xf0, 0x43, 0x10, 0x4c, 0x00, 0x00, 0x7e, 0x00, 0xf7]);
+    assert.equal(msg.isGmReset(), false);
+    assert.equal(msg.isGsReset(), false);
+    assert.equal(msg.isXgReset(), true);
   });
   it('sxMidiSoft', function() {
     assert.equal(JZZ.MIDI.sxMidiSoft(0).toString(), 'f0 00 20 24 00 00 f7 -- [K:00]');

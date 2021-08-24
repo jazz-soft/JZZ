@@ -14,11 +14,13 @@
 })(this, function() {
 
   var _scope = typeof window === 'undefined' ? global : window;
-  var _version = '1.3.9';
+  var _version = '1.4.0';
   var i, j, k, m, n;
 
+  /* istanbul ignore next */
   var _time = Date.now || function () { return new Date().getTime(); };
   var _startTime = _time();
+  /* istanbul ignore next */
   var _now = typeof performance != 'undefined' && performance.now ?
     function() { return performance.now(); } : function() { return _time() - _startTime; };
   var _schedule = function(f) {
@@ -2233,6 +2235,28 @@
   };
   MIDI.prototype.isKeySignature = function() {
     return this.ff == 0x59;
+  };
+  MIDI.prototype.isGmReset = function() {
+    return this.match([0xf0, 0x7e, [0, 0], 0x09, [0, 0], 0xf7]);
+  };
+  MIDI.prototype.isGsReset = function() {
+    return this.match([0xf0, 0x41, [0, 0], 0x42, 0x12, 0x40, 0, 0x7f, 0, 0x41, 0xf7]);
+  };
+  MIDI.prototype.isXgReset = function() {
+    return this.match([0xf0, 0x43, [0x10, 0xf0], 0x4c, 0, 0, 0x7e, 0, 0xf7]);
+  };
+  MIDI.prototype.match = function(a, n) {
+    var i, m;
+    for (i = 0; i < a.length; i++) {
+      m = a[i][1];
+      if (typeof m == 'undefined') {
+        if (this[i] != a[i]) return false;
+      }
+      else {
+        if ((this[i] & m) != (a[i][0] & m)) return false;
+      }
+    }
+    return true;
   };
 
   function _s2a(x) {
