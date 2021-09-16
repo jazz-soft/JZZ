@@ -68,7 +68,7 @@ by running `npm remove midi-test --save-dev`.
 
 ```html
 <script src="https://cdn.jsdelivr.net/npm/jzz"></script>       // the latest version, or
-<script src="https://cdn.jsdelivr.net/npm/jzz@1.4.0"></script> // any particular version
+<script src="https://cdn.jsdelivr.net/npm/jzz@1.4.1"></script> // any particular version
 //...
 ```
 
@@ -76,7 +76,7 @@ by running `npm remove midi-test --save-dev`.
 
 ```html
 <script src="https://unpkg.com/jzz"></script>       // the latest version, or
-<script src="https://unpkg.com/jzz@1.4.0"></script> // any particular version
+<script src="https://unpkg.com/jzz@1.4.1"></script> // any particular version
 //...
 ```
 
@@ -195,9 +195,11 @@ navigator.requestMIDIAccess = JZZ.requestMIDIAccess;
 JZZ.MIDI.freq('A5'); // => 440
 JZZ.MIDI.freq(69);   // => 440
 JZZ.MIDI.freq(69.5); // => 452.8929841231365
-
+// from the frequency:
 JZZ.MIDI.midi(440);  // => 69
 JZZ.MIDI.midi(450);  // => 69.38905773230853
+// or from the name:
+JZZ.MIDI.midi('A5'); // => 69
 ```
 
 ## Additional modules

@@ -647,7 +647,9 @@ describe('MIDI messages', function() {
   });
   it('midi', function() {
     assert.equal(JZZ.MIDI.midi(50) - JZZ.MIDI.shift(50), 69);
+    assert.equal(JZZ.MIDI.midi('C#5'), 61);
     assert.throws(function() { JZZ.MIDI.midi(50, 'dummy'); });
+    assert.throws(function() { JZZ.MIDI.midi('dummy'); });
   });
   it('to14b', function() {
     assert.equal(JZZ.MIDI.to14b(-.01), 0);

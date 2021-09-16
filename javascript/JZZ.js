@@ -14,7 +14,7 @@
 })(this, function() {
 
   var _scope = typeof window === 'undefined' ? global : window;
-  var _version = '1.4.0';
+  var _version = '1.4.1';
   var i, j, k, m, n;
 
   /* istanbul ignore next */
@@ -1555,7 +1555,10 @@
     _float(f0);
     return Math.log2(f / f0) * 12;
   };
-  MIDI.midi = function(f, f0) { return MIDI.shift(f, f0) + 69; };
+  MIDI.midi = function(f, f0) {
+    if (f != parseFloat(f)) return _7bn(f);
+    return MIDI.shift(f, f0) + 69;
+  };
   MIDI.to14b = function(x) {
     _float(x);
     return x <= 0 ? 0 : x >= 1 ? 0x3fff : Math.floor(x * 0x4000);
