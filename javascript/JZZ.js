@@ -14,7 +14,7 @@
 })(this, function() {
 
   var _scope = typeof window === 'undefined' ? global : window;
-  var _version = '1.4.1';
+  var _version = '1.4.2';
   var i, j, k, m, n;
 
   /* istanbul ignore next */
@@ -1770,11 +1770,15 @@
         if (x < -1 || x > 1) throw RangeError('Out of range: ' + b[i]);
         v.push(MIDI.to14b((b[i] + 1) / 2)); }
       return _helperNC.sxScaleTuning2.call(this, a, v, c); },
-    sxGM: function(gm) { if (typeof gm == 'undefined') gm = 1; return [0xF0, 0x7E, this._sxid, 0x09, gm ? gm == 2 ? 3 : 1 : 2, 0xF7]; },
+    sxGM: function(gm) { if (typeof gm == 'undefined') gm = 1; return [0xF0, 0x7E, this._sxid, 0x09, gm ? gm == 2 ? 3 : 1 : 2, 0xf7]; },
     sxGS: function(arg) { var arr = typeof arg == 'undefined' ? [0x40, 0, 0x7F, 0] : arg instanceof Array ? arg : arguments;
       var c = 0; var a = [0xF0, 0x41, this._sxid, 0x42, 0x12];
       for (var i = 0; i < arr.length; i++) { var x = _7b(arr[i]); a.push(x); c += x; }
       c %= 128; a.push(c ? 128 - c : 0); a.push(0xf7); return a; },
+    sxXG: function() {
+      var sxid = this._sxid == 0x7f ? 0 : this._sxid;
+      if (sxid > 15) _throw('Bad Yamaha device number: ' + sxid);
+      return [0xf0, 0x43, 16 + sxid, 0x4c, 0, 0, 0x7e, 0, 0xf7]; },
     sxMidiSoft: function(n, s) {
       var a = [0xf0, 0x00, 0x20, 0x24, 0x00, _7b(n || 0)];
       s = typeof s == 'undefined' ? '' : '' + s;

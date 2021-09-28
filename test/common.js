@@ -623,10 +623,11 @@ describe('MIDI messages', function() {
     assert.equal(JZZ.MIDI.sxGS().isXgReset(), false);
   });
   it('sxXG', function() {
-    var msg = JZZ.MIDI([0xf0, 0x43, 0x10, 0x4c, 0x00, 0x00, 0x7e, 0x00, 0xf7]);
+    var msg = JZZ.MIDI.sxXG();
     assert.equal(msg.isGmReset(), false);
     assert.equal(msg.isGsReset(), false);
     assert.equal(msg.isXgReset(), true);
+    assert.throws(function() { JZZ.MIDI.sxId(0x7e).sxXG(); });
   });
   it('sxMidiSoft', function() {
     assert.equal(JZZ.MIDI.sxMidiSoft(0).toString(), 'f0 00 20 24 00 00 f7 -- [K:00]');
@@ -1153,7 +1154,7 @@ describe('JZZ.Context', function() {
   });
   it('XG', function() {
     var ctxt = JZZ.Context();
-    var msg = JZZ.MIDI([0xf0, 0x43, 0x10, 0x4c, 0, 0, 0x7e, 0, 0xf7]);
+    var msg = JZZ.MIDI.sxXG();
     ctxt._receive(msg);
     assert.equal(msg.toString(), 'f0 43 10 4c 00 00 7e 00 f7 (XG System On)');
     assert.equal(ctxt._gm, 'Y');
