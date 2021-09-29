@@ -195,10 +195,10 @@ navigator.requestMIDIAccess = JZZ.requestMIDIAccess;
 JZZ.MIDI.freq('A5'); // => 440
 JZZ.MIDI.freq(69);   // => 440
 JZZ.MIDI.freq(69.5); // => 452.8929841231365
-// from the frequency:
+// from frequency:
 JZZ.MIDI.midi(440);  // => 69
 JZZ.MIDI.midi(450);  // => 69.38905773230853
-// or from the name:
+// or from name:
 JZZ.MIDI.midi('A5'); // => 69
 ```
 
