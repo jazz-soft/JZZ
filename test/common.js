@@ -1151,6 +1151,18 @@ describe('JZZ.Context', function() {
     ctxt._receive(msg);
     assert.equal(msg.toString(), 'f0 41 7f 42 12 40 00 7f 00 41 f7 (GS Reset)');
     assert.equal(ctxt._gm, 'R');
+    msg = JZZ.MIDI.sxGS(0x40, 0x11, 0x15, 0x02);
+    ctxt._receive(msg);
+    assert.equal(msg.toString(), 'f0 41 7f 42 12 40 11 15 02 18 f7 (GS Drum Part Change)');
+    msg = JZZ.MIDI.sxGS(0x40, 0x10, 0x15, 0x00);
+    ctxt._receive(msg);
+    assert.equal(msg.toString(), 'f0 41 7f 42 12 40 10 15 00 1b f7 (GS Drum Part Change)');
+    msg = JZZ.MIDI.sxGS(0x40, 0x10, 0x16, 0x00);
+    ctxt._receive(msg);
+    assert.equal(msg.toString(), 'f0 41 7f 42 12 40 10 16 00 1a f7 (GS Parameter)');
+    msg = JZZ.MIDI.sxGS(0x41, 0x10, 0x15, 0x00);
+    ctxt._receive(msg);
+    assert.equal(msg.toString(), 'f0 41 7f 42 12 41 10 15 00 1a f7 (GS Parameter)');
   });
   it('XG', function() {
     var ctxt = JZZ.Context();

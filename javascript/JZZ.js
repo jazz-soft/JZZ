@@ -14,7 +14,7 @@
 })(this, function() {
 
   var _scope = typeof window === 'undefined' ? global : window;
-  var _version = '1.4.2';
+  var _version = '1.4.3';
   var i, j, k, m, n;
 
   /* istanbul ignore next */
@@ -2586,8 +2586,15 @@
         }
       }
       else if (msg[1] == 0x41) {
-        if (msg[3] == 0x42 && msg[4] == 0x12 && msg[5] == 0x40 && msg[6] == 0 && msg[7] == 0x7f && msg[8] == 0 && msg[9] == 0x41) {
-          msg.label('GS Reset'); this._clear(); this._gm = 'R';
+        if (msg[3] == 0x42 && msg[4] == 0x12) {
+          if (msg[5] == 0x40) {
+            if (msg[6] == 0 && msg[7] == 0x7f && msg[8] == 0 && msg[9] == 0x41) {
+              msg.label('GS Reset'); this._clear(); this._gm = 'R';
+            }
+            else if ((msg[6] & 0xf0) == 0x10 && msg[7] == 0x15) msg.label('GS Drum Part Change');
+            else msg.label('GS Parameter');
+          }
+          if (msg[5] == 0x41) msg.label('GS Parameter');
         }
       }
     }
