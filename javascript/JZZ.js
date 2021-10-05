@@ -2592,6 +2592,7 @@
               msg.label('GS Reset'); this._clear(); this._gm = 'R';
             }
             else if ((msg[6] & 0xf0) == 0x10 && msg[7] == 0x15) msg.label('GS Drum Part Change');
+            else if ((msg[6] & 0xf0) == 0x10 && msg[7] >= 0x40 && msg[7] <= 0x4b) msg.label('GS Scale Tuning');
             else msg.label('GS Parameter');
           }
           if (msg[5] == 0x41) msg.label('GS Parameter');

@@ -1157,6 +1157,9 @@ describe('JZZ.Context', function() {
     msg = JZZ.MIDI.sxGS(0x40, 0x10, 0x15, 0x00);
     ctxt._receive(msg);
     assert.equal(msg.toString(), 'f0 41 7f 42 12 40 10 15 00 1b f7 (GS Drum Part Change)');
+    msg = JZZ.MIDI.sxGS(0x40, 0x12, 0x45, 0x40);
+    ctxt._receive(msg);
+    assert.equal(msg.toString(), 'f0 41 7f 42 12 40 12 45 40 29 f7 (GS Scale Tuning)');
     msg = JZZ.MIDI.sxGS(0x40, 0x10, 0x16, 0x00);
     ctxt._receive(msg);
     assert.equal(msg.toString(), 'f0 41 7f 42 12 40 10 16 00 1a f7 (GS Parameter)');
