@@ -1198,6 +1198,24 @@ describe('JZZ.Context', function() {
     ctxt._receive(msg);
     assert.equal(msg.toString(), 'f0 7f 7f 04 02 7f 7f f7 (Master Balance)');
   });
+  it('master fine tuning', function() {
+    var ctxt = JZZ.Context();
+    var msg = JZZ.MIDI([0xf0, 0x7f, 0x7f, 0x04, 0x03, 0x7f, 0x7f, 0xf7]);
+    ctxt._receive(msg);
+    assert.equal(msg.toString(), 'f0 7f 7f 04 03 7f 7f f7 (Master Fine Tuning)');
+  });
+  it('master coarse tuning', function() {
+    var ctxt = JZZ.Context();
+    var msg = JZZ.MIDI([0xf0, 0x7f, 0x7f, 0x04, 0x04, 0x7f, 0x7f, 0xf7]);
+    ctxt._receive(msg);
+    assert.equal(msg.toString(), 'f0 7f 7f 04 04 7f 7f f7 (Master Coarse Tuning)');
+  });
+  it('unknown 04 xx', function() {
+    var ctxt = JZZ.Context();
+    var msg = JZZ.MIDI([0xf0, 0x7f, 0x7f, 0x04, 0x7f, 0x7f, 0x7f, 0xf7]);
+    ctxt._receive(msg);
+    assert.equal(msg.toString(), 'f0 7f 7f 04 7f 7f 7f f7');
+  });
   it('etc', function() {
     var msg;
     var ctxt = JZZ.Context();

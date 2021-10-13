@@ -2252,7 +2252,7 @@
   MIDI.prototype.isXgReset = function() {
     return this.match([0xf0, 0x43, [0x10, 0xf0], 0x4c, 0, 0, 0x7e, 0, 0xf7]);
   };
-  MIDI.prototype.match = function(a, n) {
+  MIDI.prototype.match = function(a) {
     var i, m;
     for (i = 0; i < a.length; i++) {
       m = a[i][1];
@@ -2533,6 +2533,7 @@
     if (msg[0] == 0xff) { this._clear(); return msg; }
     var ch = msg[0] & 15;
     var st = msg[0] >> 4;
+    var s;
     if (st == 12) {
       msg._bm = this._cc[ch].bm;
       msg._bl = this._cc[ch].bl;
@@ -2563,8 +2564,8 @@
     else if (msg.isFullSysEx()) {
       if (msg[1] == 0x7f) {
         if (msg[3] == 4) {
-          if (msg[4] == 1) msg.label('Master Volume');
-          else if (msg[4] == 2) msg.label('Master Balance');
+          s = { 1: 'Master Volume', 2: 'Master Balance', 3: 'Master Fine Tuning', 4: 'Master Coarse Tuning' }[msg[4]];
+          if (s) msg.label(s);
         }
       }
       else if (msg[1] == 0x7e) {
