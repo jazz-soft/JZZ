@@ -1,6 +1,6 @@
 {
   "name": "jzz",
-  "version": "1.4.3",
+  "version": "1.4.4",
   "description": "MIDI library for Node.js and web-browsers",
   "main": "javascript/JZZ.js",
   "scripts": {
@@ -21,7 +21,7 @@
     "jazz-midi": "^1.7.5"
   },
   "devDependencies": {
-    "eslint": "^8.0.0",
+    "eslint": "^8.0.1",
     "grunt": "^1.4.1",
     "grunt-contrib-jshint": "^3.1.1",
     "grunt-contrib-uglify": "^5.0.1",
