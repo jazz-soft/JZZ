@@ -1,6 +1,6 @@
 {
   "name": "web-midi-api",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "description": "Web MIDI API for Node.js",
   "main": "index.js",
   "scripts": {
