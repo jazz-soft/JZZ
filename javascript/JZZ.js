@@ -2555,7 +2555,7 @@
           }
           if (this._cc[ch].rn == 'n') {
             msg._nm = this._cc[ch].rm;
-            msg._nl = this._cc[ch].nl; 
+            msg._nl = this._cc[ch].nl;
             msg.label(_nrpn_txt(this._cc[ch].nm, this._cc[ch].nl));
           }
           break;
@@ -2567,6 +2567,10 @@
           s = { 1: 'Master Volume', 2: 'Master Balance', 3: 'Master Fine Tuning', 4: 'Master Coarse Tuning' }[msg[4]];
           if (s) msg.label(s);
         }
+        else if (msg[3] == 8) {
+          s = { 2: 'Note Tuning', 7: 'Note Tuning, Bank', 8: 'Scale Tuning, 1 byte format', 9: 'Scale Tuning, 2 byte format' }[msg[4]];
+          if (s) msg.label(s);
+        }
       }
       else if (msg[1] == 0x7e) {
         if (msg[3] == 6) {
@@ -2574,6 +2578,14 @@
           else if (msg[4] == 2) {
             msg.label('Device ID Response');
           }
+        }
+        else if (msg[3] == 8) {
+          s = {
+            0: 'Bulk Tuning Dump Request', 1: 'Bulk Tuning Dump', 3: 'Bulk Tuning Dump Request, Bank', 4: 'Bulk Tuning Dump, Bank',
+            5: 'Scale Tuning Dump, 1 byte format', 6: 'Scale Tuning Dump, 2 byte format',
+            7: 'Note Tuning, Bank', 8: 'Scale Tuning, 1 byte format', 9: 'Scale Tuning, 2 byte format'
+          }[msg[4]];
+          if (s) msg.label(s);
         }
         else if (msg[3] == 9) {
           if (msg[4] == 1) { msg.label('GM1 System On'); this._clear(); this._gm = '1'; }
