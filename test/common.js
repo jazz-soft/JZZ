@@ -1210,6 +1210,21 @@ describe('JZZ.Context', function() {
     ctxt._receive(msg);
     assert.equal(msg.toString(), 'f0 7f 7f 04 04 7f 7f f7 (Master Coarse Tuning)');
   });
+  it('note/scale tuning', function() {
+    var ctxt = JZZ.Context();
+    var msg = JZZ.MIDI([0xf0, 0x7f, 0x7f, 0x08, 0x00, 0x00, 0xf7]);
+    ctxt._receive(msg);
+    assert.equal(msg.toString(), 'f0 7f 7f 08 00 00 f7');
+    msg = JZZ.MIDI([0xf0, 0x7e, 0x7f, 0x08, 0x00, 0x00, 0xf7]);
+    ctxt._receive(msg);
+    assert.equal(msg.toString(), 'f0 7e 7f 08 00 00 f7 (Bulk Tuning Dump Request)');
+    msg = JZZ.MIDI([0xf0, 0x7f, 0x7f, 0x08, 0x02, 0x00, 0x01, 0x45, 0x47, 0x00, 0x00, 0xf7]);
+    ctxt._receive(msg);
+    assert.equal(msg.toString(), 'f0 7f 7f 08 02 00 01 45 47 00 00 f7 (Note Tuning)');
+    msg = JZZ.MIDI([0xf0, 0x7e, 0x7f, 0x08, 0x02, 0x00, 0x01, 0x45, 0x47, 0x00, 0x00, 0xf7]);
+    ctxt._receive(msg);
+    assert.equal(msg.toString(), 'f0 7e 7f 08 02 00 01 45 47 00 00 f7');
+  });
   it('unknown 04 xx', function() {
     var ctxt = JZZ.Context();
     var msg = JZZ.MIDI([0xf0, 0x7f, 0x7f, 0x04, 0x7f, 0x7f, 0x7f, 0xf7]);
