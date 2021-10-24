@@ -1775,10 +1775,11 @@
       var c = 0; var a = [0xF0, 0x41, this._sxid, 0x42, 0x12];
       for (var i = 0; i < arr.length; i++) { var x = _7b(arr[i]); a.push(x); c += x; }
       c %= 128; a.push(c ? 128 - c : 0); a.push(0xf7); return a; },
-    sxXG: function() {
+    sxXG: function(arg) { var arr = typeof arg == 'undefined' ? [0, 0, 0x7E, 0] : arg instanceof Array ? arg : arguments;
       var sxid = this._sxid == 0x7f ? 0 : this._sxid;
       if (sxid > 15) _throw('Bad Yamaha device number: ' + sxid);
-      return [0xf0, 0x43, 16 + sxid, 0x4c, 0, 0, 0x7e, 0, 0xf7]; },
+      var a = [0xf0, 0x43, 16 + sxid, 0x4c];
+      for (var i = 0; i < arr.length; i++) a.push(_7b(arr[i])); a.push(0xf7); return a; },
     sxMidiSoft: function(n, s) {
       var a = [0xf0, 0x00, 0x20, 0x24, 0x00, _7b(n || 0)];
       s = typeof s == 'undefined' ? '' : '' + s;

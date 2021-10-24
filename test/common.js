@@ -627,6 +627,8 @@ describe('MIDI messages', function() {
     assert.equal(msg.isGmReset(), false);
     assert.equal(msg.isGsReset(), false);
     assert.equal(msg.isXgReset(), true);
+    assert.equal(JZZ.MIDI.sxXG(0, 0, 0x7e, 0).toString(), 'f0 43 10 4c 00 00 7e 00 f7');
+    assert.equal(JZZ.MIDI.sxXG([0, 0, 0x7e, 0]).toString(), 'f0 43 10 4c 00 00 7e 00 f7');
     assert.throws(function() { JZZ.MIDI.sxId(0x7e).sxXG(); });
   });
   it('sxMidiSoft', function() {
