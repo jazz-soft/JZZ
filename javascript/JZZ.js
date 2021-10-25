@@ -2595,8 +2595,15 @@
         }
       }
       else if (msg[1] == 0x43) {
-        if ((msg[2] & 0xf0) == 0x10 && msg[3] == 0x4c && msg[4] == 0 && msg[5] == 0 && msg[6] == 0x7e && msg[7] == 0) {
-          msg.label('XG System On'); this._clear(); this._gm = 'Y';
+        if ((msg[2] & 0xf0) == 0x10 && msg[3] == 0x4c) {
+          if (msg[4] == 0 && msg[5] == 0 && msg[6] == 0x7e && msg[7] == 0) {
+            msg.label('XG System On'); this._clear(); this._gm = 'Y';
+          }
+          else if (msg[4] == 0 && msg[5] == 0 && msg[6] == 0) msg.label('XG Master Tuning');
+          else if (msg[4] == 0 && msg[5] == 0 && msg[6] == 4) msg.label('XG Master Volume');
+          else if (msg[4] == 0 && msg[5] == 0 && msg[6] == 6) msg.label('XG Master Transpose');
+          else if (msg[4] == 8 && msg[5] < 16 && msg[6] >= 0x41 && msg[6] <= 0x4c) msg.label('XG Scale Tuning');
+          else  msg.label('XG Parameter');
         }
       }
       else if (msg[1] == 0x41) {
