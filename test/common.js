@@ -1175,6 +1175,21 @@ describe('JZZ.Context', function() {
     ctxt._receive(msg);
     assert.equal(msg.toString(), 'f0 43 10 4c 00 00 7e 00 f7 (XG System On)');
     assert.equal(ctxt._gm, 'Y');
+    msg = JZZ.MIDI.sxXG(0, 0, 0, 0x40, 0, 0, 0);
+    ctxt._receive(msg);
+    assert.equal(msg.toString(), 'f0 43 10 4c 00 00 00 40 00 00 00 f7 (XG Master Tuning)');
+    msg = JZZ.MIDI.sxXG(0, 0, 4, 0x7f);
+    ctxt._receive(msg);
+    assert.equal(msg.toString(), 'f0 43 10 4c 00 00 04 7f f7 (XG Master Volume)');
+    msg = JZZ.MIDI.sxXG(0, 0, 6, 0x40);
+    ctxt._receive(msg);
+    assert.equal(msg.toString(), 'f0 43 10 4c 00 00 06 40 f7 (XG Master Transpose)');
+    msg = JZZ.MIDI.sxXG(8, 1, 0x41, 0x40);
+    ctxt._receive(msg);
+    assert.equal(msg.toString(), 'f0 43 10 4c 08 01 41 40 f7 (XG Scale Tuning)');
+    msg = JZZ.MIDI.sxXG(1, 1, 1, 1);
+    ctxt._receive(msg);
+    assert.equal(msg.toString(), 'f0 43 10 4c 01 01 01 01 f7 (XG Parameter)');
   });
   it('device id request', function() {
     var ctxt = JZZ.Context();
