@@ -1542,6 +1542,11 @@
   var _noteNum = {};
   MIDI.noteValue = function(x) { return typeof x == 'undefined' ? undefined : _noteNum[x.toString().toLowerCase()]; };
   MIDI.programValue = function(x) { return x; };
+  MIDI.octaveValue = function(x) {
+    var n = _noteNum[x.toString().toLowerCase()];
+    if (typeof n == 'undefined') n = _noteNum[x.toString().toLowerCase() + '1'];
+    return typeof n == 'undefined' ? undefined : n % 12;
+  }
   MIDI.freq = function(n, a) {
     if (typeof a == 'undefined') a = 440.0;
     _float(a);
@@ -1596,7 +1601,7 @@
     for (n = 0; n < 12; n++) {
       m = _noteMap[k] + n * 12;
       if (m > 127) break;
-      _noteNum[k+n] = m;
+      _noteNum[k + n] = m;
       if (m > 0) { _noteNum[k + 'b' + n] = m - 1; _noteNum[k + 'bb' + n] = m - 2; }
       if (m < 127) { _noteNum[k + '#' + n] = m + 1; _noteNum[k + '##' + n] = m + 2; }
     }
