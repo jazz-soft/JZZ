@@ -631,6 +631,13 @@ describe('MIDI messages', function() {
     assert.equal(JZZ.MIDI.sxXG([0, 0, 0x7e, 0]).toString(), 'f0 43 10 4c 00 00 7e 00 f7');
     assert.throws(function() { JZZ.MIDI.sxId(0x7e).sxXG(); });
   });
+  it('xgOctaveTuning', function() {
+    assert.equal(JZZ.MIDI.xgOctaveTuning(1, 'C5', 114).toString(), 'f0 43 10 4c 08 01 41 72 f7');
+    assert.equal(JZZ.MIDI.xgOctaveTuning(1, 'B#', 114).toString(), 'f0 43 10 4c 08 01 41 72 f7');
+    assert.equal(JZZ.MIDI.xgOctaveTuningF(1, 0, 0.5).toString(), 'f0 43 10 4c 08 01 41 72 f7');
+    assert.throws(function() { JZZ.MIDI.xgOctaveTuning(0, 'dummy', 0); });
+    assert.throws(function() { JZZ.MIDI.xgOctaveTuningF(0, 0, 1); });
+  });
   it('sxMidiSoft', function() {
     assert.equal(JZZ.MIDI.sxMidiSoft(0).toString(), 'f0 00 20 24 00 00 f7 -- [K:00]');
     assert.equal(JZZ.MIDI.sxMidiSoft(4, 'MidiSoft').toString(), 'f0 00 20 24 00 04 4d 69 64 69 53 6f 66 74 f7 -- [K:04] MidiSoft');

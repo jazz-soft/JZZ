@@ -1790,6 +1790,9 @@
       s = typeof s == 'undefined' ? '' : '' + s;
       for (var i = 0; i < s.length; i++) a.push(_7b(s.charCodeAt(i)));
       a.push(0xf7); return a; },
+    xgOctaveTuning: function(c, n, x) { return _helperNC.sxXG.call(this, [8, _ch(c), 0x41 + MIDI.octaveValue(n), _7b(x)]); },
+    xgOctaveTuningF: function(c, n, x) { if (x < -0.64 || x > 0.63) throw RangeError('Out of range: ' + x);
+      return _helperNC.xgOctaveTuning.call(this, c, n, Math.floor(x * 100 + 64)); },
     reset: function() { return [0xFF]; },
   };
   _helperNC.sxScaleTuning = _helperNC.sxScaleTuning2;
