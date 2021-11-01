@@ -638,12 +638,24 @@ describe('MIDI messages', function() {
     assert.throws(function() { JZZ.MIDI.gsOctaveTuning(0, 'dummy', 0); });
     assert.throws(function() { JZZ.MIDI.gsOctaveTuningF(0, 0, 1); });
   });
+  it('gsScaleTuning', function() {
+    assert.equal(JZZ.MIDI.gsScaleTuning(0, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])[1].toString(), 'f0 41 7f 42 12 40 11 41 00 6e f7');
+    assert.equal(JZZ.MIDI.gsScaleTuningF(0, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])[1].toString(), 'f0 41 7f 42 12 40 11 41 40 2e f7');
+    assert.throws(function() { JZZ.MIDI.gsScaleTuning(0, []); });
+    assert.throws(function() { JZZ.MIDI.gsScaleTuningF(0, []); });
+  });
   it('xgOctaveTuning', function() {
     assert.equal(JZZ.MIDI.xgOctaveTuning(1, 'C5', 114).toString(), 'f0 43 10 4c 08 01 41 72 f7');
     assert.equal(JZZ.MIDI.xgOctaveTuning(1, 'B#', 114).toString(), 'f0 43 10 4c 08 01 41 72 f7');
     assert.equal(JZZ.MIDI.xgOctaveTuningF(1, 0, 0.5).toString(), 'f0 43 10 4c 08 01 41 72 f7');
     assert.throws(function() { JZZ.MIDI.xgOctaveTuning(0, 'dummy', 0); });
     assert.throws(function() { JZZ.MIDI.xgOctaveTuningF(0, 0, 1); });
+  });
+  it('xgScaleTuning', function() {
+    assert.equal(JZZ.MIDI.xgScaleTuning(0, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])[1].toString(), 'f0 43 10 4c 08 00 42 00 f7');
+    assert.equal(JZZ.MIDI.xgScaleTuningF(0, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])[1].toString(), 'f0 43 10 4c 08 00 42 40 f7');
+    assert.throws(function() { JZZ.MIDI.xgScaleTuning(0, []); });
+    assert.throws(function() { JZZ.MIDI.xgScaleTuningF(0, []); });
   });
   it('sxMidiSoft', function() {
     assert.equal(JZZ.MIDI.sxMidiSoft(0).toString(), 'f0 00 20 24 00 00 f7 -- [K:00]');

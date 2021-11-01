@@ -1859,6 +1859,14 @@
     sxMasterTuning: function(n, m, l) { return [_helperNC.sxMasterCoarseTuning.call(this, n), _helperNC.sxMasterFineTuning.call(this, m, l)]; },
     sxMasterTuningF: function(x) { return [_helperNC.sxMasterCoarseTuningF.call(this, x), _helperNC.sxMasterFineTuningF.call(this, x)]; },
     sxMasterTuningA: function(a) { return _helperGNC.sxMasterTuningF.call(this, MIDI.shift(a)); },
+    gsScaleTuning: function(c, a) { var out = []; if (a.length != 12) throw RangeError('Wrong input size: ' + a.length);
+      for (var i = 0; i < 12; i++) out.push(_helperNC.gsOctaveTuning.call(this, c, i, a[i])); return out; },
+    gsScaleTuningF: function(c, a) { var out = []; if (a.length != 12) throw RangeError('Wrong input size: ' + a.length);
+      for (var i = 0; i < 12; i++) out.push(_helperNC.gsOctaveTuningF.call(this, c, i, a[i])); return out; },
+    xgScaleTuning: function(c, a) { var out = []; if (a.length != 12) throw RangeError('Wrong input size: ' + a.length);
+      for (var i = 0; i < 12; i++) out.push(_helperNC.xgOctaveTuning.call(this, c, i, a[i])); return out; },
+    xgScaleTuningF: function(c, a) { var out = []; if (a.length != 12) throw RangeError('Wrong input size: ' + a.length);
+      for (var i = 0; i < 12; i++) out.push(_helperNC.xgOctaveTuningF.call(this, c, i, a[i])); return out; },
   };
   function _smf(ff, dd) {
     var midi = new MIDI();
