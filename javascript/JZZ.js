@@ -14,7 +14,7 @@
 })(this, function() {
 
   var _scope = typeof window === 'undefined' ? global : window;
-  var _version = '1.4.4';
+  var _version = '1.4.5';
   var i, j, k, m, n;
 
   /* istanbul ignore next */
@@ -1546,7 +1546,7 @@
     var n = _noteNum[x.toString().toLowerCase()];
     if (typeof n == 'undefined') n = _noteNum[x.toString().toLowerCase() + '1'];
     return typeof n == 'undefined' ? undefined : n % 12;
-  }
+  };
   MIDI.freq = function(n, a) {
     if (typeof a == 'undefined') a = 440.0;
     _float(a);
