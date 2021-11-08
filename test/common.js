@@ -1179,6 +1179,18 @@ describe('JZZ.Context', function() {
     ctxt._receive(msg);
     assert.equal(msg.toString(), 'f0 41 7f 42 12 40 00 7f 00 41 f7 (GS Reset)');
     assert.equal(ctxt._gm, 'R');
+    msg = JZZ.MIDI.sxGS(0x40, 0, 0, 0, 0x04, 0, 0);
+    ctxt._receive(msg);
+    assert.equal(msg.toString(), 'f0 41 7f 42 12 40 00 00 00 04 00 00 3c f7 (GS Master Tuning)');
+    msg = JZZ.MIDI.sxGS(0x40, 0, 4, 0x7f);
+    ctxt._receive(msg);
+    assert.equal(msg.toString(), 'f0 41 7f 42 12 40 00 04 7f 3d f7 (GS Master Volume)');
+    msg = JZZ.MIDI.sxGS(0x40, 0, 5, 0x40);
+    ctxt._receive(msg);
+    assert.equal(msg.toString(), 'f0 41 7f 42 12 40 00 05 40 7b f7 (GS Master Transpose)');
+    msg = JZZ.MIDI.sxGS(0x40, 0, 1, 0);
+    ctxt._receive(msg);
+    assert.equal(msg.toString(), 'f0 41 7f 42 12 40 00 01 00 3f f7 (GS Parameter)');
     msg = JZZ.MIDI.sxGS(0x40, 0x11, 0x15, 0x02);
     ctxt._receive(msg);
     assert.equal(msg.toString(), 'f0 41 7f 42 12 40 11 15 02 18 f7 (GS Drum Part Change)');
