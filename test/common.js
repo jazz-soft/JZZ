@@ -631,6 +631,9 @@ describe('MIDI messages', function() {
     assert.equal(JZZ.MIDI.sxXG([0, 0, 0x7e, 0]).toString(), 'f0 43 10 4c 00 00 7e 00 f7');
     assert.throws(function() { JZZ.MIDI.sxId(0x7e).sxXG(); });
   });
+  it('gsMasterTranspose', function() {
+    assert.equal(JZZ.MIDI.gsMasterTranspose(0x41).toString(), 'f0 41 7f 42 12 40 00 05 41 7a f7');
+  });
   it('gsOctaveTuning', function() {
     assert.equal(JZZ.MIDI.gsOctaveTuning(1, 'C5', 114).toString(), 'f0 41 7f 42 12 40 12 40 72 7c f7');
     assert.equal(JZZ.MIDI.gsOctaveTuning(1, 'B#', 114).toString(), 'f0 41 7f 42 12 40 12 40 72 7c f7');
@@ -643,6 +646,9 @@ describe('MIDI messages', function() {
     assert.equal(JZZ.MIDI.gsScaleTuningF(0, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])[1].toString(), 'f0 41 7f 42 12 40 11 41 40 2e f7');
     assert.throws(function() { JZZ.MIDI.gsScaleTuning(0, []); });
     assert.throws(function() { JZZ.MIDI.gsScaleTuningF(0, []); });
+  });
+  it('xgMasterTranspose', function() {
+    assert.equal(JZZ.MIDI.xgMasterTranspose(0x41).toString(), 'f0 43 10 4c 00 00 06 41 f7');
   });
   it('xgOctaveTuning', function() {
     assert.equal(JZZ.MIDI.xgOctaveTuning(1, 'C5', 114).toString(), 'f0 43 10 4c 08 01 41 72 f7');
