@@ -1791,10 +1791,12 @@
       for (var i = 0; i < s.length; i++) a.push(_7b(s.charCodeAt(i)));
       a.push(0xf7); return a; },
     gsMasterTranspose: function(n) { return _helperNC.sxGS.call(this, [0x40, 0, 5, _7b(n)]); },
+    gsMasterTransposeF: function(x) { return _helperNC.gsMasterTranspose.call(this, 0x40 + (x - x % 1)); },
     gsOctaveTuning: function(c, n, x) { return _helperNC.sxGS.call(this, [0x40, 0x10 + [1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 11, 12, 13, 14, 15][_ch(c)], 0x40 + MIDI.octaveValue(n), _7b(x)]); },
     gsOctaveTuningF: function(c, n, x) { if (x < -0.64 || x > 0.63) throw RangeError('Out of range: ' + x);
       return _helperNC.gsOctaveTuning.call(this, c, n, Math.floor(x * 100 + 64)); },
     xgMasterTranspose: function(n) { return _helperNC.sxXG.call(this, [0, 0, 6, _7b(n)]); },
+    xgMasterTransposeF: function(x) { return _helperNC.xgMasterTranspose.call(this, 0x40 + (x - x % 1)); },
     xgOctaveTuning: function(c, n, x) { return _helperNC.sxXG.call(this, [8, _ch(c), 0x41 + MIDI.octaveValue(n), _7b(x)]); },
     xgOctaveTuningF: function(c, n, x) { if (x < -0.64 || x > 0.63) throw RangeError('Out of range: ' + x);
       return _helperNC.xgOctaveTuning.call(this, c, n, Math.floor(x * 100 + 64)); },
@@ -1802,6 +1804,8 @@
   };
   _helperNC.sxScaleTuning = _helperNC.sxScaleTuning2;
   _helperNC.sxScaleTuningF = _helperNC.sxScaleTuning2F;
+  _helperNC.MasterTranspose = _helperNC.sxMasterCoarseTuning;
+  _helperNC.MasterTransposeF = _helperNC.sxMasterCoarseTuningF;
   var _helperGCH = { // compound messages
     bank: function(c, m, l) { return typeof l == 'undefined' ?
       [_helperCH.bankMSB(c, _msb(m)), _helperCH.bankLSB(c, _lsb(m))] : [_helperCH.bankMSB(c, m), _helperCH.bankLSB(c, l)]; },
