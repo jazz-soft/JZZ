@@ -1564,6 +1564,10 @@
     if (f != parseFloat(f)) return _7bn(f);
     return MIDI.shift(f, f0) + 69;
   };
+  MIDI.to7b = function(x) {
+    _float(x);
+    return x <= 0 ? 0 : x >= 1 ? 0x7f : Math.floor(x * 0x80);
+  };
   MIDI.to14b = function(x) {
     _float(x);
     return x <= 0 ? 0 : x >= 1 ? 0x3fff : Math.floor(x * 0x4000);
@@ -1790,11 +1794,15 @@
       s = typeof s == 'undefined' ? '' : '' + s;
       for (var i = 0; i < s.length; i++) a.push(_7b(s.charCodeAt(i)));
       a.push(0xf7); return a; },
+    gsMasterVolume: function(n) { return _helperNC.sxGS.call(this, [0x40, 0, 4, _7b(n)]); },
+    gsMasterVolumeF: function(x) { return _helperNC.gsMasterVolume.call(this, MIDI.to7b(_01(x))); },
     gsMasterCoarseTuning: function(n) { return _helperNC.sxGS.call(this, [0x40, 0, 5, _7b(n)]); },
     gsMasterCoarseTuningF: function(x) { return _helperNC.gsMasterCoarseTuning.call(this, 0x40 + (x - x % 1)); },
     gsOctaveTuning: function(c, n, x) { return _helperNC.sxGS.call(this, [0x40, 0x10 + [1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 11, 12, 13, 14, 15][_ch(c)], 0x40 + MIDI.octaveValue(n), _7b(x)]); },
     gsOctaveTuningF: function(c, n, x) { if (x < -0.64 || x > 0.63) throw RangeError('Out of range: ' + x);
       return _helperNC.gsOctaveTuning.call(this, c, n, Math.floor(x * 100 + 64)); },
+    xgMasterVolume: function(n) { return _helperNC.sxXG.call(this, [0, 0, 4, _7b(n)]); },
+    xgMasterVolumeF: function(x) { return _helperNC.xgMasterVolume.call(this, MIDI.to7b(_01(x))); },
     xgMasterCoarseTuning: function(n) { return _helperNC.sxXG.call(this, [0, 0, 6, _7b(n)]); },
     xgMasterCoarseTuningF: function(x) { return _helperNC.xgMasterCoarseTuning.call(this, 0x40 + (x - x % 1)); },
     xgOctaveTuning: function(c, n, x) { return _helperNC.sxXG.call(this, [8, _ch(c), 0x41 + MIDI.octaveValue(n), _7b(x)]); },
