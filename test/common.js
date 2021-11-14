@@ -637,7 +637,10 @@ describe('MIDI messages', function() {
     assert.equal(JZZ.MIDI.gsMasterVolume(0x40).toString(), 'f0 41 7f 42 12 40 00 04 40 7c f7');
     assert.equal(JZZ.MIDI.gsMasterVolumeF(0.5).toString(), 'f0 41 7f 42 12 40 00 04 40 7c f7');
   });
-  it('gsMasterTranspose', function() {
+  it('gsMasterTuning', function() {
+    assert.equal(JZZ.MIDI.gsMasterFineTuning(0, 1, 2, 3).toString(), 'f0 41 7f 42 12 40 00 00 00 01 02 03 3a f7');
+    assert.equal(JZZ.MIDI.gsMasterFineTuning(0x123).toString(), 'f0 41 7f 42 12 40 00 00 00 01 02 03 3a f7');
+    assert.throws(function() { JZZ.MIDI.gsMasterFineTuning(); });
     assert.equal(JZZ.MIDI.gsMasterCoarseTuning(0x41).toString(), 'f0 41 7f 42 12 40 00 05 41 7a f7');
     assert.equal(JZZ.MIDI.gsMasterCoarseTuningF(1).toString(), 'f0 41 7f 42 12 40 00 05 41 7a f7');
     assert.equal(JZZ.MIDI.gsMasterTranspose(0x41).toString(), 'f0 41 7f 42 12 40 00 05 41 7a f7');
@@ -660,7 +663,10 @@ describe('MIDI messages', function() {
     assert.equal(JZZ.MIDI.xgMasterVolume(0x40).toString(), 'f0 43 10 4c 00 00 04 40 f7');
     assert.equal(JZZ.MIDI.xgMasterVolumeF(0.5).toString(), 'f0 43 10 4c 00 00 04 40 f7');
   });
-  it('xgMasterTranspose', function() {
+  it('xgMasterTuning', function() {
+    assert.equal(JZZ.MIDI.xgMasterFineTuning(0, 1, 2, 3).toString(), 'f0 43 10 4c 00 00 00 00 01 02 03 f7');
+    assert.equal(JZZ.MIDI.xgMasterFineTuning(0x123).toString(), 'f0 43 10 4c 00 00 00 00 01 02 03 f7');
+    assert.throws(function() { JZZ.MIDI.xgMasterFineTuning(); });
     assert.equal(JZZ.MIDI.xgMasterCoarseTuning(0x41).toString(), 'f0 43 10 4c 00 00 06 41 f7');
     assert.equal(JZZ.MIDI.xgMasterCoarseTuningF(1).toString(), 'f0 43 10 4c 00 00 06 41 f7');
     assert.equal(JZZ.MIDI.xgMasterTranspose(0x41).toString(), 'f0 43 10 4c 00 00 06 41 f7');

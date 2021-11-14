@@ -1733,6 +1733,12 @@
     mono: function(c, n) { if (typeof n == 'undefined') n = 1; return [0xB0 + _ch(c), 0x7e, _7b(n)]; },
     poly: function(c) { return [0xB0 + _ch(c), 0x7f, 0]; },
   };
+  function _splitMasterTuning(a, b, c, d) {
+    if (typeof b != 'undefined') return [_7b(a), _7b(b), _7b(c), _7b(d)];
+    if (a != parseInt(a) || a < 0 || n > 0xffff) _bad(a);
+    a = parseInt(a);
+    return [(a >> 12) & 0xf, (a >> 8) & 0xf, (a >> 4) & 0xf, a & 0xf];
+  }
   var _helperNC = { // no channel
     mtc: function(t) { return [0xF1, _mtc(t)]; },
     songPosition: function(n, l) { return typeof l == 'undefined' ? [0xF2, _lsb(n), _msb(n)] : [0xF2, _7b(l), _7b(n)]; },
@@ -1796,6 +1802,7 @@
       a.push(0xf7); return a; },
     gsMasterVolume: function(n) { return _helperNC.sxGS.call(this, [0x40, 0, 4, _7b(n)]); },
     gsMasterVolumeF: function(x) { return _helperNC.gsMasterVolume.call(this, MIDI.to7b(_01(x))); },
+    gsMasterFineTuning: function(a, b, c, d) { a = _splitMasterTuning(a, b, c, d); return _helperNC.sxGS.call(this, [0x40, 0, 0, a[0], a[1], a[2], a[3]]); },
     gsMasterCoarseTuning: function(n) { return _helperNC.sxGS.call(this, [0x40, 0, 5, _7b(n)]); },
     gsMasterCoarseTuningF: function(x) { return _helperNC.gsMasterCoarseTuning.call(this, 0x40 + (x - x % 1)); },
     gsOctaveTuning: function(c, n, x) { return _helperNC.sxGS.call(this, [0x40, 0x10 + [1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 11, 12, 13, 14, 15][_ch(c)], 0x40 + MIDI.octaveValue(n), _7b(x)]); },
@@ -1803,6 +1810,7 @@
       return _helperNC.gsOctaveTuning.call(this, c, n, Math.floor(x * 100 + 64)); },
     xgMasterVolume: function(n) { return _helperNC.sxXG.call(this, [0, 0, 4, _7b(n)]); },
     xgMasterVolumeF: function(x) { return _helperNC.xgMasterVolume.call(this, MIDI.to7b(_01(x))); },
+    xgMasterFineTuning: function(a, b, c, d) { a = _splitMasterTuning(a, b, c, d); return _helperNC.sxXG.call(this, [0, 0, 0, a[0], a[1], a[2], a[3]]); },
     xgMasterCoarseTuning: function(n) { return _helperNC.sxXG.call(this, [0, 0, 6, _7b(n)]); },
     xgMasterCoarseTuningF: function(x) { return _helperNC.xgMasterCoarseTuning.call(this, 0x40 + (x - x % 1)); },
     xgOctaveTuning: function(c, n, x) { return _helperNC.sxXG.call(this, [8, _ch(c), 0x41 + MIDI.octaveValue(n), _7b(x)]); },
