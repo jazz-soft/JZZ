@@ -642,9 +642,8 @@ describe('MIDI messages', function() {
     assert.equal(JZZ.MIDI.gsMasterFineTuning(0x123).toString(), 'f0 41 7f 42 12 40 00 00 00 01 02 03 3a f7');
     assert.throws(function() { JZZ.MIDI.gsMasterFineTuning(); });
     assert.equal(JZZ.MIDI.gsMasterFineTuningF(0).toString(), 'f0 41 7f 42 12 40 00 00 00 04 00 00 3c f7');
-    assert.equal(JZZ.MIDI.gsMasterFineTuningF(1).toString(), 'f0 41 7f 42 12 40 00 00 00 07 0e 08 23 f7');
-    assert.equal(JZZ.MIDI.gsMasterFineTuningF(-1).toString(), 'f0 41 7f 42 12 40 00 00 00 00 01 08 37 f7');
-    assert.throws(function() { JZZ.MIDI.gsMasterFineTuningF(2); });
+    assert.equal(JZZ.MIDI.gsMasterFineTuningF(0.9999).toString(), 'f0 41 7f 42 12 40 00 00 00 07 0e 08 23 f7');
+    assert.equal(JZZ.MIDI.gsMasterFineTuningF(-0.9999).toString(), 'f0 41 7f 42 12 40 00 00 00 00 01 08 37 f7');
     assert.equal(JZZ.MIDI.gsMasterCoarseTuning(0x41).toString(), 'f0 41 7f 42 12 40 00 05 41 7a f7');
     assert.equal(JZZ.MIDI.gsMasterCoarseTuningF(1).toString(), 'f0 41 7f 42 12 40 00 05 41 7a f7');
     assert.equal(JZZ.MIDI.gsMasterTranspose(0x41).toString(), 'f0 41 7f 42 12 40 00 05 41 7a f7');
@@ -672,9 +671,8 @@ describe('MIDI messages', function() {
     assert.equal(JZZ.MIDI.xgMasterFineTuning(0x123).toString(), 'f0 43 10 4c 00 00 00 00 01 02 03 f7');
     assert.throws(function() { JZZ.MIDI.xgMasterFineTuning(); });
     assert.equal(JZZ.MIDI.xgMasterFineTuningF(0).toString(), 'f0 43 10 4c 00 00 00 00 04 00 00 f7');
-    assert.equal(JZZ.MIDI.xgMasterFineTuningF(1).toString(), 'f0 43 10 4c 00 00 00 00 07 0e 08 f7');
-    assert.equal(JZZ.MIDI.xgMasterFineTuningF(-1).toString(), 'f0 43 10 4c 00 00 00 00 00 01 08 f7');
-    assert.throws(function() { JZZ.MIDI.xgMasterFineTuningF(2); });
+    assert.equal(JZZ.MIDI.xgMasterFineTuningF(0.9999).toString(), 'f0 43 10 4c 00 00 00 00 07 0e 08 f7');
+    assert.equal(JZZ.MIDI.xgMasterFineTuningF(-0.9999).toString(), 'f0 43 10 4c 00 00 00 00 00 01 08 f7');
     assert.equal(JZZ.MIDI.xgMasterCoarseTuning(0x41).toString(), 'f0 43 10 4c 00 00 06 41 f7');
     assert.equal(JZZ.MIDI.xgMasterCoarseTuningF(1).toString(), 'f0 43 10 4c 00 00 06 41 f7');
     assert.equal(JZZ.MIDI.xgMasterTranspose(0x41).toString(), 'f0 43 10 4c 00 00 06 41 f7');
