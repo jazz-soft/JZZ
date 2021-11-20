@@ -1890,7 +1890,11 @@
   var _helperGNC = { // compound messages no channel
     sxMasterTuning: function(n, m, l) { return [_helperNC.sxMasterCoarseTuning.call(this, n), _helperNC.sxMasterFineTuning.call(this, m, l)]; },
     sxMasterTuningF: function(x) { return [_helperNC.sxMasterCoarseTuningF.call(this, x), _helperNC.sxMasterFineTuningF.call(this, x)]; },
+    gsMasterTuningF: function(x) { return [_helperNC.gsMasterCoarseTuningF.call(this, x), _helperNC.gsMasterFineTuningF.call(this, x)]; },
+    xgMasterTuningF: function(x) { return [_helperNC.xgMasterCoarseTuningF.call(this, x), _helperNC.xgMasterFineTuningF.call(this, x)]; },
     sxMasterTuningA: function(a) { return _helperGNC.sxMasterTuningF.call(this, MIDI.shift(a)); },
+    gsMasterTuningA: function(a) { return _helperGNC.gsMasterTuningF.call(this, MIDI.shift(a)); },
+    xgMasterTuningA: function(a) { return _helperGNC.xgMasterTuningF.call(this, MIDI.shift(a)); },
     gsScaleTuning: function(c, a) { var out = []; if (a.length != 12) throw RangeError('Wrong input size: ' + a.length);
       for (var i = 0; i < 12; i++) out.push(_helperNC.gsOctaveTuning.call(this, c, i, a[i])); return out; },
     gsScaleTuningF: function(c, a) { var out = []; if (a.length != 12) throw RangeError('Wrong input size: ' + a.length);
