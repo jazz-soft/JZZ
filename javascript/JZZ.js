@@ -14,7 +14,7 @@
 })(this, function() {
 
   var _scope = typeof window === 'undefined' ? global : window;
-  var _version = '1.4.6';
+  var _version = '1.4.7';
   var i, j, k, m, n;
 
   /* istanbul ignore next */
@@ -1605,9 +1605,15 @@
     for (n = 0; n < 12; n++) {
       m = _noteMap[k] + n * 12;
       if (m > 127) break;
-      _noteNum[k + n] = m;
-      if (m > 0) { _noteNum[k + 'b' + n] = m - 1; _noteNum[k + 'bb' + n] = m - 2; }
-      if (m < 127) { _noteNum[k + '#' + n] = m + 1; _noteNum[k + '##' + n] = m + 2; }
+      _noteNum[k + n] = m; _noteNum[k + '♮' + n] = m;
+      if (m > 0) {
+        _noteNum[k + 'b' + n] = m - 1; _noteNum[k + '♭' + n] = m - 1;
+        _noteNum[k + 'bb' + n] = m - 2; _noteNum[k + '♭♭' + n] = m - 2; _noteNum[k + '𝄫' + n] = m - 2;
+      }
+      if (m < 127) {
+        _noteNum[k + '#' + n] = m + 1; _noteNum[k + '♯' + n] = m + 1;
+        _noteNum[k + '##' + n] = m + 2; _noteNum[k + '♯♯' + n] = m + 2; _noteNum[k + '𝄪' + n] = m + 2;
+      }
     }
   });
   for (n = 0; n < 128; n++) _noteNum[n] = n;
