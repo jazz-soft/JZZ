@@ -45,7 +45,6 @@ or [**Apple App Store**](https://apps.apple.com/us/app/jazz-midi/id1506447231).
 ## Install
 
 `npm install jzz --save`  
-or `bower install jzz`  
 or `yarn add jzz`  
 or get the full development version and minified scripts from [**Github**](https://github.com/jazz-soft/JZZ)
 
