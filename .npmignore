@@ -3,7 +3,6 @@ web-midi-api
 test*
 .*
 coverage
-bower.json
 Gruntfile.js
 *.html
 *.bat
