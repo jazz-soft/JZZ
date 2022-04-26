@@ -14,7 +14,7 @@
 })(this, function() {
 
   var _scope = typeof window === 'undefined' ? global : window;
-  var _version = '1.5.0';
+  var _version = '1.5.1';
   var i, j, k, m, n;
 
   /* istanbul ignore next */
@@ -2834,7 +2834,7 @@
             if (!osc.stop) osc.stop = osc.noteOff;
             osc.start(0.1); osc.stop(0.11);
           }
-          else {
+          else if (typeof document != 'undefined') {
             document.removeEventListener('touchstart', _activateAudioContext);
             document.removeEventListener('touchend', _activateAudioContext);
             document.removeEventListener('mousedown', _activateAudioContext);
@@ -2846,8 +2846,8 @@
           document.addEventListener('touchend', _activateAudioContext);
           document.addEventListener('mousedown', _activateAudioContext);
           document.addEventListener('keydown', _activateAudioContext);
-          _activateAudioContext();
         }
+        _activateAudioContext();
       }
     }
   }
