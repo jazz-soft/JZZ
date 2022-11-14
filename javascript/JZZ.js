@@ -2808,7 +2808,7 @@
       }
       setTimeout(_sch_tick, 0);
     };
-    _sch(function() { JZZ.lib.schedule = _sch; });
+    //_sch(function() { JZZ.lib.schedule = _sch; });
   }
   catch (e) {}
 
