@@ -14,7 +14,7 @@
 })(this, function() {
 
   var _scope = typeof window === 'undefined' ? global : window;
-  var _version = '1.5.3';
+  var _version = '1.5.4';
   var i, j, k, m, n;
 
   /* istanbul ignore next */
@@ -2780,6 +2780,38 @@
   JZZ.lib = {};
   JZZ.lib.now = _now;
   JZZ.lib.schedule = _schedule;
+  var _sch_list = [];
+  var _sch_worker;
+  var _sch_count = 0;
+  try {
+    var _blob = URL.createObjectURL(new Blob(['(', function() {
+      function tick() {
+        postMessage({});
+        setTimeout(tick, 0);
+      }
+      tick();
+    }.toString(), ')()'], { type: 'application/javascript' }));
+    var _sch_tick = function() {
+      while (_sch_list.length) _sch_list.shift()();
+      _sch_count++;
+      if (_sch_count > 20 && _sch_worker) {
+        _sch_worker.terminate();
+        _sch_worker = undefined;
+      }
+    };
+    var _sch = function(x) {
+      _sch_list.push(x);
+      _sch_count = 0;
+      if (!_sch_worker) {
+        _sch_worker = new Worker(_blob);
+        _sch_worker.onmessage = _sch_tick;
+      }
+      setTimeout(_sch_tick, 0);
+    };
+    _sch(function() { JZZ.lib.schedule = _sch; });
+  }
+  catch (e) {}
+
   JZZ.lib.openMidiOut = function(name, engine) {
     var port = new _M();
     engine._openOut(port);
