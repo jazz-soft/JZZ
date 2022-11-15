@@ -2792,7 +2792,9 @@
       tick();
     }.toString(), ')()'], { type: 'application/javascript' }));
     var _sch_tick = function() {
-      while (_sch_list.length) _sch_list.shift()();
+      var n = _sch_list.length;
+      // cannot use i < _sch_list.length !
+      for (var i = 0; i < n; i++) _sch_list.shift()();
       _sch_count++;
       if (_sch_count > 20 && _sch_worker) {
         _sch_worker.terminate();
@@ -2808,7 +2810,7 @@
       }
       setTimeout(_sch_tick, 0);
     };
-    //_sch(function() { JZZ.lib.schedule = _sch; });
+    _sch(function() { JZZ.lib.schedule = _sch; });
   }
   catch (e) {}
 
