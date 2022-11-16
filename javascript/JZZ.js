@@ -14,7 +14,7 @@
 })(this, function() {
 
   var _scope = typeof window === 'undefined' ? global : window;
-  var _version = '1.5.4';
+  var _version = '1.5.5';
   var i, j, k, m, n;
 
   /* istanbul ignore next */
@@ -2808,7 +2808,6 @@
         _sch_worker = new Worker(_blob);
         _sch_worker.onmessage = _sch_tick;
       }
-      setTimeout(_sch_tick, 0);
     };
     _sch(function() { JZZ.lib.schedule = _sch; });
   }
