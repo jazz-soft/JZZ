@@ -7,6 +7,8 @@
 ![raspberry pi](https://jazz-soft.github.io/img/rpi.jpg)  
 [![npm](https://img.shields.io/npm/v/web-midi-api.svg)](https://www.npmjs.com/package/web-midi-api)
 [![npm](https://img.shields.io/npm/dt/web-midi-api.svg)](https://www.npmjs.com/package/web-midi-api)
+[![build](https://github.com/jazz-soft/JZZ/actions/workflows/build.yml/badge.svg)](https://github.com/jazz-soft/JZZ/actions)
+[![Coverage](https://coveralls.io/repos/github/jazz-soft/JZZ/badge.svg?branch=master)](https://coveralls.io/github/jazz-soft/JZZ?branch=master)
 
 This package is deprecated and kept here for the old projects compatibility.
 It redirects to [**jzz**](https://www.npmjs.com/package/jzz):
