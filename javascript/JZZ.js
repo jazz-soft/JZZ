@@ -14,7 +14,7 @@
 })(this, function() {
 
   var _scope = typeof window === 'undefined' ? global : window;
-  var _version = '1.5.6';
+  var _version = '1.5.7';
   var i, j, k, m, n;
 
   /* istanbul ignore next */
@@ -572,8 +572,11 @@
   // Node.js
   function _tryNODE() {
     if (typeof module != 'undefined' && module.exports) {
-      _initNode(require('jazz-midi'));
-      return;
+      var jazzmidi = require('jazz-midi');
+      if (jazzmidi) {
+        _initNode(jazzmidi);
+        return;
+      }
     }
     this._break();
   }
