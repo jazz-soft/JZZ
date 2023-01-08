@@ -79,10 +79,17 @@ by running `npm remove midi-test --save-dev`.
 //...
 ```
 
-##### CommonJS (Browserify and Node.js command line applications)
+##### CommonJS
 
 ```js
 var JZZ = require('jzz');
+//...
+```
+
+##### TypeScript / ES6
+
+```ts
+import * as JZZ from 'jzz';
 //...
 ```
 
@@ -92,13 +99,6 @@ var JZZ = require('jzz');
 require(['JZZ'], function(JZZ) {
   //...
 });
-```
-
-##### TypeScript
-
-```ts
-import * as JZZ from 'jzz';
-//...
 ```
 
 ## Web MIDI API
