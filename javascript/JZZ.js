@@ -14,7 +14,7 @@
 })(this, function() {
 
   var _scope = typeof window === 'undefined' ? global : window;
-  var _version = '1.5.7';
+  var _version = '1.5.8';
   var i, j, k, m, n;
 
   /* istanbul ignore next */
@@ -671,8 +671,11 @@
       }
     }
     this._pause();
-    document.addEventListener('jazz-midi-msg', eventHandle);
-    try { document.dispatchEvent(new Event('jazz-midi')); } catch (err) {}
+    try {
+      document.addEventListener('jazz-midi-msg', eventHandle);
+      document.dispatchEvent(new Event('jazz-midi'));
+    }
+    catch (err) {}
     _schedule(function() { if (!inst) self._crash(); });
   }
 
