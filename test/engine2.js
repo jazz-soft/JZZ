@@ -69,7 +69,7 @@ var DOM = {
         console.log('function', func, 'not yet implemented!');
       }
     }
-    if (this.handle['jazz-midi-msg']) this.handle['jazz-midi-msg']();
+    if (this.handle['jazz-midi-msg']) this.handle['jazz-midi-msg']({});
   },
   MidiSrc: function(name) {
     return {
@@ -82,7 +82,7 @@ var DOM = {
       },
       emit: function(msg) {
         DOM.exchange.innerText += JSON.stringify(['midi', this.pos, 0].concat(msg)) + '\n';
-        if (DOM.handle) DOM.handle['jazz-midi-msg']();
+        if (DOM.handle) DOM.handle['jazz-midi-msg']({});
       }
     };
   },

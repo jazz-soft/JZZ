@@ -14,7 +14,7 @@
 })(this, function() {
 
   var _scope = typeof window === 'undefined' ? global : window;
-  var _version = '1.5.8';
+  var _version = '1.5.9';
   var i, j, k, m, n;
 
   /* istanbul ignore next */
@@ -654,13 +654,15 @@
     var self = this;
     var inst;
     var msg;
-    function eventHandle() {
+    function eventHandle(evt) {
       inst = true;
-      if (!msg) msg = document.getElementById('jazz-midi-msg');
-      if (!msg) return;
-      var a = [];
-      try { a = JSON.parse(msg.innerText); } catch (err) {}
-      msg.innerText = '';
+      var a = evt.detail;
+      if (!a) {
+        if (!msg) msg = document.getElementById('jazz-midi-msg');
+        if (!msg) return;
+        try { a = JSON.parse(msg.innerText); } catch (err) {}
+        msg.innerText = '';
+      }
       document.removeEventListener('jazz-midi-msg', eventHandle);
       if (a[0] === 'version') {
         _initCRX(msg, a[2]);
@@ -676,7 +678,7 @@
       document.dispatchEvent(new Event('jazz-midi'));
     }
     catch (err) {}
-    _schedule(function() { if (!inst) self._crash(); });
+    setTimeout(function() { if (!inst) self._crash(); }, 50);
   }
 
   /* istanbul ignore next */
@@ -1188,13 +1190,16 @@
       clearInterval(watcher);
       watcher = undefined;
     };
-    document.addEventListener('jazz-midi-msg', function() {
-      var v = _engine._msg.innerText.split('\n');
-      var impl, i, j;
-      _engine._msg.innerText = '';
+    document.addEventListener('jazz-midi-msg', function(evt) {
+      var i, j, impl;
+      var v = evt.detail ? [ evt.detail ] : undefined;
+      if (!v) {
+        v = _engine._msg.innerText.split('\n');
+        _engine._msg.innerText = '';
+        for (i = 0; i < v.length; i++) try { v[i] = JSON.parse(v[i]); } catch (err) { v[i] = []; }
+      }
       for (i = 0; i < v.length; i++) {
-        var a = [];
-        try { a = JSON.parse(v[i]); } catch (err) {}
+        var a = v[i];
         if (!a.length) continue;
         if (a[0] === 'refresh') {
           if (a[1].ins) {
