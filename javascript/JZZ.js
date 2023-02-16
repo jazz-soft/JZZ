@@ -14,7 +14,7 @@
 })(this, function() {
 
   var _scope = typeof window === 'undefined' ? global : window;
-  var _version = '1.5.9';
+  var _version = '1.6.0';
   var i, j, k, m, n;
 
   /* istanbul ignore next */
@@ -65,7 +65,7 @@
     var self = this;
     var F = function() {}; F.prototype = self;
     var ret = new F();
-    ret.then = function(good, bad) { self._push(_then, [good, bad]); return this; };      
+    ret.then = function(good, bad) { self._push(_then, [good, bad]); return this; };
     return ret;
   };
   function _then(good, bad) {
@@ -188,6 +188,8 @@
   var _ins = [];
   var _outsW = [];
   var _insW = [];
+  var _outsM = {};
+  var _insM = {};
 
   function _postRefresh() {
     _jzz._info.engine = _engine._type;
@@ -202,6 +204,7 @@
     var i, x;
     for (i = 0; i < _engine._outs.length; i++) {
       x = _engine._outs[i];
+      if (_outsM[x.name]) continue;
       x.engine = _engine;
       _engine._allOuts[x.name] = x;
       _jzz._info.outputs.push({
@@ -215,6 +218,7 @@
     }
     for (i = 0; i < _virtual._outs.length; i++) {
       x = _virtual._outs[i];
+      if (_outsM[x.name]) continue;
       _jzz._info.outputs.push({
         id: x.name,
         name: x.name,
@@ -226,6 +230,7 @@
     }
     for (i = 0; i < _engine._ins.length; i++) {
       x = _engine._ins[i];
+      if (_insM[x.name]) continue;
       x.engine = _engine;
       _engine._allIns[x.name] = x;
       _jzz._info.inputs.push({
@@ -239,6 +244,7 @@
     }
     for (i = 0; i < _virtual._ins.length; i++) {
       x = _virtual._ins[i];
+      if (_insM[x.name]) continue;
       _jzz._info.inputs.push({
         id: x.name,
         name: x.name,
@@ -1289,6 +1295,7 @@
     };
     return JZZ.lib.registerMidiIn(name, engine);
   };
+  _J.prototype.addMidiIn = JZZ.addMidiIn;
   JZZ.addMidiOut = function(name, widget) {
     var info = _clone(widget._info || {});
     info.name = name;
@@ -1307,6 +1314,15 @@
     };
     return JZZ.lib.registerMidiOut(name, engine);
   };
+  _J.prototype.addMidiOut = JZZ.addMidiOut;
+  JZZ.maskMidiIn = function(name) { _insM[name] = true; };
+  _J.prototype.maskMidiIn = JZZ.maskMidiIn;
+  JZZ.unmaskMidiIn = function(name) { delete _insM[name]; };
+  _J.prototype.unmaskMidiIn = JZZ.unmaskMidiIn;
+  JZZ.maskMidiOut = function(name) { _outsM[name] = true; };
+  _J.prototype.maskMidiOut = JZZ.maskMidiOut;
+  JZZ.unmaskMidiOut = function(name) { delete _outsM[name]; };
+  _J.prototype.unmaskMidiOut = JZZ.unmaskMidiOut;
 
   // JZZ.SMPTE
 
