@@ -158,6 +158,52 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
       });
     },
 
+    mask_midi_in: function() {
+      it('Mask MIDI-In', function(done) {
+        var port;
+        var widget = JZZ.Widget();
+        JZZ.addMidiIn('Widget MIDI-In', widget);
+        JZZ.maskMidiIn('Widget MIDI-In');
+        JZZ.maskMidiIn('Widget MIDI-In');
+        engine.openMidiIn('Widget MIDI-In').or(function() { done(); });
+      });
+    },
+
+    mask_midi_out: function() {
+      it('Mask MIDI-In', function(done) {
+        var port;
+        var widget = JZZ.Widget();
+        JZZ.addMidiOut('Widget MIDI-Out', widget);
+        JZZ.maskMidiOut('Widget MIDI-Out');
+        JZZ.maskMidiOut('Widget MIDI-Out');
+        engine.openMidiOut('Widget MIDI-Out').or(function() { done(); });
+      });
+    },
+
+    unmask_midi_in: function() {
+      it('Unmask MIDI-In', function(done) {
+        var port;
+        var widget = JZZ.Widget();
+        JZZ.addMidiIn('Widget MIDI-In', widget);
+        JZZ.unmaskMidiIn('Widget MIDI-In');
+        JZZ.maskMidiIn('Widget MIDI-In');
+        JZZ.unmaskMidiIn('Widget MIDI-In');
+        engine.openMidiIn('Widget MIDI-In').and(function() { done(); });
+      });
+    },
+
+    unmask_midi_out: function() {
+      it('Unmask MIDI-In', function(done) {
+        var port;
+        var widget = JZZ.Widget();
+        JZZ.addMidiOut('Widget MIDI-Out', widget);
+        JZZ.unmaskMidiOut('Widget MIDI-Out');
+        JZZ.maskMidiOut('Widget MIDI-Out');
+        JZZ.unmaskMidiOut('Widget MIDI-Out');
+        engine.openMidiOut('Widget MIDI-Out').and(function() { done(); });
+      });
+    },
+
     connect_watcher: function() {
       it('Connection watcher', function() {
         var dummy = function() {};
