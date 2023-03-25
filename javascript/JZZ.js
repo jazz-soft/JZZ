@@ -14,7 +14,7 @@
 })(this, function() {
 
   var _scope = typeof window === 'undefined' ? global : window;
-  var _version = '1.6.0';
+  var _version = '1.6.1';
   var i, j, k, m, n;
 
   /* istanbul ignore next */

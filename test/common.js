@@ -1,12 +1,16 @@
-﻿var assert = require('assert');
-var JZZ = require('..');
-var test = require('./tests.js')(JZZ, { engine: ['webmidi', 'none'] });
+﻿const assert = require('assert');
+const JZZ = require('..');
+const version = require('../package.json').version;
+const test = require('./tests.js')(JZZ, { engine: ['webmidi', 'none'] });
 
 describe('Info', function() {
   console.log('Node:', process.versions.node);
   console.log('process.platform:', process.platform);
   console.log('process.arch:', process.arch);
   console.log('JZZ:', JZZ.info().ver);
+  it('version ' + version, function() {
+    assert.equal(JZZ.info().ver, version);
+  });
 });
 
 describe('MIDI messages', function() {
