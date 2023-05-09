@@ -21,7 +21,7 @@
     "jazz-midi": "^1.7.9"
   },
   "devDependencies": {
-    "eslint": "^8.36.0",
+    "eslint": "^8.40.0",
     "grunt": "^1.6.1",
     "grunt-contrib-jshint": "^3.2.0",
     "grunt-contrib-uglify": "^5.2.2",
