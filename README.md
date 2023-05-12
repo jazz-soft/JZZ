@@ -221,3 +221,6 @@ JZZ.MIDI.midi('A5'); // => 69
 *Check the [**Getting Started**](https://jazz-soft.net/doc/JZZ) page
 and the [**API reference**](https://jazz-soft.net/doc/JZZ/reference.html)
 for more information...*
+
+## Thanks for your support!
+[![Stargazers for @jazz-soft/JZZ](https://reporoster.com/stars/jazz-soft/JZZ)](https://github.com/jazz-soft/JZZ/stargazers)
