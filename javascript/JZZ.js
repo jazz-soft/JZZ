@@ -14,7 +14,7 @@
 })(this, function() {
 
   var _scope = typeof window === 'undefined' ? global : window;
-  var _version = '1.6.3';
+  var _version = '1.6.4';
   var i, j, k, m, n;
 
   /* istanbul ignore next */
@@ -2283,6 +2283,13 @@
        return [this.dd.charCodeAt(0), 1 << this.dd.charCodeAt(1)];
     }
   };
+  MIDI.prototype.getTimeSignature4 = function() {
+    if (this.ff == 0x58 && typeof this.dd != 'undefined') {
+       var a = [this.dd.charCodeAt(0), 1 << this.dd.charCodeAt(1)];
+       if (this.dd.length == 4) a.push(this.dd.charCodeAt(2), this.dd.charCodeAt(3));
+       return a;
+    }
+  };
   MIDI.prototype.getKeySignature = function() {
     if (this.ff == 0x59 && typeof this.dd != 'undefined') {
       var sf = this.dd.charCodeAt(0);
@@ -2322,6 +2329,33 @@
   };
   MIDI.prototype.isEOT = function() {
     return this.ff == 0x2f;
+  };
+  MIDI.prototype.isText = function() {
+    return this.ff == 1;
+  };
+  MIDI.prototype.isCopyright = function() {
+    return this.ff == 2;
+  };
+  MIDI.prototype.isSeqName = function() {
+    return this.ff == 3;
+  };
+  MIDI.prototype.isInstrName = function() {
+    return this.ff == 4;
+  };
+  MIDI.prototype.isLyric = function() {
+    return this.ff == 5;
+  };
+  MIDI.prototype.isMarker = function() {
+    return this.ff == 6;
+  };
+  MIDI.prototype.isCuePoint = function() {
+    return this.ff == 7;
+  };
+  MIDI.prototype.isProgName = function() {
+    return this.ff == 8;
+  };
+  MIDI.prototype.isDevName = function() {
+    return this.ff == 9;
   };
   MIDI.prototype.isTempo = function() {
     return this.ff == 0x51;

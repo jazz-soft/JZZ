@@ -54,12 +54,22 @@ describe('MIDI messages', function() {
     assert.equal(msg.isSMF(), false);
     assert.equal(msg.isEOT(), false);
     assert.equal(msg.isTempo(), false);
+    assert.equal(msg.isText(), false);
+    assert.equal(msg.isCopyright(), false);
+    assert.equal(msg.isSeqName(), false);
+    assert.equal(msg.isInstrName(), false);
+    assert.equal(msg.isLyric(), false);
+    assert.equal(msg.isMarker(), false);
+    assert.equal(msg.isCuePoint(), false);
+    assert.equal(msg.isProgName(), false);
+    assert.equal(msg.isDevName(), false);
     assert.equal(msg.isTimeSignature(), false);
     assert.equal(msg.isKeySignature(), false);
     assert.equal(msg.getData(), undefined);
     assert.equal(msg.getText(), undefined);
     assert.equal(msg.getBPM(), undefined);
     assert.equal(msg.getTimeSignature(), undefined);
+    assert.equal(msg.getTimeSignature4(), undefined);
     assert.equal(msg.getKeySignature(), undefined);
     msg = JZZ.MIDI(0x90, 0x48, 0x7f);
     assert.equal(msg.toString(), '90 48 7f -- Note On');
@@ -779,6 +789,7 @@ describe('SMF events', function() {
   it('smf/Text', function() {
     var msg = JZZ.MIDI.smf(1, 'smf');
     assert.equal(msg.getData(), 'smf');
+    assert.equal(msg.isText(), true);
     msg.setData();
     assert.equal(msg.getData(), '');
     msg.setText('音樂');
@@ -788,28 +799,44 @@ describe('SMF events', function() {
     assert.equal(JZZ.MIDI.smfText('\ttwo\nlines\r\x00').toString(), 'ff01 -- Text: \\ttwo\\nlines\\r\\x00');
   });
   it('smf/Copyright', function() {
-    assert.equal(JZZ.MIDI.smfCopyright('© ...').toString(), 'ff02 -- Copyright: © ...');
+    var msg = JZZ.MIDI.smfCopyright('© ...');
+    assert.equal(msg.isCopyright(), true);
+    assert.equal(msg.toString(), 'ff02 -- Copyright: © ...');
   });
   it('smf/SeqName', function() {
-    assert.equal(JZZ.MIDI.smfSeqName('sequence').toString(), 'ff03 -- Sequence Name: sequence');
+    var msg = JZZ.MIDI.smfSeqName('sequence');
+    assert.equal(msg.isSeqName(), true);
+    assert.equal(msg.toString(), 'ff03 -- Sequence Name: sequence');
   });
   it('smf/InstrName', function() {
-    assert.equal(JZZ.MIDI.smfInstrName('instrument').toString(), 'ff04 -- Instrument Name: instrument');
+    var msg = JZZ.MIDI.smfInstrName('instrument');
+    assert.equal(msg.isInstrName(), true);
+    assert.equal(msg.toString(), 'ff04 -- Instrument Name: instrument');
   });
   it('smf/Lyric', function() {
-    assert.equal(JZZ.MIDI.smfLyric('𝄋𝄋𝄋').toString(), 'ff05 -- Lyric: 𝄋𝄋𝄋');
+    var msg = JZZ.MIDI.smfLyric('𝄋𝄋𝄋');
+    assert.equal(msg.isLyric(), true);
+    assert.equal(msg.toString(), 'ff05 -- Lyric: 𝄋𝄋𝄋');
   });
   it('smf/Marker', function() {
-    assert.equal(JZZ.MIDI.smfMarker('marker').toString(), 'ff06 -- Marker: marker');
+    var msg = JZZ.MIDI.smfMarker('marker');
+    assert.equal(msg.isMarker(), true);
+    assert.equal(msg.toString(), 'ff06 -- Marker: marker');
   });
   it('smf/CuePoint', function() {
-    assert.equal(JZZ.MIDI.smfCuePoint('cue point').toString(), 'ff07 -- Cue Point: cue point');
+    var msg = JZZ.MIDI.smfCuePoint('cue point');
+    assert.equal(msg.isCuePoint(), true);
+    assert.equal(msg.toString(), 'ff07 -- Cue Point: cue point');
   });
   it('smf/ProgName', function() {
-    assert.equal(JZZ.MIDI.smfProgName('program').toString(), 'ff08 -- Program Name: program');
+    var msg = JZZ.MIDI.smfProgName('program');
+    assert.equal(msg.isProgName(), true);
+    assert.equal(msg.toString(), 'ff08 -- Program Name: program');
   });
   it('smf/DevName', function() {
-    assert.equal(JZZ.MIDI.smfDevName('device').toString(), 'ff09 -- Device Name: device');
+    var msg = JZZ.MIDI.smfDevName('device');
+    assert.equal(msg.isDevName(), true);
+    assert.equal(msg.toString(), 'ff09 -- Device Name: device');
   });
   it('smf/ChannelPrefix', function() {
     var msg = JZZ.MIDI.smfChannelPrefix(10);
@@ -864,6 +891,8 @@ describe('SMF events', function() {
     assert.equal(msg.isTimeSignature(), true);
     assert.equal(msg.getTimeSignature()[0], 3);
     assert.equal(msg.getTimeSignature()[1], 4);
+    assert.equal(msg.getTimeSignature4()[2], 24);
+    assert.equal(msg.getTimeSignature4()[3], 8);
     assert.equal(msg.toString(), 'ff58 -- Time Signature: 3/4 24 8');
     assert.equal(JZZ.MIDI.smfTimeSignature('\x03\x02\x18\x08').toString(), 'ff58 -- Time Signature: 3/4 24 8');
     assert.equal(JZZ.MIDI.smfTimeSignature('7/8').toString(), 'ff58 -- Time Signature: 7/8 24 8');
