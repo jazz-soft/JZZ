@@ -2415,10 +2415,16 @@
   function __hex(x) { return (x < 16 ? '0' : '') + x.toString(16); }
   function _hex(x) {
     var a = [];
-    for (var i = 0; i < x.length; i++) {
-      a[i] = __hex(x[i]);
-    }
+    for (var i = 0; i < x.length; i++) a.push(__hex(x[i]));
     return a.join(' ');
+  }
+  function _hexx(x) {
+    var a = [];
+    for (var i = 0; i < x.length; i++) {
+      if (i && !(i % 4)) a.push(' ');
+      a.push(__hex(x[i]));
+    }
+    return a.join('');
   }
   function _toLine(s) {
     var out = '';
@@ -2837,6 +2843,83 @@
     return msg;
   };
   JZZ.MPE = MPE;
+
+  // JZZ.UMP
+
+  function UMP(arg) {
+    var self = this instanceof UMP ? this : self = new UMP();
+    var i;
+    if (arg instanceof UMP) {
+      self._from = arg._from.slice();
+      _for(arg, function(i) { if (i != '_from') self[i] = arg[i]; });
+      return self;
+    }
+    else self._from = [];
+    if (typeof arg == 'undefined') return self;
+    var arr = arg instanceof Array ? arg : arguments;
+    for (i = 0; i < arr.length; i++) {
+      n = arr[i];
+      if (n != parseInt(n) || n < 0 || n > 255) _throw(arr[i]);
+      self.push(n);
+    }
+    return self;
+  }
+  UMP.prototype = [];
+  UMP.prototype.constructor = UMP;
+
+  function _UMP() {}
+  _UMP.prototype = UMP;
+  UMP.ch = function(c) {
+    if (c == this._ch || typeof c == 'undefined' && typeof this._ch == 'undefined') return this;
+    var ret = new _UMP();
+    if (typeof c != 'undefined') c = _ch(c);
+    ret._ch = c;
+    ret._gr = this._gr;
+    return ret;
+  };
+  UMP.gr = function(g) {
+    if (g == this._gr || typeof g == 'undefined' && typeof this._gr == 'undefined') return this;
+    var ret = new _UMP();
+    if (typeof g != 'undefined') g = _ch(g);
+    ret._ch = this._ch;
+    ret._gr = g;
+    return ret;
+  };
+
+  UMP.prototype.toString = function() {
+    return _hexx(this);
+  };
+
+  var _helperNN = {
+    noop: function() { return [0, 0, 0, 0]; },
+  };
+  var _helperGC = {
+    noteOff: function(g, c, n, v) { if (typeof v == 'undefined') v = 64; return [0x20 + _ch(g), 0x80 + _ch(c), _7bn(n), _7b(v)]; },
+    noteOn: function(g, c, n, v) { if (typeof v == 'undefined') v = 127; return [0x20 + _ch(g), 0x90 + _ch(c), _7bn(n), _7b(v)]; },
+  };
+
+  function _copyHelperNN(name, func) {
+    UMP[name] = function() {
+      return new UMP(func.apply(this, arguments));
+    };
+  }
+  function _copyHelperGC(name, func) {
+    UMP[name] = function() {
+      var args = Array.prototype.slice.call(arguments);
+      if (typeof this._gr != 'undefined') args = [this._gr].concat(args);
+      if (typeof this._ch != 'undefined') args = [args[0]].concat([this._ch]).concat(args.slice(1));
+      return new UMP(func.apply(this, args));
+    };
+  }
+  _for(_helperNN, function(n) { _copyHelperNN(n, _helperNN[n]); });
+  _for(_helperGC, function(n) { _copyHelperGC(n, _helperGC[n]); });
+
+  UMP.prototype._stamp = MIDI.prototype._stamp;
+  UMP.prototype._unstamp = MIDI.prototype._unstamp;
+  UMP.prototype._stamped = MIDI.prototype._stamped;
+
+  JZZ.UMP = UMP;
+  _J.prototype.UMP = UMP;
 
   JZZ.lib = {};
   JZZ.lib.now = _now;

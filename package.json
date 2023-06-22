@@ -21,11 +21,11 @@
     "jazz-midi": "^1.7.9"
   },
   "devDependencies": {
-    "eslint": "^8.41.0",
+    "eslint": "^8.43.0",
     "grunt": "^1.6.1",
     "grunt-contrib-jshint": "^3.2.0",
     "grunt-contrib-uglify": "^5.2.2",
-    "midi-test": "^1.2.5",
+    "midi-test": "^1.2.6",
     "mocha": "^10.2.0",
     "nyc": "^15.1.0",
     "web-audio-test": "^0.0.5",
