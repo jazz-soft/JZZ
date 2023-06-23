@@ -763,6 +763,38 @@ describe('MIDI messages', function() {
   });
 });
 
+describe('UMP messages', function() {
+  it('throw', function() {
+    assert.throws(function() { JZZ.UMP([1]); });
+    assert.throws(function() { JZZ.UMP([1, 2, 3, 'error']); });
+    assert.throws(function() { JZZ.UMP([1, 2, 3, 4, 5, 6, 7, 8]); });
+  });
+  it('noop', function() {
+    var msg =JZZ.UMP.noop();
+    assert.equal(msg.toString(), '00000000');
+    assert.equal(typeof msg.getGroup(), 'undefined');
+  });
+  it('noteOn', function() {
+    var s = '21923d7f';
+    var msg = JZZ.UMP.noteOn(1, 2, 'C#5');
+    assert.equal(msg.getGroup(), 1);
+    assert.equal(JZZ.UMP.noteOn(1, 2, 'C#5').toString(), s);
+    assert.equal(JZZ.UMP.ch().noteOn(1, 2, 'C#5').toString(), s);
+    assert.equal(JZZ.UMP.ch(5).ch().noteOn(1, 2, 'C#5').toString(), s);
+    assert.equal(JZZ.UMP.gr().noteOn(1, 2, 'C#5').toString(), s);
+    assert.equal(JZZ.UMP.gr(5).gr().noteOn(1, 2, 'C#5').toString(), s);
+    assert.equal(JZZ.UMP.gr(1).noteOn(2, 'C#5').toString(), s);
+    assert.equal(JZZ.UMP.ch(2).noteOn(1, 'C#5').toString(), s);
+    assert.equal(JZZ.UMP.gr(1).ch(2).noteOn('C#5').toString(), s);
+    assert.equal(JZZ.UMP.ch(2).gr(1).noteOn('C#5', 127).toString(), s);
+    assert.equal(JZZ.UMP.ch(2).gr(1).ch(2).gr(1).noteOn('C#5', 127).toString(), s);
+  });
+  it('noteOff', function() {
+    assert.equal(JZZ.UMP.noteOff(1, 2, 61).toString(), '21823d40');
+    assert.equal(JZZ.UMP.noteOff(1, 2, 'C#5', 64).toString(), '21823d40');
+  });
+});
+
 describe('SMF events', function() {
   it('empty', function() {
     assert.equal(JZZ.MIDI.smf(1).toString(), 'ff01 -- Text');

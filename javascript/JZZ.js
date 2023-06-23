@@ -2847,7 +2847,7 @@
   // JZZ.UMP
 
   function UMP(arg) {
-    var self = this instanceof UMP ? this : self = new UMP();
+    var self = this instanceof UMP ? this : self = new UMP([0, 0, 0, 0]);
     var i;
     if (arg instanceof UMP) {
       self._from = arg._from.slice();
@@ -2857,11 +2857,13 @@
     else self._from = [];
     if (typeof arg == 'undefined') return self;
     var arr = arg instanceof Array ? arg : arguments;
+    self.length = 0;
     for (i = 0; i < arr.length; i++) {
       n = arr[i];
       if (n != parseInt(n) || n < 0 || n > 255) _throw(arr[i]);
       self.push(n);
     }
+    if (self.length != [4, 4, 4, 8, 8, 16, 4, 4, 8, 8, 8, 12, 12, 16, 16, 16][self[0] >> 4]) throw RangeError('Wrong UMP size');
     return self;
   }
   UMP.prototype = [];
@@ -2884,6 +2886,11 @@
     ret._ch = this._ch;
     ret._gr = g;
     return ret;
+  };
+  UMP.prototype.getGroup = function() {
+    if (!this[0]) return;
+    var m = this[0] >> 4;
+    if (m == 1 || m == 2 || m == 3 || m == 4 || m == 5 || m == 13) return this[0] & 15;
   };
 
   UMP.prototype.toString = function() {
