@@ -40,6 +40,7 @@ or [**Apple App Store**](https://apps.apple.com/us/app/jazz-midi/id1506447231).
 - MIDI files
 - MPE
 - SMPTE
+- UMP
 - Additional modules
 
 ## Install

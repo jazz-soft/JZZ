@@ -793,6 +793,22 @@ describe('UMP messages', function() {
     assert.equal(JZZ.UMP.noteOff(1, 2, 61).toString(), '21823d40');
     assert.equal(JZZ.UMP.noteOff(1, 2, 'C#5', 64).toString(), '21823d40');
   });
+  it('program', function() {
+    assert.equal(JZZ.UMP.program(1, 2, 15).toString(), '21c20f00');
+  });
+  it('damper', function() {
+    assert.equal(JZZ.UMP.damper(1, 2, true).toString(), '21b2407f');
+  });
+  it('songPosition', function() {
+    assert.equal(JZZ.UMP.songPosition(5, 300).toString(), '15f22c02');
+    assert.equal(JZZ.UMP.songPosition(5, 2, 44).toString(), '15f22c02');
+  });
+  it('songSelect', function() {
+    assert.equal(JZZ.UMP.songSelect(5, 15).toString(), '15f30f00');
+  });
+  it('reset', function() {
+    assert.equal(JZZ.UMP.reset(5).toString(), '15ff0000');
+  });
 });
 
 describe('SMF events', function() {
