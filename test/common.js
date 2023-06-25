@@ -794,7 +794,10 @@ describe('UMP messages', function() {
     assert.equal(JZZ.UMP.noteOff(1, 2, 'C#5', 64).toString(), '21823d40');
   });
   it('program', function() {
-    assert.equal(JZZ.UMP.program(1, 2, 15).toString(), '21c20f00');
+    var s = '21c20f00';
+    var msg = JZZ.UMP.program(1, 2, 15);
+    assert.equal(msg.getGroup(), 1);
+    assert.equal(JZZ.UMP.gr(1).program(2, 15).toString(), s);
   });
   it('damper', function() {
     assert.equal(JZZ.UMP.damper(1, 2, true).toString(), '21b2407f');
@@ -807,7 +810,28 @@ describe('UMP messages', function() {
     assert.equal(JZZ.UMP.songSelect(5, 15).toString(), '15f30f00');
   });
   it('reset', function() {
-    assert.equal(JZZ.UMP.reset(5).toString(), '15ff0000');
+    var s = '15ff0000';
+    var msg = JZZ.UMP.reset(5);
+    assert.equal(msg.getGroup(), 5);
+    assert.equal(msg.toString(), s);
+    msg = JZZ.UMP.gr(5).reset();
+    assert.equal(msg.getGroup(), 5);
+    assert.equal(msg.toString(), s);
+  });
+  it('sxIdRequest', function() {
+    var s = '37047e7f 06010000';
+    var msg = JZZ.UMP.sxId(1).sxId(1).sxId().sxId().sxIdRequest(7)[0];
+    assert.equal(msg.getGroup(), 7);
+    assert.equal(msg.toString(), s);
+    msg = JZZ.UMP.gr(7).sxIdRequest()[0];
+    assert.equal(msg.getGroup(), 7);
+    assert.equal(msg.toString(), s);
+  });
+  it('sxMasterVolume', function() {
+    assert.equal(JZZ.UMP.sxMasterVolumeF(5, 0.5).toString(), '35067f7f 04010040');
+  });
+  it('sxGS', function() {
+    assert.equal(JZZ.UMP.sxGS(5).toString(), '3516417f 42124000,35337f00 41000000');
   });
 });
 

@@ -2874,12 +2874,24 @@
 
   function _UMP() {}
   _UMP.prototype = UMP;
+  UMP._sxid = 0x7f;
+  UMP.sxId = function(id) {
+    if (typeof id == 'undefined') id = UMP._sxid;
+    if (id == this._sxid) return this;
+    id = _7b(id);
+    var ret = new _UMP();
+    ret._ch = this._ch;
+    ret._gr = this._gr;
+    ret._sxid = id;
+    return ret;
+  };
   UMP.ch = function(c) {
     if (c == this._ch || typeof c == 'undefined' && typeof this._ch == 'undefined') return this;
     var ret = new _UMP();
     if (typeof c != 'undefined') c = _ch(c);
     ret._ch = c;
     ret._gr = this._gr;
+    ret._sxid = this._sxid;
     return ret;
   };
   UMP.gr = function(g) {
@@ -2888,6 +2900,7 @@
     if (typeof g != 'undefined') g = _ch(g);
     ret._ch = this._ch;
     ret._gr = g;
+    ret._sxid = this._sxid;
     return ret;
   };
   UMP.prototype.getGroup = function() {
@@ -2926,6 +2939,20 @@
       return new UMP([0x10 + args[0]].concat(func.apply(this, args.slice(1)), [0, 0]).slice(0, 4));
     };
   }
+  function _umpseqstat(n, i) { return n == 1 ? 0 : i == 0 ? 0x10 : i == n - 1 ? 0x30 : 0x20; }
+  function _sliceSX(gr, m) {
+    var a = [];
+    for (var x = m.slice(1, m.length - 1); x.length; x = x.slice(6)) a.push(x.slice(0, 6));
+    for (var i = 0; i < a.length; i++) a[i] = new UMP([0x30 + gr, _umpseqstat(a.length, i) + a[i].length].concat(a[i], [0, 0, 0, 0, 0]).slice(0, 8));
+    return a;
+  }
+  function _copyHelperSX(name, func) {
+    UMP[name] = function() {
+      var args = Array.prototype.slice.call(arguments);
+      if (typeof this._gr != 'undefined') args = [this._gr].concat(args);
+      return _sliceSX(args[0], func.apply(this, args.slice(1)));
+    };
+  }
   function _copyHelperM1(name, func) {
     UMP[name] = function() {
       var args = Array.prototype.slice.call(arguments);
@@ -2939,6 +2966,7 @@
   _for(_helperMPE, function(n) { _copyHelperM1(n, _helperMPE[n]); });
   _for(_helperCH, function(n) { _copyHelperM1(n, _helperCH[n]); });
   _for(_helperNC, function(n) { _copyHelperGN(n, _helperNC[n]); });
+  _for(_helperSX, function(n) { _copyHelperSX(n, _helperSX[n]); });
 
   UMP.prototype._stamp = MIDI.prototype._stamp;
   UMP.prototype._unstamp = MIDI.prototype._unstamp;
