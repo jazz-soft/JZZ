@@ -765,14 +765,24 @@ describe('MIDI messages', function() {
 
 describe('UMP messages', function() {
   it('throw', function() {
+    assert.throws(function() { JZZ.UMP(1); });
     assert.throws(function() { JZZ.UMP([1]); });
     assert.throws(function() { JZZ.UMP([1, 2, 3, 'error']); });
     assert.throws(function() { JZZ.UMP([1, 2, 3, 4, 5, 6, 7, 8]); });
   });
   it('noop', function() {
+    var s = '00000000';
     var msg =JZZ.UMP.noop();
-    assert.equal(msg.toString(), '00000000');
     assert.equal(typeof msg.getGroup(), 'undefined');
+    assert.equal(msg.toString(), s);
+    msg = new JZZ.UMP(msg);
+    assert.equal(msg.toString(), s);
+    msg = new JZZ.UMP();
+    assert.equal(msg.toString(), s);
+    msg = new JZZ.UMP([0, 0, 0, 0]);
+    assert.equal(msg.toString(), s);
+    msg = new JZZ.UMP(0, 0, 0, 0);
+    assert.equal(msg.toString(), s);
   });
   it('noteOn', function() {
     var s = '21923d7f';
@@ -832,6 +842,9 @@ describe('UMP messages', function() {
   });
   it('sxGS', function() {
     assert.equal(JZZ.UMP.sxGS(5).toString(), '3516417f 42124000,35337f00 41000000');
+  });
+  it('sxMidiSoft', function() {
+    assert.equal(JZZ.UMP.sxMidiSoft(5, 4, 'karaoke...').toString(), '35160020 2400046b,35266172 616f6b65,35332e2e 2e000000');
   });
 });
 

@@ -2850,7 +2850,7 @@
   // JZZ.UMP
 
   function UMP(arg) {
-    var self = this instanceof UMP ? this : self = new UMP([0, 0, 0, 0]);
+    var self = this instanceof UMP ? this : self = new UMP();
     var i;
     if (arg instanceof UMP) {
       self._from = arg._from.slice();
@@ -2858,7 +2858,7 @@
       return self;
     }
     else self._from = [];
-    if (typeof arg == 'undefined') return self;
+    if (typeof arg == 'undefined') arg = [0, 0, 0, 0];
     var arr = arg instanceof Array ? arg : arguments;
     self.length = 0;
     for (i = 0; i < arr.length; i++) {
