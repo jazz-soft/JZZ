@@ -1652,6 +1652,7 @@
   function _8b(n) { if (n != parseInt(n) || n < 0 || n > 0xff) _throw(n); return parseInt(n); }
   function _14b(n) { if (n != parseInt(n) || n < 0 || n > 0x3fff) _throw(n); return parseInt(n); }
   function _16b(n) { if (n != parseInt(n) || n < 0 || n > 0xffff) throw RangeError('Expected a 16-bit value: ' + n); return parseInt(n); }
+  function _20b(n) { if (n != parseInt(n) || n < 0 || n > 0xfffff) throw RangeError('Expected a 20-bit value: ' + n); return parseInt(n); }
   function _21b(n) { if (n != parseInt(n) || n < 0 || n > 0x1fffff) _throw(n); return parseInt(n); }
   function _7bn(n) { return _7b(MIDI.noteValue(n), n); }
   function _lsb(n) { return _14b(n) & 0x7f; }
@@ -2915,6 +2916,10 @@
 
   var _helperNN = {
     noop: function() { return [0, 0, 0, 0]; },
+    ticksPQN: function(n) { n = _16b(n); return [0, 0x30, n >> 8, n & 0xff]; },
+    delta: function(n) { n = _20b(n); return [0, 0x40 + (n >> 16), (n >> 8) & 0xff, n & 0xff]; },
+    clipStart: function() { return [0xf0, 0x20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]; },
+    clipEnd: function() { return [0xf0, 0x21, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]; },
   };
   var _helperGC = {
   };

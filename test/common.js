@@ -846,6 +846,22 @@ describe('UMP messages', function() {
   it('sxMidiSoft', function() {
     assert.equal(JZZ.UMP.sxMidiSoft(5, 4, 'karaoke...').toString(), '35160020 2400046b,35266172 616f6b65,35332e2e 2e000000');
   });
+  it('ticksPQN', function() {
+    assert.equal(JZZ.UMP.ticksPQN(96).toString(), '00300060');
+    assert.throws(function() { JZZ.UMP.ticksPQN(0x10000); });
+  });
+  it('delta', function() {
+    assert.equal(JZZ.UMP.delta(96).toString(), '00400060');
+    assert.throws(function() { JZZ.UMP.delta(0x100000); });
+  });
+  it('clipStart', function() {
+    var msg = JZZ.UMP.clipStart();
+    assert.equal(typeof msg.getGroup(), 'undefined');
+    assert.equal(msg.toString(), 'f0200000 00000000 00000000 00000000');
+  });
+  it('clipEnd', function() {
+    assert.equal(JZZ.UMP.clipEnd().toString(), 'f0210000 00000000 00000000 00000000');
+  });
 });
 
 describe('SMF events', function() {
