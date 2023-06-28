@@ -2916,10 +2916,12 @@
 
   var _helperNN = {
     noop: function() { return [0, 0, 0, 0]; },
-    ticksPQN: function(n) { n = _16b(n); return [0, 0x30, n >> 8, n & 0xff]; },
-    delta: function(n) { n = _20b(n); return [0, 0x40 + (n >> 16), (n >> 8) & 0xff, n & 0xff]; },
-    clipStart: function() { return [0xf0, 0x20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]; },
-    clipEnd: function() { return [0xf0, 0x21, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]; },
+    umpClock: function(n) { n = _16b(n); return [0, 0x10, n >> 8, n & 0xff]; },
+    umpTimestamp: function(n) { n = _16b(n); return [0, 0x20, n >> 8, n & 0xff]; },
+    umpTicksPQN: function(n) { n = _16b(n); return [0, 0x30, n >> 8, n & 0xff]; },
+    umpDelta: function(n) { n = n || 0; n = _20b(n); return [0, 0x40 + (n >> 16), (n >> 8) & 0xff, n & 0xff]; },
+    umpStartClip: function() { return [0xf0, 0x20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]; },
+    umpEndClip: function() { return [0xf0, 0x21, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]; },
   };
   var _helperGC = {
   };

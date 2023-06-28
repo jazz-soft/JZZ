@@ -846,21 +846,28 @@ describe('UMP messages', function() {
   it('sxMidiSoft', function() {
     assert.equal(JZZ.UMP.sxMidiSoft(5, 4, 'karaoke...').toString(), '35160020 2400046b,35266172 616f6b65,35332e2e 2e000000');
   });
-  it('ticksPQN', function() {
-    assert.equal(JZZ.UMP.ticksPQN(96).toString(), '00300060');
-    assert.throws(function() { JZZ.UMP.ticksPQN(0x10000); });
+  it('umpClock', function() {
+    assert.equal(JZZ.UMP.umpClock(96).toString(), '00100060');
   });
-  it('delta', function() {
-    assert.equal(JZZ.UMP.delta(96).toString(), '00400060');
-    assert.throws(function() { JZZ.UMP.delta(0x100000); });
+  it('umpTimestamp', function() {
+    assert.equal(JZZ.UMP.umpTimestamp(96).toString(), '00200060');
   });
-  it('clipStart', function() {
-    var msg = JZZ.UMP.clipStart();
+  it('umpTicksPQN', function() {
+    assert.equal(JZZ.UMP.umpTicksPQN(96).toString(), '00300060');
+    assert.throws(function() { JZZ.UMP.umpTicksPQN(0x10000); });
+  });
+  it('umpDelta', function() {
+    assert.equal(JZZ.UMP.umpDelta().toString(), '00400000');
+    assert.equal(JZZ.UMP.umpDelta(96).toString(), '00400060');
+    assert.throws(function() { JZZ.UMP.umpDelta(0x100000); });
+  });
+  it('umpStartClip', function() {
+    var msg = JZZ.UMP.umpStartClip();
     assert.equal(typeof msg.getGroup(), 'undefined');
     assert.equal(msg.toString(), 'f0200000 00000000 00000000 00000000');
   });
-  it('clipEnd', function() {
-    assert.equal(JZZ.UMP.clipEnd().toString(), 'f0210000 00000000 00000000 00000000');
+  it('umpEndClip', function() {
+    assert.equal(JZZ.UMP.umpEndClip().toString(), 'f0210000 00000000 00000000 00000000');
   });
 });
 
