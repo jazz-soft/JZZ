@@ -785,7 +785,7 @@ describe('UMP messages', function() {
     assert.equal(msg.toString(), s);
   });
   it('noteOn', function() {
-    var s = '21923d7f';
+    var s = '21923d7f -- Note On';
     var msg = JZZ.UMP.noteOn(1, 2, 'C#5');
     assert.equal(msg.getGroup(), 1);
     assert.equal(JZZ.UMP.noteOn(1, 2, 'C#5').toString(), s);
@@ -800,17 +800,18 @@ describe('UMP messages', function() {
     assert.equal(JZZ.UMP.ch(2).gr(1).ch(2).gr(1).noteOn('C#5', 127).toString(), s);
   });
   it('noteOff', function() {
-    assert.equal(JZZ.UMP.noteOff(1, 2, 61).toString(), '21823d40');
-    assert.equal(JZZ.UMP.noteOff(1, 2, 'C#5', 64).toString(), '21823d40');
+    var s = '21823d40 -- Note Off';
+    assert.equal(JZZ.UMP.noteOff(1, 2, 61).toString(), s);
+    assert.equal(JZZ.UMP.noteOff(1, 2, 'C#5', 64).toString(), s);
   });
   it('program', function() {
-    var s = '21c20f00';
+    var s = '21c20f00 -- Program Change';
     var msg = JZZ.UMP.program(1, 2, 15);
     assert.equal(msg.getGroup(), 1);
     assert.equal(JZZ.UMP.gr(1).program(2, 15).toString(), s);
   });
   it('damper', function() {
-    assert.equal(JZZ.UMP.damper(1, 2, true).toString(), '21b2407f');
+    assert.equal(JZZ.UMP.damper(1, 2, true).toString(), '21b2407f -- Damper Pedal On');
   });
   it('songPosition', function() {
     assert.equal(JZZ.UMP.songPosition(5, 300).toString(), '15f22c02');

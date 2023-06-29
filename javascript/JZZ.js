@@ -2455,62 +2455,66 @@
     return this.lbl ? this._str() + ' (' + this.lbl + ')' : this._str();
   };
   MIDI.prototype._str = function() {
-    var s;
+    var s, t;
+    if (!this.length) {
+      if (typeof this.ff == 'undefined') return 'empty';
+      s = 'ff' + __hex(this.ff);
+    }
+    else s = _hex(this);
+    t = this._string();
+    return t ? s + ' -- ' + t : s;
+  };
+  MIDI.prototype._string = function() {
+    var s = '';
     var ss;
     if (!this.length) {
-      if (typeof this.ff != 'undefined') {
-        s = 'ff' + __hex(this.ff) + ' -- ';
-        if (this.ff == 0) s += 'Sequence Number: ' + _s2n(this.dd);
-        else if (this.ff > 0 && this.ff < 10) s += ['', 'Text', 'Copyright', 'Sequence Name', 'Instrument Name', 'Lyric', 'Marker', 'Cue Point', 'Program Name', 'Device Name'][this.ff] + _smftxt(this.dd);
-        else if (this.ff == 32) s += 'Channel Prefix' + _smfhex(this.dd);
-        else if (this.ff == 33) s += 'MIDI Port' + _smfhex(this.dd);
-        else if (this.ff == 47) s += 'End of Track' + _smfhex(this.dd);
-        else if (this.ff == 81) {
-          var bpm = Math.round(this.getBPM() * 100) / 100;
-          s += 'Tempo: ' + bpm + ' bpm';
-        }
-        else if (this.ff == 84) s += 'SMPTE Offset: ' + _smptetxt(_s2a(this.dd));
-        else if (this.ff == 88) {
-          var d = 1 << this.dd.charCodeAt(1);
-          s += 'Time Signature: ' + this.dd.charCodeAt(0) + '/' + d;
-          s += ' ' + this.dd.charCodeAt(2) + ' ' + this.dd.charCodeAt(3);
-        }
-        else if (this.ff == 89) {
-          s += 'Key Signature: ';
-          var ks = this.getKeySignature();
-          if (ks) {
-            s += ks[1];
-            if (ks[2]) s += ' min';
-          }
-          else s+= 'invalid';
-        }
-        else if (this.ff == 127) {
-          if (this.dd.charCodeAt(0) == 0x43) {
-            if (this.dd.charCodeAt(1) == 0x7b) {
-              s += '[XF:' + __hex(this.dd.charCodeAt(2)) + ']';
-              ss = { 0: 'Version', 1: 'Chord', 2: 'Rehearsal Mark', 3: 'Phrase Mark', 4: 'Max Phrase Mark',
-                5: 'Fingering Number', 12: 'Guide Track Flag', 16: 'Guitar Info', 18: 'Chord Voicing',
-                127: 'XG Song Data Number' }[this.dd.charCodeAt(2)];
-              s += ss ? ' ' + ss : '';
-              s += ': ';
-              if (this.dd.charCodeAt(2) == 0) {
-                return s + this.dd.substr(3, 4) + ' ' + _hex(_s2a(this.dd.substr(7)));
-              }
-              if (this.dd.charCodeAt(2) == 1) {
-                return s + this.getText();
-              }
-              return s + _hex(_s2a(this.dd.substr(3)));
-            }
-          }
-          s += 'Sequencer Specific' + _smfhex(this.dd);
-        }
-        else s += 'SMF' + _smfhex(this.dd);
-        return s;
+      if (this.ff == 0) s += 'Sequence Number: ' + _s2n(this.dd);
+      else if (this.ff > 0 && this.ff < 10) s += ['', 'Text', 'Copyright', 'Sequence Name', 'Instrument Name', 'Lyric', 'Marker', 'Cue Point', 'Program Name', 'Device Name'][this.ff] + _smftxt(this.dd);
+      else if (this.ff == 32) s += 'Channel Prefix' + _smfhex(this.dd);
+      else if (this.ff == 33) s += 'MIDI Port' + _smfhex(this.dd);
+      else if (this.ff == 47) s += 'End of Track' + _smfhex(this.dd);
+      else if (this.ff == 81) {
+        var bpm = Math.round(this.getBPM() * 100) / 100;
+        s += 'Tempo: ' + bpm + ' bpm';
       }
-      return 'empty';
+      else if (this.ff == 84) s += 'SMPTE Offset: ' + _smptetxt(_s2a(this.dd));
+      else if (this.ff == 88) {
+        var d = 1 << this.dd.charCodeAt(1);
+        s += 'Time Signature: ' + this.dd.charCodeAt(0) + '/' + d;
+        s += ' ' + this.dd.charCodeAt(2) + ' ' + this.dd.charCodeAt(3);
+      }
+      else if (this.ff == 89) {
+        s += 'Key Signature: ';
+        var ks = this.getKeySignature();
+        if (ks) {
+          s += ks[1];
+          if (ks[2]) s += ' min';
+        }
+        else s+= 'invalid';
+      }
+      else if (this.ff == 127) {
+        if (this.dd.charCodeAt(0) == 0x43) {
+          if (this.dd.charCodeAt(1) == 0x7b) {
+            s += '[XF:' + __hex(this.dd.charCodeAt(2)) + ']';
+            ss = { 0: 'Version', 1: 'Chord', 2: 'Rehearsal Mark', 3: 'Phrase Mark', 4: 'Max Phrase Mark',
+              5: 'Fingering Number', 12: 'Guide Track Flag', 16: 'Guitar Info', 18: 'Chord Voicing',
+              127: 'XG Song Data Number' }[this.dd.charCodeAt(2)];
+            s += ss ? ' ' + ss : '';
+            s += ': ';
+            if (this.dd.charCodeAt(2) == 0) {
+              return s + this.dd.substr(3, 4) + ' ' + _hex(_s2a(this.dd.substr(7)));
+            }
+            if (this.dd.charCodeAt(2) == 1) {
+              return s + this.getText();
+            }
+            return s + _hex(_s2a(this.dd.substr(3)));
+          }
+        }
+        s += 'Sequencer Specific' + _smfhex(this.dd);
+      }
+      else s += 'SMF' + _smfhex(this.dd);
+      return s;
     }
-    s = _hex(this);
-    if (this[0] < 0x80) return s;
     ss = {
       241: 'MIDI Time Code',
       242: 'Song Position',
@@ -2527,16 +2531,16 @@
       254: 'Active Sensing',
       255: 'Reset'
     }[this[0]];
-    if (ss) return s + ' -- ' + ss;
+    if (ss) return ss;
     if (this.isMidiSoft()) {
       ss = _toLine(this.getText());
       if (ss) ss = ' ' + ss;
-      return s + ' -- [K:' + __hex(this[5]) + ']' + ss;
+      return '[K:' + __hex(this[5]) + ']' + ss;
     }
     var c = this[0] >> 4;
     ss = {8: 'Note Off', 10: 'Aftertouch', 12: 'Program Change', 13: 'Channel Aftertouch', 14: 'Pitch Wheel'}[c];
-    if (ss) return s + ' -- ' + ss;
-    if (c == 9) return s + ' -- ' + (this[2] ? 'Note On' : 'Note Off');
+    if (ss) return ss;
+    if (c == 9) return this[2] ? 'Note On' : 'Note Off';
     if (c != 11) return s;
     ss = {
       0: 'Bank Select MSB',
@@ -2616,7 +2620,7 @@
     }[this[1]];
     if (this[1] >= 64 && this[1] <= 69) ss += this[2] < 64 ? ' Off' : ' On';
     if (!ss) ss = 'Undefined';
-    return s + ' -- ' + ss;
+    return ss;
   };
   MIDI.prototype._stamp = function(obj) { this._from.push(obj._orig ? obj._orig : obj); return this; };
   MIDI.prototype._unstamp = function(obj) {
@@ -2910,10 +2914,6 @@
     if (m == 1 || m == 2 || m == 3 || m == 4 || m == 5 || m == 13) return this[0] & 15;
   };
 
-  UMP.prototype.toString = function() {
-    return _hexx(this);
-  };
-
   var _helperNN = {
     noop: function() { return [0, 0, 0, 0]; },
     umpClock: function(n) { n = _16b(n); return [0, 0x10, n >> 8, n & 0xff]; },
@@ -2974,6 +2974,16 @@
   _for(_helperCH, function(n) { _copyHelperM1(n, _helperCH[n]); });
   _for(_helperNC, function(n) { _copyHelperGN(n, _helperNC[n]); });
   _for(_helperSX, function(n) { _copyHelperSX(n, _helperSX[n]); });
+
+  UMP.prototype.toString = MIDI.prototype.toString;
+  UMP.prototype._str = function() {
+    var t = this._string();
+    return t ? _hexx(this) + ' -- ' + t : _hexx(this);
+  };
+  UMP.prototype._string = function() {
+    var t = this[0] >> 4;
+    if (t == 2) return new MIDI(this.slice(1))._string();
+  };
 
   UMP.prototype._stamp = MIDI.prototype._stamp;
   UMP.prototype._unstamp = MIDI.prototype._unstamp;
