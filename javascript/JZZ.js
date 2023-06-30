@@ -2981,8 +2981,18 @@
     return t ? _hexx(this) + ' -- ' + t : _hexx(this);
   };
   UMP.prototype._string = function() {
+    var n, s;
     var t = this[0] >> 4;
-    if (t == 2) return new MIDI(this.slice(1))._string();
+    if (t == 1 || t == 2) return new MIDI(this.slice(1))._string();
+    if (t == 0) {
+      n = this[1] >> 4;
+      s = ['NOOP', 'JR Clock', 'JR Timestamp', 'Ticks Per Quarter Note', 'Delta Ticks'][n];
+      return s;
+    }
+    if (this[0] == 0xf0) {
+      s = { 0x20: 'Start of Clip', 0x21: 'End of Clip' }[this[1]];
+      return s;
+    }
   };
 
   UMP.prototype._stamp = MIDI.prototype._stamp;

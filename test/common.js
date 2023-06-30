@@ -771,7 +771,7 @@ describe('UMP messages', function() {
     assert.throws(function() { JZZ.UMP([1, 2, 3, 4, 5, 6, 7, 8]); });
   });
   it('noop', function() {
-    var s = '00000000';
+    var s = '00000000 -- NOOP';
     var msg =JZZ.UMP.noop();
     assert.equal(typeof msg.getGroup(), 'undefined');
     assert.equal(msg.toString(), s);
@@ -814,14 +814,16 @@ describe('UMP messages', function() {
     assert.equal(JZZ.UMP.damper(1, 2, true).toString(), '21b2407f -- Damper Pedal On');
   });
   it('songPosition', function() {
-    assert.equal(JZZ.UMP.songPosition(5, 300).toString(), '15f22c02');
-    assert.equal(JZZ.UMP.songPosition(5, 2, 44).toString(), '15f22c02');
+    var s = '15f22c02 -- Song Position';
+    assert.equal(JZZ.UMP.songPosition(5, 300).toString(), s);
+    assert.equal(JZZ.UMP.songPosition(5, 2, 44).toString(), s);
   });
   it('songSelect', function() {
-    assert.equal(JZZ.UMP.songSelect(5, 15).toString(), '15f30f00');
+    var s = '15f30f00 -- Song Select'
+    assert.equal(JZZ.UMP.songSelect(5, 15).toString(), s);
   });
   it('reset', function() {
-    var s = '15ff0000';
+    var s = '15ff0000 -- Reset';
     var msg = JZZ.UMP.reset(5);
     assert.equal(msg.getGroup(), 5);
     assert.equal(msg.toString(), s);
@@ -848,27 +850,27 @@ describe('UMP messages', function() {
     assert.equal(JZZ.UMP.sxMidiSoft(5, 4, 'karaoke...').toString(), '35160020 2400046b,35266172 616f6b65,35332e2e 2e000000');
   });
   it('umpClock', function() {
-    assert.equal(JZZ.UMP.umpClock(96).toString(), '00100060');
+    assert.equal(JZZ.UMP.umpClock(96).toString(), '00100060 -- JR Clock');
   });
   it('umpTimestamp', function() {
-    assert.equal(JZZ.UMP.umpTimestamp(96).toString(), '00200060');
+    assert.equal(JZZ.UMP.umpTimestamp(96).toString(), '00200060 -- JR Timestamp');
   });
   it('umpTicksPQN', function() {
-    assert.equal(JZZ.UMP.umpTicksPQN(96).toString(), '00300060');
+    assert.equal(JZZ.UMP.umpTicksPQN(96).toString(), '00300060 -- Ticks Per Quarter Note');
     assert.throws(function() { JZZ.UMP.umpTicksPQN(0x10000); });
   });
   it('umpDelta', function() {
-    assert.equal(JZZ.UMP.umpDelta().toString(), '00400000');
-    assert.equal(JZZ.UMP.umpDelta(96).toString(), '00400060');
+    assert.equal(JZZ.UMP.umpDelta().toString(), '00400000 -- Delta Ticks');
+    assert.equal(JZZ.UMP.umpDelta(96).toString(), '00400060 -- Delta Ticks');
     assert.throws(function() { JZZ.UMP.umpDelta(0x100000); });
   });
   it('umpStartClip', function() {
     var msg = JZZ.UMP.umpStartClip();
     assert.equal(typeof msg.getGroup(), 'undefined');
-    assert.equal(msg.toString(), 'f0200000 00000000 00000000 00000000');
+    assert.equal(msg.toString(), 'f0200000 00000000 00000000 00000000 -- Start of Clip');
   });
   it('umpEndClip', function() {
-    assert.equal(JZZ.UMP.umpEndClip().toString(), 'f0210000 00000000 00000000 00000000');
+    assert.equal(JZZ.UMP.umpEndClip().toString(), 'f0210000 00000000 00000000 00000000 -- End of Clip');
   });
 });
 
