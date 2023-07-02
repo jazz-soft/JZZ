@@ -2923,6 +2923,33 @@
     umpStartClip: function() { return [0xf0, 0x20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]; },
     umpEndClip: function() { return [0xf0, 0x21, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]; },
   };
+  var _helperGN = {
+    umpTempo: function(g, n) { return [0xd0 + g, 0x10, 0, 0, n >> 24, (n >> 16) & 0xff, (n >> 8) & 0xff, n & 0xff, 0, 0, 0, 0, 0, 0, 0, 0]; },
+    umpBPM: function(g, n) { return _helperGN.umpTempo(g, Math.round(6000000000 / n)); },
+    umpTimeSignature: function(g, a, b) {
+      var nn, cc, dd;
+      var m = ('' + a ).match(/^\s*(\d+)\s*\/\s*(\d+)\s*$/);
+      if (m) {
+        nn = parseInt(m[1]);
+        cc = parseInt(m[2]);
+        if (nn > 0 && nn < 0x100 && cc > 0 && !(cc & (cc - 1))) {
+          dd = 0;
+          for (cc >>= 1; cc; cc >>= 1) dd++;
+          return [0xd0 + g, 0x10, 0, 1, nn, dd, cc, 0, 0, 0, 0, 0, 0, 0, 0, 0]; 
+        }
+      }
+      else if (a == parseInt(a) && b == parseInt(b)) {
+        if (a > 0 && a < 0x100 && b > 0 && !(b & (b - 1))) {
+          nn = a;
+          dd = 0;
+          cc = b;
+          for (cc >>= 1; cc; cc >>= 1) dd++;
+          return [0xd0 + g, 0x10, 0, 1, nn, dd, cc, 0, 0, 0, 0, 0, 0, 0, 0, 0]; 
+        }
+      }
+      throw RangeError('Wrong time signature ' + a + (typeof b == 'undefined' ? '' : '/' + b));
+    },
+  };
   var _helperGC = {
   };
 
@@ -2943,7 +2970,7 @@
     UMP[name] = function() {
       var args = Array.prototype.slice.call(arguments);
       if (typeof this._gr != 'undefined') args = [this._gr].concat(args);
-      return new UMP([0x10 + args[0]].concat(func.apply(this, args.slice(1)), [0, 0]).slice(0, 4));
+      return new UMP(func.apply(this, args));
     };
   }
   function _umpseqstat(n, i) { return n == 1 ? 0 : i == 0 ? 0x10 : i == n - 1 ? 0x30 : 0x20; }
@@ -2968,12 +2995,38 @@
       return new UMP([0x20 + args[0]].concat(func.apply(this, args.slice(1)), [0]).slice(0, 4));
     };
   }
+  function _copyHelperM1N(name, func) {
+    UMP[name] = function() {
+      var args = Array.prototype.slice.call(arguments);
+      if (typeof this._gr != 'undefined') args = [this._gr].concat(args);
+      return new UMP([0x10 + args[0]].concat(func.apply(this, args.slice(1)), [0, 0]).slice(0, 4));
+    };
+  }
   _for(_helperNN, function(n) { _copyHelperNN(n, _helperNN[n]); });
   _for(_helperGC, function(n) { _copyHelperGC(n, _helperGC[n]); });
   _for(_helperMPE, function(n) { _copyHelperM1(n, _helperMPE[n]); });
   _for(_helperCH, function(n) { _copyHelperM1(n, _helperCH[n]); });
-  _for(_helperNC, function(n) { _copyHelperGN(n, _helperNC[n]); });
+  _for(_helperNC, function(n) { _copyHelperM1N(n, _helperNC[n]); });
+  _for(_helperGN, function(n) { _copyHelperGN(n, _helperGN[n]); });
   _for(_helperSX, function(n) { _copyHelperSX(n, _helperSX[n]); });
+
+  UMP.prototype.getTempo = function() {
+    if (this.isTempo()) return (this[4] << 24) + (this[5] << 16) + (this[6] << 8) + this[7];
+  };
+  UMP.prototype.getBPM = function() {
+    var n = this.getTempo();
+    if (n) return Math.round(6000000000 / n);
+  };
+  UMP.prototype.getTimeSignature = function() {
+    if (this.isTimeSignature()) return [this[4], 1 << this[5]];
+  };
+
+  UMP.prototype.isTempo = function() {
+    return (this[0] >> 4) == 13 && (this[1] >> 4) == 1 &&  this[2] == 0 &&  this[3] == 0;
+  };
+  UMP.prototype.isTimeSignature = function() {
+    return (this[0] >> 4) == 13 && (this[1] >> 4) == 1 &&  this[2] == 0 &&  this[3] == 1;
+  };
 
   UMP.prototype.toString = MIDI.prototype.toString;
   UMP.prototype._str = function() {
@@ -2988,6 +3041,12 @@
       n = this[1] >> 4;
       s = ['NOOP', 'JR Clock', 'JR Timestamp', 'Ticks Per Quarter Note', 'Delta Ticks'][n];
       return s;
+    }
+    if (this[0] == 0xd0) {
+      if (this[2] == 0) {
+        if (this[3] == 0) return 'Tempo ' + this.getBPM() + ' BPM';
+        if (this[3] == 1) return 'Time Signature ' + this.getTimeSignature().join('/');
+      }
     }
     if (this[0] == 0xf0) {
       s = { 0x20: 'Start of Clip', 0x21: 'End of Clip' }[this[1]];

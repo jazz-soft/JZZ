@@ -872,6 +872,35 @@ describe('UMP messages', function() {
   it('umpEndClip', function() {
     assert.equal(JZZ.UMP.umpEndClip().toString(), 'f0210000 00000000 00000000 00000000 -- End of Clip');
   });
+  it('umpTempo', function() {
+    var s = 'd0100000 02faf080 00000000 00000000 -- Tempo 120 BPM';
+    var msg = JZZ.UMP.umpBPM(0, 120);
+    assert.equal(msg.isTempo(), true);
+    assert.equal(msg.isTimeSignature(), false);
+    assert.equal(msg.getTempo(), 50000000);
+    assert.equal(msg.getBPM(), 120);
+    assert.equal(typeof msg.getTimeSignature(), 'undefined');
+    assert.equal(msg.toString(), s);
+    assert.equal(JZZ.UMP.gr(0).umpBPM(120).toString(), s);
+  });
+  it('umpTimeSignature', function() {
+    var s = 'd0100001 03020000 00000000 00000000 -- Time Signature 3/4';
+    var msg = JZZ.UMP.umpTimeSignature(0, '3/4');
+    assert.equal(msg.isTimeSignature(), true);
+    assert.equal(msg.isTempo(), false);
+    assert.equal(typeof msg.getBPM(), 'undefined');
+    assert.equal(msg.toString(), s);
+    assert.equal(JZZ.UMP.umpTimeSignature(0, 3, 4).toString(), s);
+    assert.equal(JZZ.UMP.gr(0).umpTimeSignature(3, 4).toString(), s);
+    assert.throws(function() { JZZ.UMP.gr(0).umpTimeSignature('1/5'); });
+    assert.throws(function() { JZZ.UMP.gr(0).umpTimeSignature(4, 3); });
+    assert.throws(function() { JZZ.UMP.gr(0).umpTimeSignature(); });
+  });
+
+  it('unknown', function() {
+    assert.equal(JZZ.UMP([0xd0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]).toString(), 'd0000500 00000000 00000000 00000000');
+    assert.equal(JZZ.UMP([0xd0, 0x10, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]).toString(), 'd0100005 00000000 00000000 00000000');
+  });
 });
 
 describe('SMF events', function() {
