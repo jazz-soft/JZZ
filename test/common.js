@@ -884,7 +884,7 @@ describe('UMP messages', function() {
     assert.equal(JZZ.UMP.gr(0).umpBPM(120).toString(), s);
   });
   it('umpTimeSignature', function() {
-    var s = 'd0100001 03020000 00000000 00000000 -- Time Signature 3/4';
+    var s = 'd0100001 03021800 00000000 00000000 -- Time Signature 3/4';
     var msg = JZZ.UMP.umpTimeSignature(0, '3/4');
     assert.equal(msg.isTimeSignature(), true);
     assert.equal(msg.isTempo(), false);
@@ -894,6 +894,7 @@ describe('UMP messages', function() {
     assert.equal(JZZ.UMP.gr(0).umpTimeSignature(3, 4).toString(), s);
     assert.throws(function() { JZZ.UMP.gr(0).umpTimeSignature('1/5'); });
     assert.throws(function() { JZZ.UMP.gr(0).umpTimeSignature(4, 3); });
+    assert.throws(function() { JZZ.UMP.gr(0).umpTimeSignature(100, 4); });
     assert.throws(function() { JZZ.UMP.gr(0).umpTimeSignature(); });
   });
 

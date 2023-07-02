@@ -14,7 +14,7 @@
 })(this, function() {
 
   var _scope = typeof window === 'undefined' ? global : window;
-  var _version = '1.6.4';
+  var _version = '1.6.5';
   var i, j, k, m, n;
 
   /* istanbul ignore next */
@@ -2425,7 +2425,7 @@
   function _hexx(x) {
     var a = [];
     for (var i = 0; i < x.length; i++) {
-      if (i && !(i % 4)) a.push(' ');
+      if (i && i % 4 == 0) a.push(' ');
       a.push(__hex(x[i]));
     }
     return a.join('');
@@ -2921,7 +2921,7 @@
     umpTicksPQN: function(n) { n = _16b(n); return [0, 0x30, n >> 8, n & 0xff]; },
     umpDelta: function(n) { n = n || 0; n = _20b(n); return [0, 0x40 + (n >> 16), (n >> 8) & 0xff, n & 0xff]; },
     umpStartClip: function() { return [0xf0, 0x20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]; },
-    umpEndClip: function() { return [0xf0, 0x21, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]; },
+    umpEndClip: function() { return [0xf0, 0x21, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]; }
   };
   var _helperGN = {
     umpTempo: function(g, n) { return [0xd0 + g, 0x10, 0, 0, n >> 24, (n >> 16) & 0xff, (n >> 8) & 0xff, n & 0xff, 0, 0, 0, 0, 0, 0, 0, 0]; },
@@ -2932,23 +2932,19 @@
       if (m) {
         nn = parseInt(m[1]);
         cc = parseInt(m[2]);
-        if (nn > 0 && nn < 0x100 && cc > 0 && !(cc & (cc - 1))) {
-          dd = 0;
-          for (cc >>= 1; cc; cc >>= 1) dd++;
-          return [0xd0 + g, 0x10, 0, 1, nn, dd, cc, 0, 0, 0, 0, 0, 0, 0, 0, 0]; 
-        }
       }
       else if (a == parseInt(a) && b == parseInt(b)) {
-        if (a > 0 && a < 0x100 && b > 0 && !(b & (b - 1))) {
-          nn = a;
-          dd = 0;
-          cc = b;
-          for (cc >>= 1; cc; cc >>= 1) dd++;
-          return [0xd0 + g, 0x10, 0, 1, nn, dd, cc, 0, 0, 0, 0, 0, 0, 0, 0, 0]; 
-        }
+        nn = parseInt(a);
+        cc = parseInt(b);
+      }
+      if (nn > 0 && nn < 0x100 && cc > 0 && !(cc & (cc - 1))) {
+        dd = 0;
+        for (cc >>= 1; cc; cc >>= 1) dd++;
+        cc = Math.round(nn * 32 / (1 << dd));
+        if (cc < 0x100) return [0xd0 + g, 0x10, 0, 1, nn, dd, cc, 0, 0, 0, 0, 0, 0, 0, 0, 0];
       }
       throw RangeError('Wrong time signature ' + a + (typeof b == 'undefined' ? '' : '/' + b));
-    },
+    }
   };
   var _helperGC = {
   };
