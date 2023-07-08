@@ -14,7 +14,7 @@
 })(this, function() {
 
   var _scope = typeof window === 'undefined' ? global : window;
-  var _version = '1.6.5';
+  var _version = '1.6.6';
   var i, j, k, m, n;
 
   /* istanbul ignore next */
@@ -3023,6 +3023,8 @@
   UMP.prototype.isTimeSignature = function() {
     return (this[0] >> 4) == 13 && (this[1] >> 4) == 1 &&  this[2] == 0 &&  this[3] == 1;
   };
+  UMP.prototype.isStartClip = function() { return this.match([0xf0, 0x20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]); };
+  UMP.prototype.isEndClip = function() { return this.match([0xf0, 0x21, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]); };
 
   UMP.prototype.toString = MIDI.prototype.toString;
   UMP.prototype._str = function() {
@@ -3053,6 +3055,7 @@
   UMP.prototype._stamp = MIDI.prototype._stamp;
   UMP.prototype._unstamp = MIDI.prototype._unstamp;
   UMP.prototype._stamped = MIDI.prototype._stamped;
+  UMP.prototype.match = MIDI.prototype.match;
 
   JZZ.UMP = UMP;
   _J.prototype.UMP = UMP;

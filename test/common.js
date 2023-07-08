@@ -867,6 +867,8 @@ describe('UMP messages', function() {
   it('umpStartClip', function() {
     var msg = JZZ.UMP.umpStartClip();
     assert.equal(typeof msg.getGroup(), 'undefined');
+    assert.equal(msg.isStartClip(), true);
+    assert.equal(msg.isEndClip(), false);
     assert.equal(msg.toString(), 'f0200000 00000000 00000000 00000000 -- Start of Clip');
   });
   it('umpEndClip', function() {

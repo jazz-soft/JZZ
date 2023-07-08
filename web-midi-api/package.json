@@ -13,7 +13,7 @@
     "web-midi-api"
   ],
   "dependencies": {
-    "jzz": "^1.6.5"
+    "jzz": "^1.6.6"
   },
   "contributors": [
     {
