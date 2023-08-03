@@ -774,6 +774,7 @@ describe('UMP messages', function() {
     var s = '00000000 -- NOOP';
     var msg =JZZ.UMP.noop();
     assert.equal(typeof msg.getGroup(), 'undefined');
+    assert.equal(typeof msg.getDelta(), 'undefined');
     assert.equal(msg.toString(), s);
     msg = new JZZ.UMP(msg);
     assert.equal(msg.toString(), s);
@@ -860,8 +861,10 @@ describe('UMP messages', function() {
     assert.throws(function() { JZZ.UMP.umpTicksPQN(0x10000); });
   });
   it('umpDelta', function() {
+    var msg = JZZ.UMP.umpDelta(96);
+    assert.equal(msg.getDelta(), 96);
+    assert.equal(msg.toString(), '00400060 -- Delta Ticks');
     assert.equal(JZZ.UMP.umpDelta().toString(), '00400000 -- Delta Ticks');
-    assert.equal(JZZ.UMP.umpDelta(96).toString(), '00400060 -- Delta Ticks');
     assert.throws(function() { JZZ.UMP.umpDelta(0x100000); });
   });
   it('umpStartClip', function() {

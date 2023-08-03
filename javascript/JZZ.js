@@ -3016,6 +3016,9 @@
   UMP.prototype.getTimeSignature = function() {
     if (this.isTimeSignature()) return [this[4], 1 << this[5]];
   };
+  UMP.prototype.getDelta = function() {
+    if (this.isDelta()) return ((this[1] & 15) << 16) + (this[2] << 8) + this[3];
+  };
 
   UMP.prototype.isTempo = function() {
     return (this[0] >> 4) == 13 && (this[1] >> 4) == 1 &&  this[2] == 0 &&  this[3] == 0;
@@ -3023,6 +3026,7 @@
   UMP.prototype.isTimeSignature = function() {
     return (this[0] >> 4) == 13 && (this[1] >> 4) == 1 &&  this[2] == 0 &&  this[3] == 1;
   };
+  UMP.prototype.isDelta = function() { return this[0] == 0 && (this[1] >> 4) == 4; };
   UMP.prototype.isStartClip = function() { return this.match([0xf0, 0x20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]); };
   UMP.prototype.isEndClip = function() { return this.match([0xf0, 0x21, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]); };
 
