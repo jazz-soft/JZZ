@@ -509,6 +509,14 @@
       throw RangeError('Bad channel value (must not be less than 0 or more than 15): ' + c);
   }
 
+    // _M2: MIDI 2.0 object
+    function _M2() {
+      _R.apply(this);
+      this._handles = [];
+      this._outs = [];
+    }
+    _M2.prototype = new _R();
+  
   // _W: Watcher object ~ MIDIAccess.onstatechange
   function _W() {
     _R.apply(this);
@@ -2949,6 +2957,7 @@
   var _helperGC = {
   };
 
+  var _helpersUmp = {};
   function _copyHelperNN(name, func) {
     UMP[name] = function() {
       return new UMP(func.apply(this, arguments));
@@ -3005,6 +3014,11 @@
   _for(_helperNC, function(n) { _copyHelperM1N(n, _helperNC[n]); });
   _for(_helperGN, function(n) { _copyHelperGN(n, _helperGN[n]); });
   _for(_helperSX, function(n) { _copyHelperSX(n, _helperSX[n]); });
+
+  function _copyUmpHelpers(M) {
+    _for(_helpersUmp, function(n) { M.prototype[n] = _helpersUmp[n]; });
+  }
+  _copyUmpHelpers(_M2);
 
   UMP.prototype.getTempo = function() {
     if (this.isTempo()) return (this[4] << 24) + (this[5] << 16) + (this[6] << 8) + this[7];
