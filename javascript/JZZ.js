@@ -3186,6 +3186,8 @@
     }
   }
   JZZ.lib.copyMidiHelpers = _copyMidiHelpers;
+  JZZ.lib.copyMidi2Helpers = _copyUmpHelpers;
+  JZZ.lib.copyUmpHelpers = _copyUmpHelpers;
   JZZ.lib.getAudioContext = function() { _initAudioContext(); return _ac; };
   var _b64 = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
   JZZ.lib.fromBase64 = function(input) {
