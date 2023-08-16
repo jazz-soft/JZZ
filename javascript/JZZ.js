@@ -509,14 +509,27 @@
       throw RangeError('Bad channel value (must not be less than 0 or more than 15): ' + c);
   }
 
-    // _M2: MIDI 2.0 object
-    function _M2() {
-      _R.apply(this);
-      this._handles = [];
-      this._outs = [];
+  // _M2: MIDI 2.0 object
+  function _M2() {
+    _R.apply(this);
+    this._handles = [];
+    this._outs = [];
+  }
+  _M2.prototype = new _R();
+  _M2.prototype._receive = function(msg) { this._emit(msg); };
+  _M2.prototype.send = function() {
+    this._push(_receive, [UMP.apply(null, arguments)]);
+    return this._thenable();
+  };
+  _M2.prototype._emit = function(msg) {
+    var i;
+    for (i = 0; i < this._handles.length; i++) this._handles[i].apply(this, [UMP(msg)._stamp(this)]);
+    for (i = 0; i < this._outs.length; i++) {
+      var m = UMP(msg);
+      if (!m._stamped(this._outs[i])) this._outs[i].send(m._stamp(this));
     }
-    _M2.prototype = new _R();
-  
+  };
+
   // _W: Watcher object ~ MIDIAccess.onstatechange
   function _W() {
     _R.apply(this);
@@ -1285,6 +1298,16 @@
   }
   JZZ.Widget = Widget;
   _J.prototype.Widget = JZZ.Widget;
+
+  function Widget2(arg) {
+    var self = new _M2();
+    if (arg instanceof Object) _for(arg, function(k) { self[k] = arg[k]; });
+    self._resume();
+    return self;
+  }
+  JZZ.Widget2 = Widget2;
+  _J.prototype.Widget2 = JZZ.Widget2;
+
   JZZ.addMidiIn = function(name, widget) {
     var info = _clone(widget._info || {});
     info.name = name;
@@ -2962,6 +2985,7 @@
     UMP[name] = function() {
       return new UMP(func.apply(this, arguments));
     };
+    _helpersUmp[name] = function() { return this.send(func.apply(this, arguments)); };
   }
   function _copyHelperGC(name, func) {
     UMP[name] = function() {
