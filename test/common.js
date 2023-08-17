@@ -1268,13 +1268,12 @@ describe('JZZ.Widget', function() {
 });
 
 describe('JZZ.Widget2', function() {
-  it('connect', function(done) {
-    var port1 = JZZ.Widget2({ _receive: function(msg) { this._emit(msg); done(); }});
+  it('noop', function(done) {
+    var sample = new test.Sample(done, [[0, 0, 0, 0]]);
+    var port1 = JZZ.Widget2();
     var port2 = JZZ.Widget2();
-    var port3 = JZZ.Widget2();
-    //port1.connect(port2);
-    //port2.connect(port3);
-    //port3.connect(port1);
+    port1.connect(port2);
+    port2.connect(function(msg) { sample.compare(msg); });
     port1.noop();
   });
 });

@@ -529,6 +529,9 @@
       if (!m._stamped(this._outs[i])) this._outs[i].send(m._stamp(this));
     }
   };
+  _M2.prototype.connect = _M.prototype.connect;
+  _M2.prototype.disconnect = _M.prototype.disconnect;
+  _M2.prototype.connected = _M.prototype.connected;
 
   // _W: Watcher object ~ MIDIAccess.onstatechange
   function _W() {
