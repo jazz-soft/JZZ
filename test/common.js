@@ -1273,6 +1273,7 @@ describe('JZZ.Widget2', function() {
     var port1 = JZZ.Widget2();
     var port2 = JZZ.Widget2();
     port1.connect(port2);
+    port2.connect(port1);
     port2.connect(function(msg) { sample.compare(msg); });
     port1.noop();
   });
