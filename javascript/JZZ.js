@@ -457,16 +457,14 @@
   };
   _M.prototype._image = function() {
     var dup = this._dup();
+    dup._gr = this._gr;
     dup._ch = this._ch;
     dup._sxid = this._sxid;
     dup._master = this._master;
     dup._band = this._band;
     return dup;
   };
-  _M.prototype._ch = undefined;
   _M.prototype._sxid = 0x7f;
-  _M.prototype._master = undefined;
-  _M.prototype._band = undefined;
 
   _M.prototype.sxId = function(id) {
     if (typeof id == 'undefined') id = _M.prototype._sxid;
@@ -532,6 +530,17 @@
   _M2.prototype.connect = _M.prototype.connect;
   _M2.prototype.disconnect = _M.prototype.disconnect;
   _M2.prototype.connected = _M.prototype.connected;
+  _M2.prototype._sxid = 0x7f;
+  _M2.prototype.sxId = _M.prototype.sxId;
+  _M2.prototype.ch = _M.prototype.ch;
+  _M2.prototype.gr = function(g) {
+    if (g == this._gr || typeof g == 'undefined' && typeof this._gr == 'undefined') return this._thenable();
+    var img = this._image();
+    if (typeof g != 'undefined') g = _ch(g);
+    img._gr = g;
+    this._push(_kick, [img]);
+    return img._thenable();
+  };
 
   // _W: Watcher object ~ MIDIAccess.onstatechange
   function _W() {

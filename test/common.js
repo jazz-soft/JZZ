@@ -1275,7 +1275,7 @@ describe('JZZ.Widget2', function() {
     port1.connect(port2);
     port2.connect(port1);
     port2.connect(function(msg) { sample.compare(msg); });
-    port1.noop();
+    port1.gr().gr(1).gr(1).gr().noop();
   });
 });
 
