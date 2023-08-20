@@ -2994,9 +2994,7 @@
 
   var _helpersUmp = {};
   function _copyHelperNN(name, func) {
-    UMP[name] = function() {
-      return new UMP(func.apply(this, arguments));
-    };
+    UMP[name] = function() { return new UMP(func.apply(this, arguments));};
     _helpersUmp[name] = function() { return this.send(func.apply(this, arguments)); };
   }
   function _copyHelperGC(name, func) {
@@ -3012,6 +3010,11 @@
       var args = Array.prototype.slice.call(arguments);
       if (typeof this._gr != 'undefined') args = [this._gr].concat(args);
       return new UMP(func.apply(this, args));
+    };
+    _helpersUmp[name] = function() {
+      var args = Array.prototype.slice.call(arguments);
+      if (typeof this._gr != 'undefined') args = [this._gr].concat(args);
+      return this.send(func.apply(this, args));
     };
   }
   function _umpseqstat(n, i) { return n == 1 ? 0 : i == 0 ? 0x10 : i == n - 1 ? 0x30 : 0x20; }

@@ -1277,6 +1277,15 @@ describe('JZZ.Widget2', function() {
     port2.connect(function(msg) { sample.compare(msg); });
     port1.gr().gr(1).gr(1).gr().noop();
   });
+  it('umpBPM', function(done) {
+    var sample = new test.Sample(done, [
+      [209, 16, 0, 0, 2, 250, 240, 128, 0, 0, 0, 0, 0, 0, 0, 0],
+      [210, 16, 0, 0, 2, 250, 240, 128, 0, 0, 0, 0, 0, 0, 0, 0]
+    ]);
+    var port = JZZ.Widget2();
+    port.connect(function(msg) { sample.compare(msg); });
+    port.umpBPM(1, 120).gr(2).umpBPM(120);
+  });
 });
 
 describe('JZZ.Context', function() {
