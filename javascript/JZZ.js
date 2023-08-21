@@ -527,6 +527,7 @@
       if (!m._stamped(this._outs[i])) this._outs[i].send(m._stamp(this));
     }
   };
+  _M2.prototype._image = _M.prototype._image;
   _M2.prototype.connect = _M.prototype.connect;
   _M2.prototype.disconnect = _M.prototype.disconnect;
   _M2.prototype.connected = _M.prototype.connected;
@@ -2998,12 +2999,20 @@
     _helpersUmp[name] = function() { return this.send(func.apply(this, arguments)); };
   }
   function _copyHelperGC(name, func) {
+    /*
     UMP[name] = function() {
       var args = Array.prototype.slice.call(arguments);
       if (typeof this._gr != 'undefined') args = [this._gr].concat(args);
       if (typeof this._ch != 'undefined') args = [args[0]].concat([this._ch]).concat(args.slice(1));
       return new UMP(func.apply(this, args));
     };
+    _helpersUmp[name] = function() {
+      var args = Array.prototype.slice.call(arguments);
+      if (typeof this._gr != 'undefined') args = [this._gr].concat(args);
+      if (typeof this._ch != 'undefined') args = [args[0]].concat([this._ch]).concat(args.slice(1));
+      return this.send(func.apply(this, args));
+    };
+    */
   }
   function _copyHelperGN(name, func) {
     UMP[name] = function() {
@@ -3030,6 +3039,14 @@
       if (typeof this._gr != 'undefined') args = [this._gr].concat(args);
       return _sliceSX(args[0], func.apply(this, args.slice(1)));
     };
+    _helpersUmp[name] = function() {
+      var args = Array.prototype.slice.call(arguments);
+      if (typeof this._gr != 'undefined') args = [this._gr].concat(args);
+      var a = _sliceSX(args[0], func.apply(this, args.slice(1)));
+      var g = this;
+      for (var i = 0; i < a.length; i++) g = g.send(a[i]);
+      return g;
+    };
   }
   function _copyHelperM1(name, func) {
     UMP[name] = function() {
@@ -3038,12 +3055,23 @@
       if (typeof this._ch != 'undefined') args = [args[0]].concat([this._ch]).concat(args.slice(1));
       return new UMP([0x20 + args[0]].concat(func.apply(this, args.slice(1)), [0]).slice(0, 4));
     };
+    _helpersUmp[name] = function() {
+      var args = Array.prototype.slice.call(arguments);
+      if (typeof this._gr != 'undefined') args = [this._gr].concat(args);
+      if (typeof this._ch != 'undefined') args = [args[0]].concat([this._ch]).concat(args.slice(1));
+      return this.send([0x20 + args[0]].concat(func.apply(this, args.slice(1)), [0]).slice(0, 4));
+    };
   }
   function _copyHelperM1N(name, func) {
     UMP[name] = function() {
       var args = Array.prototype.slice.call(arguments);
       if (typeof this._gr != 'undefined') args = [this._gr].concat(args);
       return new UMP([0x10 + args[0]].concat(func.apply(this, args.slice(1)), [0, 0]).slice(0, 4));
+    };
+    _helpersUmp[name] = function() {
+      var args = Array.prototype.slice.call(arguments);
+      if (typeof this._gr != 'undefined') args = [this._gr].concat(args);
+      return this.send([0x10 + args[0]].concat(func.apply(this, args.slice(1)), [0, 0]).slice(0, 4));
     };
   }
   _for(_helperNN, function(n) { _copyHelperNN(n, _helperNN[n]); });

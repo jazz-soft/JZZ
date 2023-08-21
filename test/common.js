@@ -1277,6 +1277,37 @@ describe('JZZ.Widget2', function() {
     port2.connect(function(msg) { sample.compare(msg); });
     port1.gr().gr(1).gr(1).gr().noop();
   });
+  it('reset', function(done) {
+    var sample = new test.Sample(done, [
+      [17, 255, 0, 0],
+      [18, 255, 0, 0]
+    ]);
+    var port = JZZ.Widget2();
+    port.connect(function(msg) { sample.compare(msg); });
+    port.reset(1).gr(2).reset();
+  });
+  it('noteOn', function(done) {
+    var sample = new test.Sample(done, [
+      [33, 146, 61, 126],
+      [33, 146, 61, 126],
+      [33, 146, 61, 126],
+      [33, 146, 61, 126]
+    ]);
+    var port = JZZ.Widget2();
+    port.connect(function(msg) { sample.compare(msg); });
+    port.noteOn(1, 2, 'C#5', 126).gr(1).noteOn(2, 'C#5', 126).ch(2).noteOn('C#5', 126).gr().noteOn(1, 'C#5', 126);
+  });
+  it('sxGS', function(done) {
+    var sample = new test.Sample(done, [
+      [49, 22, 65, 127, 66, 18, 64, 0],
+      [49, 51, 127, 0, 65, 0, 0, 0],
+      [50, 22, 65, 127, 66, 18, 64, 0],
+      [50, 51, 127, 0, 65, 0, 0, 0]
+    ]);
+    var port = JZZ.Widget2();
+    port.connect(function(msg) { sample.compare(msg); });
+    port.sxGS(1).gr(2).sxGS();
+  });
   it('umpBPM', function(done) {
     var sample = new test.Sample(done, [
       [209, 16, 0, 0, 2, 250, 240, 128, 0, 0, 0, 0, 0, 0, 0, 0],
