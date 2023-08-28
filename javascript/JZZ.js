@@ -14,7 +14,7 @@
 })(this, function() {
 
   var _scope = typeof window === 'undefined' ? global : window;
-  var _version = '1.6.7';
+  var _version = '1.6.8';
   var i, j, k, m, n;
 
   /* istanbul ignore next */
@@ -2920,6 +2920,12 @@
   }
   UMP.prototype = [];
   UMP.prototype.constructor = UMP;
+  UMP.prototype.dump = function() {
+    var i;
+    var s = '';
+    for (i = 0; i < this.length; i++) s += String.fromCharCode(this[i]);
+    return s;
+  };
 
   function _UMP() {}
   _UMP.prototype = UMP;

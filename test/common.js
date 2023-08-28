@@ -775,6 +775,7 @@ describe('UMP messages', function() {
     var msg =JZZ.UMP.noop();
     assert.equal(typeof msg.getGroup(), 'undefined');
     assert.equal(typeof msg.getDelta(), 'undefined');
+    assert(msg.dump(), '\0\0\0\0');
     assert.equal(msg.toString(), s);
     msg = new JZZ.UMP(msg);
     assert.equal(msg.toString(), s);
