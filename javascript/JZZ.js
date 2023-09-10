@@ -14,7 +14,7 @@
 })(this, function() {
 
   var _scope = typeof window === 'undefined' ? global : window;
-  var _version = '1.6.8';
+  var _version = '1.6.9';
   var i, j, k, m, n;
 
   /* istanbul ignore next */
@@ -2920,6 +2920,7 @@
   }
   UMP.prototype = [];
   UMP.prototype.constructor = UMP;
+  UMP.prototype.isMidi2 = true;
   UMP.prototype.dump = function() {
     var i;
     var s = '';
@@ -2997,6 +2998,17 @@
     }
   };
   var _helperGC = {
+    umpNoteOn: function(g, c, n, v, t, a) {
+      if (typeof v == 'undefined')  v = 0xffff;
+      t = t || 0; a = a || 0;
+      v = _16b(v); a = _16b(a);
+      return [0x40 + g, 0x90 + _ch(c), _7bn(n), _8b(t), v >> 8, v & 255, a >> 8, a & 255];
+    },
+    umpNoteOff: function(g, c, n, v, t, a) {
+      v = v || 0; t = t || 0; a = a || 0;
+      v = _16b(v); a = _16b(a);
+      return [0x40 + g, 0x80 + _ch(c), _7bn(n), _8b(t), v >> 8, v & 255, a >> 8, a & 255];
+    }
   };
 
   var _helpersUmp = {};
@@ -3005,7 +3017,6 @@
     _helpersUmp[name] = function() { return this.send(func.apply(this, arguments)); };
   }
   function _copyHelperGC(name, func) {
-    /*
     UMP[name] = function() {
       var args = Array.prototype.slice.call(arguments);
       if (typeof this._gr != 'undefined') args = [this._gr].concat(args);
@@ -3018,7 +3029,6 @@
       if (typeof this._ch != 'undefined') args = [args[0]].concat([this._ch]).concat(args.slice(1));
       return this.send(func.apply(this, args));
     };
-    */
   }
   function _copyHelperGN(name, func) {
     UMP[name] = function() {
@@ -3116,7 +3126,20 @@
   UMP.prototype.isDelta = function() { return this[0] == 0 && (this[1] >> 4) == 4; };
   UMP.prototype.isStartClip = function() { return this.match([0xf0, 0x20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]); };
   UMP.prototype.isEndClip = function() { return this.match([0xf0, 0x21, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]); };
-
+  UMP.prototype.isNoteOn = function() {
+    var c = (this[0] || 0) >> 4;
+    var d = (this[1] || 0) >> 4;
+    if (c == 4) return d == 9;
+    else if (c == 2) return d == 9 && !!this[3]; 
+    return false;
+  };
+  UMP.prototype.isNoteOff = function() {
+    var c = (this[0] || 0) >> 4;
+    var d = (this[1] || 0) >> 4;
+    if (c == 4) return d == 8;
+    else if (c == 2) return d == 8 || (d == 9 && !this[3]); 
+    return false;
+  };
   UMP.prototype.toString = MIDI.prototype.toString;
   UMP.prototype._str = function() {
     var t = this._string();
@@ -3129,6 +3152,14 @@
     if (t == 0) {
       n = this[1] >> 4;
       s = ['NOOP', 'JR Clock', 'JR Timestamp', 'Ticks Per Quarter Note', 'Delta Ticks'][n];
+      return s;
+    }
+    if (t == 4) {
+      n = this[1] >> 4;
+      s = {
+        8: 'Note Off',
+        9: 'Note On'
+      }[n];
       return s;
     }
     if (this[0] == 0xd0) {

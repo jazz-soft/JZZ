@@ -773,6 +773,8 @@ describe('UMP messages', function() {
   it('noop', function() {
     var s = '00000000 -- NOOP';
     var msg =JZZ.UMP.noop();
+    assert.equal(msg.isNoteOn(), false);
+    assert.equal(msg.isNoteOff(), false);
     assert.equal(typeof msg.getGroup(), 'undefined');
     assert.equal(typeof msg.getDelta(), 'undefined');
     assert(msg.dump(), '\0\0\0\0');
@@ -789,6 +791,8 @@ describe('UMP messages', function() {
   it('noteOn', function() {
     var s = '21923d7f -- Note On';
     var msg = JZZ.UMP.noteOn(1, 2, 'C#5');
+    assert.equal(msg.isNoteOn(), true);
+    assert.equal(msg.isNoteOff(), false);
     assert.equal(msg.getGroup(), 1);
     assert.equal(JZZ.UMP.noteOn(1, 2, 'C#5').toString(), s);
     assert.equal(JZZ.UMP.ch().noteOn(1, 2, 'C#5').toString(), s);
@@ -803,6 +807,9 @@ describe('UMP messages', function() {
   });
   it('noteOff', function() {
     var s = '21823d40 -- Note Off';
+    var msg = JZZ.UMP.noteOff(1, 2, 61);
+    assert.equal(msg.isNoteOn(), false);
+    assert.equal(msg.isNoteOff(), true);
     assert.equal(JZZ.UMP.noteOff(1, 2, 61).toString(), s);
     assert.equal(JZZ.UMP.noteOff(1, 2, 'C#5', 64).toString(), s);
   });
@@ -902,6 +909,31 @@ describe('UMP messages', function() {
     assert.throws(function() { JZZ.UMP.gr(0).umpTimeSignature(4, 3); });
     assert.throws(function() { JZZ.UMP.gr(0).umpTimeSignature(100, 4); });
     assert.throws(function() { JZZ.UMP.gr(0).umpTimeSignature(); });
+  });
+  it('umpNoteOn', function() {
+    var s = '41923d00 ffff0000 -- Note On';
+    var msg = JZZ.UMP.umpNoteOn(1, 2, 'C#5');
+    assert.equal(msg.isNoteOn(), true);
+    assert.equal(msg.isNoteOff(), false);
+    assert.equal(msg.getGroup(), 1);
+    assert.equal(JZZ.UMP.umpNoteOn(1, 2, 'C#5').toString(), s);
+    assert.equal(JZZ.UMP.ch().umpNoteOn(1, 2, 'C#5').toString(), s);
+    assert.equal(JZZ.UMP.ch(5).ch().umpNoteOn(1, 2, 'C#5').toString(), s);
+    assert.equal(JZZ.UMP.gr().umpNoteOn(1, 2, 'C#5').toString(), s);
+    assert.equal(JZZ.UMP.gr(5).gr().umpNoteOn(1, 2, 'C#5').toString(), s);
+    assert.equal(JZZ.UMP.gr(1).umpNoteOn(2, 'C#5').toString(), s);
+    assert.equal(JZZ.UMP.ch(2).umpNoteOn(1, 'C#5').toString(), s);
+    assert.equal(JZZ.UMP.gr(1).ch(2).umpNoteOn('C#5').toString(), s);
+    assert.equal(JZZ.UMP.ch(2).gr(1).umpNoteOn('C#5', 0xffff).toString(), s);
+    assert.equal(JZZ.UMP.ch(2).gr(1).ch(2).gr(1).umpNoteOn('C#5', 0xffff, 0, 0).toString(), s);
+  });
+  it('umpNoteOff', function() {
+    var s = '41823d00 00000000 -- Note Off';
+    var msg = JZZ.UMP.umpNoteOff(1, 2, 'C#5');
+    assert.equal(msg.isNoteOn(), false);
+    assert.equal(msg.isNoteOff(), true);
+    assert.equal(JZZ.UMP.umpNoteOff(1, 2, 61).toString(), s);
+    assert.equal(JZZ.UMP.umpNoteOff(1, 2, 'C#5', 0).toString(), s);
   });
 
   it('unknown', function() {
@@ -1297,6 +1329,17 @@ describe('JZZ.Widget2', function() {
     var port = JZZ.Widget2();
     port.connect(function(msg) { sample.compare(msg); });
     port.noteOn(1, 2, 'C#5', 126).gr(1).noteOn(2, 'C#5', 126).ch(2).noteOn('C#5', 126).gr().noteOn(1, 'C#5', 126);
+  });
+  it('umpNoteOn', function(done) {
+    var sample = new test.Sample(done, [
+      [65, 146, 61, 0, 0, 126, 0, 0],
+      [65, 146, 61, 0, 0, 126, 0, 0],
+      [65, 146, 61, 0, 0, 126, 0, 0],
+      [65, 146, 61, 0, 0, 126, 0, 0]
+    ]);
+    var port = JZZ.Widget2();
+    port.connect(function(msg) { sample.compare(msg); });
+    port.umpNoteOn(1, 2, 'C#5', 126).gr(1).umpNoteOn(2, 'C#5', 126).ch(2).umpNoteOn('C#5', 126).gr().umpNoteOn(1, 'C#5', 126);
   });
   it('sxGS', function(done) {
     var sample = new test.Sample(done, [
