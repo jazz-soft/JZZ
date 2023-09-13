@@ -841,7 +841,7 @@ describe('UMP messages', function() {
     assert.equal(msg.toString(), s);
   });
   it('sxIdRequest', function() {
-    var s = '37047e7f 06010000';
+    var s = '37047e7f 06010000 -- SysEx';
     var msg = JZZ.UMP.sxId(1).sxId(1).sxId().sxId().sxIdRequest(7)[0];
     assert.equal(msg.getGroup(), 7);
     assert.equal(msg.toString(), s);
@@ -850,13 +850,13 @@ describe('UMP messages', function() {
     assert.equal(msg.toString(), s);
   });
   it('sxMasterVolume', function() {
-    assert.equal(JZZ.UMP.sxMasterVolumeF(5, 0.5).toString(), '35067f7f 04010040');
+    assert.equal(JZZ.UMP.sxMasterVolumeF(5, 0.5).toString(), '35067f7f 04010040 -- SysEx');
   });
   it('sxGS', function() {
-    assert.equal(JZZ.UMP.sxGS(5).toString(), '3516417f 42124000,35337f00 41000000');
+    assert.equal(JZZ.UMP.sxGS(5).toString(), '3516417f 42124000 -- SysEx,35337f00 41000000 -- SysEx');
   });
   it('sxMidiSoft', function() {
-    assert.equal(JZZ.UMP.sxMidiSoft(5, 4, 'karaoke...').toString(), '35160020 2400046b,35266172 616f6b65,35332e2e 2e000000');
+    assert.equal(JZZ.UMP.sxMidiSoft(5, 4, 'karaoke...').toString(), '35160020 2400046b -- SysEx,35266172 616f6b65 -- SysEx,35332e2e 2e000000 -- SysEx');
   });
   it('umpClock', function() {
     assert.equal(JZZ.UMP.umpClock(96).toString(), '00100060 -- JR Clock');
@@ -910,6 +910,10 @@ describe('UMP messages', function() {
     assert.throws(function() { JZZ.UMP.gr(0).umpTimeSignature(100, 4); });
     assert.throws(function() { JZZ.UMP.gr(0).umpTimeSignature(); });
   });
+  it('umpKeySignature', function() {
+    var s = 'd0100005 00000000 00000000 00000000 -- Key Signature';
+    assert.equal(JZZ.UMP([0xd0, 0x10, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]).toString(), s);
+  });
   it('umpNoteOn', function() {
     var s = '41923d00 ffff0000 -- Note On';
     var msg = JZZ.UMP.umpNoteOn(1, 2, 'C#5');
@@ -937,8 +941,8 @@ describe('UMP messages', function() {
   });
 
   it('unknown', function() {
-    assert.equal(JZZ.UMP([0xd0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]).toString(), 'd0000500 00000000 00000000 00000000');
-    assert.equal(JZZ.UMP([0xd0, 0x10, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]).toString(), 'd0100005 00000000 00000000 00000000');
+    assert.equal(JZZ.UMP([0xd0, 0, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]).toString(), 'd0000700 00000000 00000000 00000000');
+    assert.equal(JZZ.UMP([0xd0, 0x10, 0, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]).toString(), 'd0100007 00000000 00000000 00000000');
   });
 });
 

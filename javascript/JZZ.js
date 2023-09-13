@@ -3149,29 +3149,83 @@
     var n, s;
     var t = this[0] >> 4;
     if (t == 1 || t == 2) return new MIDI(this.slice(1))._string();
-    if (t == 0) {
+    else if (t == 0) {
       n = this[1] >> 4;
       s = ['NOOP', 'JR Clock', 'JR Timestamp', 'Ticks Per Quarter Note', 'Delta Ticks'][n];
-      return s;
     }
-    if (t == 4) {
+    else if (t == 3) {
+      s = 'SysEx';
+    }
+    else if (t == 4) {
       n = this[1] >> 4;
       s = {
+        0: 'Registered Per-Note Controller',
+        1: 'Assignable Per-Note Controller',
+        2: 'Registered Controller',
+        3: 'Assignable Controller',
+        4: 'Relative Registered Controller',
+        5: 'Relative Assignable Controller',
+        6: 'Per-Note Pitch Bend',
         8: 'Note Off',
-        9: 'Note On'
+        9: 'Note On',
+        10: 'Poly Pressure',
+        11: 'Control Change',
+        12: 'Program Change',
+        13: 'Channel Pressure',
+        14: 'Pitch Bend',
+        15: 'Per-Note Management'
       }[n];
-      return s;
     }
-    if (this[0] == 0xd0) {
-      if (this[2] == 0) {
-        if (this[3] == 0) return 'Tempo ' + this.getBPM() + ' BPM';
-        if (this[3] == 1) return 'Time Signature ' + this.getTimeSignature().join('/');
+    else if (t == 5) {
+      s = 'Data';
+    }
+    else if (t == 13) {
+      n = this[2];
+      if (n == 0) {
+        n = this[3];
+        s = {
+          0: 'Tempo ',
+          1: 'Time Signature ',
+          2: 'Metronome',
+          5: 'Key Signature',
+          6: 'Chord Name'
+        }[n];
+        if (n == 0) s += this.getBPM() + ' BPM';
+        else if (n == 1) s += this.getTimeSignature().join('/');
+      }
+      else if (n == 1) {
+        n = this[3];
+        s = {
+          0: 'Metadata Text',
+          1: 'Project Name',
+          2: 'Composition Name',
+          3: 'Clip Name',
+          4: 'Copyright',
+          5: 'Composer Name',
+          6: 'Lyricist Name',
+          7: 'Arranger Name',
+          8: 'Publisher Name',
+          9: 'Primary Performer Name',
+          10: 'Accompanying Performer Name',
+          11: 'Recording Date',
+          12: 'Recording Location'
+        }[n];
+      }
+      else if (n == 2) {
+        n = this[3];
+        s = {
+          0: 'Performance Text',
+          1: 'Lyrics',
+          2: 'Lyrics Language',
+          3: 'Ruby',
+          4: 'Ruby Language',
+        }[n];
       }
     }
-    if (this[0] == 0xf0) {
+    if (t == 15) {
       s = { 0x20: 'Start of Clip', 0x21: 'End of Clip' }[this[1]];
-      return s;
     }
+    return s;
   };
 
   UMP.prototype._stamp = MIDI.prototype._stamp;
