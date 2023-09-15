@@ -40,10 +40,12 @@ module.exports = function(grunt) {
   });
   grunt.task.registerTask('ts', 'Check index.d.ts', function() {
     var JZZ = require('.');
-    function H1() {}
-    JZZ.lib.copyMidiHelpers(H1);
-    function H2() {}
-    JZZ.lib.copyUmpHelpers(H2);
+    function F1() {}
+    JZZ.lib.copyMidiHelpers(F1);
+    var H1 = Object.keys(F1.prototype).sort();
+    function F2() {}
+    JZZ.lib.copyUmpHelpers(F2);
+    var H2 = Object.keys(F2.prototype).sort();
     var ts = grunt.file.read('index.d.ts').split(/\r?\n/);
     var list = {};
     var current;
@@ -66,9 +68,12 @@ module.exports = function(grunt) {
       if (match) {
         current[match[1]] = true;
       }
-      var M1 = ['namespace MIDI'];
-      for (j = 0; j < M1.length; j++) {
-        //console.log(list[M1[j]]);
+    }
+    var M1 = ['namespace MIDI'];
+    for (j = 0; j < M1.length; j++) {
+      for (k = 0; k < H1.length; k++) {
+        if (!list[M1[j]][H1[k]])
+        console.log('missing', M1[j], ':', H1[k] );
       }
     }
   });
