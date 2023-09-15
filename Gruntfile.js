@@ -38,6 +38,40 @@ module.exports = function(grunt) {
       }
     }
   });
+  grunt.task.registerTask('ts', 'Check index.d.ts', function() {
+    var JZZ = require('.');
+    function H1() {}
+    JZZ.lib.copyMidiHelpers(H1);
+    function H2() {}
+    JZZ.lib.copyUmpHelpers(H2);
+    var ts = grunt.file.read('index.d.ts').split(/\r?\n/);
+    var list = {};
+    var current;
+    var i, j, k;
+    for (i = 0; i < ts.length; i++) {
+      var match = ts[i].match(/namespace\s+(\S+)/);
+      if (match) {
+        current = {};
+        list['namespace ' + match[1]] = current;
+        continue;
+      }
+      match = ts[i].match(/interface\s+(\S+)/);
+      if (match) {
+        if (match[1] == 'Constructor') continue;
+        current = {};
+        list['interface ' + match[1]] = current;
+        continue;
+      }
+      match = ts[i].match(/\s+(\S+)\(/);
+      if (match) {
+        current[match[1]] = true;
+      }
+      var M1 = ['namespace MIDI'];
+      for (j = 0; j < M1.length; j++) {
+        //console.log(list[M1[j]]);
+      }
+    }
+  });
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.registerTask('default', ['jshint', 'uglify', 'version']);
