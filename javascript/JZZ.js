@@ -3042,11 +3042,15 @@
       return this.send(func.apply(this, args));
     };
   }
-  function _umpseqstat(n, i) { return n == 1 ? 0 : i == 0 ? 0x10 : i == n - 1 ? 0x30 : 0x20; }
-  function _sliceSX(gr, m) {
+  function _umpseqstat(n, i) { return n == 1 ? 0 : i == 0 ? 0x1 : i == n - 1 ? 0x3 : 0x2; }
+  function _slice(m, n) {
     var a = [];
-    for (var x = m.slice(1, m.length - 1); x.length; x = x.slice(6)) a.push(x.slice(0, 6));
-    for (var i = 0; i < a.length; i++) a[i] = new UMP([0x30 + gr, _umpseqstat(a.length, i) + a[i].length].concat(a[i], [0, 0, 0, 0, 0]).slice(0, 8));
+    for (var x = m; x.length; x = x.slice(n)) a.push(x.slice(0, n));
+    return a;
+  }
+  function _sliceSX(gr, m) {
+    var a = _slice(m.slice(1, m.length - 1), 6);
+    for (var i = 0; i < a.length; i++) a[i] = new UMP([0x30 + gr, _umpseqstat(a.length, i) * 16 + a[i].length].concat(a[i], [0, 0, 0, 0, 0, 0]).slice(0, 8));
     return a;
   }
   function _copyHelperSX(name, func) {
