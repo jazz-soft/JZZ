@@ -914,6 +914,89 @@ describe('UMP messages', function() {
     var s = 'd0100005 00000000 00000000 00000000 -- Key Signature';
     assert.equal(JZZ.UMP([0xd0, 0x10, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]).toString(), s);
   });
+  it('umpCustomText', function() {
+    var m = JZZ.UMP.umpCustomText(5, 5, 1, 1, 15, 'This is a long text that spans over 4 messages!');
+    console.log(m);
+    assert.equal(m[0].toString(), 'd555010f 54686973 20697320 61206c6f -- Unknown Text');
+    assert.equal(m[1].toString(), 'd595010f 6e672074 65787420 74686174 -- Unknown Text');
+    assert.equal(m[2].toString(), 'd595010f 20737061 6e73206f 76657220 -- Unknown Text');
+    assert.equal(m[3].toString(), 'd5d5010f 34206d65 73736167 65732100 -- Unknown Text');
+    assert.equal(JZZ.UMP.umpCustomText(5, 5, 0, 2, 15, '')[0].toString(), 'd505020f 00000000 00000000 00000000 -- Unknown Text');
+  });
+  it('umpMetadata', function() {
+    var s = 'd2100100 00000000 00000000 00000000 -- Metadata';
+    assert.equal(JZZ.UMP.umpMetadata(2, '')[0].toString(), s);
+    assert.equal(JZZ.UMP.gr(2).umpMetadata('')[0].toString(), s);
+    s = 'd2050100 54455854 00000000 00000000 -- Metadata';
+    assert.equal(JZZ.UMP.umpCMetadata(2, 5, 'TEXT')[0].toString(), s);
+    assert.equal(JZZ.UMP.gr(2).umpCMetadata(5, 'TEXT')[0].toString(), s);
+    assert.equal(JZZ.UMP.gr(2).ch(5).umpCMetadata('TEXT')[0].toString(), s);
+    assert.equal(JZZ.UMP.ch(5).umpCMetadata(2, 'TEXT')[0].toString(), s);
+  });
+  it('umpProjectName', function() {
+    assert.equal(JZZ.UMP.umpProjectName(0, 'JZZ')[0].toString(), 'd0100101 4a5a5a00 00000000 00000000 -- Project Name');
+    assert.equal(JZZ.UMP.umpCProjectName(0, 0, 'JZZ')[0].toString(), 'd0000101 4a5a5a00 00000000 00000000 -- Project Name');
+  });
+  it('umpCompositionName', function() {
+    assert.equal(JZZ.UMP.umpCompositionName(0, '...')[0].toString(), 'd0100102 2e2e2e00 00000000 00000000 -- Composition Name');
+    assert.equal(JZZ.UMP.umpCCompositionName(0, 0, '...')[0].toString(), 'd0000102 2e2e2e00 00000000 00000000 -- Composition Name');
+  });
+  it('umpClipName', function() {
+    assert.equal(JZZ.UMP.umpClipName(0, '...')[0].toString(), 'd0100103 2e2e2e00 00000000 00000000 -- Clip Name');
+    assert.equal(JZZ.UMP.umpCClipName(0, 0, '...')[0].toString(), 'd0000103 2e2e2e00 00000000 00000000 -- Clip Name');
+  });
+  it('umpCopyright', function() {
+    assert.equal(JZZ.UMP.umpCopyright(0, '...')[0].toString(), 'd0100104 2e2e2e00 00000000 00000000 -- Copyright');
+    assert.equal(JZZ.UMP.umpCCopyright(0, 0, '...')[0].toString(), 'd0000104 2e2e2e00 00000000 00000000 -- Copyright');
+  });
+  it('umpComposerName', function() {
+    assert.equal(JZZ.UMP.umpComposerName(0, '...')[0].toString(), 'd0100105 2e2e2e00 00000000 00000000 -- Composer Name');
+    assert.equal(JZZ.UMP.umpCComposerName(0, 0, '...')[0].toString(), 'd0000105 2e2e2e00 00000000 00000000 -- Composer Name');
+  });
+  it('umpLyricistName', function() {
+    assert.equal(JZZ.UMP.umpLyricistName(0, '...')[0].toString(), 'd0100106 2e2e2e00 00000000 00000000 -- Lyricist Name');
+    assert.equal(JZZ.UMP.umpCLyricistName(0, 0, '...')[0].toString(), 'd0000106 2e2e2e00 00000000 00000000 -- Lyricist Name');
+  });
+  it('umpArrangerName', function() {
+    assert.equal(JZZ.UMP.umpArrangerName(0, '...')[0].toString(), 'd0100107 2e2e2e00 00000000 00000000 -- Arranger Name');
+    assert.equal(JZZ.UMP.umpCArrangerName(0, 0, '...')[0].toString(), 'd0000107 2e2e2e00 00000000 00000000 -- Arranger Name');
+  });
+  it('umpPublisherName', function() {
+    assert.equal(JZZ.UMP.umpPublisherName(0, '...')[0].toString(), 'd0100108 2e2e2e00 00000000 00000000 -- Publisher Name');
+    assert.equal(JZZ.UMP.umpCPublisherName(0, 0, '...')[0].toString(), 'd0000108 2e2e2e00 00000000 00000000 -- Publisher Name');
+  });
+  it('umpPerformerName', function() {
+    assert.equal(JZZ.UMP.umpPerformerName(0, '...')[0].toString(), 'd0100109 2e2e2e00 00000000 00000000 -- Primary Performer Name');
+    assert.equal(JZZ.UMP.umpCPerformerName(0, 0, '...')[0].toString(), 'd0000109 2e2e2e00 00000000 00000000 -- Primary Performer Name');
+  });
+  it('umpAccPerformerName', function() {
+    assert.equal(JZZ.UMP.umpAccPerformerName(0, '...')[0].toString(), 'd010010a 2e2e2e00 00000000 00000000 -- Accompanying Performer Name');
+    assert.equal(JZZ.UMP.umpCAccPerformerName(0, 0, '...')[0].toString(), 'd000010a 2e2e2e00 00000000 00000000 -- Accompanying Performer Name');
+  });
+  it('umpRecordingDate', function() {
+    assert.equal(JZZ.UMP.umpRecordingDate(0, '...')[0].toString(), 'd010010b 2e2e2e00 00000000 00000000 -- Recording Date');
+    assert.equal(JZZ.UMP.umpCRecordingDate(0, 0, '...')[0].toString(), 'd000010b 2e2e2e00 00000000 00000000 -- Recording Date');
+  });
+  it('umpRecordingLocation', function() {
+    assert.equal(JZZ.UMP.umpRecordingLocation(0, '...')[0].toString(), 'd010010c 2e2e2e00 00000000 00000000 -- Recording Location');
+    assert.equal(JZZ.UMP.umpCRecordingLocation(0, 0, '...')[0].toString(), 'd000010c 2e2e2e00 00000000 00000000 -- Recording Location');
+  });
+  it('umpText', function() {
+    assert.equal(JZZ.UMP.umpText(0, '音樂')[0].toString(), 'd0100200 e99fb3e6 a8820000 00000000 -- Text');
+    assert.equal(JZZ.UMP.umpCText(0, 0, '音樂')[0].toString(), 'd0000200 e99fb3e6 a8820000 00000000 -- Text');
+  });
+  it('umpLyrics', function() {
+    assert.equal(JZZ.UMP.umpLyrics(0, '...')[0].toString(), 'd0100201 2e2e2e00 00000000 00000000 -- Lyrics');
+    assert.equal(JZZ.UMP.umpCLyrics(0, 0, '...')[0].toString(), 'd0000201 2e2e2e00 00000000 00000000 -- Lyrics');
+    assert.equal(JZZ.UMP.umpLyricsLanguage(0, '...')[0].toString(), 'd0100202 2e2e2e00 00000000 00000000 -- Lyrics Language');
+    assert.equal(JZZ.UMP.umpCLyricsLanguage(0, 0, '...')[0].toString(), 'd0000202 2e2e2e00 00000000 00000000 -- Lyrics Language');
+  });
+  it('umpRuby', function() {
+    assert.equal(JZZ.UMP.umpRuby(0, '...')[0].toString(), 'd0100203 2e2e2e00 00000000 00000000 -- Ruby');
+    assert.equal(JZZ.UMP.umpCRuby(0, 0, '...')[0].toString(), 'd0000203 2e2e2e00 00000000 00000000 -- Ruby');
+    assert.equal(JZZ.UMP.umpRubyLanguage(0, '...')[0].toString(), 'd0100204 2e2e2e00 00000000 00000000 -- Ruby Language');
+    assert.equal(JZZ.UMP.umpCRubyLanguage(0, 0, '...')[0].toString(), 'd0000204 2e2e2e00 00000000 00000000 -- Ruby Language');
+  });
   it('umpNoteOn', function() {
     var s = '41923d00 ffff0000 -- Note On';
     var msg = JZZ.UMP.umpNoteOn(1, 2, 'C#5');
@@ -1364,6 +1447,11 @@ describe('JZZ.Widget2', function() {
     var port = JZZ.Widget2();
     port.connect(function(msg) { sample.compare(msg); });
     port.umpBPM(1, 120).gr(2).umpBPM(120);
+  });
+  it('umpText', function() {
+    var port = JZZ.Widget2();
+    port.umpText(1, '').gr(2).umpText('');
+    port.umpCText(1, 2, '').gr(2).umpText(2, '').ch(3).umpText('');
   });
 });
 

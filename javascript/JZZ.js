@@ -1692,6 +1692,7 @@
   function _bad(x) { throw TypeError('Invalid value: ' + x); }
   function _oor(x) { throw RangeError('Out of range: ' + x); }
   function _ch(c) { _validateChannel(c); return parseInt(c); }
+  function _4b(n) { if (n != parseInt(n) || n < 0 || n > 0xf) throw RangeError('Expected a 4-bit value: ' + n); return parseInt(n); }
   function _7b(n, m) { if (n != parseInt(n) || n < 0 || n > 0x7f) _throw(typeof m == 'undefined' ? n : m); return parseInt(n); }
   function _8b(n) { if (n != parseInt(n) || n < 0 || n > 0xff) _throw(n); return parseInt(n); }
   function _14b(n) { if (n != parseInt(n) || n < 0 || n > 0x3fff) _throw(n); return parseInt(n); }
@@ -2964,7 +2965,7 @@
     var m = this[0] >> 4;
     if (m == 1 || m == 2 || m == 3 || m == 4 || m == 5 || m == 13) return this[0] & 15;
   };
-
+  var _zeros = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
   var _helperNN = {
     noop: function() { return [0, 0, 0, 0]; },
     umpClock: function(n) { n = _16b(n); return [0, 0x10, n >> 8, n & 0xff]; },
@@ -2975,7 +2976,7 @@
     umpEndClip: function() { return [0xf0, 0x21, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]; }
   };
   var _helperGN = {
-    umpTempo: function(g, n) { return [0xd0 + g, 0x10, 0, 0, n >> 24, (n >> 16) & 0xff, (n >> 8) & 0xff, n & 0xff, 0, 0, 0, 0, 0, 0, 0, 0]; },
+    umpTempo: function(g, n) { return [0xd0 + _4b(g), 0x10, 0, 0, n >> 24, (n >> 16) & 0xff, (n >> 8) & 0xff, n & 0xff, 0, 0, 0, 0, 0, 0, 0, 0]; },
     umpBPM: function(g, n) { return _helperGN.umpTempo(g, Math.round(6000000000 / n)); },
     umpTimeSignature: function(g, a, b) {
       var nn, cc, dd;
@@ -2992,7 +2993,7 @@
         dd = 0;
         for (cc >>= 1; cc; cc >>= 1) dd++;
         cc = Math.round(nn * 32 / (1 << dd));
-        if (cc < 0x100) return [0xd0 + g, 0x10, 0, 1, nn, dd, cc, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+        if (cc < 0x100) return [0xd0 + _4b(g), 0x10, 0, 1, nn, dd, cc, 0, 0, 0, 0, 0, 0, 0, 0, 0];
       }
       throw RangeError('Wrong time signature ' + a + (typeof b == 'undefined' ? '' : '/' + b));
     }
@@ -3002,13 +3003,62 @@
       if (typeof v == 'undefined')  v = 0xffff;
       t = t || 0; a = a || 0;
       v = _16b(v); a = _16b(a);
-      return [0x40 + g, 0x90 + _ch(c), _7bn(n), _8b(t), v >> 8, v & 255, a >> 8, a & 255];
+      return [0x40 + _4b(g), 0x90 + _ch(c), _7bn(n), _8b(t), v >> 8, v & 255, a >> 8, a & 255];
     },
     umpNoteOff: function(g, c, n, v, t, a) {
       v = v || 0; t = t || 0; a = a || 0;
       v = _16b(v); a = _16b(a);
-      return [0x40 + g, 0x80 + _ch(c), _7bn(n), _8b(t), v >> 8, v & 255, a >> 8, a & 255];
+      return [0x40 + _4b(g), 0x80 + _ch(c), _7bn(n), _8b(t), v >> 8, v & 255, a >> 8, a & 255];
     }
+  };
+  var _helperGCG = {
+    umpCustomText: function(g, c, d, b, s, t) {
+      var i;
+      var a = [];
+      t = JZZ.lib.toUTF8('' + t);
+      for (i = 0; i < t.length; i++) a.push(t.charCodeAt(i));
+      a = _slice(a, 12);
+      for (i = 0; i < a.length; i++) a[i] = [0xd0 + _4b(g), _umpseqstat(a.length, i) * 64 + (d ? 16 : 0) + _ch(c), b, s].concat(a[i], _zeros).slice(0, 16);
+      return a;
+    },
+    umpCMetadata: function(g, c, t) { return _helperGCG.umpCustomText(g, c, 0, 1, 0, t); },
+    umpCProjectName: function(g, c, t) { return _helperGCG.umpCustomText(g, c, 0, 1, 1, t); },
+    umpCCompositionName: function(g, c, t) { return _helperGCG.umpCustomText(g, c, 0, 1, 2, t); },
+    umpCClipName: function(g, c, t) { return _helperGCG.umpCustomText(g, c, 0, 1, 3, t); },
+    umpCCopyright: function(g, c, t) { return _helperGCG.umpCustomText(g, c, 0, 1, 4, t); },
+    umpCComposerName: function(g, c, t) { return _helperGCG.umpCustomText(g, c, 0, 1, 5, t); },
+    umpCLyricistName: function(g, c, t) { return _helperGCG.umpCustomText(g, c, 0, 1, 6, t); },
+    umpCArrangerName: function(g, c, t) { return _helperGCG.umpCustomText(g, c, 0, 1, 7, t); },
+    umpCPublisherName: function(g, c, t) { return _helperGCG.umpCustomText(g, c, 0, 1, 8, t); },
+    umpCPerformerName: function(g, c, t) { return _helperGCG.umpCustomText(g, c, 0, 1, 9, t); },
+    umpCAccPerformerName: function(g, c, t) { return _helperGCG.umpCustomText(g, c, 0, 1, 10, t); },
+    umpCRecordingDate: function(g, c, t) { return _helperGCG.umpCustomText(g, c, 0, 1, 11, t); },
+    umpCRecordingLocation: function(g, c, t) { return _helperGCG.umpCustomText(g, c, 0, 1, 12, t); },
+    umpCText: function(g, c, t) { return _helperGCG.umpCustomText(g, c, 0, 2, 0, t); },
+    umpCLyrics: function(g, c, t) { return _helperGCG.umpCustomText(g, c, 0, 2, 1, t); },
+    umpCLyricsLanguage: function(g, c, t) { return _helperGCG.umpCustomText(g, c, 0, 2, 2, t); },
+    umpCRuby: function(g, c, t) { return _helperGCG.umpCustomText(g, c, 0, 2, 3, t); },
+    umpCRubyLanguage: function(g, c, t) { return _helperGCG.umpCustomText(g, c, 0, 2, 4, t); }
+  };
+  var _helperGNG = {
+    umpMetadata: function(g, t) { return _helperGCG.umpCustomText(g, 0, 1, 1, 0, t); },
+    umpProjectName: function(g, t) { return _helperGCG.umpCustomText(g, 0, 1, 1, 1, t); },
+    umpCompositionName: function(g, t) { return _helperGCG.umpCustomText(g, 0, 1, 1, 2, t); },
+    umpClipName: function(g, t) { return _helperGCG.umpCustomText(g, 0, 1, 1, 3, t); },
+    umpCopyright: function(g, t) { return _helperGCG.umpCustomText(g, 0, 1, 1, 4, t); },
+    umpComposerName: function(g, t) { return _helperGCG.umpCustomText(g, 0, 1, 1, 5, t); },
+    umpLyricistName: function(g, t) { return _helperGCG.umpCustomText(g, 0, 1, 1, 6, t); },
+    umpArrangerName: function(g, t) { return _helperGCG.umpCustomText(g, 0, 1, 1, 7, t); },
+    umpPublisherName: function(g, t) { return _helperGCG.umpCustomText(g, 0, 1, 1, 8, t); },
+    umpPerformerName: function(g, t) { return _helperGCG.umpCustomText(g, 0, 1, 1, 9, t); },
+    umpAccPerformerName: function(g, t) { return _helperGCG.umpCustomText(g, 0, 1, 1, 10, t); },
+    umpRecordingDate: function(g, t) { return _helperGCG.umpCustomText(g, 0, 1, 1, 11, t); },
+    umpRecordingLocation: function(g, t) { return _helperGCG.umpCustomText(g, 0, 1, 1, 12, t); },
+    umpText: function(g, t) { return _helperGCG.umpCustomText(g, 0, 1, 2, 0, t); },
+    umpLyrics: function(g, t) { return _helperGCG.umpCustomText(g, 0, 1, 2, 1, t); },
+    umpLyricsLanguage: function(g, t) { return _helperGCG.umpCustomText(g, 0, 1, 2, 2, t); },
+    umpRuby: function(g, t) { return _helperGCG.umpCustomText(g, 0, 1, 2, 3, t); },
+    umpRubyLanguage: function(g, t) { return _helperGCG.umpCustomText(g, 0, 1, 2, 4, t); }
   };
 
   var _helpersUmp = {};
@@ -3030,6 +3080,40 @@
       return this.send(func.apply(this, args));
     };
   }
+  function _copyHelperGCG(name, func) {
+    UMP[name] = function() {
+      var args = Array.prototype.slice.call(arguments);
+      if (typeof this._gr != 'undefined') args = [this._gr].concat(args);
+      if (typeof this._ch != 'undefined') args = [args[0]].concat([this._ch]).concat(args.slice(1));
+      var a = func.apply(this, args);
+      for (var i = 0; i < a.length; i++) a[i] = new UMP(a[i]);
+      return a;
+    };
+    _helpersUmp[name] = function() {
+      var args = Array.prototype.slice.call(arguments);
+      if (typeof this._gr != 'undefined') args = [this._gr].concat(args);
+      if (typeof this._ch != 'undefined') args = [args[0]].concat([this._ch]).concat(args.slice(1));
+      var a = func.apply(this, args);
+      for (var i = 0; i < a.length; i++) this.send(a[i]);
+      return this;
+    };
+  }
+  function _copyHelperGNG(name, func) {
+    UMP[name] = function() {
+      var args = Array.prototype.slice.call(arguments);
+      if (typeof this._gr != 'undefined') args = [this._gr].concat(args);
+      var a = func.apply(this, args);
+      for (var i = 0; i < a.length; i++) a[i] = new UMP(a[i]);
+      return a;
+    };
+    _helpersUmp[name] = function() {
+      var args = Array.prototype.slice.call(arguments);
+      if (typeof this._gr != 'undefined') args = [this._gr].concat(args);
+      var a = func.apply(this, args);
+      for (var i = 0; i < a.length; i++) this.send(a[i]);
+      return this;
+    };
+  }
   function _copyHelperGN(name, func) {
     UMP[name] = function() {
       var args = Array.prototype.slice.call(arguments);
@@ -3046,11 +3130,11 @@
   function _slice(m, n) {
     var a = [];
     for (var x = m; x.length; x = x.slice(n)) a.push(x.slice(0, n));
-    return a;
+    return a.length ? a : [[]];
   }
   function _sliceSX(gr, m) {
     var a = _slice(m.slice(1, m.length - 1), 6);
-    for (var i = 0; i < a.length; i++) a[i] = new UMP([0x30 + gr, _umpseqstat(a.length, i) * 16 + a[i].length].concat(a[i], [0, 0, 0, 0, 0, 0]).slice(0, 8));
+    for (var i = 0; i < a.length; i++) a[i] = new UMP([0x30 + gr, _umpseqstat(a.length, i) * 16 + a[i].length].concat(a[i], _zeros).slice(0, 8));
     return a;
   }
   function _copyHelperSX(name, func) {
@@ -3096,6 +3180,8 @@
   }
   _for(_helperNN, function(n) { _copyHelperNN(n, _helperNN[n]); });
   _for(_helperGC, function(n) { _copyHelperGC(n, _helperGC[n]); });
+  _for(_helperGCG, function(n) { _copyHelperGCG(n, _helperGCG[n]); });
+  _for(_helperGNG, function(n) { _copyHelperGNG(n, _helperGNG[n]); });
   _for(_helperMPE, function(n) { _copyHelperM1(n, _helperMPE[n]); });
   _for(_helperCH, function(n) { _copyHelperM1(n, _helperCH[n]); });
   _for(_helperNC, function(n) { _copyHelperM1N(n, _helperNC[n]); });
@@ -3134,14 +3220,14 @@
     var c = (this[0] || 0) >> 4;
     var d = (this[1] || 0) >> 4;
     if (c == 4) return d == 9;
-    else if (c == 2) return d == 9 && !!this[3]; 
+    else if (c == 2) return d == 9 && !!this[3];
     return false;
   };
   UMP.prototype.isNoteOff = function() {
     var c = (this[0] || 0) >> 4;
     var d = (this[1] || 0) >> 4;
     if (c == 4) return d == 8;
-    else if (c == 2) return d == 8 || (d == 9 && !this[3]); 
+    else if (c == 2) return d == 8 || (d == 9 && !this[3]);
     return false;
   };
   UMP.prototype.toString = MIDI.prototype.toString;
@@ -3200,7 +3286,7 @@
       else if (n == 1) {
         n = this[3];
         s = {
-          0: 'Metadata Text',
+          0: 'Metadata',
           1: 'Project Name',
           2: 'Composition Name',
           3: 'Clip Name',
@@ -3213,17 +3299,17 @@
           10: 'Accompanying Performer Name',
           11: 'Recording Date',
           12: 'Recording Location'
-        }[n];
+        }[n] || 'Unknown Text';
       }
       else if (n == 2) {
         n = this[3];
         s = {
-          0: 'Performance Text',
+          0: 'Text',
           1: 'Lyrics',
           2: 'Lyrics Language',
           3: 'Ruby',
           4: 'Ruby Language',
-        }[n];
+        }[n] || 'Unknown Text';
       }
     }
     if (t == 15) {
