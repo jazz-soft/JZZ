@@ -1363,6 +1363,10 @@ describe('JZZ.Widget', function() {
     port.ch(4).mtc(JZZ.SMPTE(30, 1, 2, 3, 4)).ch().mtc(JZZ.SMPTE(30, 1, 2, 3, 4));
     port.note(0, 'B#4', 127, 1).note(9, 0, 1).ch(5).wait(10).note('Dbb5', 127, 1).wait(10).note(0, 1).disconnect().close();
   });
+  it('gr', function() {
+    var port = JZZ.Widget({ _receive: function(msg) { sample.compare(msg); }});
+    port.gr(1).gr(1).gr().gr();
+  });
   it('sxId', function(done) {
     var sample = new test.Sample(done, [
       [0xf0, 0x7f, 0x11, 0x04, 0x04, 0x00, 0x40, 0xf7], [0xf0, 0x7f, 0x11, 0x04, 0x03, 0x00, 0x40, 0xf7],
@@ -1385,9 +1389,16 @@ describe('JZZ.Widget', function() {
       .noteOn('D5').aftertouch('D5', 127).noteOff('C5').note('E5', 127, 1).note(0, 1)
       .mpe(0, 4).mpe(0, 4).mpe(0, 3).mpe(0, 0).mpe();
   });
+  it('MIDI1/MIDI2', function(done) {
+    var sample = new test.Sample(done, [
+      [0x90, 0x40, 0x7f], [0x20, 0x90, 0x40, 0x7f], [0x90, 0x40, 0x7f]
+    ]);
+    var port = JZZ.Widget({ _receive: function(msg) { sample.compare(msg); }});
+    port.noteOn(0, 64).MIDI2().MIDI2().noteOn(0, 0, 64).MIDI1().MIDI1().noteOn(0, 64).close();
+  });
 });
 
-describe('JZZ.Widget2', function() {
+describe.skip('JZZ.Widget2', function() {
   it('noop', function(done) {
     var sample = new test.Sample(done, [[0, 0, 0, 0]]);
     var port1 = JZZ.Widget2();

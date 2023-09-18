@@ -419,11 +419,12 @@
     }
     return this._thenable();
   };
+  function _midi(msg) { return msg.isMidi2 ? new UMP(msg) : new MIDI(msg); }
   _M.prototype._emit = function(msg) {
     var i;
     for (i = 0; i < this._handles.length; i++) this._handles[i].apply(this, [MIDI(msg)._stamp(this)]);
     for (i = 0; i < this._outs.length; i++) {
-      var m = MIDI(msg);
+      var m = _midi(msg);
       if (!m._stamped(this._outs[i])) this._outs[i].send(m._stamp(this));
     }
   };
@@ -485,6 +486,20 @@
     this._push(_kick, [img]);
     return img._thenable();
   };
+  _M.prototype.gr = function(g) {
+    if (g == this._gr || typeof g == 'undefined' && typeof this._gr == 'undefined') return this._thenable();
+    var img = this._image();
+    if (typeof g != 'undefined') g = _7b(g);
+    img._gr = g;
+    this._push(_kick, [img]);
+    return img._thenable();
+  };
+  _M.prototype.MIDI1 = function() { return this._thenable(); };
+  _M.prototype.MIDI2 = function() {
+    var m2 = new _M2(this);
+    this._push(_kick, [m2]);
+    return m2._thenable();
+  };
 
   function _mpe(m, n) {
     if (!this._orig._mpe) this._orig._mpe = new MPE();
@@ -507,41 +522,38 @@
       throw RangeError('Bad channel value (must not be less than 0 or more than 15): ' + c);
   }
 
-  // _M2: MIDI 2.0 object
-  function _M2() {
+  // _M2: MIDI 2.0 adaptor
+  function _M2(sink) {
     _R.apply(this);
-    this._handles = [];
-    this._outs = [];
+    this._sink = sink;
+    this._sxid = sink._sxid;
   }
   _M2.prototype = new _R();
-  _M2.prototype._receive = function(msg) { this._emit(msg); };
+  _M2.prototype._receive = function(msg) { this._sink._receive(msg); };
   _M2.prototype.send = function() {
     this._push(_receive, [UMP.apply(null, arguments)]);
     return this._thenable();
   };
-  _M2.prototype._emit = function(msg) {
-    var i;
-    for (i = 0; i < this._handles.length; i++) this._handles[i].apply(this, [UMP(msg)._stamp(this)]);
-    for (i = 0; i < this._outs.length; i++) {
-      var m = UMP(msg);
-      if (!m._stamped(this._outs[i])) this._outs[i].send(m._stamp(this));
-    }
-  };
+  _M2.prototype._emit = function(msg) { this._sink._emit(msg); };
   _M2.prototype._image = _M.prototype._image;
-  _M2.prototype.connect = _M.prototype.connect;
-  _M2.prototype.disconnect = _M.prototype.disconnect;
-  _M2.prototype.connected = _M.prototype.connected;
-  _M2.prototype._sxid = 0x7f;
+  _M2.prototype.connect = function(arg) {
+    this._sink.connect(arg);
+    return this._thenable();
+  };
+  _M2.prototype.disconnect = function(arg) {
+    this._sink.disconnect(arg);
+    return this._thenable();
+  };
+  _M2.prototype.connected = function() { return this._sink.connected(); };
   _M2.prototype.sxId = _M.prototype.sxId;
   _M2.prototype.ch = _M.prototype.ch;
-  _M2.prototype.gr = function(g) {
-    if (g == this._gr || typeof g == 'undefined' && typeof this._gr == 'undefined') return this._thenable();
-    var img = this._image();
-    if (typeof g != 'undefined') g = _ch(g);
-    img._gr = g;
+  _M2.prototype.gr = _M.prototype.gr;
+  _M2.prototype.MIDI1 = function() {
+    var img = this._sink._image();
     this._push(_kick, [img]);
     return img._thenable();
   };
+  _M2.prototype.MIDI2 = function() { return this._thenable(); };
 
   // _W: Watcher object ~ MIDIAccess.onstatechange
   function _W() {
@@ -1311,15 +1323,6 @@
   }
   JZZ.Widget = Widget;
   _J.prototype.Widget = JZZ.Widget;
-
-  function Widget2(arg) {
-    var self = new _M2();
-    if (arg instanceof Object) _for(arg, function(k) { self[k] = arg[k]; });
-    self._resume();
-    return self;
-  }
-  JZZ.Widget2 = Widget2;
-  _J.prototype.Widget2 = JZZ.Widget2;
 
   JZZ.addMidiIn = function(name, widget) {
     var info = _clone(widget._info || {});
