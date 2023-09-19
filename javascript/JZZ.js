@@ -486,17 +486,22 @@
     this._push(_kick, [img]);
     return img._thenable();
   };
-  _M.prototype.gr = function(g) {
-    if (g == this._gr || typeof g == 'undefined' && typeof this._gr == 'undefined') return this._thenable();
+  _M.prototype.MIDI1 = function() {
     var img = this._image();
-    if (typeof g != 'undefined') g = _7b(g);
-    img._gr = g;
+    img._ch = undefined;
+    img._sxid = _M.prototype._sxid;
+    img._master = undefined;
+    img._band = undefined;
     this._push(_kick, [img]);
     return img._thenable();
   };
-  _M.prototype.MIDI1 = function() { return this._thenable(); };
   _M.prototype.MIDI2 = function() {
-    var m2 = new _M2(this);
+    var img = this._image();
+    img._ch = undefined;
+    img._sxid = _M.prototype._sxid;
+    img._master = undefined;
+    img._band = undefined;
+    var m2 = new _M2(img);
     this._push(_kick, [m2]);
     return m2._thenable();
   };
@@ -526,15 +531,14 @@
   function _M2(sink) {
     _R.apply(this);
     this._sink = sink;
-    this._sxid = sink._sxid;
   }
   _M2.prototype = new _R();
+  _M2.prototype._sxid = _M.prototype._sxid;
   _M2.prototype._receive = function(msg) { this._sink._receive(msg); };
   _M2.prototype.send = function() {
     this._push(_receive, [UMP.apply(null, arguments)]);
     return this._thenable();
   };
-  _M2.prototype._emit = function(msg) { this._sink._emit(msg); };
   _M2.prototype._image = _M.prototype._image;
   _M2.prototype.connect = function(arg) {
     this._sink.connect(arg);
@@ -547,13 +551,27 @@
   _M2.prototype.connected = function() { return this._sink.connected(); };
   _M2.prototype.sxId = _M.prototype.sxId;
   _M2.prototype.ch = _M.prototype.ch;
-  _M2.prototype.gr = _M.prototype.gr;
+  _M2.prototype.gr = function(g) {
+    if (g == this._gr || typeof g == 'undefined' && typeof this._gr == 'undefined') return this._thenable();
+    var img = this._image();
+    if (typeof g != 'undefined') g = _7b(g);
+    img._gr = g;
+    this._push(_kick, [img]);
+    return img._thenable();
+  };
   _M2.prototype.MIDI1 = function() {
     var img = this._sink._image();
     this._push(_kick, [img]);
     return img._thenable();
   };
-  _M2.prototype.MIDI2 = function() { return this._thenable(); };
+  _M2.prototype.MIDI2 = function() {
+    var img = this._image();
+    img._gr = undefined;
+    img._ch = undefined;
+    img._sxid = _M.prototype._sxid;
+    this._push(_kick, [img]);
+    return img._thenable();
+  };
 
   // _W: Watcher object ~ MIDIAccess.onstatechange
   function _W() {
