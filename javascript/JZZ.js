@@ -542,10 +542,12 @@
   _M2.prototype._image = _M.prototype._image;
   _M2.prototype.connect = function(arg) {
     this._sink.connect(arg);
+    this._push(_kick, [this._sink]);
     return this._thenable();
   };
   _M2.prototype.disconnect = function(arg) {
     this._sink.disconnect(arg);
+    this._push(_kick, [this._sink]);
     return this._thenable();
   };
   _M2.prototype.connected = function() { return this._sink.connected(); };
@@ -2975,7 +2977,7 @@
   UMP.gr = function(g) {
     if (g == this._gr || typeof g == 'undefined' && typeof this._gr == 'undefined') return this;
     var ret = new _UMP();
-    if (typeof g != 'undefined') g = _ch(g);
+    if (typeof g != 'undefined') g = _4b(g);
     ret._ch = this._ch;
     ret._gr = g;
     ret._sxid = this._sxid;
@@ -3162,12 +3164,12 @@
     UMP[name] = function() {
       var args = Array.prototype.slice.call(arguments);
       if (typeof this._gr != 'undefined') args = [this._gr].concat(args);
-      return _sliceSX(args[0], func.apply(this, args.slice(1)));
+      return _sliceSX(_4b(args[0]), func.apply(this, args.slice(1)));
     };
     _helpersUmp[name] = function() {
       var args = Array.prototype.slice.call(arguments);
       if (typeof this._gr != 'undefined') args = [this._gr].concat(args);
-      var a = _sliceSX(args[0], func.apply(this, args.slice(1)));
+      var a = _sliceSX(_4b(args[0]), func.apply(this, args.slice(1)));
       var g = this;
       for (var i = 0; i < a.length; i++) g = g.send(a[i]);
       return g;
@@ -3178,25 +3180,25 @@
       var args = Array.prototype.slice.call(arguments);
       if (typeof this._gr != 'undefined') args = [this._gr].concat(args);
       if (typeof this._ch != 'undefined') args = [args[0]].concat([this._ch]).concat(args.slice(1));
-      return new UMP([0x20 + args[0]].concat(func.apply(this, args.slice(1)), [0]).slice(0, 4));
+      return new UMP([0x20 + _4b(args[0])].concat(func.apply(this, args.slice(1)), [0]).slice(0, 4));
     };
     _helpersUmp[name] = function() {
       var args = Array.prototype.slice.call(arguments);
       if (typeof this._gr != 'undefined') args = [this._gr].concat(args);
       if (typeof this._ch != 'undefined') args = [args[0]].concat([this._ch]).concat(args.slice(1));
-      return this.send([0x20 + args[0]].concat(func.apply(this, args.slice(1)), [0]).slice(0, 4));
+      return this.send([0x20 + _4b(args[0])].concat(func.apply(this, args.slice(1)), [0]).slice(0, 4));
     };
   }
   function _copyHelperM1N(name, func) {
     UMP[name] = function() {
       var args = Array.prototype.slice.call(arguments);
       if (typeof this._gr != 'undefined') args = [this._gr].concat(args);
-      return new UMP([0x10 + args[0]].concat(func.apply(this, args.slice(1)), [0, 0]).slice(0, 4));
+      return new UMP([0x10 + _4b(args[0])].concat(func.apply(this, args.slice(1)), [0, 0]).slice(0, 4));
     };
     _helpersUmp[name] = function() {
       var args = Array.prototype.slice.call(arguments);
       if (typeof this._gr != 'undefined') args = [this._gr].concat(args);
-      return this.send([0x10 + args[0]].concat(func.apply(this, args.slice(1)), [0, 0]).slice(0, 4));
+      return this.send([0x10 + _4b(args[0])].concat(func.apply(this, args.slice(1)), [0, 0]).slice(0, 4));
     };
   }
   _for(_helperNN, function(n) { _copyHelperNN(n, _helperNN[n]); });

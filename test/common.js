@@ -1397,6 +1397,7 @@ describe('JZZ.Widget', function() {
     ]);
     var port = JZZ.Widget({ _receive: function(msg) { sample.compare(msg); }});
     assert.throws(function() { port.gr(1); });
+    assert.throws(function() { port.MIDI2.gr(16); });
     port.MIDI2().noteOn(0, 0, 64).gr(1).gr(1).noteOn(0, 64).gr().gr().noteOn(2, 0, 64).gr(5)
       .MIDI2().noteOn(3, 0, 64).ch(5).noteOn(3, 64, 127).close();
   });
@@ -1414,9 +1415,10 @@ describe('JZZ.Widget', function() {
       [17, 255, 0, 0],
       [18, 255, 0, 0]
     ]);
-    var port = JZZ.Widget();
+    var port = JZZ.Widget().MIDI2();
+    assert.throws(function() { port.reset(16); });
     port.connect(function(msg) { sample.compare(msg); });
-    port.MIDI2().reset(1).gr(2).reset();
+    port.reset(1).gr(2).reset();
   });
   it('umpNoteOn', function(done) {
     var sample = new test.Sample(done, [
@@ -1441,9 +1443,10 @@ describe('JZZ.Widget', function() {
       [50, 22, 65, 127, 66, 18, 64, 0],
       [50, 51, 127, 0, 65, 0, 0, 0]
     ]);
-    var port = JZZ.Widget();
+    var port = JZZ.Widget().MIDI2();
     port.connect(function(msg) { sample.compare(msg); });
-    port.MIDI2().sxGS(1).gr(2).sxGS();
+    assert.equal(port.connected(), 1);
+    port.sxGS(1).gr(2).sxGS().disconnect();
   });
   it('umpBPM', function(done) {
     var sample = new test.Sample(done, [
