@@ -406,7 +406,7 @@
   _M.prototype._receive = function(msg) { this._emit(this._filter(msg)); };
   function _receive(msg) { if (!this._bad) this._receive(msg); }
   _M.prototype.send = function() {
-    this._push(_receive, [MIDI.apply(null, arguments)]);
+    this._push(_receive, [_midi.apply(null, arguments)]);
     return this._thenable();
   };
   _M.prototype.note = function(c, n, v, t) {
