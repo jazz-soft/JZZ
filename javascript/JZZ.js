@@ -419,12 +419,15 @@
     }
     return this._thenable();
   };
-  function _midi(msg) { return msg.isMidi2 ? new UMP(msg) : new MIDI(msg); }
+  function _midi(msg) { return msg.isMidi2 ? new UMP(msg) : MIDI.apply(null, arguments); }
   _M.prototype._emit = function(msg) {
-    var i;
-    for (i = 0; i < this._handles.length; i++) this._handles[i].apply(this, [MIDI(msg)._stamp(this)]);
+    var i, m;
+    for (i = 0; i < this._handles.length; i++) {
+      m = _midi(msg);
+      this._handles[i].apply(this, [m._stamp(this)]);
+    }
     for (i = 0; i < this._outs.length; i++) {
-      var m = _midi(msg);
+      m = _midi(msg);
       if (!m._stamped(this._outs[i])) this._outs[i].send(m._stamp(this));
     }
   };
@@ -3348,6 +3351,8 @@
 
   JZZ.UMP = UMP;
   _J.prototype.UMP = UMP;
+  JZZ.MIDI2 = UMP;
+  _J.prototype.MIDI2 = UMP;
 
   JZZ.lib = {};
   JZZ.lib.now = _now;

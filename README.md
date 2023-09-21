@@ -40,7 +40,7 @@ or [**Apple App Store**](https://apps.apple.com/us/app/jazz-midi/id1506447231).
 - MIDI files
 - MPE
 - SMPTE
-- UMP
+- UMP (MIDI 2.0)
 - Additional modules
 
 ## Install
@@ -200,6 +200,26 @@ JZZ.MIDI.midi(440);  // => 69
 JZZ.MIDI.midi(450);  // => 69.38905773230853
 // or from name:
 JZZ.MIDI.midi('A5'); // => 69
+```
+
+## MIDI 2.0
+
+`MIDI2()` is a sort of adapter that enables MIDI 2.0 in all subsequent chained calls.  
+`MIDI1()` returns the operation back to MIDI 1.0.  
+Note that connected MIDI nodes don't require any actions to receive and transfer MIDI 2.0 messages:
+
+```js
+var first = JZZ.Widget();
+var second = JZZ.Widget();
+first.connect(second);
+second.connect(function (msg) { console.log(msg.toString()); });
+
+first
+  .send([0x90, 0x3c, 0x7f])       // 90 3c 7f -- Note On
+  .MIDI2()                        // enable MIDI 2.0
+  .send([0x20, 0x90, 0x3c, 0x7f]) // 20903c7f -- Note On
+  .MIDI1()                        // reset to MIDI 1.0
+  .send([0x90, 0x3c, 0x7f])       // 90 3c 7f -- Note On
 ```
 
 ## Additional modules
