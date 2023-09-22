@@ -204,15 +204,17 @@ JZZ.MIDI.midi('A5'); // => 69
 
 ## MIDI 2.0
 
-`MIDI2()` is a sort of adapter that enables MIDI 2.0 in all subsequent chained calls.  
+`MIDI2()` is an adapter that enables MIDI 2.0 in all subsequent chained calls.  
 `MIDI1()` returns the operation back to MIDI 1.0.  
-Note that connected MIDI nodes don't require any actions to receive and transfer MIDI 2.0 messages:
+Note that the downstream MIDI nodes don't require any special actions to receive and transfer MIDI 2.0 messages:
 
 ```js
 var first = JZZ.Widget();
 var second = JZZ.Widget();
+var third = JZZ.Widget();
 first.connect(second);
-second.connect(function (msg) { console.log(msg.toString()); });
+second.connect(third);
+third.connect(function (msg) { console.log(msg.toString()); });
 
 first
   .send([0x90, 0x3c, 0x7f])       // 90 3c 7f -- Note On
@@ -220,6 +222,29 @@ first
   .send([0x20, 0x90, 0x3c, 0x7f]) // 20903c7f -- Note On
   .MIDI1()                        // reset to MIDI 1.0
   .send([0x90, 0x3c, 0x7f])       // 90 3c 7f -- Note On
+```
+
+When used with MIDI 2.0, most of MIDI 1.0 helpers require `group` as an additional first parameter  
+and produce MIDI 1.0 messages wrapped into UMP packages.  
+Most of the new MIDI 2.0 helpers don't have corresponding MIDI 1.0 messages.  
+Use `gr()`, `ch()` and `sxId()` calls to set default `group`, `channel` and `SysEx ID` for the subsequent calls.  
+`MIDI2()` and `MIDI1()` clear off default `group`, `channel`, `SysEx ID` and `MPE` settings:
+
+```js
+first
+  .noteOn(5, 'C5', 127)           // 95 3c 7f -- Note On
+  .ch(5).noteOn('C5', 127)        // 95 3c 7f -- Note On
+  .MIDI2()
+  .noteOn(2, 5, 'C5', 127)        // 22953c7f -- Note On
+  .gr(2).noteOn(5, 'C5', 127)     // 22953c7f -- Note On
+  .ch(5).noteOn('C5', 127)        // 22953c7f -- Note On
+  .MIDI2()
+  .noteOn(2, 5, 'C5', 127)        // 22953c7f -- Note On
+  .ch(5).noteOn(2, 'C5', 127)     // 22953c7f -- Note On
+  .MIDI2()
+  .umpNoteOn(2, 5, 'C5', 127)     // 42953c00 007f0000 -- Note On
+  .gr(2).umpNoteOn(5, 'C5', 127)  // 42953c00 007f0000 -- Note On
+  .ch(5).umpNoteOn('C5', 127)     // 42953c00 007f0000 -- Note On
 ```
 
 ## Additional modules
