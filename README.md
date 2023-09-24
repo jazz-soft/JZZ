@@ -247,6 +247,8 @@ first
   .ch(5).umpNoteOn('C5', 127)     // 42953c00 007f0000 -- Note On
 ```
 
+More on [MIDI 2.0 support](https://jazz-soft.net/doc/JZZ/jzzmidi2.html)...
+
 ## Additional modules
 - [**JZZ-midi-SMF**](https://github.com/jazz-soft/JZZ-midi-SMF) - Standard MIDI files: read / write / play
 - [**JZZ-midi-GM**](https://github.com/jazz-soft/JZZ-midi-GM) - General MIDI instrument names: MIDI to string / string to MIDI
