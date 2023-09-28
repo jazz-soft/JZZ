@@ -3024,6 +3024,26 @@
       throw RangeError('Wrong time signature ' + a + (typeof b == 'undefined' ? '' : '/' + b));
     }
   };
+  var _helperGNX = {
+    umpMetadata: function(g, t) { return _helperGCX.umpCustomText(g, 0, 1, 1, 0, t); },
+    umpProjectName: function(g, t) { return _helperGCX.umpCustomText(g, 0, 1, 1, 1, t); },
+    umpCompositionName: function(g, t) { return _helperGCX.umpCustomText(g, 0, 1, 1, 2, t); },
+    umpClipName: function(g, t) { return _helperGCX.umpCustomText(g, 0, 1, 1, 3, t); },
+    umpCopyright: function(g, t) { return _helperGCX.umpCustomText(g, 0, 1, 1, 4, t); },
+    umpComposerName: function(g, t) { return _helperGCX.umpCustomText(g, 0, 1, 1, 5, t); },
+    umpLyricistName: function(g, t) { return _helperGCX.umpCustomText(g, 0, 1, 1, 6, t); },
+    umpArrangerName: function(g, t) { return _helperGCX.umpCustomText(g, 0, 1, 1, 7, t); },
+    umpPublisherName: function(g, t) { return _helperGCX.umpCustomText(g, 0, 1, 1, 8, t); },
+    umpPerformerName: function(g, t) { return _helperGCX.umpCustomText(g, 0, 1, 1, 9, t); },
+    umpAccPerformerName: function(g, t) { return _helperGCX.umpCustomText(g, 0, 1, 1, 10, t); },
+    umpRecordingDate: function(g, t) { return _helperGCX.umpCustomText(g, 0, 1, 1, 11, t); },
+    umpRecordingLocation: function(g, t) { return _helperGCX.umpCustomText(g, 0, 1, 1, 12, t); },
+    umpText: function(g, t) { return _helperGCX.umpCustomText(g, 0, 1, 2, 0, t); },
+    umpLyrics: function(g, t) { return _helperGCX.umpCustomText(g, 0, 1, 2, 1, t); },
+    umpLyricsLanguage: function(g, t) { return _helperGCX.umpCustomText(g, 0, 1, 2, 2, t); },
+    umpRuby: function(g, t) { return _helperGCX.umpCustomText(g, 0, 1, 2, 3, t); },
+    umpRubyLanguage: function(g, t) { return _helperGCX.umpCustomText(g, 0, 1, 2, 4, t); }
+  };
   var _helperGC = {
     umpNoteOn: function(g, c, n, v, t, a) {
       if (typeof v == 'undefined')  v = 0xffff;
@@ -3037,7 +3057,7 @@
       return [0x40 + _4b(g), 0x80 + _ch(c), _7bn(n), _8b(t), v >> 8, v & 255, a >> 8, a & 255];
     }
   };
-  var _helperGCG = {
+  var _helperGCX = {
     umpCustomText: function(g, c, d, b, s, t) {
       var i;
       var a = [];
@@ -3047,50 +3067,58 @@
       for (i = 0; i < a.length; i++) a[i] = [0xd0 + _4b(g), _umpseqstat(a.length, i) * 64 + (d ? 16 : 0) + _ch(c), b, s].concat(a[i], _zeros).slice(0, 16);
       return a;
     },
-    umpCMetadata: function(g, c, t) { return _helperGCG.umpCustomText(g, c, 0, 1, 0, t); },
-    umpCProjectName: function(g, c, t) { return _helperGCG.umpCustomText(g, c, 0, 1, 1, t); },
-    umpCCompositionName: function(g, c, t) { return _helperGCG.umpCustomText(g, c, 0, 1, 2, t); },
-    umpCClipName: function(g, c, t) { return _helperGCG.umpCustomText(g, c, 0, 1, 3, t); },
-    umpCCopyright: function(g, c, t) { return _helperGCG.umpCustomText(g, c, 0, 1, 4, t); },
-    umpCComposerName: function(g, c, t) { return _helperGCG.umpCustomText(g, c, 0, 1, 5, t); },
-    umpCLyricistName: function(g, c, t) { return _helperGCG.umpCustomText(g, c, 0, 1, 6, t); },
-    umpCArrangerName: function(g, c, t) { return _helperGCG.umpCustomText(g, c, 0, 1, 7, t); },
-    umpCPublisherName: function(g, c, t) { return _helperGCG.umpCustomText(g, c, 0, 1, 8, t); },
-    umpCPerformerName: function(g, c, t) { return _helperGCG.umpCustomText(g, c, 0, 1, 9, t); },
-    umpCAccPerformerName: function(g, c, t) { return _helperGCG.umpCustomText(g, c, 0, 1, 10, t); },
-    umpCRecordingDate: function(g, c, t) { return _helperGCG.umpCustomText(g, c, 0, 1, 11, t); },
-    umpCRecordingLocation: function(g, c, t) { return _helperGCG.umpCustomText(g, c, 0, 1, 12, t); },
-    umpCText: function(g, c, t) { return _helperGCG.umpCustomText(g, c, 0, 2, 0, t); },
-    umpCLyrics: function(g, c, t) { return _helperGCG.umpCustomText(g, c, 0, 2, 1, t); },
-    umpCLyricsLanguage: function(g, c, t) { return _helperGCG.umpCustomText(g, c, 0, 2, 2, t); },
-    umpCRuby: function(g, c, t) { return _helperGCG.umpCustomText(g, c, 0, 2, 3, t); },
-    umpCRubyLanguage: function(g, c, t) { return _helperGCG.umpCustomText(g, c, 0, 2, 4, t); }
-  };
-  var _helperGNG = {
-    umpMetadata: function(g, t) { return _helperGCG.umpCustomText(g, 0, 1, 1, 0, t); },
-    umpProjectName: function(g, t) { return _helperGCG.umpCustomText(g, 0, 1, 1, 1, t); },
-    umpCompositionName: function(g, t) { return _helperGCG.umpCustomText(g, 0, 1, 1, 2, t); },
-    umpClipName: function(g, t) { return _helperGCG.umpCustomText(g, 0, 1, 1, 3, t); },
-    umpCopyright: function(g, t) { return _helperGCG.umpCustomText(g, 0, 1, 1, 4, t); },
-    umpComposerName: function(g, t) { return _helperGCG.umpCustomText(g, 0, 1, 1, 5, t); },
-    umpLyricistName: function(g, t) { return _helperGCG.umpCustomText(g, 0, 1, 1, 6, t); },
-    umpArrangerName: function(g, t) { return _helperGCG.umpCustomText(g, 0, 1, 1, 7, t); },
-    umpPublisherName: function(g, t) { return _helperGCG.umpCustomText(g, 0, 1, 1, 8, t); },
-    umpPerformerName: function(g, t) { return _helperGCG.umpCustomText(g, 0, 1, 1, 9, t); },
-    umpAccPerformerName: function(g, t) { return _helperGCG.umpCustomText(g, 0, 1, 1, 10, t); },
-    umpRecordingDate: function(g, t) { return _helperGCG.umpCustomText(g, 0, 1, 1, 11, t); },
-    umpRecordingLocation: function(g, t) { return _helperGCG.umpCustomText(g, 0, 1, 1, 12, t); },
-    umpText: function(g, t) { return _helperGCG.umpCustomText(g, 0, 1, 2, 0, t); },
-    umpLyrics: function(g, t) { return _helperGCG.umpCustomText(g, 0, 1, 2, 1, t); },
-    umpLyricsLanguage: function(g, t) { return _helperGCG.umpCustomText(g, 0, 1, 2, 2, t); },
-    umpRuby: function(g, t) { return _helperGCG.umpCustomText(g, 0, 1, 2, 3, t); },
-    umpRubyLanguage: function(g, t) { return _helperGCG.umpCustomText(g, 0, 1, 2, 4, t); }
+    umpCMetadata: function(g, c, t) { return _helperGCX.umpCustomText(g, c, 0, 1, 0, t); },
+    umpCProjectName: function(g, c, t) { return _helperGCX.umpCustomText(g, c, 0, 1, 1, t); },
+    umpCCompositionName: function(g, c, t) { return _helperGCX.umpCustomText(g, c, 0, 1, 2, t); },
+    umpCClipName: function(g, c, t) { return _helperGCX.umpCustomText(g, c, 0, 1, 3, t); },
+    umpCCopyright: function(g, c, t) { return _helperGCX.umpCustomText(g, c, 0, 1, 4, t); },
+    umpCComposerName: function(g, c, t) { return _helperGCX.umpCustomText(g, c, 0, 1, 5, t); },
+    umpCLyricistName: function(g, c, t) { return _helperGCX.umpCustomText(g, c, 0, 1, 6, t); },
+    umpCArrangerName: function(g, c, t) { return _helperGCX.umpCustomText(g, c, 0, 1, 7, t); },
+    umpCPublisherName: function(g, c, t) { return _helperGCX.umpCustomText(g, c, 0, 1, 8, t); },
+    umpCPerformerName: function(g, c, t) { return _helperGCX.umpCustomText(g, c, 0, 1, 9, t); },
+    umpCAccPerformerName: function(g, c, t) { return _helperGCX.umpCustomText(g, c, 0, 1, 10, t); },
+    umpCRecordingDate: function(g, c, t) { return _helperGCX.umpCustomText(g, c, 0, 1, 11, t); },
+    umpCRecordingLocation: function(g, c, t) { return _helperGCX.umpCustomText(g, c, 0, 1, 12, t); },
+    umpCText: function(g, c, t) { return _helperGCX.umpCustomText(g, c, 0, 2, 0, t); },
+    umpCLyrics: function(g, c, t) { return _helperGCX.umpCustomText(g, c, 0, 2, 1, t); },
+    umpCLyricsLanguage: function(g, c, t) { return _helperGCX.umpCustomText(g, c, 0, 2, 2, t); },
+    umpCRuby: function(g, c, t) { return _helperGCX.umpCustomText(g, c, 0, 2, 3, t); },
+    umpCRubyLanguage: function(g, c, t) { return _helperGCX.umpCustomText(g, c, 0, 2, 4, t); }
   };
 
   var _helpersUmp = {};
   function _copyHelperNN(name, func) {
     UMP[name] = function() { return new UMP(func.apply(this, arguments));};
     _helpersUmp[name] = function() { return this.send(func.apply(this, arguments)); };
+  }
+  function _copyHelperGN(name, func) {
+    UMP[name] = function() {
+      var args = Array.prototype.slice.call(arguments);
+      if (typeof this._gr != 'undefined') args = [this._gr].concat(args);
+      return new UMP(func.apply(this, args));
+    };
+    _helpersUmp[name] = function() {
+      var args = Array.prototype.slice.call(arguments);
+      if (typeof this._gr != 'undefined') args = [this._gr].concat(args);
+      return this.send(func.apply(this, args));
+    };
+  }
+  function _copyHelperGNX(name, func) {
+    UMP[name] = function() {
+      var args = Array.prototype.slice.call(arguments);
+      if (typeof this._gr != 'undefined') args = [this._gr].concat(args);
+      var a = func.apply(this, args);
+      for (var i = 0; i < a.length; i++) a[i] = new UMP(a[i]);
+      return a;
+    };
+    _helpersUmp[name] = function() {
+      var args = Array.prototype.slice.call(arguments);
+      if (typeof this._gr != 'undefined') args = [this._gr].concat(args);
+      var a = func.apply(this, args);
+      for (var i = 0; i < a.length; i++) this.send(a[i]);
+      return this;
+    };
   }
   function _copyHelperGC(name, func) {
     UMP[name] = function() {
@@ -3106,7 +3134,7 @@
       return this.send(func.apply(this, args));
     };
   }
-  function _copyHelperGCG(name, func) {
+  function _copyHelperGCX(name, func) {
     UMP[name] = function() {
       var args = Array.prototype.slice.call(arguments);
       if (typeof this._gr != 'undefined') args = [this._gr].concat(args);
@@ -3122,34 +3150,6 @@
       var a = func.apply(this, args);
       for (var i = 0; i < a.length; i++) this.send(a[i]);
       return this;
-    };
-  }
-  function _copyHelperGNG(name, func) {
-    UMP[name] = function() {
-      var args = Array.prototype.slice.call(arguments);
-      if (typeof this._gr != 'undefined') args = [this._gr].concat(args);
-      var a = func.apply(this, args);
-      for (var i = 0; i < a.length; i++) a[i] = new UMP(a[i]);
-      return a;
-    };
-    _helpersUmp[name] = function() {
-      var args = Array.prototype.slice.call(arguments);
-      if (typeof this._gr != 'undefined') args = [this._gr].concat(args);
-      var a = func.apply(this, args);
-      for (var i = 0; i < a.length; i++) this.send(a[i]);
-      return this;
-    };
-  }
-  function _copyHelperGN(name, func) {
-    UMP[name] = function() {
-      var args = Array.prototype.slice.call(arguments);
-      if (typeof this._gr != 'undefined') args = [this._gr].concat(args);
-      return new UMP(func.apply(this, args));
-    };
-    _helpersUmp[name] = function() {
-      var args = Array.prototype.slice.call(arguments);
-      if (typeof this._gr != 'undefined') args = [this._gr].concat(args);
-      return this.send(func.apply(this, args));
     };
   }
   function _umpseqstat(n, i) { return n == 1 ? 0 : i == 0 ? 0x1 : i == n - 1 ? 0x3 : 0x2; }
@@ -3178,40 +3178,60 @@
       return g;
     };
   }
-  function _copyHelperM1(name, func) {
-    UMP[name] = function() {
-      var args = Array.prototype.slice.call(arguments);
-      if (typeof this._gr != 'undefined') args = [this._gr].concat(args);
-      if (typeof this._ch != 'undefined') args = [args[0]].concat([this._ch]).concat(args.slice(1));
-      return new UMP([0x20 + _4b(args[0])].concat(func.apply(this, args.slice(1)), [0]).slice(0, 4));
-    };
-    _helpersUmp[name] = function() {
-      var args = Array.prototype.slice.call(arguments);
-      if (typeof this._gr != 'undefined') args = [this._gr].concat(args);
-      if (typeof this._ch != 'undefined') args = [args[0]].concat([this._ch]).concat(args.slice(1));
-      return this.send([0x20 + _4b(args[0])].concat(func.apply(this, args.slice(1)), [0]).slice(0, 4));
-    };
-  }
   function _copyHelperM1N(name, func) {
     UMP[name] = function() {
       var args = Array.prototype.slice.call(arguments);
       if (typeof this._gr != 'undefined') args = [this._gr].concat(args);
-      return new UMP([0x10 + _4b(args[0])].concat(func.apply(this, args.slice(1)), [0, 0]).slice(0, 4));
+      return new UMP([0x10 + _4b(args[0])].concat(func.apply(this, args.slice(1)), _zeros).slice(0, 4));
     };
     _helpersUmp[name] = function() {
       var args = Array.prototype.slice.call(arguments);
       if (typeof this._gr != 'undefined') args = [this._gr].concat(args);
-      return this.send([0x10 + _4b(args[0])].concat(func.apply(this, args.slice(1)), [0, 0]).slice(0, 4));
+      return this.send([0x10 + _4b(args[0])].concat(func.apply(this, args.slice(1)), _zeros).slice(0, 4));
+    };
+  }
+  function _copyHelperM1C(name, func) {
+    UMP[name] = function() {
+      var args = Array.prototype.slice.call(arguments);
+      if (typeof this._gr != 'undefined') args = [this._gr].concat(args);
+      if (typeof this._ch != 'undefined') args = [args[0]].concat([this._ch]).concat(args.slice(1));
+      return new UMP([0x20 + _4b(args[0])].concat(func.apply(this, args.slice(1)), _zeros).slice(0, 4));
+    };
+    _helpersUmp[name] = function() {
+      var args = Array.prototype.slice.call(arguments);
+      if (typeof this._gr != 'undefined') args = [this._gr].concat(args);
+      if (typeof this._ch != 'undefined') args = [args[0]].concat([this._ch]).concat(args.slice(1));
+      return this.send([0x20 + _4b(args[0])].concat(func.apply(this, args.slice(1)), _zeros).slice(0, 4));
+    };
+  }
+  function _copyHelperM1CX(name, func) {
+    UMP[name] = function() {
+      var args = Array.prototype.slice.call(arguments);
+      if (typeof this._gr != 'undefined') args = [this._gr].concat(args);
+      if (typeof this._ch != 'undefined') args = [args[0]].concat([this._ch]).concat(args.slice(1));
+      var a = func.apply(this, args.slice(1));
+      for (var i = 0; i < a.length; i++) a[i] = new UMP([0x20 + _4b(args[0])].concat(a[i], _zeros).slice(0, 4));
+      return a;
+    };
+    _helpersUmp[name] = function() {
+      var args = Array.prototype.slice.call(arguments);
+      if (typeof this._gr != 'undefined') args = [this._gr].concat(args);
+      if (typeof this._ch != 'undefined') args = [args[0]].concat([this._ch]).concat(args.slice(1));
+      var a = func.apply(this, args.slice(1));
+      var g = this;
+      for (var i = 0; i < a.length; i++) g = g.send([0x20 + _4b(args[0])].concat(a[i], _zeros).slice(0, 4));
+      return g;
     };
   }
   _for(_helperNN, function(n) { _copyHelperNN(n, _helperNN[n]); });
-  _for(_helperGC, function(n) { _copyHelperGC(n, _helperGC[n]); });
-  _for(_helperGCG, function(n) { _copyHelperGCG(n, _helperGCG[n]); });
-  _for(_helperGNG, function(n) { _copyHelperGNG(n, _helperGNG[n]); });
-  _for(_helperMPE, function(n) { _copyHelperM1(n, _helperMPE[n]); });
-  _for(_helperCH, function(n) { _copyHelperM1(n, _helperCH[n]); });
-  _for(_helperNC, function(n) { _copyHelperM1N(n, _helperNC[n]); });
   _for(_helperGN, function(n) { _copyHelperGN(n, _helperGN[n]); });
+  _for(_helperGNX, function(n) { _copyHelperGNX(n, _helperGNX[n]); });
+  _for(_helperGC, function(n) { _copyHelperGC(n, _helperGC[n]); });
+  _for(_helperGCX, function(n) { _copyHelperGCX(n, _helperGCX[n]); });
+  _for(_helperNC, function(n) { _copyHelperM1N(n, _helperNC[n]); });
+  _for(_helperMPE, function(n) { _copyHelperM1C(n, _helperMPE[n]); });
+  _for(_helperCH, function(n) { _copyHelperM1C(n, _helperCH[n]); });
+  _for(_helperGCH, function(n) { _copyHelperM1CX(n, _helperGCH[n]); });
   _for(_helperSX, function(n) { _copyHelperSX(n, _helperSX[n]); });
 
   function _copyUmpHelpers(M) {

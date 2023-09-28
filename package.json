@@ -18,7 +18,7 @@
   ],
   "author": "jazz-soft (https://jazz-soft.net/)",
   "dependencies": {
-    "@types/webmidi": "^2.0.7",
+    "@types/webmidi": "^2.0.8",
     "jazz-midi": "^1.7.9"
   },
   "devDependencies": {
@@ -26,11 +26,11 @@
     "grunt": "^1.6.1",
     "grunt-contrib-jshint": "^3.2.0",
     "grunt-contrib-uglify": "^5.2.2",
-    "midi-test": "^1.2.6",
+    "midi-test": "^1.2.7",
     "mocha": "^10.2.0",
     "nyc": "^15.1.0",
-    "web-audio-test": "^0.0.5",
-    "web-midi-test": "^1.2.4"
+    "web-audio-test": "^0.0.6",
+    "web-midi-test": "^1.2.5"
   },
   "runkitExampleFilename": "runkit.js",
   "repository": {

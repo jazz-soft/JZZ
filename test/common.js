@@ -819,6 +819,14 @@ describe('UMP messages', function() {
     assert.equal(msg.getGroup(), 1);
     assert.equal(JZZ.UMP.gr(1).program(2, 15).toString(), s);
   });
+  it('bank', function() {
+    var msg = JZZ.UMP.bank(3, 4, 5, 6);
+    assert.equal(msg[0].toString(), '23b40005 -- Bank Select MSB');
+    assert.equal(msg[1].toString(), '23b42006 -- Bank Select LSB');
+    msg = JZZ.UMP.gr(3).ch(4).bank(5, 6);
+    assert.equal(msg[0].toString(), '23b40005 -- Bank Select MSB');
+    assert.equal(msg[1].toString(), '23b42006 -- Bank Select LSB');
+  });
   it('damper', function() {
     assert.equal(JZZ.UMP.damper(1, 2, true).toString(), '21b2407f -- Damper Pedal On');
   });
@@ -1419,6 +1427,15 @@ describe('JZZ.Widget', function() {
     assert.throws(function() { port.reset(16); });
     port.connect(function(msg) { sample.compare(msg); });
     port.reset(1).gr(2).reset();
+  });
+  it('bank', function(done) {
+    var sample = new test.Sample(done, [
+      [35, 180, 0, 5], [35, 180, 32, 6],
+      [35, 180, 0, 5], [35, 180, 32, 6]
+    ]);
+    var port = JZZ.Widget().MIDI2();
+    port.connect(function(msg) { sample.compare(msg); });
+    port.bank(3, 4, 5, 6).gr(3).ch(4).bank(5, 6);
   });
   it('umpNoteOn', function(done) {
     var sample = new test.Sample(done, [
