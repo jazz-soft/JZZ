@@ -14,7 +14,7 @@
 })(this, function() {
 
   var _scope = typeof window === 'undefined' ? global : window;
-  var _version = '1.7.0';
+  var _version = '1.7.1';
   var i, j, k, m, n;
 
   /* istanbul ignore next */
@@ -1994,14 +1994,14 @@
     mode3: function(c) { return [ _helperCH.omni(c, false), _helperCH.poly(c) ]; },
     mode4: function(c) { return [ _helperCH.omni(c, false), _helperCH.mono(c) ]; }
   };
-  var _helperGNC = { // compound messages no channel
+  var _helperSXX = { // compound messages no channel
     sxMasterTuning: function(n, m, l) { return [_helperSX.sxMasterCoarseTuning.call(this, n), _helperSX.sxMasterFineTuning.call(this, m, l)]; },
     sxMasterTuningF: function(x) { return [_helperSX.sxMasterCoarseTuningF.call(this, x), _helperSX.sxMasterFineTuningF.call(this, x)]; },
     gsMasterTuningF: function(x) { return [_helperSX.gsMasterCoarseTuningF.call(this, x), _helperSX.gsMasterFineTuningF.call(this, x)]; },
     xgMasterTuningF: function(x) { return [_helperSX.xgMasterCoarseTuningF.call(this, x), _helperSX.xgMasterFineTuningF.call(this, x)]; },
-    sxMasterTuningA: function(a) { return _helperGNC.sxMasterTuningF.call(this, MIDI.shift(a)); },
-    gsMasterTuningA: function(a) { return _helperGNC.gsMasterTuningF.call(this, MIDI.shift(a)); },
-    xgMasterTuningA: function(a) { return _helperGNC.xgMasterTuningF.call(this, MIDI.shift(a)); },
+    sxMasterTuningA: function(a) { return _helperSXX.sxMasterTuningF.call(this, MIDI.shift(a)); },
+    gsMasterTuningA: function(a) { return _helperSXX.gsMasterTuningF.call(this, MIDI.shift(a)); },
+    xgMasterTuningA: function(a) { return _helperSXX.xgMasterTuningF.call(this, MIDI.shift(a)); },
     gsScaleTuning: function(c, a) { var out = []; if (a.length != 12) throw RangeError('Wrong input size: ' + a.length);
       for (var i = 0; i < 12; i++) out.push(_helperSX.gsOctaveTuning.call(this, c, i, a[i])); return out; },
     gsScaleTuningF: function(c, a) { var out = []; if (a.length != 12) throw RangeError('Wrong input size: ' + a.length);
@@ -2244,7 +2244,7 @@
   _for(_helperNC, function(n) { _copyHelperNC(n, _helperNC[n]); });
   _for(_helperSX, function(n) { _copyHelperNC(n, _helperSX[n]); });
   _for(_helperSMF, function(n) { _copyHelperSMF(n, _helperSMF[n]); });
-  _for(_helperGNC, function(n) { _copyHelperGNC(n, _helperGNC[n]); });
+  _for(_helperSXX, function(n) { _copyHelperGNC(n, _helperSXX[n]); });
   _for(_helperMPE, function(n) { _copyHelperMPE(n, _helperMPE[n]); });
   _for(_helperCH, function(n) { _copyHelperCH(n, _helperCH[n]); });
   _for(_helperGCH, function(n) { _copyHelperGCH(n, _helperGCH[n]); });
@@ -3178,6 +3178,27 @@
       return g;
     };
   }
+  function _copyHelperSXX(name, func) {
+    UMP[name] = function() {
+      var args = Array.prototype.slice.call(arguments);
+      if (typeof this._gr != 'undefined') args = [this._gr].concat(args);
+      var m = func.apply(this, args.slice(1));
+      var a = [];
+      for (var i = 0; i < m.length; i++) a = a.concat(_sliceSX(_4b(args[0]), m[i]));
+      return a;
+    };
+    _helpersUmp[name] = function() {
+      var args = Array.prototype.slice.call(arguments);
+      if (typeof this._gr != 'undefined') args = [this._gr].concat(args);
+      var m = func.apply(this, args.slice(1));
+      var g = this;
+      for (var i = 0; i < m.length; i++) {
+        var a = _sliceSX(_4b(args[0]), m[i]);
+        for (var j = 0; j < a.length; j++) g = g.send(a[j]);
+      }
+      return g;
+    };
+  }
   function _copyHelperM1N(name, func) {
     UMP[name] = function() {
       var args = Array.prototype.slice.call(arguments);
@@ -3233,6 +3254,7 @@
   _for(_helperCH, function(n) { _copyHelperM1C(n, _helperCH[n]); });
   _for(_helperGCH, function(n) { _copyHelperM1CX(n, _helperGCH[n]); });
   _for(_helperSX, function(n) { _copyHelperSX(n, _helperSX[n]); });
+  _for(_helperSXX, function(n) { _copyHelperSXX(n, _helperSXX[n]); });
 
   function _copyUmpHelpers(M) {
     _for(_helpersUmp, function(n) { M.prototype[n] = _helpersUmp[n]; });

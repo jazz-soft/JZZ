@@ -866,6 +866,11 @@ describe('UMP messages', function() {
   it('sxMidiSoft', function() {
     assert.equal(JZZ.UMP.sxMidiSoft(5, 4, 'karaoke...').toString(), '35160020 2400046b -- SysEx,35266172 616f6b65 -- SysEx,35332e2e 2e000000 -- SysEx');
   });
+  it('xgMasterTuningA', function() {
+    var s = '30164310 4c000006 -- SysEx,30314000 00000000 -- SysEx,30164310 4c000000 -- SysEx,30340004 00000000 -- SysEx';
+    assert.equal(JZZ.UMP.xgMasterTuningA(0, 440).toString(), s);
+    assert.equal(JZZ.UMP.gr(0).xgMasterTuningA(440).toString(), s);
+  });
   it('umpClock', function() {
     assert.equal(JZZ.UMP.umpClock(96).toString(), '00100060 -- JR Clock');
   });
@@ -1465,6 +1470,32 @@ describe('JZZ.Widget', function() {
     assert.equal(port.connected(), 1);
     port.sxGS(1).gr(2).sxGS().disconnect();
   });
+  it('xgMasterTuningA', function(done) {
+    var sample = new test.Sample(done, [
+      [48, 22, 67, 16, 76, 0, 0, 6],
+      [48, 49, 64, 0, 0, 0, 0, 0],
+      [48, 22, 67, 16, 76, 0, 0, 0],
+      [48, 52, 0, 4, 0, 0, 0, 0],
+      [48, 22, 67, 16, 76, 0, 0, 6],
+      [48, 49, 64, 0, 0, 0, 0, 0],
+      [48, 22, 67, 16, 76, 0, 0, 0],
+      [48, 52, 0, 4, 0, 0, 0, 0]
+    ]);
+    var port = JZZ.Widget().MIDI2();
+    port.connect(function(msg) { sample.compare(msg); });
+    assert.equal(port.connected(), 1);
+    port.xgMasterTuningA(0, 440).gr(0).xgMasterTuningA(440).disconnect();
+  });
+
+  it('xgMasterTuningA', function() {
+    var s = '30164310 4c000006 -- SysEx,30314000 00000000 -- SysEx,30164310 4c000000 -- SysEx,30340004 00000000 -- SysEx';
+    assert.equal(JZZ.UMP.xgMasterTuningA(0, 440).toString(), s);
+    assert.equal(JZZ.UMP.gr(0).xgMasterTuningA(440).toString(), s);
+  });
+
+
+
+
   it('umpBPM', function(done) {
     var sample = new test.Sample(done, [
       [209, 16, 0, 0, 2, 250, 240, 128, 0, 0, 0, 0, 0, 0, 0, 0],
