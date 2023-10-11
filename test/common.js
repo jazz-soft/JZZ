@@ -878,12 +878,15 @@ describe('UMP messages', function() {
     assert.equal(JZZ.UMP.umpTimestamp(96).toString(), '00200060 -- JR Timestamp');
   });
   it('umpTicksPQN', function() {
-    assert.equal(JZZ.UMP.umpTicksPQN(96).toString(), '00300060 -- Ticks Per Quarter Note');
+    var msg = JZZ.UMP.umpTicksPQN(96);
+    assert.equal(msg.getTicksPQN(), 96);
+    assert.equal(msg.toString(), '00300060 -- Ticks Per Quarter Note');
     assert.throws(function() { JZZ.UMP.umpTicksPQN(0x10000); });
   });
   it('umpDelta', function() {
     var msg = JZZ.UMP.umpDelta(96);
     assert.equal(msg.getDelta(), 96);
+    assert.equal(typeof msg.getTicksPQN(), 'undefined');
     assert.equal(msg.toString(), '00400060 -- Delta Ticks');
     assert.equal(JZZ.UMP.umpDelta().toString(), '00400000 -- Delta Ticks');
     assert.throws(function() { JZZ.UMP.umpDelta(0x100000); });
@@ -1033,6 +1036,11 @@ describe('UMP messages', function() {
     assert.equal(msg.isNoteOff(), true);
     assert.equal(JZZ.UMP.umpNoteOff(1, 2, 61).toString(), s);
     assert.equal(JZZ.UMP.umpNoteOff(1, 2, 'C#5', 0).toString(), s);
+  });
+  it('umpProgram', function() {
+    assert.equal(JZZ.UMP.umpProgram(1, 2, 3).toString(), '41c20000 03000000 -- Program Change');
+    assert.equal(JZZ.UMP.umpProgram(1, 2, 3, 4, 5).toString(), '41c20001 03000405 -- Program Change');
+    assert.throws(function() { JZZ.UMP.umpProgram(1, 2, 3, 4); });
   });
 
   it('unknown', function() {

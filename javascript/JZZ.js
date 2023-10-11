@@ -14,7 +14,7 @@
 })(this, function() {
 
   var _scope = typeof window === 'undefined' ? global : window;
-  var _version = '1.7.1';
+  var _version = '1.7.2';
   var i, j, k, m, n;
 
   /* istanbul ignore next */
@@ -1899,7 +1899,7 @@
       return _helperSX.sxScaleTuning2.call(this, a, v, c); },
     sxGM: function(gm) { if (typeof gm == 'undefined') gm = 1; return [0xF0, 0x7E, this._sxid, 0x09, gm ? gm == 2 ? 3 : 1 : 2, 0xf7]; },
     sxGS: function(arg) { var arr = typeof arg == 'undefined' ? [0x40, 0, 0x7F, 0] : arg instanceof Array ? arg : arguments;
-      var c = 0; var a = [0xF0, 0x41, this._sxid, 0x42, 0x12];
+      var c = 0; var a = [0xf0, 0x41, this._sxid, 0x42, 0x12];
       for (var i = 0; i < arr.length; i++) { var x = _7b(arr[i]); a.push(x); c += x; }
       c %= 128; a.push(c ? 128 - c : 0); a.push(0xf7); return a; },
     sxXG: function(arg) { var arr = typeof arg == 'undefined' ? [0, 0, 0x7E, 0] : arg instanceof Array ? arg : arguments;
@@ -3055,6 +3055,11 @@
       v = v || 0; t = t || 0; a = a || 0;
       v = _16b(v); a = _16b(a);
       return [0x40 + _4b(g), 0x80 + _ch(c), _7bn(n), _8b(t), v >> 8, v & 255, a >> 8, a & 255];
+    },
+    umpProgram: function(g, c, n, msb, lsb) {
+      return typeof msb == 'undefined' && typeof lsb == 'undefined' ?
+        [0x40 + _4b(g), 0xc0 + _ch(c), 0, 0, _7bn(n), 0, 0, 0] :
+        [0x40 + _4b(g), 0xc0 + _ch(c), 0, 1, _7bn(n), 0, _7bn(msb), _7bn(lsb)];
     }
   };
   var _helperGCX = {
@@ -3271,6 +3276,9 @@
   UMP.prototype.getTimeSignature = function() {
     if (this.isTimeSignature()) return [this[4], 1 << this[5]];
   };
+  UMP.prototype.getTicksPQN = function() {
+    if (this.isTicksPQN()) return (this[2] << 8) + this[3];
+  };
   UMP.prototype.getDelta = function() {
     if (this.isDelta()) return ((this[1] & 15) << 16) + (this[2] << 8) + this[3];
   };
@@ -3281,6 +3289,7 @@
   UMP.prototype.isTimeSignature = function() {
     return (this[0] >> 4) == 13 && (this[1] >> 4) == 1 &&  this[2] == 0 &&  this[3] == 1;
   };
+  UMP.prototype.isTicksPQN = function() { return this[0] == 0 && (this[1] >> 4) == 3; };
   UMP.prototype.isDelta = function() { return this[0] == 0 && (this[1] >> 4) == 4; };
   UMP.prototype.isStartClip = function() { return this.match([0xf0, 0x20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]); };
   UMP.prototype.isEndClip = function() { return this.match([0xf0, 0x21, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]); };
