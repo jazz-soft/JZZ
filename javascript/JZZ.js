@@ -3405,6 +3405,39 @@
   JZZ.MIDI2 = UMP;
   _J.prototype.MIDI2 = UMP;
 
+  function _16_7(n) {
+    return n ? (n >> 9) || 1 : 0;
+  }
+  function _m2m1(msg) {
+    if (msg.isMidi2) {
+      var m, n;
+      var t = msg[0] >> 4;
+      var g = msg[0] & 15;
+      if (t == 1 || t == 2) {
+        m = new MIDI(msg.slice(1));
+        m.gr = g;
+        this._emit(m);
+      }
+      else if (t == 4) {
+        n = msg[1] >> 4;
+        if (n == 8 || n == 9) {
+          m = new MIDI([msg[1], msg[2], _16_7(msg[4] * 256 + msg[5])]);
+          m.gr = g;
+          this._emit(m);
+        }
+      }
+    }
+    else this._emit(msg);
+  }
+  function M2M1() {
+    var self = new _M();
+    self._receive = _m2m1;
+    self._resume();
+    return self.MIDI2();
+  }
+  JZZ.M2M1 = M2M1;
+  _J.prototype.M2M1 = JZZ.M2M1;
+
   JZZ.lib = {};
   JZZ.lib.now = _now;
   JZZ.lib.schedule = _schedule;
