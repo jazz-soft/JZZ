@@ -3405,25 +3405,28 @@
   JZZ.MIDI2 = UMP;
   _J.prototype.MIDI2 = UMP;
 
-  function _16_7(n) {
-    return n ? (n >> 9) || 1 : 0;
-  }
+  function _16_7(n) { return n ? (n >> 9) || 1 : 0; }
+  function _grp(m, g) { m.gr = g; return m; }
   function _m2m1(msg) {
     if (msg.isMidi2) {
-      var m, n;
+      var n, c;
       var t = msg[0] >> 4;
       var g = msg[0] & 15;
       if (t == 1 || t == 2) {
-        m = new MIDI(msg.slice(1));
-        m.gr = g;
-        this._emit(m);
+        this._emit(_grp(new MIDI(msg.slice(1)), g));
       }
       else if (t == 4) {
         n = msg[1] >> 4;
+        c = msg[1] & 15;
         if (n == 8 || n == 9) {
-          m = new MIDI([msg[1], msg[2], _16_7(msg[4] * 256 + msg[5])]);
-          m.gr = g;
-          this._emit(m);
+          this._emit(_grp(new MIDI([msg[1], msg[2], _16_7(msg[4] * 256 + msg[5])]), g));
+        }
+        else if (n == 12) {
+          if (msg[3]) {
+            this._emit(_grp(new MIDI([0xb0 + c, 0, msg[6]]), g));
+            this._emit(_grp(new MIDI([0xb0 + c, 32, msg[7]]), g));
+          }
+          this._emit(_grp(new MIDI([msg[1], msg[4]]), g));
         }
       }
     }

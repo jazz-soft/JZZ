@@ -1494,16 +1494,11 @@ describe('JZZ.Widget', function() {
     assert.equal(port.connected(), 1);
     port.xgMasterTuningA(0, 440).gr(0).xgMasterTuningA(440).disconnect();
   });
-
   it('xgMasterTuningA', function() {
     var s = '30164310 4c000006 -- SysEx,30314000 00000000 -- SysEx,30164310 4c000000 -- SysEx,30340004 00000000 -- SysEx';
     assert.equal(JZZ.UMP.xgMasterTuningA(0, 440).toString(), s);
     assert.equal(JZZ.UMP.gr(0).xgMasterTuningA(440).toString(), s);
   });
-
-
-
-
   it('umpBPM', function(done) {
     var sample = new test.Sample(done, [
       [209, 16, 0, 0, 2, 250, 240, 128, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -1517,6 +1512,27 @@ describe('JZZ.Widget', function() {
     var port = JZZ.Widget();
     port.MIDI2().umpText(1, '').gr(2).umpText('');
     port.MIDI2().umpCText(1, 2, '').gr(2).umpCText(2, '').ch(3).umpCText('');
+  });
+});
+
+describe('JZZ.M2M1', function() {
+  it('noteO/Off', function(done) {
+    var sample = new test.Sample(done, [
+      [0x91, 0x3c, 0x7f], [0x81, 0x3c, 0],
+      [0x91, 0x3c, 0x01], [0x81, 0x3c, 0],
+      [0x90, 0x00, 0x7f]
+    ]);
+    var port = new JZZ.M2M1();
+    port.connect(function(msg) { sample.compare(msg); });
+    port.noteOn(0, 1, 'C5').noteOff(0, 1, 'C5', 0).noop().umpNoteOn(0, 1, 'C5', 1).umpNoteOff(0, 1, 'C5').MIDI1().noteOn(0, 0);
+  });
+  it('program', function(done) {
+    var sample = new test.Sample(done, [
+      [0xc1, 32], [0xb1, 0, 1], [0xb1, 32, 2], [0xc1, 64]
+    ]);
+    var port = new JZZ.M2M1();
+    port.connect(function(msg) { sample.compare(msg); });
+    port.umpProgram(0, 1, 32).umpProgram(0, 1, 64, 1, 2);
   });
 });
 
