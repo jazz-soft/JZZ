@@ -1534,6 +1534,16 @@ describe('JZZ.M2M1', function() {
     port.connect(function(msg) { sample.compare(msg); });
     port.umpProgram(0, 1, 32).umpProgram(0, 1, 64, 1, 2);
   });
+  it('sysex', function(done) {
+    var sample = new test.Sample(done, [
+      [0xf0, 0x7e, 0x7f, 0x09, 0x01, 0xf7],
+      [0xf0, 0x00, 0x20, 0x24, 0x00, 0x04, 0x6b, 0x61, 0x72, 0x61, 0x6f, 0x6b, 0x65, 0x2e, 0x2e, 0x2e, 0xf7]
+    ]);
+    var port = new JZZ.M2M1();
+    port.connect(function(msg) { sample.compare(msg); });
+    var a = JZZ.MIDI2.sxMidiSoft(0, 4, 'karaoke...');
+    port.gr(0).send(a[1]).send(a[2]).sxGM().send(a[0]).send(a[1]).send(a[2]);
+  });
 });
 
 describe('JZZ.Context', function() {

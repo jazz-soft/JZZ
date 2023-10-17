@@ -3415,6 +3415,24 @@
       if (t == 1 || t == 2) {
         this._emit(_grp(new MIDI(msg.slice(1)), g));
       }
+      else if (t == 3) {
+        c = msg[1] >> 4;
+        n = msg[1] & 15;
+        if (c == 0) {
+          this._emit(_grp(new MIDI([0xf0].concat(msg.slice(2, 2 + n), [0xf7])), g));
+          this._sx[g] = undefined;
+        }
+        else if (c == 1) {
+          this._sx[g] = msg.slice(2, 2 + n);
+        }
+        else if (c == 2) {
+          if (this._sx[g]) this._sx[g] = this._sx[g].concat(msg.slice(2, 2 + n));
+        }
+        else if (c == 3) {
+          if (this._sx[g]) this._emit(_grp(new MIDI([0xf0].concat(this._sx[g], msg.slice(2, 2 + n), [0xf7])), g));
+          this._sx[g] = undefined;
+        }
+      }
       else if (t == 4) {
         n = msg[1] >> 4;
         c = msg[1] & 15;
@@ -3434,6 +3452,7 @@
   }
   function M2M1() {
     var self = new _M();
+    self._sx = [];
     self._receive = _m2m1;
     self._resume();
     return self.MIDI2();
