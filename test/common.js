@@ -1042,7 +1042,9 @@ describe('UMP messages', function() {
     assert.equal(JZZ.UMP.umpProgram(1, 2, 3, 4, 5).toString(), '41c20001 03000405 -- Program Change');
     assert.throws(function() { JZZ.UMP.umpProgram(1, 2, 3, 4); });
   });
-
+  it('data', function() {
+    assert.equal(JZZ.UMP(0x50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0).toString(), '50000000 00000000 00000000 00000000 -- Data');
+  });
   it('unknown', function() {
     assert.equal(JZZ.UMP([0xd0, 0, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]).toString(), 'd0000700 00000000 00000000 00000000');
     assert.equal(JZZ.UMP([0xd0, 0x10, 0, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]).toString(), 'd0100007 00000000 00000000 00000000');
@@ -1507,6 +1509,37 @@ describe('JZZ.Widget', function() {
     var port = JZZ.Widget();
     port.MIDI2().umpText(1, '').gr(2).umpText('');
     port.MIDI2().umpCText(1, 2, '').gr(2).umpCText(2, '').ch(3).umpCText('');
+  });
+});
+
+describe('JZZ.M1M2', function() {
+  it('noteO/Off', function(done) {
+    var sample = new test.Sample(done, [
+      [0x21, 0x91, 0x3c, 0x7f], [0x20, 0x81, 0x3c, 0x00],
+      [0x20, 0x91, 0x3c, 0x7f], [0x20, 0x81, 0x3c, 0x00]
+    ]);
+    var port = new JZZ.M1M2();
+    port.connect(function(msg) { sample.compare(msg); });
+    var msg = JZZ.MIDI.noteOn(1, 'C5');
+    msg.gr = 1;
+    port.send(msg).noteOff(1, 'C5', 0).MIDI2().noteOn(0, 1, 'C5').noteOff(0, 1, 'C5', 0);
+  });
+  it('reset', function(done) {
+    var sample = new test.Sample(done, [ [0x10, 0xff, 0x00, 0x00] ]);
+    var port = new JZZ.M1M2();
+    port.connect(function(msg) { sample.compare(msg); });
+    port.send(0xf7).reset();
+  });
+  it('sysext', function(done) {
+    var sample = new test.Sample(done, [
+      [0x30, 0x16, 0x00, 0x20, 0x24, 0x00, 0x04, 0x6b],
+      [0x30, 0x26, 0x61, 0x72, 0x61, 0x6f, 0x6b, 0x65],
+      [0x30, 0x33, 0x2e, 0x2e, 0x2e, 0x00, 0x00, 0x00]
+    ]);
+    var port = new JZZ.M1M2();
+    port.connect(function(msg) { console.log(msg.toString()); });
+    port.connect(function(msg) { sample.compare(msg); });
+    port.sxMidiSoft(4, 'karaoke...');
   });
 });
 

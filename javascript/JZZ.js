@@ -3461,6 +3461,31 @@
   JZZ.M2M1 = M2M1;
   _J.prototype.M2M1 = JZZ.M2M1;
 
+  function _m1m2(msg) {
+    if (!msg.isMidi2) {
+      var gr = msg.gr >= 0 && msg.gr <= 15 ? msg.gr : 0;
+      if (msg[0] >= 0x80 && msg[0] < 0xf0) {
+        this._emit(JZZ.MIDI2([0x20 + gr].concat(msg.slice(), _zeros).slice(0, 4)));
+      }
+      else if (msg[0] > 0xf0 && msg[0] <= 0xff && msg[0] != 0xf7) {
+        this._emit(JZZ.MIDI2([0x10 + gr].concat(msg.slice(), _zeros).slice(0, 4)));
+      }
+      else if (msg.isFullSysEx()) {
+        var a = _sliceSX(gr, msg.slice());
+        for (var i = 0; i < a.length; i++) this._emit(JZZ.MIDI2(a[i]));
+      }
+    }
+    else this._emit(msg);
+  }
+  function M1M2() {
+    var self = new _M();
+    self._receive = _m1m2;
+    self._resume();
+    return self;
+  }
+  JZZ.M1M2 = M1M2;
+  _J.prototype.M1M2 = JZZ.M1M2;
+
   JZZ.lib = {};
   JZZ.lib.now = _now;
   JZZ.lib.schedule = _schedule;
