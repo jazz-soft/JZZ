@@ -38,6 +38,7 @@ describe('MIDI messages', function() {
   });
   it('noteOn', function() {
     var msg = JZZ.MIDI.noteOn(1, 'C5', 20);
+    assert.equal(msg.isMidi(), 1);
     assert.equal(msg.getChannel(), 1);
     assert.equal(msg.getNote(), 60);
     assert.equal(msg.getVelocity(), 20);
@@ -773,6 +774,7 @@ describe('UMP messages', function() {
   it('noop', function() {
     var s = '00000000 -- NOOP';
     var msg =JZZ.UMP.noop();
+    assert.equal(msg.isMidi(), 2);
     assert.equal(msg.isNoteOn(), false);
     assert.equal(msg.isNoteOff(), false);
     assert.equal(typeof msg.getGroup(), 'undefined');
@@ -1546,13 +1548,15 @@ describe('JZZ.M1M2', function() {
 describe('JZZ.M2M1', function() {
   it('noteO/Off', function(done) {
     var sample = new test.Sample(done, [
+      [0x91, 0x3c, 0x7f], [0x91, 0x3c, 0x7f],
       [0x91, 0x3c, 0x7f], [0x81, 0x3c, 0],
       [0x91, 0x3c, 0x01], [0x81, 0x3c, 0],
       [0x90, 0x00, 0x7f]
     ]);
     var port = new JZZ.M2M1();
     port.connect(function(msg) { sample.compare(msg); });
-    port.noteOn(0, 1, 'C5').noteOff(0, 1, 'C5', 0).noop().umpNoteOn(0, 1, 'C5', 1).umpNoteOff(0, 1, 'C5').MIDI1().noteOn(0, 0);
+    port.send(JZZ.MIDI.noteOn(1, 'C5')).send(JZZ.UMP.noteOn(0, 1, 'C5'))
+      .noteOn(0, 1, 'C5').noteOff(0, 1, 'C5', 0).noop().umpNoteOn(0, 1, 'C5', 1).umpNoteOff(0, 1, 'C5').MIDI1().noteOn(0, 0);
   });
   it('program', function(done) {
     var sample = new test.Sample(done, [

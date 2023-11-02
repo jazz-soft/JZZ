@@ -14,7 +14,7 @@
 })(this, function() {
 
   var _scope = typeof window === 'undefined' ? global : window;
-  var _version = '1.7.3';
+  var _version = '1.7.4';
   var i, j, k, m, n;
 
   /* istanbul ignore next */
@@ -538,8 +538,9 @@
   _M2.prototype = new _R();
   _M2.prototype._sxid = _M.prototype._sxid;
   _M2.prototype._receive = function(msg) { this._sink._receive(msg); };
+  function _midi2(msg) { return msg.isMidi && !msg.isMidi2 ? new MIDI(msg) : UMP.apply(null, arguments); }
   _M2.prototype.send = function() {
-    this._push(_receive, [UMP.apply(null, arguments)]);
+    this._push(_receive, [_midi2.apply(null, arguments)]);
     return this._thenable();
   };
   _M2.prototype._image = _M.prototype._image;
@@ -1636,6 +1637,7 @@
   }
   MIDI.prototype = [];
   MIDI.prototype.constructor = MIDI;
+  MIDI.prototype.isMidi = function() { return 1; };
   var _noteNum = {};
   MIDI.noteValue = function(x) { return typeof x == 'undefined' ? undefined : _noteNum[x.toString().toLowerCase()]; };
   MIDI.programValue = function(x) { return x; };
@@ -2948,6 +2950,7 @@
   }
   UMP.prototype = [];
   UMP.prototype.constructor = UMP;
+  UMP.prototype.isMidi = function() { return 2; };
   UMP.prototype.isMidi2 = true;
   UMP.prototype.dump = function() {
     var i;
