@@ -1033,7 +1033,7 @@ describe('UMP messages', function() {
   });
   it('umpNoteOff', function() {
     var s = '41823d00 00000000 -- Note Off';
-    var msg = JZZ.UMP.umpNoteOff(1, 2, 'C#5kkkkkk');
+    var msg = JZZ.UMP.umpNoteOff(1, 2, 'C#5');
     assert.equal(msg.isNoteOn(), false);
     assert.equal(msg.isNoteOff(), true);
     assert.equal(JZZ.UMP.umpNoteOff(1, 2, 61).toString(), s);
