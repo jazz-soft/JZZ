@@ -1727,6 +1727,7 @@
   function _16b(n) { if (n != parseInt(n) || n < 0 || n > 0xffff) throw RangeError('Expected a 16-bit value: ' + n); return parseInt(n); }
   function _20b(n) { if (n != parseInt(n) || n < 0 || n > 0xfffff) throw RangeError('Expected a 20-bit value: ' + n); return parseInt(n); }
   function _21b(n) { if (n != parseInt(n) || n < 0 || n > 0x1fffff) _throw(n); return parseInt(n); }
+  function _32b(n) { if (n != parseInt(n) || n < 0 || n > 0xffffffff) _throw(n); return parseInt(n); }
   function _7bn(n) { return _7b(MIDI.noteValue(n), n); }
   function _lsb(n) { return _14b(n) & 0x7f; }
   function _msb(n) { return _14b(n) >> 7; }
@@ -3059,6 +3060,14 @@
       v = v || 0; t = t || 0; a = a || 0;
       v = _16b(v); a = _16b(a);
       return [0x40 + _4b(g), 0x80 + _ch(c), _7bn(n), _8b(t), v >> 8, v & 255, a >> 8, a & 255];
+    },
+    umpAftertouch: function(g, c, n, x) {
+      x = _32b(x);
+      return [0x40 + _4b(g), 0xa0 + _ch(c), _7bn(n), 0, (x >> 24) & 255, (x >> 16) & 255, (x >> 8) & 255, x & 255];
+    },
+    umpPressure: function(g, c, x) {
+      x = _32b(x);
+      return [0x40 + _4b(g), 0xd0 + _ch(c), 0, 0, (x >> 24) & 255, (x >> 16) & 255, (x >> 8) & 255, x & 255];
     },
     umpProgram: function(g, c, n, msb, lsb) {
       return typeof msb == 'undefined' && typeof lsb == 'undefined' ?

@@ -1033,11 +1033,18 @@ describe('UMP messages', function() {
   });
   it('umpNoteOff', function() {
     var s = '41823d00 00000000 -- Note Off';
-    var msg = JZZ.UMP.umpNoteOff(1, 2, 'C#5');
+    var msg = JZZ.UMP.umpNoteOff(1, 2, 'C#5kkkkkk');
     assert.equal(msg.isNoteOn(), false);
     assert.equal(msg.isNoteOff(), true);
     assert.equal(JZZ.UMP.umpNoteOff(1, 2, 61).toString(), s);
     assert.equal(JZZ.UMP.umpNoteOff(1, 2, 'C#5', 0).toString(), s);
+  });
+  it.only('umpAftertouch', function() {
+    assert.equal(JZZ.UMP.umpAftertouch(1, 2, 3, 0xf0f0f0f0).toString(), '41a20300 f0f0f0f0 -- Poly Pressure');
+    assert.throws(function() { JZZ.UMP.umpAftertouch(1, 2, 3, -1); });
+  });
+  it.only('umpPressure', function() {
+    assert.equal(JZZ.UMP.umpPressure(1, 2, 0xf0f0f0f0).toString(), '41d20000 f0f0f0f0 -- Channel Pressure');
   });
   it('umpProgram', function() {
     assert.equal(JZZ.UMP.umpProgram(1, 2, 3).toString(), '41c20000 03000000 -- Program Change');
