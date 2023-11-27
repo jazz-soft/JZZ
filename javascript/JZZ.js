@@ -3419,6 +3419,7 @@
   _J.prototype.MIDI2 = UMP;
 
   function _16_7(n) { return n ? (n >> 9) || 1 : 0; }
+  function _32_7(n) { return n ? ((n >> 25) & 127) || 1 : 0; }
   function _grp(m, g) { m.gr = g; return m; }
   function _m2m1(msg) {
     if (msg.isMidi2) {
@@ -3451,6 +3452,12 @@
         c = msg[1] & 15;
         if (n == 8 || n == 9) {
           this._emit(_grp(new MIDI([msg[1], msg[2], _16_7(msg[4] * 256 + msg[5])]), g));
+        }
+        if (n == 10) {
+          this._emit(_grp(new MIDI([msg[1], msg[2], _32_7(msg[4] * 0x1000000 + msg[5] * 0x10000 + msg[6] * 0x100 + msg[7])]), g));
+        }
+        if (n == 13) {
+          this._emit(_grp(new MIDI([msg[1], _32_7(msg[4] * 0x1000000 + msg[5] * 0x10000 + msg[6] * 0x100 + msg[7])]), g));
         }
         else if (n == 12) {
           if (msg[3]) {
