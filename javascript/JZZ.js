@@ -3065,6 +3065,11 @@
       x = _32b(x);
       return [0x40 + _4b(g), 0xa0 + _ch(c), _7bn(n), 0, (x >> 24) & 255, (x >> 16) & 255, (x >> 8) & 255, x & 255];
     },
+    umpControl: function(g, c, n, x) {
+      if ([0, 6, 32, 38, 98, 99, 100, 101].includes(n)) _throw(n);
+      x = _32b(x);
+      return [0x40 + _4b(g), 0xb0 + _ch(c), _7b(n), 0, (x >> 24) & 255, (x >> 16) & 255, (x >> 8) & 255, x & 255];
+    },
     umpPressure: function(g, c, x) {
       x = _32b(x);
       return [0x40 + _4b(g), 0xd0 + _ch(c), 0, 0, (x >> 24) & 255, (x >> 16) & 255, (x >> 8) & 255, x & 255];
