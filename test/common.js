@@ -1585,6 +1585,14 @@ describe('JZZ.M2M1', function() {
     port.connect(function(msg) { sample.compare(msg); });
     port.umpAftertouch(0, 1, 'C5', 0xa0000000).umpAftertouch(0, 1, 'C5', 0).umpPressure(0, 1, 0xa0000000);
   });
+  it('control', function(done) {
+    var sample = new test.Sample(done, [
+      [0xb1, 1, 80]
+    ]);
+    var port = new JZZ.M2M1();
+    port.connect(function(msg) { sample.compare(msg); });
+    port.send([0x40, 0xb1, 0, 0, 20, 20, 20, 20]).umpControl(0, 1, 1, 0xa0000000).umpControl(0, 1, 1, 0xa0000000);
+  });
   it('sysex', function(done) {
     var sample = new test.Sample(done, [
       [0xf0, 0x7e, 0x7f, 0x09, 0x01, 0xf7],

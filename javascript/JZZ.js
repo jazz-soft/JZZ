@@ -3049,6 +3049,7 @@
     umpRuby: function(g, t) { return _helperGCX.umpCustomText(g, 0, 1, 2, 3, t); },
     umpRubyLanguage: function(g, t) { return _helperGCX.umpCustomText(g, 0, 1, 2, 4, t); }
   };
+  var _noctrl = [0, 6, 32, 38, 98, 99, 100, 101];
   var _helperGC = {
     umpNoteOn: function(g, c, n, v, t, a) {
       if (typeof v == 'undefined')  v = 0xffff;
@@ -3066,7 +3067,7 @@
       return [0x40 + _4b(g), 0xa0 + _ch(c), _7bn(n), 0, (x >> 24) & 255, (x >> 16) & 255, (x >> 8) & 255, x & 255];
     },
     umpControl: function(g, c, n, x) {
-      if ([0, 6, 32, 38, 98, 99, 100, 101].includes(n)) _throw(n);
+      if (_noctrl.includes(n)) _throw(n);
       x = _32b(x);
       return [0x40 + _4b(g), 0xb0 + _ch(c), _7b(n), 0, (x >> 24) & 255, (x >> 16) & 255, (x >> 8) & 255, x & 255];
     },
@@ -3459,6 +3460,10 @@
           this._emit(_grp(new MIDI([msg[1], msg[2], _16_7(msg[4] * 256 + msg[5])]), g));
         }
         if (n == 10) {
+          this._emit(_grp(new MIDI([msg[1], msg[2], _32_7(msg[4] * 0x1000000 + msg[5] * 0x10000 + msg[6] * 0x100 + msg[7])]), g));
+        }
+        if (n == 11) {
+          if (_noctrl.includes(msg[2])) return;
           this._emit(_grp(new MIDI([msg[1], msg[2], _32_7(msg[4] * 0x1000000 + msg[5] * 0x10000 + msg[6] * 0x100 + msg[7])]), g));
         }
         if (n == 13) {
