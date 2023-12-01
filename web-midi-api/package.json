@@ -1,6 +1,6 @@
 {
   "name": "web-midi-api",
-  "version": "2.2.6",
+  "version": "2.2.7",
   "description": "Web MIDI API for Node.js",
   "main": "index.js",
   "scripts": {
@@ -13,7 +13,7 @@
     "web-midi-api"
   ],
   "dependencies": {
-    "jzz": "^1.7.4"
+    "jzz": "^1.7.5"
   },
   "contributors": [
     {

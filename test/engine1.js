@@ -4,7 +4,7 @@ global.navigator = {};
 
 var JZZ = require('..');
 var MT;
-if (0 || process.platform == 'darwin' || process.platform == 'linux') {
+if (process.platform == 'darwin' || process.platform == 'linux') {
   try {
     MT = require('midi-test');
   }
