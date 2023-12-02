@@ -1047,7 +1047,9 @@ describe('UMP messages', function() {
     assert.equal(JZZ.UMP.umpPressure(1, 2, 0xf0f0f0f0).toString(), '41d20000 f0f0f0f0 -- Channel Pressure');
   });
   it('umpControl', function() {
-    assert.equal(JZZ.UMP.umpControl(1, 2, 3, 0xf0f0f0f0).toString(), '41b20300 f0f0f0f0 -- Control Change');
+    var s = '41b20300 f0f0f0f0 -- Control Change';
+    assert.equal(JZZ.UMP.umpControl(1, 2, 3, 0xf0f0f0f0).toString(), s);
+    assert.equal(JZZ.UMP.umpControl(1, 2, 3, 0xf0, 0xf0, 0xf0, 0xf0).toString(), s);
     assert.throws(function() { JZZ.UMP.umpControl(1, 2, 0, 0xf0f0f0f0); });
   });
   it('umpProgram', function() {

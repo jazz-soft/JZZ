@@ -2997,6 +2997,11 @@
     if (m == 1 || m == 2 || m == 3 || m == 4 || m == 5 || m == 13) return this[0] & 15;
   };
   var _zeros = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+  function _32a(a, b, c, d) {
+    if (typeof b != 'undefined') return [_8b(a), _8b(b), _8b(c), _8b(d)];
+    a = _32b(a);
+    return [(a >> 24) & 255, (a >> 16) & 255, (a >> 8) & 255, a & 255];
+  }
   var _helperNN = {
     noop: function() { return [0, 0, 0, 0]; },
     umpClock: function(n) { n = _16b(n); return [0, 0x10, n >> 8, n & 0xff]; },
@@ -3007,7 +3012,7 @@
     umpEndClip: function() { return [0xf0, 0x21, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]; }
   };
   var _helperGN = {
-    umpTempo: function(g, n) { return [0xd0 + _4b(g), 0x10, 0, 0, n >> 24, (n >> 16) & 0xff, (n >> 8) & 0xff, n & 0xff, 0, 0, 0, 0, 0, 0, 0, 0]; },
+    umpTempo: function(g, n) { return [0xd0 + _4b(g), 0x10, 0, 0].concat(_32a(n), [0, 0, 0, 0, 0, 0, 0, 0]); },
     umpBPM: function(g, n) { return _helperGN.umpTempo(g, Math.round(6000000000 / n)); },
     umpTimeSignature: function(g, a, b) {
       var nn, cc, dd;
@@ -3062,18 +3067,15 @@
       v = _16b(v); a = _16b(a);
       return [0x40 + _4b(g), 0x80 + _ch(c), _7bn(n), _8b(t), v >> 8, v & 255, a >> 8, a & 255];
     },
-    umpAftertouch: function(g, c, n, x) {
-      x = _32b(x);
-      return [0x40 + _4b(g), 0xa0 + _ch(c), _7bn(n), 0, (x >> 24) & 255, (x >> 16) & 255, (x >> 8) & 255, x & 255];
+    umpAftertouch: function(g, c, n, x, y, z, w) {
+      return [0x40 + _4b(g), 0xa0 + _ch(c), _7bn(n), 0].concat(_32a(x, y, z, w));
     },
-    umpControl: function(g, c, n, x) {
+    umpControl: function(g, c, n, x, y, z, w) {
       if (_noctrl.includes(n)) _throw(n);
-      x = _32b(x);
-      return [0x40 + _4b(g), 0xb0 + _ch(c), _7b(n), 0, (x >> 24) & 255, (x >> 16) & 255, (x >> 8) & 255, x & 255];
+      return [0x40 + _4b(g), 0xb0 + _ch(c), _7b(n), 0].concat(_32a(x, y, z, w));
     },
-    umpPressure: function(g, c, x) {
-      x = _32b(x);
-      return [0x40 + _4b(g), 0xd0 + _ch(c), 0, 0, (x >> 24) & 255, (x >> 16) & 255, (x >> 8) & 255, x & 255];
+    umpPressure: function(g, c, x, y, z, w) {
+      return [0x40 + _4b(g), 0xd0 + _ch(c), 0, 0].concat(_32a(x, y, z, w));
     },
     umpProgram: function(g, c, n, msb, lsb) {
       return typeof msb == 'undefined' && typeof lsb == 'undefined' ?
