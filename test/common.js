@@ -1057,6 +1057,14 @@ describe('UMP messages', function() {
     assert.equal(JZZ.UMP.umpProgram(1, 2, 3, 4, 5).toString(), '41c20001 03000405 -- Program Change');
     assert.throws(function() { JZZ.UMP.umpProgram(1, 2, 3, 4); });
   });
+  it('umpRPN', function() {
+    assert.equal(JZZ.UMP.umpRPN(1, 2, 3, 4, 5).toString(), '41220304 00000005 -- Registered Controller');
+    assert.equal(JZZ.UMP.umpRPN(1, 2, 3, 4, 5, 6, 7, 8).toString(), '41220304 05060708 -- Registered Controller');
+  });
+  it('umpNRPN', function() {
+    assert.equal(JZZ.UMP.umpNRPN(1, 2, 3, 4, 5).toString(), '41320304 00000005 -- Assignable Controller');
+    assert.equal(JZZ.UMP.umpNRPN(1, 2, 3, 4, 5, 6, 7, 8).toString(), '41320304 05060708 -- Assignable Controller');
+  });
   it('data', function() {
     assert.equal(JZZ.UMP(0x50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0).toString(), '50000000 00000000 00000000 00000000 -- Data');
   });

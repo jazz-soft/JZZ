@@ -3081,6 +3081,12 @@
       return typeof msb == 'undefined' && typeof lsb == 'undefined' ?
         [0x40 + _4b(g), 0xc0 + _ch(c), 0, 0, _7bn(n), 0, 0, 0] :
         [0x40 + _4b(g), 0xc0 + _ch(c), 0, 1, _7bn(n), 0, _7bn(msb), _7bn(lsb)];
+    },
+    umpRPN: function(g, c, b, n, x, y, z, w) {
+      return [0x40 + _4b(g), 0x20 + _ch(c), _7b(b), _7b(n)].concat(_32a(x, y, z, w));
+    },
+    umpNRPN: function(g, c, b, n, x, y, z, w) {
+      return [0x40 + _4b(g), 0x30 + _ch(c), _7b(b), _7b(n)].concat(_32a(x, y, z, w));
     }
   };
   var _helperGCX = {
