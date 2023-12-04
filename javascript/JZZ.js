@@ -14,7 +14,7 @@
 })(this, function() {
 
   var _scope = typeof window === 'undefined' ? global : window;
-  var _version = '1.7.5';
+  var _version = '1.7.6';
   var i, j, k, m, n;
 
   /* istanbul ignore next */
@@ -3470,7 +3470,13 @@
       else if (t == 4) {
         n = msg[1] >> 4;
         c = msg[1] & 15;
-        if (n == 8 || n == 9) {
+        if (n == 2 || n == 3) {
+          this._emit(_grp(new MIDI([0xb0 + c, n == 2 ? 101 : 99, msg[2]]), g));
+          this._emit(_grp(new MIDI([0xb0 + c, n == 2 ? 100 : 98, msg[3]]), g));
+          this._emit(_grp(new MIDI([0xb0 + c, 6, msg[4] >> 1]), g));
+          this._emit(_grp(new MIDI([0xb0 + c, 38, (msg[4] & 1) * 64 + (msg[4] >> 2)]), g));
+        }
+        else if (n == 8 || n == 9) {
           this._emit(_grp(new MIDI([msg[1], msg[2], _16_7(msg[4], msg[5])]), g));
         }
         if (n == 10) {
