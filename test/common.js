@@ -1065,6 +1065,12 @@ describe('UMP messages', function() {
     assert.equal(JZZ.UMP.umpNRPN(1, 2, 3, 4, 5).toString(), '41320304 00000005 -- Assignable Controller');
     assert.equal(JZZ.UMP.umpNRPN(1, 2, 3, 4, 5, 6, 7, 8).toString(), '41320304 05060708 -- Assignable Controller');
   });
+  it('umpPnRPN', function() {
+    assert.equal(JZZ.UMP.umpPnRPN(1, 2, 3, 4, 5).toString(), '41020304 00000005 -- Registered Per-Note Controller');
+  });
+  it('umpPnNRPN', function() {
+    assert.equal(JZZ.UMP.umpPnNRPN(1, 2, 3, 4, 5).toString(), '41120304 00000005 -- Assignable Per-Note Controller');
+  });
   it('data', function() {
     assert.equal(JZZ.UMP(0x50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0).toString(), '50000000 00000000 00000000 00000000 -- Data');
   });

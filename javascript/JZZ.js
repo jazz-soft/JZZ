@@ -3087,6 +3087,12 @@
     },
     umpNRPN: function(g, c, b, n, x, y, z, w) {
       return [0x40 + _4b(g), 0x30 + _ch(c), _7b(b), _7b(n)].concat(_32a(x, y, z, w));
+    },
+    umpPnRPN: function(g, c, n, i, x, y, z, w) {
+      return [0x40 + _4b(g), 0x00 + _ch(c), _7bn(n), _8b(i)].concat(_32a(x, y, z, w));
+    },
+    umpPnNRPN: function(g, c, n, i, x, y, z, w) {
+      return [0x40 + _4b(g), 0x10 + _ch(c), _7bn(n), _8b(i)].concat(_32a(x, y, z, w));
     }
   };
   var _helperGCX = {
