@@ -3093,6 +3093,16 @@
     },
     umpPnNRPN: function(g, c, n, i, x, y, z, w) {
       return [0x40 + _4b(g), 0x10 + _ch(c), _7bn(n), _8b(i)].concat(_32a(x, y, z, w));
+    },
+    umpPnManagement: function(g, c, n, m) {
+      var a = m.toString().split('');
+      var x = 0;
+      for (var i = 0; i < a.length; i++) {
+        if (a[i] == 'S' && !(x & 1)) x |= 1;
+        else if (a[i] == 'D' && !(x & 2)) x |= 2;
+        else { x = m; break; }
+      }
+      return [0x40 + _4b(g), 0xf0 + _ch(c), _7bn(n), _8b(x), 0, 0, 0, 0];
     }
   };
   var _helperGCX = {

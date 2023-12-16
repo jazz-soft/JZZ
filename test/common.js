@@ -1071,6 +1071,15 @@ describe('UMP messages', function() {
   it('umpPnNRPN', function() {
     assert.equal(JZZ.UMP.umpPnNRPN(1, 2, 3, 4, 5).toString(), '41120304 00000005 -- Assignable Per-Note Controller');
   });
+  it('umpPnManagement', function() {
+    assert.equal(JZZ.UMP.umpPnManagement(1, 2, 3, 3).toString(), '41f20303 00000000 -- Per-Note Management');
+    assert.equal(JZZ.UMP.umpPnManagement(1, 2, 3, 'DS').toString(), '41f20303 00000000 -- Per-Note Management');
+    assert.equal(JZZ.UMP.umpPnManagement(1, 2, 3, 'S').toString(), '41f20301 00000000 -- Per-Note Management');
+    assert.equal(JZZ.UMP.umpPnManagement(1, 2, 3, 'D').toString(), '41f20302 00000000 -- Per-Note Management');
+    assert.equal(JZZ.UMP.umpPnManagement(1, 2, 3, '').toString(), '41f20300 00000000 -- Per-Note Management');
+    assert.throws(function() { JZZ.UMP.umpPnManagement(1, 2, 3, 'DD'); });
+    assert.throws(function() { JZZ.UMP.umpPnManagement(1, 2, 3, 'SS'); });
+  });
   it('data', function() {
     assert.equal(JZZ.UMP(0x50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0).toString(), '50000000 00000000 00000000 00000000 -- Data');
   });
