@@ -3111,6 +3111,7 @@
       return [0x40 + _4b(g), 0xf0 + _ch(c), _7bn(n), _8b(x), 0, 0, 0, 0];
     }
   };
+  _helperGC.umpPnPressure = _helperGC.umpAftertouch;
   var _helperGCX = {
     umpCustomText: function(g, c, d, b, s, t) {
       var i;

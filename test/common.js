@@ -1041,6 +1041,7 @@ describe('UMP messages', function() {
   });
   it('umpAftertouch', function() {
     assert.equal(JZZ.UMP.umpAftertouch(1, 2, 3, 0xf0f0f0f0).toString(), '41a20300 f0f0f0f0 -- Poly Pressure');
+    assert.equal(JZZ.UMP.umpPnPressure(1, 2, 3, 0xf0f0f0f0).toString(), '41a20300 f0f0f0f0 -- Poly Pressure');
     assert.throws(function() { JZZ.UMP.umpAftertouch(1, 2, 3, -1); });
   });
   it('umpPressure', function() {
