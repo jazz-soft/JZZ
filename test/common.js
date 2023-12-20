@@ -1624,7 +1624,15 @@ describe('JZZ.M2M1', function() {
     ]);
     var port = new JZZ.M2M1();
     port.connect(function(msg) { sample.compare(msg); });
-    port.umpAftertouch(0, 1, 'C5', 0xa0000000).umpAftertouch(0, 1, 'C5', 0).umpPressure(0, 1, 0xa0000000);
+    port.umpAftertouch(0, 1, 'C5', 0xa0000000).umpPnPressure(0, 1, 'C5', 0).umpPressure(0, 1, 0xa0000000);
+  });
+  it('pitchBend', function(done) {
+    var sample = new test.Sample(done, [
+      [0xe1, 0, 0], [0xe1, 0, 0x40], [0xe1, 0x7f, 0x7f]
+    ]);
+    var port = new JZZ.M2M1();
+    port.connect(function(msg) { sample.compare(msg); });
+    port.umpPitchBend(0, 1, 0).umpPitchBend(0, 1, 0x80000000).umpPitchBend(0, 1, 0xffffffff);
   });
   it('control', function(done) {
     var sample = new test.Sample(done, [

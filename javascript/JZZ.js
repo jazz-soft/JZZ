@@ -3466,7 +3466,7 @@
   function _grp(m, g) { m.gr = g; return m; }
   function _m2m1(msg) {
     if (msg.isMidi2) {
-      var n, c;
+      var n, c, x;
       var t = msg[0] >> 4;
       var g = msg[0] & 15;
       if (t == 1 || t == 2) {
@@ -3511,6 +3511,10 @@
         }
         if (n == 13) {
           this._emit(_grp(new MIDI([msg[1], _32_7(msg[4], msg[5], msg[6], msg[7])]), g));
+        }
+        if (n == 14) {
+          x = (msg[4] * 0x1000000 + msg[5] * 0x10000 + msg[6] * 0x100 + msg[4]) >> 18;
+          this._emit(_grp(new MIDI([msg[1], x & 127, (x >> 7) & 127]), g));
         }
         else if (n == 12) {
           if (msg[3]) {
