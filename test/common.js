@@ -1042,10 +1042,16 @@ describe('UMP messages', function() {
   it('umpAftertouch', function() {
     assert.equal(JZZ.UMP.umpAftertouch(1, 2, 3, 0xf0f0f0f0).toString(), '41a20300 f0f0f0f0 -- Poly Pressure');
     assert.equal(JZZ.UMP.umpPnPressure(1, 2, 3, 0xf0f0f0f0).toString(), '41a20300 f0f0f0f0 -- Poly Pressure');
+    assert.equal(JZZ.UMP.umpAftertouchF(1, 2, 3, 0).toString(), '41a20300 00000000 -- Poly Pressure');
+    assert.equal(JZZ.UMP.umpAftertouchF(1, 2, 3, 0.5).toString(), '41a20300 80000000 -- Poly Pressure');
+    assert.equal(JZZ.UMP.umpAftertouchF(1, 2, 3, 1).toString(), '41a20300 ffffffff -- Poly Pressure');
     assert.throws(function() { JZZ.UMP.umpAftertouch(1, 2, 3, -1); });
   });
   it('umpPressure', function() {
     assert.equal(JZZ.UMP.umpPressure(1, 2, 0xf0f0f0f0).toString(), '41d20000 f0f0f0f0 -- Channel Pressure');
+    assert.equal(JZZ.UMP.umpPressureF(1, 2, 10).toString(), '41d20000 ffffffff -- Channel Pressure');
+    assert.equal(JZZ.UMP.umpPressureF(1, 2, 0.75).toString(), '41d20000 c0000000 -- Channel Pressure');
+    assert.equal(JZZ.UMP.umpPressureF(1, 2, -1).toString(), '41d20000 00000000 -- Channel Pressure');
   });
   it('umpControl', function() {
     var s = '41b20300 f0f0f0f0 -- Control Change';

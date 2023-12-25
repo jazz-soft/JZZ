@@ -3002,6 +3002,10 @@
     a = _32b(a);
     return [(a >> 24) & 255, (a >> 16) & 255, (a >> 8) & 255, a & 255];
   }
+  function _f_32(x) {
+    x = Math.floor(x * 0x100000000);
+    return x > 0xffffffff ? 0xffffffff : x < 0 ? 0 : x;
+  }
   var _helperNN = {
     noop: function() { return [0, 0, 0, 0]; },
     umpClock: function(n) { n = _16b(n); return [0, 0x10, n >> 8, n & 0xff]; },
@@ -3070,12 +3074,18 @@
     umpAftertouch: function(g, c, n, x, y, z, w) {
       return [0x40 + _4b(g), 0xa0 + _ch(c), _7bn(n), 0].concat(_32a(x, y, z, w));
     },
+    umpAftertouchF: function(g, c, n, x) {
+      return _helperGC.umpAftertouch(g, c, n, _f_32(x));
+    },
     umpControl: function(g, c, n, x, y, z, w) {
       if (_noctrl.includes(n)) _throw(n);
       return [0x40 + _4b(g), 0xb0 + _ch(c), _7b(n), 0].concat(_32a(x, y, z, w));
     },
     umpPressure: function(g, c, x, y, z, w) {
       return [0x40 + _4b(g), 0xd0 + _ch(c), 0, 0].concat(_32a(x, y, z, w));
+    },
+    umpPressureF: function(g, c, x) {
+      return _helperGC.umpPressure(g, c, _f_32(x));
     },
     umpProgram: function(g, c, n, msb, lsb) {
       return typeof msb == 'undefined' && typeof lsb == 'undefined' ?
@@ -3112,6 +3122,7 @@
     }
   };
   _helperGC.umpPnPressure = _helperGC.umpAftertouch;
+  _helperGC.umpPnPressureF = _helperGC.umpAftertouchF;
   var _helperGCX = {
     umpCustomText: function(g, c, d, b, s, t) {
       var i;
