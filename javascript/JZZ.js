@@ -3095,8 +3095,14 @@
     umpPitchBend: function(g, c, x, y, z, w) {
       return [0x40 + _4b(g), 0xe0 + _ch(c), 0, 0].concat(_32a(x, y, z, w));
     },
+    umpPitchBendF: function(g, c, x) {
+      return _helperGC.umpPitchBend(g, c, _f_32((x + 1) / 2));
+    },
     umpPnPitchBend: function(g, c, n, x, y, z, w) {
       return [0x40 + _4b(g), 0x60 + _ch(c), _7bn(n), 0].concat(_32a(x, y, z, w));
+    },
+    umpPnPitchBendF: function(g, c, n, x) {
+      return _helperGC.umpPnPitchBend(g, c, n, _f_32((x + 1) / 2));
     },
     umpRPN: function(g, c, b, n, x, y, z, w) {
       return [0x40 + _4b(g), 0x20 + _ch(c), _7b(b), _7b(n)].concat(_32a(x, y, z, w));

@@ -1070,9 +1070,13 @@ describe('UMP messages', function() {
   });
   it('umpPitchBend', function() {
     assert.equal(JZZ.UMP.umpPitchBend(1, 2, 3, 4, 5, 6).toString(), '41e20000 03040506 -- Pitch Bend');
+    assert.equal(JZZ.UMP.umpPitchBendF(1, 2, -1).toString(), '41e20000 00000000 -- Pitch Bend');
+    assert.equal(JZZ.UMP.umpPitchBendF(1, 2, 0).toString(), '41e20000 80000000 -- Pitch Bend');
+    assert.equal(JZZ.UMP.umpPitchBendF(1, 2, 1).toString(), '41e20000 ffffffff -- Pitch Bend');
   });
   it('umpPnPitchBend', function() {
     assert.equal(JZZ.UMP.umpPnPitchBend(1, 2, 'C5', 3, 4, 5, 6).toString(), '41623c00 03040506 -- Per-Note Pitch Bend');
+    assert.equal(JZZ.UMP.umpPnPitchBendF(1, 2, 'C5', 0).toString(), '41623c00 80000000 -- Per-Note Pitch Bend');
   });
   it('umpNRPN', function() {
     assert.equal(JZZ.UMP.umpNRPN(1, 2, 3, 4, 5).toString(), '41320304 00000005 -- Assignable Controller');
