@@ -3081,6 +3081,9 @@
       if (_noctrl.includes(n)) _throw(n);
       return [0x40 + _4b(g), 0xb0 + _ch(c), _7b(n), 0].concat(_32a(x, y, z, w));
     },
+    umpPortamento: function(g, c, n) {
+      return [0x40 + _4b(g), 0xb0 + _ch(c), 0x54, 0, _7bn(n), 0, 0, 0];
+    },
     umpPressure: function(g, c, x, y, z, w) {
       return [0x40 + _4b(g), 0xd0 + _ch(c), 0, 0].concat(_32a(x, y, z, w));
     },
@@ -3409,6 +3412,11 @@
         14: 'Pitch Bend',
         15: 'Per-Note Management'
       }[n];
+      if (n == 11) {
+        s = {
+          84: 'Portamento'
+        }[this[2]] || s;
+      }
     }
     else if (t == 5) {
       s = 'Data';

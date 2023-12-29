@@ -1059,6 +1059,9 @@ describe('UMP messages', function() {
     assert.equal(JZZ.UMP.umpControl(1, 2, 3, 0xf0, 0xf0, 0xf0, 0xf0).toString(), s);
     assert.throws(function() { JZZ.UMP.umpControl(1, 2, 0, 0xf0f0f0f0); });
   });
+  it('umpPortamento', function() {
+    assert.equal(JZZ.UMP.umpPortamento(1, 2, 'C5').toString(), '41b25400 3c000000 -- Portamento');
+  });
   it('umpProgram', function() {
     assert.equal(JZZ.UMP.umpProgram(1, 2, 3).toString(), '41c20000 03000000 -- Program Change');
     assert.equal(JZZ.UMP.umpProgram(1, 2, 3, 4, 5).toString(), '41c20001 03000405 -- Program Change');
