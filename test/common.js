@@ -1071,6 +1071,9 @@ describe('UMP messages', function() {
     assert.equal(JZZ.UMP.umpRPN(1, 2, 3, 4, 5).toString(), '41220304 00000005 -- Registered Controller');
     assert.equal(JZZ.UMP.umpRPN(1, 2, 3, 4, 5, 6, 7, 8).toString(), '41220304 05060708 -- Registered Controller');
   });
+  it('umpCoarseTuning', function() {
+    assert.equal(JZZ.UMP.umpCoarseTuning(1, 2, 3).toString(), '41220002 06000000 -- Registered Controller');
+  });
   it('umpPitchBend', function() {
     assert.equal(JZZ.UMP.umpPitchBend(1, 2, 3, 4, 5, 6).toString(), '41e20000 03040506 -- Pitch Bend');
     assert.equal(JZZ.UMP.umpPitchBendF(1, 2, -1).toString(), '41e20000 00000000 -- Pitch Bend');

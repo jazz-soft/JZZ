@@ -3119,6 +3119,9 @@
     umpPnNRPN: function(g, c, n, i, x, y, z, w) {
       return [0x40 + _4b(g), 0x10 + _ch(c), _7bn(n), _8b(i)].concat(_32a(x, y, z, w));
     },
+    umpCoarseTuning: function(g, c, n) {
+      return [0x40 + _4b(g), 0x20 + _ch(c), 0, 2, _7b(n) * 2, 0, 0, 0];
+    },
     umpPnManagement: function(g, c, n, m) {
       var a = m.toString().split('');
       var x = 0;
