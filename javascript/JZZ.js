@@ -2726,8 +2726,8 @@
     var b = typeof lsb == 'undefined' ? '??' : __hex(lsb);
     var c = {
       '0000': 'Pitch Bend Sensitivity',
-      '0001': 'Channel Fine Tune',
-      '0002': 'Channel Coarse Tune',
+      '0001': 'Channel Fine Tuning',
+      '0002': 'Channel Coarse Tuning',
       '0003': 'Select Tuning Program',
       '0004': 'Select Tuning Bank',
       '0005': 'Vibrato Depth Range',
@@ -3386,7 +3386,7 @@
     return t ? _hexx(this) + ' -- ' + t : _hexx(this);
   };
   UMP.prototype._string = function() {
-    var n, s;
+    var n, s, ss;
     var t = this[0] >> 4;
     if (t == 1 || t == 2) return new MIDI(this.slice(1))._string();
     else if (t == 0) {
@@ -3419,6 +3419,18 @@
         s = {
           84: 'Portamento'
         }[this[2]] || s;
+      }
+      if (n == 2) {
+        ss = {
+          '0000': 'Pitch Bend Sensitivity',
+          '0001': 'Fine Tuning',
+          '0002': 'Coarse Tuning',
+          '0003': 'Select Tuning Program',
+          '0004': 'Select Tuning Bank',
+          '0005': 'Vibrato Depth Range',
+          '7f7f': 'NONE'
+        }[__hex(this[2]) + '' + __hex(this[3])];
+        if (ss) s += ': ' + ss;
       }
     }
     else if (t == 5) {

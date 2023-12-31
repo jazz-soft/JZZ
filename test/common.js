@@ -1072,7 +1072,7 @@ describe('UMP messages', function() {
     assert.equal(JZZ.UMP.umpRPN(1, 2, 3, 4, 5, 6, 7, 8).toString(), '41220304 05060708 -- Registered Controller');
   });
   it('umpCoarseTuning', function() {
-    assert.equal(JZZ.UMP.umpCoarseTuning(1, 2, 3).toString(), '41220002 06000000 -- Registered Controller');
+    assert.equal(JZZ.UMP.umpCoarseTuning(1, 2, 3).toString(), '41220002 06000000 -- Registered Controller: Coarse Tuning');
   });
   it('umpPitchBend', function() {
     assert.equal(JZZ.UMP.umpPitchBend(1, 2, 3, 4, 5, 6).toString(), '41e20000 03040506 -- Pitch Bend');
@@ -1735,7 +1735,7 @@ describe('JZZ.Context', function() {
     var ctxt = JZZ.Context();
     ctxt.rpn(0, 0, 1);
     ctxt.connect(function(msg) {
-      assert.equal(msg.toString(), 'b0 26 00 -- Data Entry LSB (RPN 00 01: Channel Fine Tune)');
+      assert.equal(msg.toString(), 'b0 26 00 -- Data Entry LSB (RPN 00 01: Channel Fine Tuning)');
       done();
     });
     ctxt.dataLSB(0, 0);
