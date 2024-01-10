@@ -3125,6 +3125,12 @@
     umpCoarseTuning: function(g, c, n) {
       return [0x40 + _4b(g), 0x20 + _ch(c), 0, 2, _7b(n) * 2, 0, 0, 0];
     },
+    umpTuningProgram: function(g, c, n) {
+      return [0x40 + _4b(g), 0x20 + _ch(c), 0, 3, _7b(n) * 2, 0, 0, 0];
+    },
+    umpTuningBank: function(g, c, n) {
+      return [0x40 + _4b(g), 0x20 + _ch(c), 0, 4, _7b(n) * 2, 0, 0, 0];
+    },
     umpPnManagement: function(g, c, n, m) {
       var a = m.toString().split('');
       var x = 0;

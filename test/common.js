@@ -1077,6 +1077,12 @@ describe('UMP messages', function() {
   it('umpCoarseTuning', function() {
     assert.equal(JZZ.UMP.umpCoarseTuning(1, 2, 3).toString(), '41220002 06000000 -- Registered Controller: Coarse Tuning');
   });
+  it('umpTuningProgram', function() {
+    assert.equal(JZZ.UMP.umpTuningProgram(1, 2, 0).toString(), '41220003 00000000 -- Registered Controller: Select Tuning Program');
+  });
+  it('umpTuningBank', function() {
+    assert.equal(JZZ.UMP.umpTuningBank(1, 2, 3).toString(), '41220004 06000000 -- Registered Controller: Select Tuning Bank');
+  });
   it('umpPitchBend', function() {
     assert.equal(JZZ.UMP.umpPitchBend(1, 2, 3, 4, 5, 6).toString(), '41e20000 03040506 -- Pitch Bend');
     assert.equal(JZZ.UMP.umpPitchBendF(1, 2, -1).toString(), '41e20000 00000000 -- Pitch Bend');
@@ -1639,11 +1645,11 @@ describe('JZZ.M2M1', function() {
   });
   it('aftertouch/pressure', function(done) {
     var sample = new test.Sample(done, [
-      [0xa1, 60, 80], [0xa1, 60, 0], [0xd1, 80]
+      [0xa1, 60, 80], [0xa1, 60, 1], [0xa1, 60, 0], [0xa1, 60, 0], [0xd1, 80]
     ]);
     var port = new JZZ.M2M1();
     port.connect(function(msg) { sample.compare(msg); });
-    port.umpAftertouch(0, 1, 'C5', 0xa0000000).umpPnPressure(0, 1, 'C5', 0).umpPressure(0, 1, 0xa0000000);
+    port.umpAftertouch(0, 1, 'C5', 0xa0000000).umpAftertouch(0, 1, 'C5', 1).umpAftertouch(0, 1, 'C5', 0).umpPnPressure(0, 1, 'C5', 0).umpPressure(0, 1, 0xa0000000);
   });
   it('pitchBend', function(done) {
     var sample = new test.Sample(done, [
