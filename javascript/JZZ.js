@@ -3510,7 +3510,7 @@
   }
   function _32_7(a, b, c, d) {
     var n = a * 0x1000000 + b * 0x10000 + c * 0x100 + d;
-    return n ? ((n >> 25) & 127) || 1 : 0;
+    return (n >> 25) & 127;
   }
   function _grp(m, g) { m.gr = g; return m; }
   function _m2m1(msg) {

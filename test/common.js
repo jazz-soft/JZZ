@@ -1645,7 +1645,7 @@ describe('JZZ.M2M1', function() {
   });
   it('aftertouch/pressure', function(done) {
     var sample = new test.Sample(done, [
-      [0xa1, 60, 80], [0xa1, 60, 1], [0xa1, 60, 0], [0xa1, 60, 0], [0xd1, 80]
+      [0xa1, 60, 80], [0xa1, 60, 0], [0xa1, 60, 0], [0xa1, 60, 0], [0xd1, 80]
     ]);
     var port = new JZZ.M2M1();
     port.connect(function(msg) { sample.compare(msg); });
