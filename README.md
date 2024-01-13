@@ -68,7 +68,7 @@ by running `npm remove midi-test --save-dev`.
 
 ```html
 <script src="https://cdn.jsdelivr.net/npm/jzz"></script>       // the latest version, or
-<script src="https://cdn.jsdelivr.net/npm/jzz@1.7.7"></script> // any particular version
+<script src="https://cdn.jsdelivr.net/npm/jzz@1.7.8"></script> // any particular version
 //...
 ```
 
@@ -76,7 +76,7 @@ by running `npm remove midi-test --save-dev`.
 
 ```html
 <script src="https://unpkg.com/jzz"></script>       // the latest version, or
-<script src="https://unpkg.com/jzz@1.7.7"></script> // any particular version
+<script src="https://unpkg.com/jzz@1.7.8"></script> // any particular version
 //...
 ```
 
