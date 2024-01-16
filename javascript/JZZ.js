@@ -3056,7 +3056,14 @@
     umpLyrics: function(g, t) { return _helperGCX.umpCustomText(g, 0, 1, 2, 1, t); },
     umpLyricsLanguage: function(g, t) { return _helperGCX.umpCustomText(g, 0, 1, 2, 2, t); },
     umpRuby: function(g, t) { return _helperGCX.umpCustomText(g, 0, 1, 2, 3, t); },
-    umpRubyLanguage: function(g, t) { return _helperGCX.umpCustomText(g, 0, 1, 2, 4, t); }
+    umpRubyLanguage: function(g, t) { return _helperGCX.umpCustomText(g, 0, 1, 2, 4, t); },
+    umpData: function(g, x, y) {
+      if (typeof y == 'undefined') { y = x; x = 0; }
+      var i;
+      var a = _slice(_bytes(y), 13);
+      for (i = 0; i < a.length; i++) a[i] = [0x50 + _4b(g), _umpseqstat(a.length, i) * 16 + a[i].length, _8b(x)].concat(a[i], _zeros).slice(0, 16);
+      return a;
+    }
   };
   var _noctrl = [0, 6, 32, 38, 98, 99, 100, 101];
   var _helperGC = {
@@ -3248,6 +3255,16 @@
   function _sliceSX(gr, m) {
     var a = _slice(m.slice(1, m.length - 1), 6);
     for (var i = 0; i < a.length; i++) a[i] = new UMP([0x30 + gr, _umpseqstat(a.length, i) * 16 + a[i].length].concat(a[i], _zeros).slice(0, 8));
+    return a;
+  }
+  function _bytes(s) {
+    var i;
+    var a = s;
+    if (typeof s == 'string') {
+      a = [];
+      for (i = 0; i < s.length; i++) a.push(s.charCodeAt(i));
+    }
+    for (i = 0; i < a.length; i++) if (a[i] != parseInt(a[i]) || a[i] < 0 || a[i] > 255) throw RangeError('Bad data');
     return a;
   }
   function _copyHelperSX(name, func) {
