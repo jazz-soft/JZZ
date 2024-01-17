@@ -1118,6 +1118,7 @@ describe('UMP messages', function() {
     assert.equal(JZZ.UMP.umpData(1, '')[0].toString(), '51000000 00000000 00000000 00000000 -- Data');
     assert.equal(JZZ.UMP.umpData(1, '0')[0].toString(), '51010030 00000000 00000000 00000000 -- Data');
     assert.equal(JZZ.UMP.umpData(1, [1, 2, 3, 4, 5])[0].toString(), '51050001 02030405 00000000 00000000 -- Data');
+    assert.equal(JZZ.UMP.umpData(1, Buffer.from([1, 2, 3, 4, 5]))[0].toString(), '51050001 02030405 00000000 00000000 -- Data');
     assert.equal(JZZ.UMP.umpData(1, 1, [1, 2, 3, 4, 5])[0].toString(), '51050101 02030405 00000000 00000000 -- Data');
     assert.throws(function() { JZZ.UMP.umpData(1, 'Я'); });
   });
@@ -1606,14 +1607,14 @@ describe('JZZ.M1M2', function() {
     port.connect(function(msg) { sample.compare(msg); });
     port.send(0xf7).reset();
   });
-  it('sysext', function(done) {
+  it('sysex', function(done) {
     var sample = new test.Sample(done, [
       [0x30, 0x16, 0x00, 0x20, 0x24, 0x00, 0x04, 0x6b],
       [0x30, 0x26, 0x61, 0x72, 0x61, 0x6f, 0x6b, 0x65],
       [0x30, 0x33, 0x2e, 0x2e, 0x2e, 0x00, 0x00, 0x00]
     ]);
     var port = new JZZ.M1M2();
-    port.connect(function(msg) { console.log(msg.toString()); });
+    port.connect(function(msg) { msg.toString(); });
     port.connect(function(msg) { sample.compare(msg); });
     port.sxMidiSoft(4, 'karaoke...');
   });

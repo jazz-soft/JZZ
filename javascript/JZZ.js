@@ -3259,11 +3259,9 @@
   }
   function _bytes(s) {
     var i;
-    var a = s;
-    if (typeof s == 'string') {
-      a = [];
-      for (i = 0; i < s.length; i++) a.push(s.charCodeAt(i));
-    }
+    var a = [];
+    if (typeof s == 'string') for (i = 0; i < s.length; i++) a.push(s.charCodeAt(i));
+    else for (i = 0; i < s.length; i++) a.push(s[i]);
     for (i = 0; i < a.length; i++) if (a[i] != parseInt(a[i]) || a[i] < 0 || a[i] > 255) throw RangeError('Bad data');
     return a;
   }
