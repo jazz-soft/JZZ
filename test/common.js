@@ -1112,8 +1112,14 @@ describe('UMP messages', function() {
     assert.throws(function() { JZZ.UMP.umpPnManagement(1, 2, 3, 'DD'); });
     assert.throws(function() { JZZ.UMP.umpPnManagement(1, 2, 3, 'SS'); });
   });
-  it('data', function() {
+  it('umpData', function() {
     assert.equal(JZZ.UMP(0x50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0).toString(), '50000000 00000000 00000000 00000000 -- Data');
+    assert.equal(JZZ.UMP.umpData(1, [])[0].toString(), '51000000 00000000 00000000 00000000 -- Data');
+    assert.equal(JZZ.UMP.umpData(1, '')[0].toString(), '51000000 00000000 00000000 00000000 -- Data');
+    assert.equal(JZZ.UMP.umpData(1, '0')[0].toString(), '51010030 00000000 00000000 00000000 -- Data');
+    assert.equal(JZZ.UMP.umpData(1, [1, 2, 3, 4, 5])[0].toString(), '51050001 02030405 00000000 00000000 -- Data');
+    assert.equal(JZZ.UMP.umpData(1, 1, [1, 2, 3, 4, 5])[0].toString(), '51050101 02030405 00000000 00000000 -- Data');
+    assert.throws(function() { JZZ.UMP.umpData(1, 'Я'); });
   });
   it('unknown', function() {
     assert.equal(JZZ.UMP([0xd0, 0, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]).toString(), 'd0000700 00000000 00000000 00000000');
