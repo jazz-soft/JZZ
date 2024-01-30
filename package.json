@@ -29,8 +29,8 @@
     "midi-test": "^1.2.8",
     "mocha": "^10.2.0",
     "nyc": "^15.1.0",
-    "web-audio-test": "^0.0.6",
-    "web-midi-test": "^1.2.5"
+    "web-audio-test": "^0.0.7",
+    "web-midi-test": "^1.2.6"
   },
   "runkitExampleFilename": "runkit.js",
   "repository": {
