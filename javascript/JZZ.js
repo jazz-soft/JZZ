@@ -3133,6 +3133,9 @@
     umpCoarseTuning: function(g, c, n) {
       return [0x40 + _4b(g), 0x20 + _ch(c), 0, 2, _7b(n) * 2, 0, 0, 0];
     },
+    umpCoarseTuningF: function(g, c, x) {
+      return _helperGC.umpCoarseTuning(g, c, 0x40 + (x - x % 1));
+    },
     umpTuningProgram: function(g, c, n) {
       return [0x40 + _4b(g), 0x20 + _ch(c), 0, 3, _7b(n) * 2, 0, 0, 0];
     },
@@ -3152,6 +3155,7 @@
   };
   _helperGC.umpPnPressure = _helperGC.umpAftertouch;
   _helperGC.umpPnPressureF = _helperGC.umpAftertouchF;
+  _helperGC.umpTranspose = _helperGC.umpCoarseTuningF;
   var _helperGCX = {
     umpCustomText: function(g, c, d, b, s, t) {
       var i;
