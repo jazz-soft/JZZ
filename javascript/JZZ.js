@@ -1998,6 +1998,7 @@
     mode3: function(c) { return [ _helperCH.omni(c, false), _helperCH.poly(c) ]; },
     mode4: function(c) { return [ _helperCH.omni(c, false), _helperCH.mono(c) ]; }
   };
+  _helperGCH.rpnTranspose = _helperGCH.rpnCoarseTuningF;
   var _helperSXX = { // compound messages no channel
     sxMasterTuning: function(n, m, l) { return [_helperSX.sxMasterCoarseTuning.call(this, n), _helperSX.sxMasterFineTuning.call(this, m, l)]; },
     sxMasterTuningF: function(x) { return [_helperSX.sxMasterCoarseTuningF.call(this, x), _helperSX.sxMasterFineTuningF.call(this, x)]; },
