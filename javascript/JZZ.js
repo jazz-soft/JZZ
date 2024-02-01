@@ -1678,6 +1678,10 @@
     x = (Math.floor(x) << 14) + MIDI.to14b(x - Math.floor(x));
     return x < 0x1fffff ? x : 0x1ffffe;
   };
+  MIDI.to32b = function(x) {
+    _float(x);
+    return x <= 0 ? 0 : x >= 1 ? 0xffffffff : Math.floor(x * 0x100000000);
+  };
   function _MIDI() {}
   _MIDI.prototype = MIDI;
   MIDI._sxid = 0x7f;
