@@ -1073,6 +1073,11 @@ describe('UMP messages', function() {
   });
   it('umpFineTuning', function() {
     assert.equal(JZZ.UMP.umpFineTuning(1, 2, 0x80000000).toString(), '41220001 80000000 -- Registered Controller: Fine Tuning');
+    assert.equal(JZZ.UMP.umpFineTuningF(1, 2, -.9999999999).toString(), '41220001 00000000 -- Registered Controller: Fine Tuning');
+    assert.equal(JZZ.UMP.umpFineTuningF(1, 2, -.5).toString(), '41220001 40000000 -- Registered Controller: Fine Tuning');
+    assert.equal(JZZ.UMP.umpFineTuningF(1, 2, 0).toString(), '41220001 80000000 -- Registered Controller: Fine Tuning');
+    assert.equal(JZZ.UMP.umpFineTuningF(1, 2, .5).toString(), '41220001 c0000000 -- Registered Controller: Fine Tuning');
+    assert.equal(JZZ.UMP.umpFineTuningF(1, 2, .9999999999).toString(), '41220001 ffffffff -- Registered Controller: Fine Tuning');
   });
   it('umpCoarseTuning', function() {
     assert.equal(JZZ.UMP.umpCoarseTuning(1, 2, 3).toString(), '41220002 06000000 -- Registered Controller: Coarse Tuning');

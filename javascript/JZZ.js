@@ -3134,6 +3134,9 @@
     umpFineTuning: function(g, c, x, y, z, w) {
       return _helperGC.umpRPN(g, c, 0, 1, x, y, z, w);
     },
+    umpFineTuningF: function(g, c, x) {
+      return _helperGC.umpFineTuning(g, c, MIDI.to32b(_01((x % 1 + 1) / 2, x)));
+    },
     umpCoarseTuning: function(g, c, n) {
       return [0x40 + _4b(g), 0x20 + _ch(c), 0, 2, _7b(n) * 2, 0, 0, 0];
     },
