@@ -3164,6 +3164,7 @@
   _helperGC.umpPnPressureF = _helperGC.umpAftertouchF;
   _helperGC.umpTranspose = _helperGC.umpCoarseTuningF;
   var _helperGCX = {
+    umpTuningF: function(g, c, x) { return [_helperGC.umpCoarseTuningF(g, c, x), _helperGC.umpFineTuningF(g, c, x)]; },
     umpCustomText: function(g, c, d, b, s, t) {
       var i;
       var a = [];
