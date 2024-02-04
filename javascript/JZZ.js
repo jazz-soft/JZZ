@@ -3165,6 +3165,7 @@
   _helperGC.umpTranspose = _helperGC.umpCoarseTuningF;
   var _helperGCX = {
     umpTuningF: function(g, c, x) { return [_helperGC.umpCoarseTuningF(g, c, x), _helperGC.umpFineTuningF(g, c, x)]; },
+    umpTuningA: function(g, c, a) { return _helperGCX.umpTuningF(g, c, MIDI.shift(a)); },
     umpCustomText: function(g, c, d, b, s, t) {
       var i;
       var a = [];

@@ -1089,6 +1089,9 @@ describe('UMP messages', function() {
     assert.equal(JZZ.UMP.umpTuningF(1, 2, 0).toString(), '41220002 80000000 -- Registered Controller: Coarse Tuning,41220001 80000000 -- Registered Controller: Fine Tuning');
     assert.equal(JZZ.UMP.umpTuningF(1, 2, 1.5).toString(), '41220002 82000000 -- Registered Controller: Coarse Tuning,41220001 c0000000 -- Registered Controller: Fine Tuning');
     assert.equal(JZZ.UMP.umpTuningF(1, 2, -1.5).toString(), '41220002 7e000000 -- Registered Controller: Coarse Tuning,41220001 40000000 -- Registered Controller: Fine Tuning');
+    assert.equal(JZZ.UMP.umpTuningA(1, 2, 220).toString(), '41220002 68000000 -- Registered Controller: Coarse Tuning,41220001 80000000 -- Registered Controller: Fine Tuning');
+    assert.equal(JZZ.UMP.umpTuningA(1, 2, 440).toString(), '41220002 80000000 -- Registered Controller: Coarse Tuning,41220001 80000000 -- Registered Controller: Fine Tuning');
+    assert.equal(JZZ.UMP.umpTuningA(1, 2, 880).toString(), '41220002 98000000 -- Registered Controller: Coarse Tuning,41220001 80000000 -- Registered Controller: Fine Tuning');
   });
   it('umpTuningProgram', function() {
     assert.equal(JZZ.UMP.umpTuningProgram(1, 2, 0).toString(), '41220003 00000000 -- Registered Controller: Select Tuning Program');
