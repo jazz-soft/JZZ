@@ -796,6 +796,10 @@ describe('UMP messages', function() {
     assert.equal(msg.isNoteOn(), true);
     assert.equal(msg.isNoteOff(), false);
     assert.equal(msg.getGroup(), 1);
+    assert.equal(msg.isData(), false);
+    assert.equal(msg.isFlex(), false);
+    assert.equal(msg.isText(), false);
+    assert.equal(msg.isSX(), false);
     assert.equal(JZZ.UMP.noteOn(1, 2, 'C#5').toString(), s);
     assert.equal(JZZ.UMP.ch().noteOn(1, 2, 'C#5').toString(), s);
     assert.equal(JZZ.UMP.ch(5).ch().noteOn(1, 2, 'C#5').toString(), s);
@@ -853,6 +857,7 @@ describe('UMP messages', function() {
   it('sxIdRequest', function() {
     var s = '37047e7f 06010000 -- SysEx';
     var msg = JZZ.UMP.sxId(1).sxId(1).sxId().sxId().sxIdRequest(7)[0];
+    assert.equal(msg.isSX(), true);
     assert.equal(msg.getGroup(), 7);
     assert.equal(msg.toString(), s);
     msg = JZZ.UMP.gr(7).sxIdRequest()[0];
@@ -917,6 +922,8 @@ describe('UMP messages', function() {
   it('umpTimeSignature', function() {
     var s = 'd0100001 03021800 00000000 00000000 -- Time Signature 3/4';
     var msg = JZZ.UMP.umpTimeSignature(0, '3/4');
+    assert.equal(msg.isFlex(), true);
+    assert.equal(msg.isText(), false);
     assert.equal(msg.isTimeSignature(), true);
     assert.equal(msg.isTempo(), false);
     assert.equal(typeof msg.getBPM(), 'undefined');
@@ -934,6 +941,8 @@ describe('UMP messages', function() {
   });
   it('umpCustomText', function() {
     var m = JZZ.UMP.umpCustomText(5, 5, 1, 1, 15, 'This is a long text that spans over 4 messages!');
+    assert.equal(m[0].isFlex(), true);
+    assert.equal(m[0].isText(), true);
     assert.equal(m[0].toString(), 'd555010f 54686973 20697320 61206c6f -- Unknown Text');
     assert.equal(m[1].toString(), 'd595010f 6e672074 65787420 74686174 -- Unknown Text');
     assert.equal(m[2].toString(), 'd595010f 20737061 6e73206f 76657220 -- Unknown Text');
@@ -1129,6 +1138,8 @@ describe('UMP messages', function() {
     assert.throws(function() { JZZ.UMP.umpPnManagement(1, 2, 3, 'SS'); });
   });
   it('umpData', function() {
+    var m = JZZ.UMP.gr(0).umpData('data data data data data data');
+    assert.equal(m[0].isData(), true);
     assert.equal(JZZ.UMP(0x50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0).toString(), '50000000 00000000 00000000 00000000 -- Data');
     assert.equal(JZZ.UMP.umpData(1, [])[0].toString(), '51000000 00000000 00000000 00000000 -- Data');
     assert.equal(JZZ.UMP.umpData(1, '')[0].toString(), '51000000 00000000 00000000 00000000 -- Data');

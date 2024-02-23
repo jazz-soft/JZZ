@@ -3404,6 +3404,10 @@
   UMP.prototype.isDelta = function() { return this[0] == 0 && (this[1] >> 4) == 4; };
   UMP.prototype.isStartClip = function() { return this.match([0xf0, 0x20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]); };
   UMP.prototype.isEndClip = function() { return this.match([0xf0, 0x21, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]); };
+  UMP.prototype.isData = function() { return (this[0] & 0xf0) == 0x50; };
+  UMP.prototype.isFlex = function() { return (this[0] & 0xf0) == 0xd0; };
+  UMP.prototype.isText = function() { return (this[0] & 0xf0) == 0xd0 && (this[2] == 1 || this[2] == 2); };
+  UMP.prototype.isSX = function() { return (this[0] & 0xf0) == 0x30; };
   UMP.prototype.isNoteOn = function() {
     var c = (this[0] || 0) >> 4;
     var d = (this[1] || 0) >> 4;
