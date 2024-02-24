@@ -3393,6 +3393,10 @@
   UMP.prototype.getDelta = function() {
     if (this.isDelta()) return ((this[1] & 15) << 16) + (this[2] << 8) + this[3];
   };
+  UMP.prototype.getStatus = function() {
+    if (this.isFlex()) return this[1] >> 6;
+    if (this.isData() || this.isSX()) return this[1] >> 4;
+  };
 
   UMP.prototype.isTempo = function() {
     return (this[0] >> 4) == 13 && (this[1] >> 4) == 1 &&  this[2] == 0 &&  this[3] == 0;

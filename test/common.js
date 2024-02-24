@@ -779,6 +779,7 @@ describe('UMP messages', function() {
     assert.equal(msg.isNoteOff(), false);
     assert.equal(typeof msg.getGroup(), 'undefined');
     assert.equal(typeof msg.getDelta(), 'undefined');
+    assert.equal(typeof msg.getStatus(), 'undefined');
     assert(msg.dump(), '\0\0\0\0');
     assert.equal(msg.toString(), s);
     msg = new JZZ.UMP(msg);
@@ -858,6 +859,7 @@ describe('UMP messages', function() {
     var s = '37047e7f 06010000 -- SysEx';
     var msg = JZZ.UMP.sxId(1).sxId(1).sxId().sxId().sxIdRequest(7)[0];
     assert.equal(msg.isSX(), true);
+    assert.equal(msg.getStatus(), 0);
     assert.equal(msg.getGroup(), 7);
     assert.equal(msg.toString(), s);
     msg = JZZ.UMP.gr(7).sxIdRequest()[0];
@@ -944,9 +946,13 @@ describe('UMP messages', function() {
     assert.equal(m[0].isFlex(), true);
     assert.equal(m[0].isText(), true);
     assert.equal(m[0].toString(), 'd555010f 54686973 20697320 61206c6f -- Unknown Text');
+    assert.equal(m[0].getStatus(), 1);
     assert.equal(m[1].toString(), 'd595010f 6e672074 65787420 74686174 -- Unknown Text');
+    assert.equal(m[1].getStatus(), 2);
     assert.equal(m[2].toString(), 'd595010f 20737061 6e73206f 76657220 -- Unknown Text');
+    assert.equal(m[2].getStatus(), 2);
     assert.equal(m[3].toString(), 'd5d5010f 34206d65 73736167 65732100 -- Unknown Text');
+    assert.equal(m[3].getStatus(), 3);
     assert.equal(JZZ.UMP.umpCustomText(5, 5, 0, 2, 15, '')[0].toString(), 'd505020f 00000000 00000000 00000000 -- Unknown Text');
   });
   it('umpMetadata', function() {
