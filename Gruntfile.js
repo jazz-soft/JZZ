@@ -43,13 +43,15 @@ module.exports = function(grunt) {
     function F1() {}
     JZZ.lib.copyMidiHelpers(F1);
     var H1 = Object.keys(F1.prototype).sort();
+    var H1x = Object.keys(JZZ.MIDI.prototype).sort();
     function F2() {}
     JZZ.lib.copyUmpHelpers(F2);
     var H2 = Object.keys(F2.prototype).sort();
+    var H2x = Object.keys(JZZ.UMP.prototype).sort();
     var ts = grunt.file.read('index.d.ts').split(/\r?\n/);
     var list = {};
     var current;
-    var i, j, k;
+    var i, k;
     for (i = 0; i < ts.length; i++) {
       var match = ts[i].match(/namespace\s+(\S+)/);
       if (match) {
@@ -69,12 +71,16 @@ module.exports = function(grunt) {
         current[match[1]] = true;
       }
     }
-    var M1 = ['namespace MIDI'];
-    for (j = 0; j < M1.length; j++) {
-      for (k = 0; k < H1.length; k++) {
-        if (!list[M1[j]][H1[k]])
-        console.log('missing', M1[j], ':', H1[k] );
-      }
+    k = 'namespace MIDI';
+    for (i = 0; i < H1.length; i++) {
+      if (!list[k][H1[i]])
+      console.log('missing', k, ':', H1[i] );
+    }
+    k = 'interface MIDI';
+    for (i = 0; i < H1x.length; i++) {
+      if (H1x[i][0] == '_') continue;
+      if (!list[k][H1x[i]])
+      console.log('missing', k, ':', H1x[i] );
     }
   });
   grunt.loadNpmTasks('grunt-contrib-uglify');
