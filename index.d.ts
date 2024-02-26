@@ -93,7 +93,7 @@ declare namespace JZZ {
     /** Reset SMPTE object
      *
      * https://jazz-soft.net/doc/JZZ/smpte.html#reset */
-     reset(...args: any[]): SMPTE;
+    reset(...args: any[]): SMPTE;
   }
 
   namespace MIDI {
@@ -349,7 +349,7 @@ declare namespace JZZ {
        * https://jazz-soft.net/doc/JZZ/jzzmidi.html#smfBPM */
       smfBPM(bpm: number): MIDI;
       /** SMF SMPTE offset: [FF54 05 hh mm ss fr ff]
-       * 
+       *
        * https://jazz-soft.net/doc/JZZ/jzzmidi.html#smfSMPTE */
       smfSMPTE(smpte: SMPTE | number[]): MIDI;
       /** SMF Time Signature: [FF58 04 nn dd cc bb]
@@ -453,7 +453,7 @@ declare namespace JZZ {
      *
      * https://jazz-soft.net/doc/JZZ/jzzmidi.html#setSysExChannel */
     setSysExChannel(cc: number): MIDI;
-    
+
     /** Get data from SMF meta event
      *
      * https://jazz-soft.net/doc/JZZ/jzzmidi.html#getData */
@@ -891,7 +891,7 @@ declare namespace JZZ {
      * https://jazz-soft.net/doc/JZZ/jzzmidi.html#smfBPM */
     smfBPM(bpm: number): Port.Async;
     /** SMF SMPTE offset: [FF54 05 hh mm ss fr ff]
-     * 
+     *
      * https://jazz-soft.net/doc/JZZ/jzzmidi.html#smfSMPTE */
     smfSMPTE(smpte: SMPTE | number[]): Port.Async;
     /** SMF Time Signature: [FF58 04 nn dd cc bb]
@@ -1232,7 +1232,7 @@ declare namespace JZZ {
      * https://jazz-soft.net/doc/JZZ/jzzmidi.html#smfBPM */
     smfBPM(bpm: number): Channel.Async;
     /** SMF SMPTE offset: [FF54 05 hh mm ss fr ff]
-     * 
+     *
      * https://jazz-soft.net/doc/JZZ/jzzmidi.html#smfSMPTE */
     smfSMPTE(smpte: SMPTE | number[]): Channel.Async;
     /** SMF Time Signature: [FF58 04 nn dd cc bb]
@@ -1573,7 +1573,7 @@ declare namespace JZZ {
      * https://jazz-soft.net/doc/JZZ/jzzmidi.html#smfBPM */
     smfBPM(bpm: number): MPE.Async;
     /** SMF SMPTE offset: [FF54 05 hh mm ss fr ff]
-     * 
+     *
      * https://jazz-soft.net/doc/JZZ/jzzmidi.html#smfSMPTE */
     smfSMPTE(smpte: SMPTE | number[]): MPE.Async;
     /** SMF Time Signature: [FF58 04 nn dd cc bb]
