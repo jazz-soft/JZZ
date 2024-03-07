@@ -2746,99 +2746,103 @@
     return 'NRPN ' + a + ' ' + b;
   }
   function _read_ctxt(msg) {
-    if (!msg.length || msg[0] < 0x80) return msg;
-    if (msg[0] == 0xff) { this._clear(); return msg; }
-    var ch = msg[0] & 15;
-    var st = msg[0] >> 4;
+    var mmm;
+    if (msg.isMidi2) {
+    }
+    else mmm = msg;
+    if (!mmm || !mmm.length || mmm[0] < 0x80) return mmm;
+    if (mmm[0] == 0xff) { this._clear(); return msg; }
+    var ch = mmm[0] & 15;
+    var st = mmm[0] >> 4;
     var s;
     if (st == 12) {
-      msg._bm = this._cc[ch].bm;
-      msg._bl = this._cc[ch].bl;
-      if (JZZ.MIDI.programName) msg.label(JZZ.MIDI.programName(msg[1], msg._bm, msg._bl));
+      mmm._bm = this._cc[ch].bm;
+      mmm._bl = this._cc[ch].bl;
+      if (JZZ.MIDI.programName) msg.label(JZZ.MIDI.programName(mmm[1], mmm._bm, mmm._bl));
     }
     else if (st == 11) {
-      switch (msg[1]) {
-        case 0: this._cc[ch].bm = msg[2]; break;
-        case 32: this._cc[ch].bl = msg[2]; break;
-        case 98: this._cc[ch].nl = msg[2]; this._cc[ch].rn = 'n'; break;
-        case 99: this._cc[ch].nm = msg[2]; this._cc[ch].rn = 'n'; break;
-        case 100: this._cc[ch].rl = msg[2]; this._cc[ch].rn = 'r'; break;
-        case 101: this._cc[ch].rm = msg[2]; this._cc[ch].rn = 'r'; break;
+      switch (mmm[1]) {
+        case 0: this._cc[ch].bm = mmm[2]; break;
+        case 32: this._cc[ch].bl = mmm[2]; break;
+        case 98: this._cc[ch].nl = mmm[2]; this._cc[ch].rn = 'n'; break;
+        case 99: this._cc[ch].nm = mmm[2]; this._cc[ch].rn = 'n'; break;
+        case 100: this._cc[ch].rl = mmm[2]; this._cc[ch].rn = 'r'; break;
+        case 101: this._cc[ch].rm = mmm[2]; this._cc[ch].rn = 'r'; break;
         case 6: case 38: case 96: case 97:
           if (this._cc[ch].rn == 'r') {
-            msg._rm = this._cc[ch].rm;
-            msg._rl = this._cc[ch].rl;
+            mmm._rm = this._cc[ch].rm;
+            mmm._rl = this._cc[ch].rl;
             msg.label(_rpn_txt(this._cc[ch].rm, this._cc[ch].rl));
           }
           if (this._cc[ch].rn == 'n') {
-            msg._nm = this._cc[ch].rm;
-            msg._nl = this._cc[ch].nl;
+            mmm._nm = this._cc[ch].rm;
+            mmm._nl = this._cc[ch].nl;
             msg.label(_nrpn_txt(this._cc[ch].nm, this._cc[ch].nl));
           }
           break;
       }
     }
-    else if (msg.isFullSysEx()) {
-      if (msg[1] == 0x7f) {
-        if (msg[3] == 4) {
-          s = { 1: 'Master Volume', 2: 'Master Balance', 3: 'Master Fine Tuning', 4: 'Master Coarse Tuning' }[msg[4]];
+    else if (mmm.isFullSysEx()) {
+      if (mmm[1] == 0x7f) {
+        if (mmm[3] == 4) {
+          s = { 1: 'Master Volume', 2: 'Master Balance', 3: 'Master Fine Tuning', 4: 'Master Coarse Tuning' }[mmm[4]];
           if (s) msg.label(s);
         }
-        else if (msg[3] == 8) {
-          s = { 2: 'Note Tuning', 7: 'Note Tuning, Bank', 8: 'Scale Tuning, 1 byte format', 9: 'Scale Tuning, 2 byte format' }[msg[4]];
+        else if (mmm[3] == 8) {
+          s = { 2: 'Note Tuning', 7: 'Note Tuning, Bank', 8: 'Scale Tuning, 1 byte format', 9: 'Scale Tuning, 2 byte format' }[mmm[4]];
           if (s) msg.label(s);
         }
       }
-      else if (msg[1] == 0x7e) {
-        if (msg[3] == 6) {
-          if (msg[4] == 1) msg.label('Device ID Request');
-          else if (msg[4] == 2) {
+      else if (mmm[1] == 0x7e) {
+        if (mmm[3] == 6) {
+          if (mmm[4] == 1) msg.label('Device ID Request');
+          else if (mmm[4] == 2) {
             msg.label('Device ID Response');
           }
         }
-        else if (msg[3] == 8) {
+        else if (mmm[3] == 8) {
           s = {
             0: 'Bulk Tuning Dump Request', 1: 'Bulk Tuning Dump', 3: 'Bulk Tuning Dump Request, Bank', 4: 'Bulk Tuning Dump, Bank',
             5: 'Scale Tuning Dump, 1 byte format', 6: 'Scale Tuning Dump, 2 byte format',
             7: 'Note Tuning, Bank', 8: 'Scale Tuning, 1 byte format', 9: 'Scale Tuning, 2 byte format'
-          }[msg[4]];
+          }[mmm[4]];
           if (s) msg.label(s);
         }
-        else if (msg[3] == 9) {
-          if (msg[4] == 1) { msg.label('GM1 System On'); this._clear(); this._gm = '1'; }
-          else if (msg[4] == 2) { msg.label('GM System Off'); this._clear(); this._gm = '0'; }
-          else if (msg[4] == 3) { msg.label('GM2 System On'); this._clear(); this._gm = '2'; }
+        else if (mmm[3] == 9) {
+          if (mmm[4] == 1) { msg.label('GM1 System On'); this._clear(); this._gm = '1'; }
+          else if (mmm[4] == 2) { msg.label('GM System Off'); this._clear(); this._gm = '0'; }
+          else if (mmm[4] == 3) { msg.label('GM2 System On'); this._clear(); this._gm = '2'; }
         }
       }
-      else if (msg[1] == 0x43) {
-        if ((msg[2] & 0xf0) == 0x10 && msg[3] == 0x4c) {
-          if (msg[4] == 0 && msg[5] == 0 && msg[6] == 0x7e && msg[7] == 0) {
+      else if (mmm[1] == 0x43) {
+        if ((mmm[2] & 0xf0) == 0x10 && mmm[3] == 0x4c) {
+          if (mmm[4] == 0 && mmm[5] == 0 && mmm[6] == 0x7e && mmm[7] == 0) {
             msg.label('XG System On'); this._clear(); this._gm = 'Y';
           }
-          else if (msg[4] == 0 && msg[5] == 0 && msg[6] == 0) msg.label('XG Master Tuning');
-          else if (msg[4] == 0 && msg[5] == 0 && msg[6] == 4) msg.label('XG Master Volume');
-          else if (msg[4] == 0 && msg[5] == 0 && msg[6] == 6) msg.label('XG Master Transpose');
-          else if (msg[4] == 8 && msg[5] < 16 && msg[6] >= 0x41 && msg[6] <= 0x4c) msg.label('XG Scale Tuning');
+          else if (mmm[4] == 0 && mmm[5] == 0 && mmm[6] == 0) msg.label('XG Master Tuning');
+          else if (mmm[4] == 0 && mmm[5] == 0 && mmm[6] == 4) msg.label('XG Master Volume');
+          else if (mmm[4] == 0 && mmm[5] == 0 && mmm[6] == 6) msg.label('XG Master Transpose');
+          else if (mmm[4] == 8 && mmm[5] < 16 && mmm[6] >= 0x41 && mmm[6] <= 0x4c) msg.label('XG Scale Tuning');
           else  msg.label('XG Parameter');
         }
       }
-      else if (msg[1] == 0x41) {
-        if (msg[3] == 0x42 && msg[4] == 0x12) {
-          if (msg[5] == 0x40) {
-            if (msg[6] == 0) {
-              if (msg[7] == 0x7f && msg[8] == 0 && msg[9] == 0x41) {
+      else if (mmm[1] == 0x41) {
+        if (mmm[3] == 0x42 && mmm[4] == 0x12) {
+          if (mmm[5] == 0x40) {
+            if (mmm[6] == 0) {
+              if (mmm[7] == 0x7f && mmm[8] == 0 && mmm[9] == 0x41) {
                 msg.label('GS Reset'); this._clear(); this._gm = 'R';
               }
-              else if (msg[7] == 0) msg.label('GS Master Tuning');
-              else if (msg[7] == 4) msg.label('GS Master Volume');
-              else if (msg[7] == 5) msg.label('GS Master Transpose');
+              else if (mmm[7] == 0) msg.label('GS Master Tuning');
+              else if (mmm[7] == 4) msg.label('GS Master Volume');
+              else if (mmm[7] == 5) msg.label('GS Master Transpose');
               else msg.label('GS Parameter');
             }
-            else if ((msg[6] & 0xf0) == 0x10 && msg[7] == 0x15) msg.label('GS Drum Part Change');
-            else if ((msg[6] & 0xf0) == 0x10 && msg[7] >= 0x40 && msg[7] <= 0x4b) msg.label('GS Scale Tuning');
+            else if ((mmm[6] & 0xf0) == 0x10 && mmm[7] == 0x15) msg.label('GS Drum Part Change');
+            else if ((mmm[6] & 0xf0) == 0x10 && mmm[7] >= 0x40 && mmm[7] <= 0x4b) msg.label('GS Scale Tuning');
             else msg.label('GS Parameter');
           }
-          if (msg[5] == 0x41) msg.label('GS Parameter');
+          if (mmm[5] == 0x41) msg.label('GS Parameter');
         }
       }
     }
