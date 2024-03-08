@@ -2722,9 +2722,7 @@
   _J.prototype.MIDI = MIDI;
 
   function _clear_ctxt() {
-    var i;
-    this._cc = [];
-    for (i = 0; i < 16; i++) this._cc[i] = {};
+    this._cc = {};
   }
   function _rpn_txt(msb, lsb) {
     var a = typeof msb == 'undefined' ? '??' : __hex(msb);
@@ -2746,38 +2744,42 @@
     return 'NRPN ' + a + ' ' + b;
   }
   function _read_ctxt(msg) {
-    var mmm;
+    var mmm, kk;
+    var gr = 'x';
+    var ch = 'x';
     if (msg.isMidi2) {
     }
     else mmm = msg;
     if (!mmm || !mmm.length || mmm[0] < 0x80) return mmm;
     if (mmm[0] == 0xff) { this._clear(); return msg; }
-    var ch = mmm[0] & 15;
+    ch = (mmm[0] & 15).toString(16);
+    kk = gr + ch;
+    if (!this._cc[kk]) this._cc[kk] = {}; 
     var st = mmm[0] >> 4;
     var s;
     if (st == 12) {
-      mmm._bm = this._cc[ch].bm;
-      mmm._bl = this._cc[ch].bl;
+      mmm._bm = this._cc[kk].bm;
+      mmm._bl = this._cc[kk].bl;
       if (JZZ.MIDI.programName) msg.label(JZZ.MIDI.programName(mmm[1], mmm._bm, mmm._bl));
     }
     else if (st == 11) {
       switch (mmm[1]) {
-        case 0: this._cc[ch].bm = mmm[2]; break;
-        case 32: this._cc[ch].bl = mmm[2]; break;
-        case 98: this._cc[ch].nl = mmm[2]; this._cc[ch].rn = 'n'; break;
-        case 99: this._cc[ch].nm = mmm[2]; this._cc[ch].rn = 'n'; break;
-        case 100: this._cc[ch].rl = mmm[2]; this._cc[ch].rn = 'r'; break;
-        case 101: this._cc[ch].rm = mmm[2]; this._cc[ch].rn = 'r'; break;
+        case 0: this._cc[kk].bm = mmm[2]; break;
+        case 32: this._cc[kk].bl = mmm[2]; break;
+        case 98: this._cc[kk].nl = mmm[2]; this._cc[kk].rn = 'n'; break;
+        case 99: this._cc[kk].nm = mmm[2]; this._cc[kk].rn = 'n'; break;
+        case 100: this._cc[kk].rl = mmm[2]; this._cc[kk].rn = 'r'; break;
+        case 101: this._cc[kk].rm = mmm[2]; this._cc[kk].rn = 'r'; break;
         case 6: case 38: case 96: case 97:
-          if (this._cc[ch].rn == 'r') {
-            mmm._rm = this._cc[ch].rm;
-            mmm._rl = this._cc[ch].rl;
-            msg.label(_rpn_txt(this._cc[ch].rm, this._cc[ch].rl));
+          if (this._cc[kk].rn == 'r') {
+            mmm._rm = this._cc[kk].rm;
+            mmm._rl = this._cc[kk].rl;
+            msg.label(_rpn_txt(this._cc[kk].rm, this._cc[kk].rl));
           }
-          if (this._cc[ch].rn == 'n') {
-            mmm._nm = this._cc[ch].rm;
-            mmm._nl = this._cc[ch].nl;
-            msg.label(_nrpn_txt(this._cc[ch].nm, this._cc[ch].nl));
+          if (this._cc[kk].rn == 'n') {
+            mmm._nm = this._cc[kk].rm;
+            mmm._nl = this._cc[kk].nl;
+            msg.label(_nrpn_txt(this._cc[kk].nm, this._cc[kk].nl));
           }
           break;
       }
