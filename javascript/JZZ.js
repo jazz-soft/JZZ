@@ -2744,19 +2744,24 @@
     return 'NRPN ' + a + ' ' + b;
   }
   function _read_ctxt(msg) {
-    var mmm, kk;
+    var mmm, kk, tt, st, s;
     var gr = 'x';
     var ch = 'x';
     if (msg.isMidi2) {
+      tt = msg[0] >> 4;
+      gr = (msg[0] & 15).toString(16);
+      if (tt == 2) {
+        mmm = JZZ.MIDI(msg.slice(1));
+      }
+      else return msg;
     }
     else mmm = msg;
     if (!mmm || !mmm.length || mmm[0] < 0x80) return mmm;
     if (mmm[0] == 0xff) { this._clear(); return msg; }
+    st = mmm[0] >> 4;
     ch = (mmm[0] & 15).toString(16);
-    kk = gr + ch;
+    kk = st == 15 ? gr : gr + ch;
     if (!this._cc[kk]) this._cc[kk] = {}; 
-    var st = mmm[0] >> 4;
-    var s;
     if (st == 12) {
       mmm._bm = this._cc[kk].bm;
       mmm._bl = this._cc[kk].bl;
@@ -3432,6 +3437,7 @@
     else if (c == 2) return d == 8 || (d == 9 && !this[3]);
     return false;
   };
+  UMP.prototype.label = MIDI.prototype.label;
   UMP.prototype.toString = MIDI.prototype.toString;
   UMP.prototype._str = function() {
     var t = this._string();
