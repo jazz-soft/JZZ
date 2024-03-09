@@ -2744,19 +2744,42 @@
     return 'NRPN ' + a + ' ' + b;
   }
   function _read_ctxt(msg) {
-    var mmm, kk, tt, st, s;
+    var mmm, kk, tt, st, n, a, s;
     var gr = 'x';
     var ch = 'x';
     if (msg.isMidi2) {
       tt = msg[0] >> 4;
       gr = (msg[0] & 15).toString(16);
+      kk = gr;
+      if (!this._cc[kk]) this._cc[kk] = {}; 
       if (tt == 2) {
-        mmm = JZZ.MIDI(msg.slice(1));
+        mmm = new MIDI(msg.slice(1));
       }
-      else return msg;
+      else if (tt == 3) {
+        st = msg[1] >> 4;
+        n = msg[1] & 15;
+        a = msg.slice(2, 2 + n);
+        if (st == 0) {
+          mmm = new MIDI([0xf0].concat(a, [0xf7]));
+          this._cc[kk].sx = undefined;
+        }
+        else if (st == 1) {
+          this._cc[kk].sx = a;
+        }
+        else if (st == 2) {
+          if (this._cc[kk].sx) this._cc[kk].sx = this._cc[kk].sx.concat(a);
+        }
+        else if (st == 3) {
+          if (this._cc[kk].sx) {
+            a = this._cc[kk].sx.concat(a);
+            mmm = new MIDI([0xf0].concat(a, [0xf7]));
+            this._cc[kk].sx = undefined;
+          }
+        }
+      }
     }
     else mmm = msg;
-    if (!mmm || !mmm.length || mmm[0] < 0x80) return mmm;
+    if (!mmm || !mmm.length || mmm[0] < 0x80) return msg;
     if (mmm[0] == 0xff) { this._clear(); return msg; }
     st = mmm[0] >> 4;
     ch = (mmm[0] & 15).toString(16);
