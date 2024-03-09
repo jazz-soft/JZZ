@@ -1843,6 +1843,10 @@ describe('JZZ.Context', function() {
     ctxt._receive(msg);
     assert.equal(msg.toString(), 'f0 7e 7f 09 01 f7 (GM1 System On)');
     assert.equal(ctxt._gm, '1');
+    // MIDI 2.0
+    msg = JZZ.MIDI2.sxGM(0, 1)[0];
+    ctxt._receive(msg);
+    assert.equal(msg.toString(), '30047e7f 09010000 -- SysEx (GM1 System On)');
   });
   it('GM2', function() {
     var ctxt = JZZ.Context();
@@ -1891,6 +1895,15 @@ describe('JZZ.Context', function() {
     msg = JZZ.MIDI.sxGS(0x41, 0x10, 0x15, 0x00);
     ctxt._receive(msg);
     assert.equal(msg.toString(), 'f0 41 7f 42 12 41 10 15 00 1a f7 (GS Parameter)');
+    // MIDI 2.0
+    msg = JZZ.MIDI2.gr(2).sxGS(0x40, 0x10, 0x15, 0x00);
+    console.log(msg);
+    ctxt._receive(msg[1]);
+    assert.equal(msg[1].toString(), '32331500 1b000000 -- SysEx');
+    ctxt._receive(msg[0]);
+    assert.equal(msg[0].toString(), '3216417f 42124010 -- SysEx');
+    ctxt._receive(msg[1]);
+    assert.equal(msg[1].toString(), '32331500 1b000000 -- SysEx (GS Drum Part Change)');
   });
   it('XG', function() {
     var ctxt = JZZ.Context();
@@ -1922,9 +1935,25 @@ describe('JZZ.Context', function() {
   });
   it('device id response', function() {
     var ctxt = JZZ.Context();
-    var msg = JZZ.MIDI([0xf0, 0x7e, 0x10, 0x06, 0x02, 0x41, 0x2b, 0x02, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0xf7]);
+    var msg = JZZ.MIDI([0xf0, 0x7e, 0x10, 0x06, 0x02, 0x41, 0x2b,  0x02, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0xf7]);
     ctxt._receive(msg);
     assert.equal(msg.toString(), 'f0 7e 10 06 02 41 2b 02 00 00 00 01 00 00 f7 (Device ID Response)');
+    // MIDI 2.0
+    msg = JZZ.MIDI2(0x30, 0x26, 0x02, 0x00, 0x00, 0x00, 0x01, 0x00);
+    ctxt._receive(msg);
+    assert.equal(msg.toString(), '30260200 00000100 -- SysEx');
+    msg = JZZ.MIDI2(0x30, 0x16, 0x7e, 0x10, 0x06, 0x02, 0x41, 0x2b);
+    ctxt._receive(msg);
+    assert.equal(msg.toString(), '30167e10 0602412b -- SysEx');
+    msg = JZZ.MIDI2(0x30, 0x26, 0x02, 0x00, 0x00, 0x00, 0x01, 0x00);
+    ctxt._receive(msg);
+    assert.equal(msg.toString(), '30260200 00000100 -- SysEx');
+    msg = JZZ.MIDI2(0x30, 0x31, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
+    ctxt._receive(msg);
+    assert.equal(msg.toString(), '30310000 00000000 -- SysEx (Device ID Response)');
+    msg = JZZ.MIDI2(0x30, 0x50, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00); // incorrect message
+    ctxt._receive(msg);
+    assert.equal(msg.toString(), '30500000 00000000 -- SysEx');
   });
   it('master volume', function() {
     var ctxt = JZZ.Context();
@@ -1970,6 +1999,12 @@ describe('JZZ.Context', function() {
     var msg = JZZ.MIDI([0xf0, 0x7f, 0x7f, 0x04, 0x7f, 0x7f, 0x7f, 0xf7]);
     ctxt._receive(msg);
     assert.equal(msg.toString(), 'f0 7f 7f 04 7f 7f 7f f7');
+  });
+  it('noop', function() {
+    var ctxt = JZZ.Context();
+    var msg = JZZ.MIDI2.noop();
+    ctxt._receive(msg);
+    assert.equal(msg.toString(), '00000000 -- NOOP');
   });
   it('etc', function() {
     var msg;
