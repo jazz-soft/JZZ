@@ -1842,32 +1842,34 @@ describe('JZZ.Context', function() {
     var msg = JZZ.MIDI.sxGM(1);
     ctxt._receive(msg);
     assert.equal(msg.toString(), 'f0 7e 7f 09 01 f7 (GM1 System On)');
-    assert.equal(ctxt._gm, '1');
+    assert.equal(ctxt.gm(), '1');
     // MIDI 2.0
     msg = JZZ.MIDI2.sxGM(0, 1)[0];
     ctxt._receive(msg);
     assert.equal(msg.toString(), '30047e7f 09010000 -- SysEx (GM1 System On)');
+    assert.equal(ctxt.gm(0), '1');
+    assert.equal(ctxt.gm(1), '0');
   });
   it('GM2', function() {
     var ctxt = JZZ.Context();
     var msg = JZZ.MIDI.sxGM(2);
     ctxt._receive(msg);
     assert.equal(msg.toString(), 'f0 7e 7f 09 03 f7 (GM2 System On)');
-    assert.equal(ctxt._gm, '2');
+    assert.equal(ctxt.gm(), '2');
   });
   it('GM off', function() {
     var ctxt = JZZ.Context();
     var msg = JZZ.MIDI.sxGM(0);
     ctxt._receive(msg);
     assert.equal(msg.toString(), 'f0 7e 7f 09 02 f7 (GM System Off)');
-    assert.equal(ctxt._gm, '0');
+    assert.equal(ctxt.gm(), '0');
   });
   it('GS', function() {
     var ctxt = JZZ.Context();
     var msg = JZZ.MIDI.sxGS();
     ctxt._receive(msg);
     assert.equal(msg.toString(), 'f0 41 7f 42 12 40 00 7f 00 41 f7 (GS Reset)');
-    assert.equal(ctxt._gm, 'R');
+    assert.equal(ctxt.gm(), 'R');
     msg = JZZ.MIDI.sxGS(0x40, 0, 0, 0, 0x04, 0, 0);
     ctxt._receive(msg);
     assert.equal(msg.toString(), 'f0 41 7f 42 12 40 00 00 00 04 00 00 3c f7 (GS Master Tuning)');
@@ -1904,13 +1906,14 @@ describe('JZZ.Context', function() {
     assert.equal(msg[0].toString(), '3216417f 42124010 -- SysEx');
     ctxt._receive(msg[1]);
     assert.equal(msg[1].toString(), '32331500 1b000000 -- SysEx (GS Drum Part Change)');
+    assert.equal(ctxt.gm(2), '0');
   });
   it('XG', function() {
     var ctxt = JZZ.Context();
     var msg = JZZ.MIDI.sxXG();
     ctxt._receive(msg);
     assert.equal(msg.toString(), 'f0 43 10 4c 00 00 7e 00 f7 (XG System On)');
-    assert.equal(ctxt._gm, 'Y');
+    assert.equal(ctxt.gm('x'), 'Y');
     msg = JZZ.MIDI.sxXG(0, 0, 0, 0x40, 0, 0, 0);
     ctxt._receive(msg);
     assert.equal(msg.toString(), 'f0 43 10 4c 00 00 00 40 00 00 00 f7 (XG Master Tuning)');

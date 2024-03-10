@@ -2721,8 +2721,9 @@
   JZZ.MIDI = MIDI;
   _J.prototype.MIDI = MIDI;
 
-  function _clear_ctxt() {
-    this._cc = {};
+  function _clear_ctxt(gr) {
+    if (typeof gr == 'undefined') this._cc = {};
+    else this._cc[gr] = {};
   }
   function _rpn_txt(msb, lsb) {
     var a = typeof msb == 'undefined' ? '??' : __hex(msb);
@@ -2839,15 +2840,15 @@
           if (s) msg.label(s);
         }
         else if (mmm[3] == 9) {
-          if (mmm[4] == 1) { msg.label('GM1 System On'); this._clear(); this._gm = '1'; }
-          else if (mmm[4] == 2) { msg.label('GM System Off'); this._clear(); this._gm = '0'; }
-          else if (mmm[4] == 3) { msg.label('GM2 System On'); this._clear(); this._gm = '2'; }
+          if (mmm[4] == 1) { msg.label('GM1 System On'); this._clear(gr); this._cc[gr].gm = '1'; }
+          else if (mmm[4] == 2) { msg.label('GM System Off'); this._clear(gr); this._cc[gr].gm = '0'; }
+          else if (mmm[4] == 3) { msg.label('GM2 System On'); this._clear(gr); this._cc[gr].gm = '2'; }
         }
       }
       else if (mmm[1] == 0x43) {
         if ((mmm[2] & 0xf0) == 0x10 && mmm[3] == 0x4c) {
           if (mmm[4] == 0 && mmm[5] == 0 && mmm[6] == 0x7e && mmm[7] == 0) {
-            msg.label('XG System On'); this._clear(); this._gm = 'Y';
+            msg.label('XG System On'); this._clear(gr); this._cc[gr].gm = 'Y';
           }
           else if (mmm[4] == 0 && mmm[5] == 0 && mmm[6] == 0) msg.label('XG Master Tuning');
           else if (mmm[4] == 0 && mmm[5] == 0 && mmm[6] == 4) msg.label('XG Master Volume');
@@ -2861,7 +2862,7 @@
           if (mmm[5] == 0x40) {
             if (mmm[6] == 0) {
               if (mmm[7] == 0x7f && mmm[8] == 0 && mmm[9] == 0x41) {
-                msg.label('GS Reset'); this._clear(); this._gm = 'R';
+                msg.label('GS Reset'); this._clear(gr); this._cc[gr].gm = 'R';
               }
               else if (mmm[7] == 0) msg.label('GS Master Tuning');
               else if (mmm[7] == 4) msg.label('GS Master Volume');
@@ -2883,6 +2884,11 @@
     self._clear = _clear_ctxt;
     self._read = _read_ctxt;
     self._receive = function(msg) { this._emit(this._read(msg)); };
+    self.gm = function(g) {
+      if (typeof g == 'undefined') g = 'x';
+      if (this._cc[g]) return this._cc[g].gm || 0;
+      return 0;
+    };
     self._clear();
     self._resume();
     return self;
