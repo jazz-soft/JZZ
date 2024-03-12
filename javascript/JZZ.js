@@ -2777,20 +2777,20 @@
             this._cc[kk].sx = undefined;
           }
         }
-        else if (tt == 4) {
-          st = msg[1] >> 4;
-          ch = (msg[1] & 15).toString(16);
-          kk = gr + ch;
-          if (!this._cc[kk]) this._cc[kk] = {}; 
-          if (st == 12) {
-            if (msg[3] & 1) {
-              this._cc[kk].bm = msg[6];
-              this._cc[kk].bl = msg[7];
-            }
-            msg._bm = this._cc[kk].bm;
-            msg._bl = this._cc[kk].bl;
-            if (JZZ.MIDI.programName) msg.label(JZZ.MIDI.programName(msg[4], msg._bm, msg._bl));
+      }
+      else if (tt == 4) {
+        st = msg[1] >> 4;
+        ch = (msg[1] & 15).toString(16);
+        kk = gr + ch;
+        if (!this._cc[kk]) this._cc[kk] = {}; 
+        if (st == 12) {
+          if (msg[3] & 1) {
+            this._cc[kk].bm = msg[6];
+            this._cc[kk].bl = msg[7];
           }
+          msg._bm = this._cc[kk].bm;
+          msg._bl = this._cc[kk].bl;
+          if (JZZ.MIDI.programName) msg.label(JZZ.MIDI.programName(msg[4], msg._bm, msg._bl));
         }
       }
     }

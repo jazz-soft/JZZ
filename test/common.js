@@ -1754,17 +1754,26 @@ describe('JZZ.Context', function() {
     });
     ctxt.program(1, 1);
   });
-  it('progName 3', function(done) {
-    var ctxt = JZZ.Context().MIDI2().gr(2);
+  it('progName 3', function() {
+    var ctxt = JZZ.Context();
     JZZ.MIDI.programName = function(a, b, c) { return a + ' ' + b  + ' ' + c; };
-    ctxt.rpn(1, 2, 3);
-    ctxt.bank(1, 2, 3);
-    ctxt.connect(function(msg) {
-      assert.equal(msg.toString(), '22c10100 -- Program Change (1 2 3)');
-      JZZ.MIDI.programName = undefined;
-      done();
-    });
-    ctxt.program(1, 1);
+    var msg = JZZ.MIDI2.bank(0, 1, 2, 3);
+    ctxt._receive(msg[0]);
+    ctxt._receive(msg[1]);
+    msg = JZZ.MIDI2.program(0, 1, 1);
+    ctxt._receive(msg);
+    assert.equal(msg.toString(), '20c10100 -- Program Change (1 2 3)');
+    msg = JZZ.MIDI2.umpProgram(0, 1, 2);
+    ctxt._receive(msg);
+    assert.equal(msg.toString(), '40c10000 02000000 -- Program Change (2 2 3)');
+    msg = JZZ.MIDI2.umpProgram(0, 1, 2, 3, 4);
+    ctxt._receive(msg);
+    assert.equal(msg.toString(), '40c10001 02000304 -- Program Change (2 3 4)');
+    // coverage
+    JZZ.MIDI.programName = undefined;
+    ctxt._receive(msg);
+    msg = JZZ.MIDI2.umpNoteOn(0, 0, 0, 0);
+    ctxt._receive(msg);
   });
   it('rpn 0', function(done) {
     var ctxt = JZZ.Context();
