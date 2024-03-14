@@ -2744,6 +2744,15 @@
     var b = typeof lsb == 'undefined' ? '??' : __hex(lsb);
     return 'NRPN ' + a + ' ' + b;
   }
+  function _m2_str(a) {
+    var i;
+    var s = '';
+    for (i = 0; i < a.length; i++) {
+      if (!a[i]) break;
+      s += String.fromCharCode(a[i]);
+    }
+    return JZZ.lib.fromUTF8(s);
+  }
   function _read_ctxt(msg) {
     var mmm, kk, tt, st, n, a, s;
     var gr = 'x';
@@ -2800,6 +2809,7 @@
         if (!this._cc[kk]) this._cc[kk] = {};
         a = msg.slice(4);
         if (st == 0) {
+          msg.label(_m2_str(a));
           this._cc[kk].tx = undefined;
         }
         else if (st == 1) {
@@ -2811,6 +2821,7 @@
         else if (st == 3) {
           if (this._cc[kk].tx) {
             a = this._cc[kk].tx.concat(a);
+            msg.label(_m2_str(a));
             this._cc[kk].tx = undefined;
           }
         }

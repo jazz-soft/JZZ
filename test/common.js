@@ -2012,6 +2012,15 @@ describe('JZZ.Context', function() {
     ctxt._receive(msg);
     assert.equal(msg.toString(), 'f0 7f 7f 04 7f 7f 7f f7');
   });
+  it('text', function() {
+    var ctxt = JZZ.Context();
+    var msg = JZZ.MIDI2.umpText(1, '𝄞');
+    ctxt._receive(msg[0]);
+    assert.equal(msg[0].toString(), 'd1100200 eda0b4ed b49e0000 00000000 -- Text (𝄞)');
+    msg = JZZ.MIDI2.umpCText(2, 3, '𝄞');
+    ctxt._receive(msg[0]);
+    assert.equal(msg[0].toString(), 'd2030200 eda0b4ed b49e0000 00000000 -- Text (𝄞)');
+  });
   it('noop', function() {
     var ctxt = JZZ.Context();
     var msg = JZZ.MIDI2.noop();
