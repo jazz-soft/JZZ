@@ -2752,7 +2752,7 @@
       tt = msg[0] >> 4;
       gr = (msg[0] & 15).toString(16);
       kk = gr;
-      if (!this._cc[kk]) this._cc[kk] = {}; 
+      if (!this._cc[kk]) this._cc[kk] = {};
       if (tt == 2) {
         mmm = new MIDI(msg.slice(1));
       }
@@ -2782,7 +2782,7 @@
         st = msg[1] >> 4;
         ch = (msg[1] & 15).toString(16);
         kk = gr + ch;
-        if (!this._cc[kk]) this._cc[kk] = {}; 
+        if (!this._cc[kk]) this._cc[kk] = {};
         if (st == 12) {
           if (msg[3] & 1) {
             this._cc[kk].bm = msg[6];
@@ -2793,6 +2793,28 @@
           if (JZZ.MIDI.programName) msg.label(JZZ.MIDI.programName(msg[4], msg._bm, msg._bl));
         }
       }
+      else if (tt == 13) {
+        st = msg[1] >> 6;
+        if (!(msg[1] & 0x30)) ch = (msg[1] & 15).toString(16);
+        kk = gr + ch;
+        if (!this._cc[kk]) this._cc[kk] = {};
+        a = msg.slice(4);
+        if (st == 0) {
+          this._cc[kk].tx = undefined;
+        }
+        else if (st == 1) {
+          this._cc[kk].tx = a;
+        }
+        else if (st == 2) {
+          if (this._cc[kk].tx) this._cc[kk].tx = this._cc[kk].tx.concat(a);
+        }
+        else if (st == 3) {
+          if (this._cc[kk].tx) {
+            a = this._cc[kk].tx.concat(a);
+            this._cc[kk].tx = undefined;
+          }
+        }
+      }
     }
     else mmm = msg;
     if (!mmm || !mmm.length || mmm[0] < 0x80) return msg;
@@ -2800,7 +2822,7 @@
     st = mmm[0] >> 4;
     ch = (mmm[0] & 15).toString(16);
     kk = st == 15 ? gr : gr + ch;
-    if (!this._cc[kk]) this._cc[kk] = {}; 
+    if (!this._cc[kk]) this._cc[kk] = {};
     if (st == 12) {
       mmm._bm = this._cc[kk].bm;
       mmm._bl = this._cc[kk].bl;
