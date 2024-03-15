@@ -2020,6 +2020,16 @@ describe('JZZ.Context', function() {
     msg = JZZ.MIDI2.umpCText(2, 3, '𝄞');
     ctxt._receive(msg[0]);
     assert.equal(msg[0].toString(), 'd2030200 eda0b4ed b49e0000 00000000 -- Text (𝄞)');
+    msg = JZZ.MIDI2.umpText(1, '𝄞 𝄞 MIDI 𝄞 𝄞');
+    ctxt._receive(msg[1]);
+    assert.equal(msg[1].toString(), 'd1900200 9e204d49 444920ed a0b4edb4 -- Text');
+    ctxt._receive(msg[2]);
+    assert.equal(msg[2].toString(), 'd1d00200 9e20eda0 b4edb49e 00000000 -- Text');
+    ctxt._receive(msg[0]);
+    assert.equal(msg[0].toString(), 'd1500200 eda0b4ed b49e20ed a0b4edb4 -- Text');
+    ctxt._receive(msg[1]);
+    ctxt._receive(msg[2]);
+    assert.equal(msg[2].toString(), 'd1d00200 9e20eda0 b4edb49e 00000000 -- Text (𝄞 𝄞 MIDI 𝄞 𝄞)');
   });
   it('noop', function() {
     var ctxt = JZZ.Context();

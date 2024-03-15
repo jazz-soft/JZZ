@@ -2773,13 +2773,13 @@
           mmm = new MIDI([0xf0].concat(a, [0xf7]));
           this._cc[kk].sx = undefined;
         }
-        else if (st == 1) {
+        if (st == 1) {
           this._cc[kk].sx = a;
         }
-        else if (st == 2) {
+        if (st == 2) {
           if (this._cc[kk].sx) this._cc[kk].sx = this._cc[kk].sx.concat(a);
         }
-        else if (st == 3) {
+        if (st == 3) {
           if (this._cc[kk].sx) {
             a = this._cc[kk].sx.concat(a);
             mmm = new MIDI([0xf0].concat(a, [0xf7]));
@@ -2812,13 +2812,13 @@
           msg.label(_m2_str(a));
           this._cc[kk].tx = undefined;
         }
-        else if (st == 1) {
+        if (st == 1) {
           this._cc[kk].tx = a;
         }
-        else if (st == 2) {
+        if (st == 2) {
           if (this._cc[kk].tx) this._cc[kk].tx = this._cc[kk].tx.concat(a);
         }
-        else if (st == 3) {
+        if (st == 3) {
           if (this._cc[kk].tx) {
             a = this._cc[kk].tx.concat(a);
             msg.label(_m2_str(a));
