@@ -100,6 +100,7 @@ var DOM = {
   AudioContext: function() {
     return {
       resume: function() { this.state = 'running'; },
+      close: function() { this.state = 'closed'; },
       createOscillator: function() {
         return {
           connect: function() {},

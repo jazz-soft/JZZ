@@ -14,7 +14,7 @@
 })(this, function() {
 
   var _scope = typeof window === 'undefined' ? global : window;
-  var _version = '1.8.1';
+  var _version = '1.8.2';
   var i, j, k, m, n;
 
   /* istanbul ignore next */
@@ -3848,6 +3848,7 @@
   JZZ.lib.copyMidi2Helpers = _copyUmpHelpers;
   JZZ.lib.copyUmpHelpers = _copyUmpHelpers;
   JZZ.lib.getAudioContext = function() { _initAudioContext(); return _ac; };
+  JZZ.lib.closeAudioContext = function() { if (_ac) _ac.close(); _ac = undefined; };
   var _b64 = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
   JZZ.lib.fromBase64 = function(input) {
     var output = '';

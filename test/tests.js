@@ -391,7 +391,10 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
     },
 
     init_web_audio: function() {
-      it('Init Web Audio', function() {
+      it('Web Audio', function() {
+        JZZ.lib.closeAudioContext();
+        JZZ.lib.getAudioContext();
+        JZZ.lib.closeAudioContext();
         JZZ.lib.getAudioContext();
         if (typeof window != 'undefined' && window.dispatchEvent) window.dispatchEvent({ name: 'keydown' });
       });

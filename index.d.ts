@@ -1625,6 +1625,10 @@ declare namespace JZZ {
      *
      * https://jazz-soft.net/doc/JZZ/lib.html#getAudioContext */
     getAudioContext(): any;
+    /** Activate and return window.AudioContext
+     *
+     * https://jazz-soft.net/doc/JZZ/lib.html#closeAudioContext */
+    closeAudioContext(): any;
     /** Encode string to Base64
      *
      * https://jazz-soft.net/doc/JZZ/lib.html#toBase64 */

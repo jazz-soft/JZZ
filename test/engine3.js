@@ -19,6 +19,7 @@ window.dispatchEvent = function(evt) { if (document.handle[evt.name]) document.h
 window.webkitAudioContext = function() {
   return {
     resume: function() { this.state = 'running'; },
+    close: function() { this.state = 'closed'; },
     createOscillator: function() { return { connect: function() {}, noteOn: function() {}, noteOff: function() {} }; },
     createGainNode: function() { return { connect: function() {}, gain: { setTargetAtTime: function() {} } }; }
   };
