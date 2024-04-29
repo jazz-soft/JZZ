@@ -10,6 +10,7 @@ jobs:
       with:
         node-version: '20.x'
     - run: npm install
+    - run: npm install midi-test
     - run: npm test
     - run: npm run coverage
     - uses: coverallsapp/github-action@v2
