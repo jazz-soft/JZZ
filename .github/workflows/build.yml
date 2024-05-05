@@ -4,6 +4,7 @@ jobs:
   build:
     runs-on: macos-latest
     steps:
+    - run: sw_vers
     - uses: actions/checkout@v4
     - run: python -m pip install --upgrade packaging pip setuptools
     - uses: actions/setup-node@v4
