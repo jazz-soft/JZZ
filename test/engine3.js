@@ -6,10 +6,12 @@ global.performance = { now: function() { return Date.now() - _startTime; } };
 
 var WMT = require('web-midi-test');
 WMT.sysex = false;
-if (navigator) { // node 22 has a navigator object
+try {
   navigator.requestMIDIAccess = WMT.requestMIDIAccess;
 }
-else global.navigator = WMT;
+catch (e) {
+  global.navigator = WMT;
+}
 
 var JZZ = require('..');
 
