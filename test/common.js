@@ -1080,7 +1080,7 @@ describe('UMP messages', function() {
   it('umpProgram', function() {
     assert.equal(JZZ.UMP.umpProgram(1, 2, 3).toString(), '41c20000 03000000 -- Program Change');
     assert.equal(JZZ.UMP.umpProgram(1, 2, 3, 4, 5).toString(), '41c20001 03000405 -- Program Change');
-    assert.throws(function() { JZZ.UMP.umpProgram(1, 2, 3, 4); });
+    assert.equal(JZZ.UMP.umpProgram(1, 2, 3, 517).toString(), '41c20001 03000405 -- Program Change');
   });
   it('umpRPN', function() {
     assert.equal(JZZ.UMP.umpRPN(1, 2, 3, 4, 5).toString(), '41220304 00000005 -- Registered Controller');

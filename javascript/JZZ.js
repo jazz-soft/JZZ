@@ -14,7 +14,7 @@
 })(this, function() {
 
   var _scope = typeof window === 'undefined' ? global : window;
-  var _version = '1.8.6';
+  var _version = '1.8.7';
   var i, j, k, m, n;
 
   /* istanbul ignore next */
@@ -3192,8 +3192,9 @@
     },
     umpProgram: function(g, c, n, msb, lsb) {
       return typeof msb == 'undefined' && typeof lsb == 'undefined' ?
-        [0x40 + _4b(g), 0xc0 + _ch(c), 0, 0, _7bn(n), 0, 0, 0] :
-        [0x40 + _4b(g), 0xc0 + _ch(c), 0, 1, _7bn(n), 0, _7bn(msb), _7bn(lsb)];
+        [0x40 + _4b(g), 0xc0 + _ch(c), 0, 0, _7bn(n), 0, 0, 0] : typeof lsb == 'undefined' ?
+        [0x40 + _4b(g), 0xc0 + _ch(c), 0, 1, _7bn(n), 0, _msb(msb), _lsb(msb)] :
+        [0x40 + _4b(g), 0xc0 + _ch(c), 0, 1, _7bn(n), 0, _7b(msb), _7b(lsb)];
     },
     umpPitchBend: function(g, c, x, y, z, w) {
       return [0x40 + _4b(g), 0xe0 + _ch(c), 0, 0].concat(_32a(x, y, z, w));
