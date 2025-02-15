@@ -131,6 +131,9 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
         port1.connect(function() {
           port1.disconnect().close();
           port2.disconnect(port1).close();
+          JZZ.removeMidiIn('Widget MIDI-In 1');
+          JZZ.removeMidiIn('Widget MIDI-In 1');
+          JZZ.removeMidiIn('Widget MIDI-In 2');
           done();
         });
         port2.connect(widget1);
@@ -151,6 +154,9 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
         widget1._receive = function(/*msg*/) {
           port1.disconnect().close();
           port2.disconnect(port1).close();
+          JZZ.removeMidiOut('Widget MIDI-Out 1');
+          JZZ.removeMidiOut('Widget MIDI-Out 1');
+          JZZ.removeMidiOut('Widget MIDI-Out 2');
           done();
         };
         widget2.connect(port1);

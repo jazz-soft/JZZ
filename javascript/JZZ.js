@@ -14,7 +14,7 @@
 })(this, function() {
 
   var _scope = typeof window === 'undefined' ? global : window;
-  var _version = '1.8.8';
+  var _version = '1.8.9';
   var i, j, k, m, n;
 
   /* istanbul ignore next */
@@ -1386,6 +1386,10 @@
     return JZZ.lib.registerMidiOut(name, engine);
   };
   _J.prototype.addMidiOut = JZZ.addMidiOut;
+  JZZ.removeMidiOut = function(name) { return JZZ.lib.unregisterMidiOut(name); };
+  _J.prototype.removeMidiOut = JZZ.removeMidiOut;
+  JZZ.removeMidiIn = function(name) { return JZZ.lib.unregisterMidiIn(name); };
+  _J.prototype.removeMidiIn = JZZ.removeMidiIn;
   JZZ.maskMidiIn = function(name) { _insM[name] = true; };
   _J.prototype.maskMidiIn = JZZ.maskMidiIn;
   JZZ.unmaskMidiIn = function(name) { delete _insM[name]; };
@@ -3807,6 +3811,22 @@
       if (_jzz._bad) { _jzz._repair(); _jzz._resume(); }
     }
     return true;
+  };
+  JZZ.lib.unregisterMidiOut = function(name) {
+    for (var i = 0; i < _virtual._outs.length; i++) if (_virtual._outs[i].name == name) {
+      _virtual._outs.splice(i, i + 1);
+      if (_jzz) _postRefresh();
+      return true;
+    }
+    return false;
+  };
+  JZZ.lib.unregisterMidiIn = function(name) {
+    for (var i = 0; i < _virtual._ins.length; i++) if (_virtual._ins[i].name == name) {
+      _virtual._ins.splice(i, i + 1);
+      if (_jzz) _postRefresh();
+      return true;
+    }
+    return false;
   };
   var _ac;
   function _initAudioContext() {
