@@ -23,9 +23,10 @@ module.exports = function(grunt) {
       grunt.log.error('Version:', ver, '!=', pkg.version);
       return false;
     }
-    var rdme = grunt.file.read('README.md').split(/\r?\n/);
-    for (var i = 0; i < rdme.length; i++) {
-      var match = rdme[i].match(/@(\d+\.\d+\.\d+)/);
+    var i, data, match;
+    data = grunt.file.read('README.md').split(/\r?\n/);
+    for (i = 0; i < data.length; i++) {
+      match = data[i].match(/@(\d+\.\d+\.\d+)/);
       if (match) {
         ver = match[1];
         if (ver == pkg.version) {
@@ -33,6 +34,20 @@ module.exports = function(grunt) {
         }
         else {
           grunt.log.error('README Version:', ver, '!=', pkg.version);
+          return false;
+        }
+      }
+    }
+    data = grunt.file.read('web-midi-api/package.json').split(/\r?\n/);
+    for (i = 0; i < data.length; i++) {
+      match = data[i].match(/"jzz":\s*"\^(\d+\.\d+\.\d+)"/);
+      if (match) {
+        ver = match[1];
+        if (ver == pkg.version) {
+           grunt.log.ok('Web-MIDI-API:', ver);
+        }
+        else {
+          grunt.log.error('Web-MIDI-API:', ver, '!=', pkg.version);
           return false;
         }
       }
