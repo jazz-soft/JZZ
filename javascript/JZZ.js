@@ -817,6 +817,8 @@
     _engine._sysex = true;
     _engine._outs = [];
     _engine._ins = [];
+    _engine._outMap = {};
+    _engine._inMap = {};
     _engine._refresh = function() { _postRefresh(); };
     _engine._watch = _nop;
     _engine._unwatch = _nop;
