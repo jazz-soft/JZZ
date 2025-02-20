@@ -265,7 +265,7 @@
           x = _engine._outMap[diff.outputs.removed[j].name];
           if (x) x._closeAll();
         }
-        _fireW(diff);
+        _schedule(function() { _fireW(diff); });
       }
     }
     _insW = _jzz._info.inputs;

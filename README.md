@@ -250,6 +250,7 @@ first
 More on [MIDI 2.0 support](https://jazz-soft.net/doc/JZZ/jzzmidi2.html)...
 
 ## Additional modules
+- [**JZZ-midi-WS**](https://github.com/jazz-soft/JZZ-midi-WS) - MIDI via WebSockets
 - [**JZZ-midi-SMF**](https://github.com/jazz-soft/JZZ-midi-SMF) - Standard MIDI files: read / write / play
 - [**JZZ-midi-GM**](https://github.com/jazz-soft/JZZ-midi-GM) - General MIDI instrument names: MIDI to string / string to MIDI
 - [**JZZ-midi-Gear**](https://github.com/jazz-soft/JZZ-midi-Gear) - Retrieve your MIDI device model and manufacturer
