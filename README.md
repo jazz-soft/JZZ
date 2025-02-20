@@ -68,7 +68,7 @@ by running `npm remove midi-test --save-dev`.
 
 ```html
 <script src="https://cdn.jsdelivr.net/npm/jzz"></script>       // the latest version, or
-<script src="https://cdn.jsdelivr.net/npm/jzz@1.8.9"></script> // any particular version
+<script src="https://cdn.jsdelivr.net/npm/jzz@1.9.0"></script> // any particular version
 //...
 ```
 
@@ -76,7 +76,7 @@ by running `npm remove midi-test --save-dev`.
 
 ```html
 <script src="https://unpkg.com/jzz"></script>       // the latest version, or
-<script src="https://unpkg.com/jzz@1.8.9"></script> // any particular version
+<script src="https://unpkg.com/jzz@1.9.0"></script> // any particular version
 //...
 ```
 
@@ -250,8 +250,8 @@ first
 More on [MIDI 2.0 support](https://jazz-soft.net/doc/JZZ/jzzmidi2.html)...
 
 ## Additional modules
-- [**JZZ-midi-WS**](https://github.com/jazz-soft/JZZ-midi-WS) - MIDI via WebSockets
 - [**JZZ-midi-SMF**](https://github.com/jazz-soft/JZZ-midi-SMF) - Standard MIDI files: read / write / play
+- [**JZZ-midi-WS**](https://github.com/jazz-soft/JZZ-midi-WS) - MIDI via WebSockets
 - [**JZZ-midi-GM**](https://github.com/jazz-soft/JZZ-midi-GM) - General MIDI instrument names: MIDI to string / string to MIDI
 - [**JZZ-midi-Gear**](https://github.com/jazz-soft/JZZ-midi-Gear) - Retrieve your MIDI device model and manufacturer
 - [**JZZ-input-Kbd**](https://github.com/jazz-soft/JZZ-input-Kbd) - Virtual piano controls for your MIDI projects
