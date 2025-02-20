@@ -674,13 +674,13 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
           assert.equal(port.connection, 'closed');
           src.disconnect();
           engine.refresh();
-          setTimeout(call1, 10);
+          setTimeout(call1, 100);
         }
         function call1() {
           assert.equal(port.state, 'disconnected');
           assert.equal(port.connection, 'closed');
           port.open();
-          setTimeout(call2, 10);
+          setTimeout(call2, 100);
         }
         function call2() {
           assert.equal(port.state, 'disconnected');
@@ -697,7 +697,7 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
           });
           src.connect();
           engine.refresh();
-          setTimeout(call3, 10);
+          setTimeout(call3, 100);
         }
         function call3() {
           assert.equal(port.state, 'connected');
@@ -818,7 +818,7 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
           assert.equal(port.connection, 'closed');
           dst.disconnect();
           engine.refresh();
-          setTimeout(call1, 10);
+          setTimeout(call1, 100);
         }
         function call1() {
           assert.equal(port.state, 'disconnected');
@@ -826,14 +826,14 @@ module.exports = function(JZZ, PARAMS, DRIVER) {
           assert.throws(function()  { port.send([0x90, 0x40, 0x7f]); });
           assert.equal(port.connection, 'closed');
           port.open();
-          setTimeout(call2, 10);
+          setTimeout(call2, 100);
         }
         function call2() {
           assert.equal(port.state, 'disconnected');
           assert.equal(port.connection, 'pending');
           dst.connect();
           engine.refresh();
-          setTimeout(call3, 10);
+          setTimeout(call3, 100);
         }
         function call3() {
           assert.equal(port.state, 'connected');
