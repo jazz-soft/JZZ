@@ -14,7 +14,7 @@
 })(this, function() {
 
   var _scope = typeof window === 'undefined' ? global : window;
-  var _version = '1.9.0';
+  var _version = '1.9.1';
   var i, j, k, m, n;
 
   /* istanbul ignore next */
@@ -3747,6 +3747,7 @@
   JZZ.lib = {};
   JZZ.lib.now = _now;
   JZZ.lib.schedule = _schedule;
+  JZZ.lib.R = _R;
   var _sch_list = [];
   var _sch_worker;
   var _sch_count = 0;
