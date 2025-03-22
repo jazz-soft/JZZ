@@ -14,7 +14,7 @@
 })(this, function() {
 
   var _scope = typeof window === 'undefined' ? global : window;
-  var _version = '1.9.1';
+  var _version = '1.9.2';
   var i, j, k, m, n;
 
   /* istanbul ignore next */
@@ -376,6 +376,7 @@
 
   _J.prototype._close = function() {
     _engine._close();
+    for (var i = 0; i < _plugged.length; i++) if (_plugged[i] && _plugged[i].close) _plugged[i].close();
   };
 
   // _M: MIDI-In/Out object
@@ -642,8 +643,9 @@
   }
 
   var _jzz;
-  var _engine = { _outs: [], _ins: [] };
+  var _engine = { _outs: [], _ins: [], _close: _nop };
   var _virtual = { _outs: [], _ins: [] };
+  var _plugged = [];
 
   // Node.js
   function _tryNODE() {
@@ -3830,6 +3832,16 @@
       return true;
     }
     return false;
+  };
+  JZZ.lib.plug = function(x) {
+    for (var i = 0; i < _plugged.length; i++) if (_plugged[i] == x) return;
+    _plugged.push(x);
+  };
+  JZZ.lib.unplug = function(x) {
+    for (var i = 0; i < _plugged.length; i++) if (_plugged[i] == x) {
+      _plugged.splice(i, 1);
+      return;
+    }
   };
   var _ac;
   function _initAudioContext() {
