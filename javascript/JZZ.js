@@ -376,7 +376,11 @@
 
   _J.prototype._close = function() {
     _engine._close();
-    for (var i = 0; i < _plugged.length; i++) if (_plugged[i] && _plugged[i].close) _plugged[i].close();
+    var a = _plugged.slice();
+    for (var i = 0; i < a.length; i++) if (a[i]) {
+      if (a[i]._close) a[i]._close();
+      else if (a[i].close) a[i].close();
+    }
   };
 
   // _M: MIDI-In/Out object

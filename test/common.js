@@ -2093,4 +2093,16 @@ describe('Engine: none', function() {
   test.web_midi_output_no_sysex();
   test.web_midi_output_sysex();
   test.close_engine();
+  it('plug/unplug', function() {
+    var x1 = {};
+    var x2 = { close: function() { JZZ.lib.unplug(x2); JZZ.lib.unplug(x2); } };
+    var x3 = { _close: function() { JZZ.lib.unplug(x2); JZZ.lib.unplug(x2); } };
+    JZZ.lib.unplug(x1);
+    JZZ.lib.plug(x1);
+    JZZ.lib.plug(x1);
+    JZZ.lib.plug(x2);
+    JZZ.lib.plug(x3);
+    JZZ.lib.plug(undefined);
+    JZZ().close();
+  });
 });
