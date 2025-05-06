@@ -746,7 +746,7 @@
         msg.innerText = '';
       }
       document.removeEventListener('jazz-midi-msg', eventHandle);
-      if (a[0] === 'version') {
+      if (a && a[0] === 'version') {
         _initCRX(msg, a[2]);
         self._resume();
       }
