@@ -38,9 +38,11 @@ or [**Apple App Store**](https://apps.apple.com/us/app/jazz-midi/id1506447231).
 - MIDI In/Out
 - User-defined MIDI nodes
 - MIDI files
+- MIDI via WebSockets / WebRTC
 - MPE
 - SMPTE
 - UMP (MIDI 2.0)
+- Hundreds of helper functions
 - Additional modules
 
 ## Install
@@ -252,6 +254,7 @@ More on [MIDI 2.0 support](https://jazz-soft.net/doc/JZZ/jzzmidi2.html)...
 ## Additional modules
 - [**JZZ-midi-SMF**](https://github.com/jazz-soft/JZZ-midi-SMF) - Standard MIDI files: read / write / play
 - [**JZZ-midi-WS**](https://github.com/jazz-soft/JZZ-midi-WS) - MIDI via WebSockets
+- [**JZZ-midi-RTC**](https://github.com/jazz-soft/JZZ-midi-RTC) - MIDI via WebRTC
 - [**JZZ-midi-GM**](https://github.com/jazz-soft/JZZ-midi-GM) - General MIDI instrument names: MIDI to string / string to MIDI
 - [**JZZ-midi-Gear**](https://github.com/jazz-soft/JZZ-midi-Gear) - Retrieve your MIDI device model and manufacturer
 - [**JZZ-input-Kbd**](https://github.com/jazz-soft/JZZ-input-Kbd) - Virtual piano controls for your MIDI projects
