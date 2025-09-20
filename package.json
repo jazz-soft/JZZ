@@ -1,6 +1,6 @@
 {
   "name": "jzz",
-  "version": "1.9.5",
+  "version": "1.9.6",
   "description": "MIDI library for Node.js and web-browsers",
   "main": "javascript/JZZ.js",
   "scripts": {
@@ -21,7 +21,7 @@
     "jazz-midi": "^1.7.9"
   },
   "devDependencies": {
-    "eslint": "^9.35.0",
+    "eslint": "^9.36.0",
     "grunt": "^1.6.1",
     "grunt-contrib-jshint": "^3.2.0",
     "grunt-contrib-uglify": "^5.2.2",
@@ -31,7 +31,6 @@
     "web-audio-test": "^0.0.8",
     "web-midi-test": "^1.2.9"
   },
-  "runkitExampleFilename": "runkit.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/jazz-soft/JZZ.git"
