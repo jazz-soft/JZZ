@@ -1,6 +1,7 @@
 .*
 minified
 scripts
+utils
 web-midi-api
 test*
 coverage

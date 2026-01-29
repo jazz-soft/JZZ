@@ -1,0 +1,8 @@
+{
+  "name": "utils",
+  "version": "0.0.0",
+  "devDependencies": {
+    "typescript": "^5.9.3"
+  },
+  "private": true
+}
