@@ -7,7 +7,7 @@ export default [
         ignores: ["**/.instrumented/*"]
     },
     {
-        files: ["javascript/*.js", "test/*.js"],
+        files: ["javascript/*.js", "test/*.js", "utils/*.js"],
         languageOptions: {
             ecmaVersion: 2015,
             globals: {
